@@ -115,7 +115,7 @@ bmalloc(blocks)
       return (PTR) p ;
    }
 
-   if (p = pool[blocks - 1])
+   if ((p = pool[blocks - 1]))
    {
       pool[blocks - 1] = p->link ;
       return (PTR) p ;

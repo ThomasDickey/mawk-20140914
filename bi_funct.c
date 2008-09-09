@@ -74,37 +74,36 @@ the GNU General Public License, version 2, 1991.
 #include "regexp.h"
 #include "repl.h"
 #include <math.h>
-
+#include <unistd.h>
 
 /* statics */
 static STRING *PROTO(gsub, (PTR, CELL *, char *, int)) ;
 static void PROTO(fplib_err, (char *, double, char *)) ;
 
-
 /* global for the disassembler */
 BI_REC bi_funct[] =
 {				/* info to load builtins */
 
-   "length", bi_length, 0, 1,	/* special must come first */
-   "index", bi_index, 2, 2,
-   "substr", bi_substr, 2, 3,
-   "sprintf", bi_sprintf, 1, 255,
-   "sin", bi_sin, 1, 1,
-   "cos", bi_cos, 1, 1,
-   "atan2", bi_atan2, 2, 2,
-   "exp", bi_exp, 1, 1,
-   "log", bi_log, 1, 1,
-   "int", bi_int, 1, 1,
-   "sqrt", bi_sqrt, 1, 1,
-   "rand", bi_rand, 0, 0,
-   "srand", bi_srand, 0, 1,
-   "close", bi_close, 1, 1,
-   "system", bi_system, 1, 1,
-   "toupper", bi_toupper, 1, 1,
-   "tolower", bi_tolower, 1, 1,
-   "fflush", bi_fflush, 0, 1,
+   {"length", bi_length, 0, 1},	/* special must come first */
+   {"index", bi_index, 2, 2},
+   {"substr", bi_substr, 2, 3},
+   {"sprintf", bi_sprintf, 1, 255},
+   {"sin", bi_sin, 1, 1},
+   {"cos", bi_cos, 1, 1},
+   {"atan2", bi_atan2, 2, 2},
+   {"exp", bi_exp, 1, 1},
+   {"log", bi_log, 1, 1},
+   {"int", bi_int, 1, 1},
+   {"sqrt", bi_sqrt, 1, 1},
+   {"rand", bi_rand, 0, 0},
+   {"srand", bi_srand, 0, 1},
+   {"close", bi_close, 1, 1},
+   {"system", bi_system, 1, 1},
+   {"toupper", bi_toupper, 1, 1},
+   {"tolower", bi_tolower, 1, 1},
+   {"fflush", bi_fflush, 0, 1},
 
-   (char *) 0, (PF_CP) 0, 0, 0} ;
+   {(char *) 0, (PF_CP) 0, 0, 0}} ;
 
 
 /* load built-in functions in symbol table */
@@ -175,7 +174,7 @@ str_str(target, key, key_len)
       case 2:
 	 {
 	    int k1 = key[1] ;
-	    while (target = strchr(target, k))
+	    while ((target = strchr(target, k)))
 	       if (target[1] == k1)  return target ;
 	       else  target++ ;
 	    /*failed*/
@@ -184,7 +183,7 @@ str_str(target, key, key_len)
    }
 
    key_len-- ;
-   while (target = strchr(target, k))
+   while ((target = strchr(target, k)))
    {
       if (strncmp(target + 1, key + 1, key_len) == 0)  return target ;
       else  target++ ;
@@ -206,7 +205,7 @@ bi_index(sp)
    sp-- ;
    if (TEST2(sp) != TWO_STRINGS)  cast2_to_s(sp) ;
 
-   if (len = string(sp + 1)->len)
+   if ((len = string(sp + 1)->len))
       idx = (p = str_str(string(sp)->str, string(sp + 1)->str, len))
 	 ? p - string(sp)->str + 1 : 0 ;
 
@@ -240,7 +239,7 @@ bi_substr(sp)
 
    if ((len = sval->len) == 0)	/* substr on null string */
    {
-      if (n_args == 3)	cell_destroy(sp + 2) ;
+      if (n_args == 3) { cell_destroy(sp + 2) ; }
       cell_destroy(sp + 1) ;
       return sp ;
    }
@@ -831,7 +830,7 @@ bi_sub(sp)
    if (sc.type < C_STRING)  cast1_to_s(&sc) ;
    front = string(&sc)->str ;
 
-   if (middle = REmatch(front, sp->ptr, &middle_len))
+   if ((middle = REmatch(front, sp->ptr, &middle_len)))
    {
       front_len = middle - front ;
       back = middle + middle_len ;

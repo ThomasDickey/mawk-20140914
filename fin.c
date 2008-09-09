@@ -108,8 +108,8 @@ FINdopen(fd, main_flag)
    fin->nbuffs = 1 ;
    fin->buff[0] = 0 ;
 
-   if (isatty(fd) && rs_shadow.type == SEP_CHAR && rs_shadow.c == '\n'
-       || interactive_flag && fd == 0 )
+   if ((isatty(fd) && rs_shadow.type == SEP_CHAR && rs_shadow.c == '\n')
+       || (interactive_flag && fd == 0) )
    {
       /* interactive, i.e., line buffer this file */
       if (fd == 0)  fin->fp = stdin ;
@@ -169,8 +169,10 @@ FINsemi_close(fin)
       zfree(fin->buff, fin->nbuffs * BUFFSZ + 1) ;
 
       if (fin->fd)
+	{
 	 if (fin->fp)  fclose(fin->fp) ;
 	 else  close(fin->fd) ;
+	}
 
       fin->buff = fin->buffp = &dead ;	 /* marks it semi_closed */
    }

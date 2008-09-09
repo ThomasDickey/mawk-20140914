@@ -46,6 +46,9 @@ static char mawkid[] = MAWK_ID ;
 #define DOS_STRING	""
 #endif
 
+int print_compiler_id();
+int print_aux_limits();
+
 static char fmt[] = "%-14s%10lu\n" ;
 
 /* print VERSION and exit */

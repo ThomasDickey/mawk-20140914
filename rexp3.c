@@ -89,7 +89,7 @@ stackp->u = (ux)
    /* check for the easy case */
    if ((m + 1)->type == M_ACCEPT && m->type == M_STR)
    {
-      if (ts = str_str(s, m->data.str, m->len))	 *lenp = m->len ;
+      if ((ts = str_str(s, m->data.str, m->len)))	 *lenp = m->len ;
       return ts ;
    }
 
@@ -315,7 +315,7 @@ reswitch  :
 
       case M_ACCEPT + U_OFF:
 	 if (!ss)  ss = s ;
-	 if (!cb_ss || ss < cb_ss || ss == cb_ss && s > cb_e)
+	 if (!cb_ss || ss < cb_ss || (ss == cb_ss && s > cb_e))
 	 {
 	    /* we have a new current best */
 	    cb_ss = ss ; cb_e = s ;
@@ -326,7 +326,7 @@ reswitch  :
 	 if (!ss)  ss = s ;
 	 else  s = str_end ? str_end : (str_end = s + strlen(s)) ;
 
-	 if (!cb_ss || ss < cb_ss || ss == cb_ss && s > cb_e)
+	 if (!cb_ss || ss < cb_ss || (ss == cb_ss && s > cb_e))
 	 {
 	    /* we have a new current best */
 	    cb_ss = ss ; cb_e = s ;

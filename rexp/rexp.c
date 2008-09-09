@@ -65,14 +65,14 @@ char *REerrlist[] =
 static  short  table[8][8]  =  {
 
 /*        0   |   CAT   *   +   ?   (   )   */
-/* 0 */   0,  L,  L,    L,  L,  L,  L,  E1,
-/* | */   G,  G,  L,    L,  L,  L,  L,  G,
-/* CAT*/  G,  G,  G,    L,  L,  L,  L,  G,
-/* * */   G,  G,  G,    G,  G,  G, E7,  G,
-/* + */   G,  G,  G,    G,  G,  G, E7,  G,
-/* ? */   G,  G,  G,    G,  G,  G, E7,  G,
-/* ( */   E2, L,  L,    L,  L,  L,  L,  EQ,
-/* ) */   G , G,  G,    G,  G,  G,  E7,  G     }   ;
+/* 0 */   {0,  L,  L,    L,  L,  L,  L,  E1},
+/* | */   {G,  G,  L,    L,  L,  L,  L,  G},
+/* CAT*/  {G,  G,  G,    L,  L,  L,  L,  G},
+/* * */   {G,  G,  G,    G,  G,  G, E7,  G},
+/* + */   {G,  G,  G,    G,  G,  G, E7,  G},
+/* ? */   {G,  G,  G,    G,  G,  G, E7,  G},
+/* ( */   {E2, L,  L,    L,  L,  L,  L,  EQ},
+/* ) */   {G , G,  G,    G,  G,  G,  E7,  G}     }   ;
 
 
 #define	 STACKSZ   64

@@ -164,7 +164,7 @@ re_pos_match(s, re, lenp)
    register char *s ;
 PTR re ; unsigned *lenp ;
 {
-   while (s = REmatch(s, re, lenp))
+   while ((s = REmatch(s, re, lenp)))
       if (*lenp)  return s ;
       else if (*s == 0)	 break ;
       else  s++ ;
@@ -225,7 +225,7 @@ re_ov_split(s, re)
    char *t ;
    unsigned len, mlen ;
 
-   while (t = re_pos_match(s, re, &mlen))
+   while ((t = re_pos_match(s, re, &mlen)))
    {
       tail = tail->link = ZMALLOC(SPLIT_OV) ;
       tail->sval = new_STRING0(len = t - s) ;

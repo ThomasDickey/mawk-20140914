@@ -61,6 +61,9 @@ the GNU General Public License, version 2, 1991.
 #include "memory.h"
 #include "fin.h"
 
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #ifdef	V7
 #include  <sgtty.h>		/* defines FIOCLEX */
@@ -188,7 +191,7 @@ file_find(sval, type)
       if (strcmp(name, p->name->str) == 0 &&
 	  (p->type == type ||
       /* no distinction between F_APPEND and F_TRUNC here */
-	   p->type >= F_APPEND && type >= F_APPEND))
+	   (p->type >= F_APPEND && type >= F_APPEND)))
 
       {
 	 /* found */
@@ -550,7 +553,7 @@ wait_for(pid)
       add_to_child_list(id, exit_status) ;
    }
    /* see if an earlier wait() caught our child */
-   else if (p = remove_from_child_list(pid))
+   else if ((p = remove_from_child_list(pid)))
    {
       exit_status = p->exit_status ;
       ZFREE(p) ;

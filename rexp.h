@@ -152,7 +152,7 @@ void      PROTO( RE_or, (MACHINE *, MACHINE *) ) ;
 void      PROTO( RE_close, (MACHINE *) ) ;
 void      PROTO( RE_poscl, (MACHINE *) ) ;
 void      PROTO( RE_01, (MACHINE *) ) ;
-void      PROTO( RE_panic, (char *) ) ;
+void      PROTO( RE_panic, (char *) ) __attribute__((noreturn)) ;
 char     *PROTO( str_str, (char *, char *, unsigned) ) ;
 
 void      PROTO( RE_lex_init , (char *) ) ;

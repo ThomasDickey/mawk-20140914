@@ -420,7 +420,7 @@ reswitch:
 	    {
 	       if (*p == current_token)
 	       {
-		  if (*p != INC_or_DEC)	 test1_ret('=', DIV_ASG, DIV) ;
+		  if (*p != INC_or_DEC)	{ test1_ret('=', DIV_ASG, DIV) ; }
 
 		  if (next() == '=')
 		  {
@@ -852,7 +852,7 @@ static char hex_val['f' - 'A' + 1] =
 #define	 hex_value(x)	hex_val[(x)-'A']
 
 #define ishex(x) (scan_code[x] == SC_DIGIT ||\
-		  'A' <= (x) && (x) <= 'f' && hex_value(x))
+		  ('A' <= (x) && (x) <= 'f' && hex_value(x)))
 
 static int PROTO(octal, (char **)) ;
 static int PROTO(hex, (char **)) ;
@@ -909,16 +909,16 @@ static struct
 }
 escape_test[ET_END + 1] =
 {
-   'n', '\n',
-   't', '\t',
-   'f', '\f',
-   'b', '\b',
-   'r', '\r',
-   'a', '\07',
-   'v', '\013',
-   '\\', '\\',
-   '\"', '\"',
-   0, 0
+  {'n', '\n'},
+  {'t', '\t'},
+  {'f', '\f'},
+  {'b', '\b'},
+  {'r', '\r'},
+  {'a', '\07'},
+  {'v', '\013'},
+  {'\\', '\\'},
+  {'\"', '\"'},
+  {0, 0}
 } ;
 
 

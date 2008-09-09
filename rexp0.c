@@ -113,7 +113,6 @@ RE_lex(mp)
 {
    register int c ;
 
-reswitch:
    switch (c = char2token(*lp))
    {
       case T_PLUS:
@@ -165,7 +164,7 @@ reswitch:
 	 {
 	    case T_ANY:
 	       {
-		  static plus_is_star_flag = 0 ;
+		  static int plus_is_star_flag = 0 ;
 
 		  if (*++lp == '*')
 		  {
@@ -560,14 +559,14 @@ static struct
 }
 escape_test[ET_END + 1] =
 {
-   'n', '\n',
-   't', '\t',
-   'f', '\f',
-   'b', '\b',
-   'r', '\r',
-   'a', '\07',
-   'v', '\013',
-   0, 0
+   {'n', '\n'},
+   {'t', '\t'},
+   {'f', '\f'},
+   {'b', '\b'},
+   {'r', '\r'},
+   {'a', '\07'},
+   {'v', '\013'},
+   {0, 0}
 } ;
 
 

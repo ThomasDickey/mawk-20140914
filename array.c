@@ -112,8 +112,10 @@ void array_delete(A, cp)
             Int ival = d_to_I(d) ;
             if ((double)ival == d) {
                                       if (A->type == AY_SPLIT)
+					{
                                          if (ival >=1 && ival <= A->size) convert_split_array_to_table(A) ;
                                          else return ; /* ival not in range */
+					}
                                       ap = find_by_ival(A, ival, NO_CREATE) ;
                                       if (ap) { /* remove from the front of the ilist */
                                          DUAL_LINK *table = (DUAL_LINK*) A->ptr ;

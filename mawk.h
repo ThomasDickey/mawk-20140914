@@ -146,7 +146,7 @@ void  PROTO( DB_cell_destroy, (CELL *) ) ;
 void  PROTO( overflow, (char *, unsigned) ) ;
 void  PROTO( rt_overflow, (char *, unsigned) ) ;
 void  PROTO( rt_error, ( char *, ...) ) ;
-void  PROTO( mawk_exit, (int) ) ;
+void  PROTO( mawk_exit, (int) ) __attribute__ ((noreturn)) ;
 void PROTO( da, (INST *, FILE *)) ;
 char *PROTO( str_str, (char*, char*, unsigned) ) ;
 char *PROTO( rm_escape, (char *) ) ;
@@ -160,7 +160,7 @@ int  PROTO( yyparse, (void) ) ;
 void PROTO( yyerror, (char *) ) ;
 void PROTO( scan_cleanup, (void)) ;
 
-void PROTO( bozo, (char *) ) ;
+void PROTO( bozo, (char *) ) __attribute__ ((noreturn));
 void PROTO( errmsg , (int, char*, ...) ) ;
 void PROTO( compile_error, ( char *, ...) ) ;
 

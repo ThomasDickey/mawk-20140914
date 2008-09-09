@@ -86,7 +86,7 @@ call_arg_check(callee, entry_list, start, line_no)
        take q off entry_list
        test it
 	   if OK  zfree(q)  else put on exit_list  */  
-   while (q = entry_list)
+   while ((q = entry_list))
    {
       entry_list = q->link ;
 
@@ -235,8 +235,8 @@ first_pass(p)
       }
       /* note p->arg_list starts with last argument */
       else if (!p->arg_list /* nothing to do */	 ||
-	       !p->arg_cnt_checked &&
-	       !arg_cnt_ok(p->callee, p->arg_list, p->line_no))
+	       (!p->arg_cnt_checked &&
+		!arg_cnt_ok(p->callee, p->arg_list, p->line_no)))
       {
 	 q->link = p->link ;	 /* delete p */
 	 /* the ! arg_list case is not an error so free memory */
@@ -301,8 +301,8 @@ resolve_fcalls()
       p = old_list ;
       old_list = p->link ;
 
-      if (p->arg_list = call_arg_check(p->callee, p->arg_list,
-				       p->call_start, p->line_no))
+      if ((p->arg_list = call_arg_check(p->callee, p->arg_list,
+				       p->call_start, p->line_no)))
       {
 	 /* still have work to do , put on new_list   */
 	 progress |= check_progress ;
@@ -352,8 +352,8 @@ check_fcall(callee, call_scope, move_level, call, arg_list, line_no)
       /* usually arg_list disappears here and all is well
 	 otherwise add to resolve list */
 
-      if (arg_list = call_arg_check(callee, arg_list,
-				    code_base, line_no))
+      if ((arg_list = call_arg_check(callee, arg_list,
+				    code_base, line_no)))
       {
 	 p = ZMALLOC(FCALL_REC) ;
 	 p->callee = callee ;

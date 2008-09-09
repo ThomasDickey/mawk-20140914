@@ -109,13 +109,15 @@ set_rs_shadow()
       scan_code['\n'] = SC_UNEXPECTED ;
 
    if (rs_shadow.type == SEP_STR)
-      free_STRING((STRING *) rs_shadow.ptr) ;
+     {
+       free_STRING((STRING *) rs_shadow.ptr) ;
+     }
 
    cast_for_split(cellcpy(&c, RS)) ;
    switch (c.type)
    {
       case C_RE:
-	 if (s = is_string_split(c.ptr, &len))
+	 if ((s = is_string_split(c.ptr, &len)))
 	 {
 	    if (len == 1)
 	    {
@@ -276,7 +278,7 @@ split_field0()
       field[cnt--].type = C_MBSTRN ;
    }
 
-   if (cp == &c)  free_STRING(string(cp)) ;
+   if (cp == &c) { free_STRING(string(cp)) ; }
 }
 
 /*
@@ -503,7 +505,7 @@ build_field0()
 	 memcpy(p, string(cp)->str, string(cp)->len) ;
 	 p += string(cp)->len ;
 	 /* if not really string, free temp use of ptr */
-	 if (cp->type < C_STRING)  free_STRING(string(cp)) ;
+	 if (cp->type < C_STRING) { free_STRING(string(cp)) ; }
 	 if (++cp == cp_limit)
 	 {
 	    cp = *++fbp ;
