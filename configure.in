@@ -45,8 +45,8 @@ CF_MAWK_MATHLIB
 CF_MAWK_PROG_YACC
 CF_MAWK_CC_FEATURES
 CF_MAWK_FIND_SIZE_T
-CF_MAWK_CHECK_HEADERS(fcntl.h,errno.h, time.h,stdarg.h)
-CF_MAWK_CHECK_FUNCS(memcpy,strchr,strerror,vfprintf,strtod,fmod,matherr)
+CF_MAWK_CHECK_HEADERS(fcntl.h errno.h time.h stdarg.h)
+CF_MAWK_CHECK_FUNCS(memcpy strchr strerror vfprintf strtod fmod matherr)
 CF_MAWK_CHECK_FPRINTF
 CF_MAWK_FIND_MAX_INT
 CF_MAWK_RUN_FPE_TESTS
