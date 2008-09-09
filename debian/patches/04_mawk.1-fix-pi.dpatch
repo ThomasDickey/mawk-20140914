@@ -1,0 +1,36 @@
+#! /bin/sh -e
+## 04_mawk.1-fix-pi.dpatch by Colin Watson <cjwatson@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Display PI as "pi" rather than 'n' in mawk(1) when rendered by nroff.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+case "$1" in
+       -patch) patch -f --no-backup-if-mismatch -p1 < $0;;
+       -unpatch) patch -f --no-backup-if-mismatch -R -p1 < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad 04.mawk.tmp/man/mawk.1 04.mawk/man/mawk.1
+--- 04.mawk.tmp/man/mawk.1	1996-07-28 23:06:16.000000000 +0100
++++ 04.mawk/man/mawk.1	2003-04-09 22:21:29.000000000 +0100
+@@ -816,7 +816,11 @@
+ .RS
+ .PP
+ .nf
+-atan2(\fIy,x\fR)	Arctan of \fIy\fR/\fIx\fR between -\(*p and \(*p.
++.ie n \
++.ds Pi pi
++.el \
++.ds Pi \\(*p
++atan2(\fIy,x\fR)	Arctan of \fIy\fR/\fIx\fR between -\*(Pi and \*(Pi.
+ .PP  
+ cos(\fIx\fR)		Cosine function, \fIx\fR in radians.
+ .PP  

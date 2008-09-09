@@ -1,0 +1,208 @@
+#! /bin/sh -e
+## 01_error-on-full-fs.dpatch by Torsten Landschoff <torsten@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Report errors when writing to a full filesystem, even if we
+## DP: are only notified about them when closing the file.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+case "$1" in
+       -patch) patch -f --no-backup-if-mismatch -p1 < $0;;
+       -unpatch) patch -f --no-backup-if-mismatch -R -p1 < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad 01.mawk.tmp/files.c 01.mawk/files.c
+--- 01.mawk.tmp/files.c	1996-01-14 17:14:10.000000000 +0000
++++ 01.mawk/files.c	2003-04-09 22:05:20.000000000 +0100
+@@ -61,17 +61,11 @@
+ #include "memory.h"
+ #include "fin.h"
+ 
+-static FILE *PROTO(tfopen, (char *, char *)) ;
+-static void PROTO(efflush, (FILE*)) ;
+-static void PROTO(add_to_child_list, (int, int)) ;
+-static struct child *PROTO(remove_from_child_list, (int)) ;
+-extern int PROTO(isatty, (int)) ;
+ 
+ #ifdef	V7
+ #include  <sgtty.h>		/* defines FIOCLEX */
+ #endif
+ 
+-
+ #ifndef	 NO_FCNTL_H
+ 
+ #include <fcntl.h>
+@@ -103,6 +97,14 @@
+ 
+ static FILE_NODE *file_list ;
+ 
++/* Prototypes for local functions */
++
++static FILE *PROTO(tfopen, (char *, char *)) ;
++static void PROTO(efflush, (FILE*)) ;
++static void PROTO(add_to_child_list, (int, int)) ;
++static struct child *PROTO(remove_from_child_list, (int)) ;
++extern int PROTO(isatty, (int)) ;
++static void PROTO(close_error, (FILE_NODE *p));
+ 
+ /* find a file on file_list */
+ PTR
+@@ -233,16 +235,28 @@
+       if (strcmp(name, p->name->str) == 0)
+       {
+ 	 /* found */
+-	 switch (p->type)
++
++         /* Remove it from the list first because we might be called 
++            again if an error occurs leading to an infinite loop. 
++
++            Note that we don't have to consider the list corruption 
++            caused by a recursive call because it will never return. */
++
++	 q->link = p->link ;
++         file_list = dummy.link ;   /* maybe it was the first file */
++         
++         switch (p->type)
+ 	 {
+ 	    case F_TRUNC:
+ 	    case F_APPEND:
+-	       fclose((FILE *) p->ptr) ;
++	       if( fclose((FILE *) p->ptr) != 0 )
++		  close_error(p) ;
+ 	       retval = 0 ;
+ 	       break ;
+ 
+ 	    case PIPE_OUT:
+-	       fclose((FILE *) p->ptr) ;
++	       if( fclose((FILE *) p->ptr) != 0 )
++	       	  close_error(p) ;
+ 
+ #if  HAVE_REAL_PIPES
+ 	       retval = wait_for(p->pid) ;
+@@ -274,8 +288,8 @@
+ 	 }
+ 
+ 	 free_STRING(p->name) ;
+-	 hold = p ;
+-	 q->link = p = p->link ;
++         hold = p ;
++	 p = p->link ;
+ 	 ZFREE(hold) ;
+       }
+       else
+@@ -284,7 +298,6 @@
+       }
+    }
+ 
+-   file_list = dummy.link ;
+    return retval ;
+ }
+ 
+@@ -364,7 +377,14 @@
+    {
+       if (IS_OUTPUT(p->type))
+       {
+-	 fclose((FILE *) p->ptr) ;   
++	 if( fclose((FILE *) p->ptr) != 0 )
++         {
++            /* if another error occurs we do not want to be called 
++               for the same file again */
++
++            file_list = p->link ;
++	    close_error(p) ;
++         }
+ 	 if (p->type == PIPE_OUT) wait_for(p->pid) ; 
+       }
+ 
+@@ -397,7 +417,8 @@
+    {
+       if (p->type == PIPE_OUT)
+       {
+-	 fclose(p->ptr) ;
++	 if( fclose(p->ptr) != 0 )
++	    close_error(p) ;
+ 	 close_fake_outpipe(p->name->str, p->pid) ;
+       }
+       p = p->link ;
+@@ -563,18 +584,24 @@
+ set_stderr()   /* and stdout */
+ {
+    FILE_NODE *p, *q ; 
++
++   /* We insert stderr first to get it at the end of the list. This is 
++      needed because we want to output errors encountered on closing 
++      stdout. */
+    
+-   p = ZMALLOC(FILE_NODE) ;
+-   p->link = (FILE_NODE*) 0 ;
+-   p->type = F_TRUNC ;
+-   p->name = new_STRING("/dev/stdout") ;
+-   p->ptr = (PTR) stdout ;
+    q = ZMALLOC(FILE_NODE);
+-   q->link = p ;
++   q->link = (FILE_NODE*) 0 ;
+    q->type = F_TRUNC ;
+    q->name = new_STRING("/dev/stderr") ;
+    q->ptr = (PTR) stderr ;
+-   file_list = q ;
++
++   p = ZMALLOC(FILE_NODE) ;
++   p->link = q;
++   p->type = F_TRUNC ;
++   p->name = new_STRING("/dev/stdout") ;
++   p->ptr = (PTR) stdout ;
++
++   file_list = p ;
+ }
+ 
+ /* fopen() but no buffering to ttys */
+@@ -619,3 +646,13 @@
+    }
+ }
+ #endif /* MSDOS */
++
++/* An error occured closing the file referred to by P. We tell the 
++   user and terminate the program. */
++
++static void close_error(p)
++   FILE_NODE *p ;
++{
++   errmsg(errno, "close failed on file %s", p->name->str) ;
++   mawk_exit(2) ;
++}
+diff -urNad 01.mawk.tmp/test/full-awk.dat 01.mawk/test/full-awk.dat
+--- 01.mawk.tmp/test/full-awk.dat	1970-01-01 01:00:00.000000000 +0100
++++ 01.mawk/test/full-awk.dat	2003-04-09 22:05:20.000000000 +0100
+@@ -0,0 +1,3 @@
++This has to be a small file to check if mawk handles write errors correctly 
++even on a full disk. It has to be smaller than the write buffer of the 
++C library.
+diff -urNad 01.mawk.tmp/test/mawktest 01.mawk/test/mawktest
+--- 01.mawk.tmp/test/mawktest	1993-07-03 19:58:38.000000000 +0100
++++ 01.mawk/test/mawktest	2003-04-09 22:05:20.000000000 +0100
+@@ -39,6 +39,17 @@
+ #######################################
+ 
+ echo
++echo testing checking for write errors
++# Check for write errors noticed when closing the file
++mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
++# Check for write errors noticed on writing
++# The file has to be bigger than the buffer size of the libc
++mawk '{print}' <../scan.c >/dev/full 2>/dev/null && exit
++
++echo checking for write errors OK
++#######################################
++
++echo
+ echo testing arrays and flow of control
+ 
+ mawk -f wfrq0.awk $dat | cmp -s - wfrq-awk.out || exit

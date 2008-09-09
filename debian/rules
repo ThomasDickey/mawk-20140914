@@ -1,0 +1,79 @@
+#!/usr/bin/make -f
+# debian/rules file - for Mawk (1.3.3)
+# Based on sample debian/rules file - for GNU Hello (1.3).
+# Copyright 1994,1995 by Ian Jackson.
+# Copyright 2001-2003 James Troup
+# I hereby give you perpetual unlimited permission to copy,
+# modify and relicense this file, provided that you do not remove
+# my name from the file itself.  (I assert my moral right of
+# paternity under the Copyright, Designs and Patents Act 1988.)
+# This file may have to be extensively modified
+
+install_dir=install -d -m 755
+install_file=install -m 644
+install_script=install -m 755
+install_binary=install -m 755 -s
+
+include /usr/share/dpatch/dpatch.make
+
+build: patch-stamp
+	$(checkdir)
+	chmod 755 configure test/mawktest test/fpe_test
+	./configure
+	$(MAKE) CC="$(CC)" CFLAGS="-g -Wall -O2" LDFLAGS="$(LDFLAGS)"
+	touch build
+
+clean: clean-patched unpatch
+	-rm -rf debian/patched
+
+clean-patched:
+	$(checkdir)
+	-rm -f build parse.c parse.h
+	[ ! -f Makefile ] || make distclean
+	-rm -f man/index.db
+	-rm -rf debian/tmp debian/substvars debian/files*
+	find . -name \*~ | xargs rm -vf
+
+binary-indep:
+
+binary-arch:	checkroot build
+	$(checkdir)
+	rm -rf debian/tmp
+
+	$(install_dir) debian/tmp/DEBIAN
+	$(install_script) debian/prerm debian/postinst debian/tmp/DEBIAN/
+
+	$(install_dir) debian/tmp/usr/bin
+	$(install_binary) mawk debian/tmp/usr/bin/
+
+	$(install_dir) debian/tmp/usr/share/man/man1
+	$(install_file) man/mawk.1  debian/tmp/usr/share/man/man1/
+	gzip -9v debian/tmp/usr/share/man/man1/mawk.1
+
+	$(install_dir) debian/tmp/usr/share/doc/mawk/
+	$(install_file) CHANGES debian/tmp/usr/share/doc/mawk/changelog
+	$(install_file) debian/changelog debian/tmp/usr/share/doc/mawk/changelog.Debian
+	$(install_file) README ACKNOWLEDGMENT debian/tmp/usr/share/doc/mawk/
+	gzip  -9v debian/tmp/usr/share/doc/mawk/*
+
+	$(install_dir) debian/tmp/usr/share/doc/mawk/examples
+	$(install_file) examples/* debian/tmp/usr/share/doc/mawk/examples/
+	gzip -9v debian/tmp/usr/share/doc/mawk/examples/*
+
+	$(install_file) debian/copyright debian/tmp/usr/share/doc/mawk/
+
+	dpkg-shlibdeps mawk
+	dpkg-gencontrol -isp
+	chown -R root.root debian/tmp
+	chmod -R go=rX debian/tmp
+	dpkg --build debian/tmp ..
+
+# Below here is fairly generic really
+
+binary: 	binary-indep binary-arch
+
+checkroot:
+	$(checkdir)
+	test root = "`whoami`"
+
+.PHONY: binary binary-arch binary-indep clean checkroot

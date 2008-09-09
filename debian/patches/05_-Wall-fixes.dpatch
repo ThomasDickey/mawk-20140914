@@ -1,0 +1,865 @@
+#! /bin/sh -e
+## 05_-Wall-fixes.dpatch by James Troup <james@nocrew.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Partial attempt at making the code -Wall clean.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+case "$1" in
+       -patch) patch -f --no-backup-if-mismatch -p1 < $0;;
+       -unpatch) patch -f --no-backup-if-mismatch -R -p1 < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad 05.mawk.tmp/array.c 05.mawk/array.c
+--- 05.mawk.tmp/array.c	1996-09-18 02:07:09.000000000 +0100
++++ 05.mawk/array.c	2003-04-09 22:26:26.000000000 +0100
+@@ -112,8 +112,10 @@
+             Int ival = d_to_I(d) ;
+             if ((double)ival == d) {
+                                       if (A->type == AY_SPLIT)
++					{
+                                          if (ival >=1 && ival <= A->size) convert_split_array_to_table(A) ;
+                                          else return ; /* ival not in range */
++					}
+                                       ap = find_by_ival(A, ival, NO_CREATE) ;
+                                       if (ap) { /* remove from the front of the ilist */
+                                          DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
+diff -urNad 05.mawk.tmp/bi_funct.c 05.mawk/bi_funct.c
+--- 05.mawk.tmp/bi_funct.c	1996-01-14 17:16:11.000000000 +0000
++++ 05.mawk/bi_funct.c	2003-04-09 22:26:26.000000000 +0100
+@@ -74,37 +74,36 @@
+ #include "regexp.h"
+ #include "repl.h"
+ #include <math.h>
+-
++#include <unistd.h>
+ 
+ /* statics */
+ static STRING *PROTO(gsub, (PTR, CELL *, char *, int)) ;
+ static void PROTO(fplib_err, (char *, double, char *)) ;
+ 
+-
+ /* global for the disassembler */
+ BI_REC bi_funct[] =
+ {				/* info to load builtins */
+ 
+-   "length", bi_length, 0, 1,	/* special must come first */
+-   "index", bi_index, 2, 2,
+-   "substr", bi_substr, 2, 3,
+-   "sprintf", bi_sprintf, 1, 255,
+-   "sin", bi_sin, 1, 1,
+-   "cos", bi_cos, 1, 1,
+-   "atan2", bi_atan2, 2, 2,
+-   "exp", bi_exp, 1, 1,
+-   "log", bi_log, 1, 1,
+-   "int", bi_int, 1, 1,
+-   "sqrt", bi_sqrt, 1, 1,
+-   "rand", bi_rand, 0, 0,
+-   "srand", bi_srand, 0, 1,
+-   "close", bi_close, 1, 1,
+-   "system", bi_system, 1, 1,
+-   "toupper", bi_toupper, 1, 1,
+-   "tolower", bi_tolower, 1, 1,
+-   "fflush", bi_fflush, 0, 1,
++   {"length", bi_length, 0, 1},	/* special must come first */
++   {"index", bi_index, 2, 2},
++   {"substr", bi_substr, 2, 3},
++   {"sprintf", bi_sprintf, 1, 255},
++   {"sin", bi_sin, 1, 1},
++   {"cos", bi_cos, 1, 1},
++   {"atan2", bi_atan2, 2, 2},
++   {"exp", bi_exp, 1, 1},
++   {"log", bi_log, 1, 1},
++   {"int", bi_int, 1, 1},
++   {"sqrt", bi_sqrt, 1, 1},
++   {"rand", bi_rand, 0, 0},
++   {"srand", bi_srand, 0, 1},
++   {"close", bi_close, 1, 1},
++   {"system", bi_system, 1, 1},
++   {"toupper", bi_toupper, 1, 1},
++   {"tolower", bi_tolower, 1, 1},
++   {"fflush", bi_fflush, 0, 1},
+ 
+-   (char *) 0, (PF_CP) 0, 0, 0} ;
++   {(char *) 0, (PF_CP) 0, 0, 0}} ;
+ 
+ 
+ /* load built-in functions in symbol table */
+@@ -175,7 +174,7 @@
+       case 2:
+ 	 {
+ 	    int k1 = key[1] ;
+-	    while (target = strchr(target, k))
++	    while ((target = strchr(target, k)))
+ 	       if (target[1] == k1)  return target ;
+ 	       else  target++ ;
+ 	    /*failed*/
+@@ -184,7 +183,7 @@
+    }
+ 
+    key_len-- ;
+-   while (target = strchr(target, k))
++   while ((target = strchr(target, k)))
+    {
+       if (strncmp(target + 1, key + 1, key_len) == 0)  return target ;
+       else  target++ ;
+@@ -206,7 +205,7 @@
+    sp-- ;
+    if (TEST2(sp) != TWO_STRINGS)  cast2_to_s(sp) ;
+ 
+-   if (len = string(sp + 1)->len)
++   if ((len = string(sp + 1)->len))
+       idx = (p = str_str(string(sp)->str, string(sp + 1)->str, len))
+ 	 ? p - string(sp)->str + 1 : 0 ;
+ 
+@@ -240,7 +239,7 @@
+ 
+    if ((len = sval->len) == 0)	/* substr on null string */
+    {
+-      if (n_args == 3)	cell_destroy(sp + 2) ;
++      if (n_args == 3) { cell_destroy(sp + 2) ; }
+       cell_destroy(sp + 1) ;
+       return sp ;
+    }
+@@ -831,7 +830,7 @@
+    if (sc.type < C_STRING)  cast1_to_s(&sc) ;
+    front = string(&sc)->str ;
+ 
+-   if (middle = REmatch(front, sp->ptr, &middle_len))
++   if ((middle = REmatch(front, sp->ptr, &middle_len)))
+    {
+       front_len = middle - front ;
+       back = middle + middle_len ;
+diff -urNad 05.mawk.tmp/da.c 05.mawk/da.c
+--- 05.mawk.tmp/da.c	1995-06-18 20:19:59.000000000 +0100
++++ 05.mawk/da.c	2003-04-09 22:26:26.000000000 +0100
+@@ -68,65 +68,65 @@
+ } simple_code[] =
+ 
+ {
+-   _STOP, "stop",
+-   FE_PUSHA, "fe_pusha",
+-   FE_PUSHI, "fe_pushi",
+-   A_TEST, "a_test",
+-   A_DEL, "a_del",
+-   DEL_A, "del_a",
+-   POP_AL, "pop_al",
+-   _POP, "pop",
+-   _ADD, "add",
+-   _SUB, "sub",
+-   _MUL, "mul",
+-   _DIV, "div",
+-   _MOD, "mod",
+-   _POW, "pow",
+-   _NOT, "not",
+-   _UMINUS, "uminus",
+-   _UPLUS, "uplus",
+-   _TEST, "test",
+-   _CAT, "cat",
+-   _ASSIGN, "assign",
+-   _ADD_ASG, "add_asg",
+-   _SUB_ASG, "sub_asg",
+-   _MUL_ASG, "mul_asg",
+-   _DIV_ASG, "div_asg",
+-   _MOD_ASG, "mod_asg",
+-   _POW_ASG, "pow_asg",
+-   NF_PUSHI, "nf_pushi",
+-   F_ASSIGN, "f_assign",
+-   F_ADD_ASG, "f_add_asg",
+-   F_SUB_ASG, "f_sub_asg",
+-   F_MUL_ASG, "f_mul_asg",
+-   F_DIV_ASG, "f_div_asg",
+-   F_MOD_ASG, "f_mod_asg",
+-   F_POW_ASG, "f_pow_asg",
+-   _POST_INC, "post_inc",
+-   _POST_DEC, "post_dec",
+-   _PRE_INC, "pre_inc",
+-   _PRE_DEC, "pre_dec",
+-   F_POST_INC, "f_post_inc",
+-   F_POST_DEC, "f_post_dec",
+-   F_PRE_INC, "f_pre_inc",
+-   F_PRE_DEC, "f_pre_dec",
+-   _EQ, "eq",
+-   _NEQ, "neq",
+-   _LT, "lt",
+-   _LTE, "lte",
+-   _GT, "gt",
+-   _GTE, "gte",
+-   _MATCH2, "match2",
+-   _EXIT, "exit",
+-   _EXIT0, "exit0",
+-   _NEXT, "next",
+-   _RET, "ret",
+-   _RET0, "ret0",
+-   _OMAIN, "omain",
+-   _JMAIN, "jmain",
+-   OL_GL, "ol_gl",
+-   OL_GL_NR, "ol_gl_nr",
+-   _HALT, (char *) 0
++   {_STOP, "stop"},
++   {FE_PUSHA, "fe_pusha"},
++   {FE_PUSHI, "fe_pushi"},
++   {A_TEST, "a_test"},
++   {A_DEL, "a_del"},
++   {DEL_A, "del_a"},
++   {POP_AL, "pop_al"},
++   {_POP, "pop"},
++   {_ADD, "add"},
++   {_SUB, "sub"},
++   {_MUL, "mul"},
++   {_DIV, "div"},
++   {_MOD, "mod"},
++   {_POW, "pow"},
++   {_NOT, "not"},
++   {_UMINUS, "uminus"},
++   {_UPLUS, "uplus"},
++   {_TEST, "test"},
++   {_CAT, "cat"},
++   {_ASSIGN, "assign"},
++   {_ADD_ASG, "add_asg"},
++   {_SUB_ASG, "sub_asg"},
++   {_MUL_ASG, "mul_asg"},
++   {_DIV_ASG, "div_asg"},
++   {_MOD_ASG, "mod_asg"},
++   {_POW_ASG, "pow_asg"},
++   {NF_PUSHI, "nf_pushi"},
++   {F_ASSIGN, "f_assign"},
++   {F_ADD_ASG, "f_add_asg"},
++   {F_SUB_ASG, "f_sub_asg"},
++   {F_MUL_ASG, "f_mul_asg"},
++   {F_DIV_ASG, "f_div_asg"},
++   {F_MOD_ASG, "f_mod_asg"},
++   {F_POW_ASG, "f_pow_asg"},
++   {_POST_INC, "post_inc"},
++   {_POST_DEC, "post_dec"},
++   {_PRE_INC, "pre_inc"},
++   {_PRE_DEC, "pre_dec"},
++   {F_POST_INC, "f_post_inc"},
++   {F_POST_DEC, "f_post_dec"},
++   {F_PRE_INC, "f_pre_inc"},
++   {F_PRE_DEC, "f_pre_dec"},
++   {_EQ, "eq"},
++   {_NEQ, "neq"},
++   {_LT, "lt"},
++   {_LTE, "lte"},
++   {_GT, "gt"},
++   {_GTE, "gte"},
++   {_MATCH2, "match2"},
++   {_EXIT, "exit"},
++   {_EXIT0, "exit0"},
++   {_NEXT, "next"},
++   {_RET, "ret"},
++   {_RET0, "ret0"},
++   {_OMAIN, "omain"},
++   {_JMAIN, "jmain"},
++   {OL_GL, "ol_gl"},
++   {OL_GL_NR, "ol_gl_nr"},
++   {_HALT, (char *) 0}
+ } ;
+ 
+ static char *jfmt = "%s%s%03d\n" ; 
+@@ -367,12 +367,12 @@
+ }
+ special_cases[] =
+ {
+-   bi_split, "split",
+-   bi_match, "match",
+-   bi_getline, "getline",
+-   bi_sub, "sub",
+-   bi_gsub, "gsub",
+-   (PF_CP) 0, (char *) 0
++   {bi_split, "split"},
++   {bi_match, "match"},
++   {bi_getline, "getline"},
++   {bi_sub, "sub"},
++   {bi_gsub, "gsub"},
++   {(PF_CP) 0, (char *) 0}
+ } ;
+ 
+ static char *
+diff -urNad 05.mawk.tmp/error.c 05.mawk/error.c
+--- 05.mawk.tmp/error.c	1995-06-06 01:18:22.000000000 +0100
++++ 05.mawk/error.c	2003-04-09 22:26:26.000000000 +0100
+@@ -68,54 +68,54 @@
+ static struct token_str  {
+ short token ;
+ char *str ; }  token_str[] = {
+-EOF , "end of file" ,
+-NL , "end of line",
+-SEMI_COLON , ";" ,
+-LBRACE , "{" ,
+-RBRACE , "}" ,
+-SC_FAKE_SEMI_COLON, "}",
+-LPAREN , "(" ,
+-RPAREN , ")" ,
+-LBOX , "[",
+-RBOX , "]",
+-QMARK , "?",
+-COLON , ":",
+-OR, "||",
+-AND, "&&",
+-ASSIGN , "=" ,
+-ADD_ASG, "+=",
+-SUB_ASG, "-=",
+-MUL_ASG, "*=",
+-DIV_ASG, "/=",
+-MOD_ASG, "%=",
+-POW_ASG, "^=",
+-EQ  , "==" ,
+-NEQ , "!=",
+-LT, "<" ,
+-LTE, "<=" ,
+-GT, ">",
+-GTE, ">=" ,
+-MATCH, string_buff,
+-PLUS , "+" ,
+-MINUS, "-" ,
+-MUL , "*" ,
+-DIV, "/"  , 
+-MOD, "%" ,
+-POW, "^" ,
+-NOT, "!" ,
+-COMMA, "," ,
+-INC_or_DEC , string_buff ,
+-DOUBLE  , string_buff ,
+-STRING_  , string_buff ,
+-ID  , string_buff ,
+-FUNCT_ID  , string_buff ,
+-BUILTIN  , string_buff ,
+-IO_OUT , string_buff ,
+-IO_IN, "<" ,
+-PIPE, "|" ,
+-DOLLAR, "$" ,
+-FIELD, "$" ,
+-0, (char *) 0 } ;
++{EOF , "end of file" },
++{NL , "end of line"},
++{SEMI_COLON , ";" },
++{LBRACE , "{" },
++{RBRACE , "}" },
++{SC_FAKE_SEMI_COLON, "}"},
++{LPAREN , "(" },
++{RPAREN , ")" },
++{LBOX , "["},
++{RBOX , "]"},
++{QMARK , "?"},
++{COLON , ":"},
++{OR, "||"},
++{AND, "&&"},
++{ASSIGN , "=" },
++{ADD_ASG, "+="},
++{SUB_ASG, "-="},
++{MUL_ASG, "*="},
++{DIV_ASG, "/="},
++{MOD_ASG, "%="},
++{POW_ASG, "^="},
++{EQ  , "==" },
++{NEQ , "!="},
++{LT, "<" },
++{LTE, "<=" },
++{GT, ">"},
++{GTE, ">=" },
++{MATCH, string_buff},
++{PLUS , "+" },
++{MINUS, "-" },
++{MUL , "*" },
++{DIV, "/"  },
++{MOD, "%" },
++{POW, "^" },
++{NOT, "!" },
++{COMMA, "," },
++{INC_or_DEC , string_buff },
++{DOUBLE  , string_buff },
++{STRING_  , string_buff },
++{ID  , string_buff },
++{FUNCT_ID  , string_buff },
++{BUILTIN  , string_buff },
++{IO_OUT , string_buff },
++{IO_IN, "<" },
++{PIPE, "|" },
++{DOLLAR, "$" },
++{FIELD, "$" },
++{0, (char *) 0 }} ;
+ 
+ /* if paren_cnt >0 and we see one of these, we are missing a ')' */
+ static int missing_rparen[] =
+diff -urNad 05.mawk.tmp/fcall.c 05.mawk/fcall.c
+--- 05.mawk.tmp/fcall.c	1995-08-27 16:46:47.000000000 +0100
++++ 05.mawk/fcall.c	2003-04-09 22:26:26.000000000 +0100
+@@ -86,7 +86,7 @@
+        take q off entry_list
+        test it
+ 	   if OK  zfree(q)  else put on exit_list  */  
+-   while (q = entry_list)
++   while ((q = entry_list))
+    {
+       entry_list = q->link ;
+ 
+@@ -235,8 +235,8 @@
+       }
+       /* note p->arg_list starts with last argument */
+       else if (!p->arg_list /* nothing to do */	 ||
+-	       !p->arg_cnt_checked &&
+-	       !arg_cnt_ok(p->callee, p->arg_list, p->line_no))
++	       (!p->arg_cnt_checked &&
++		!arg_cnt_ok(p->callee, p->arg_list, p->line_no)))
+       {
+ 	 q->link = p->link ;	 /* delete p */
+ 	 /* the ! arg_list case is not an error so free memory */
+@@ -301,8 +301,8 @@
+       p = old_list ;
+       old_list = p->link ;
+ 
+-      if (p->arg_list = call_arg_check(p->callee, p->arg_list,
+-				       p->call_start, p->line_no))
++      if ((p->arg_list = call_arg_check(p->callee, p->arg_list,
++				       p->call_start, p->line_no)))
+       {
+ 	 /* still have work to do , put on new_list   */
+ 	 progress |= check_progress ;
+@@ -352,8 +352,8 @@
+       /* usually arg_list disappears here and all is well
+ 	 otherwise add to resolve list */
+ 
+-      if (arg_list = call_arg_check(callee, arg_list,
+-				    code_base, line_no))
++      if ((arg_list = call_arg_check(callee, arg_list,
++				    code_base, line_no)))
+       {
+ 	 p = ZMALLOC(FCALL_REC) ;
+ 	 p->callee = callee ;
+diff -urNad 05.mawk.tmp/field.c 05.mawk/field.c
+--- 05.mawk.tmp/field.c	1995-06-18 20:17:47.000000000 +0100
++++ 05.mawk/field.c	2003-04-09 22:26:26.000000000 +0100
+@@ -109,13 +109,15 @@
+       scan_code['\n'] = SC_UNEXPECTED ;
+ 
+    if (rs_shadow.type == SEP_STR)
+-      free_STRING((STRING *) rs_shadow.ptr) ;
++     {
++       free_STRING((STRING *) rs_shadow.ptr) ;
++     }
+ 
+    cast_for_split(cellcpy(&c, RS)) ;
+    switch (c.type)
+    {
+       case C_RE:
+-	 if (s = is_string_split(c.ptr, &len))
++	 if ((s = is_string_split(c.ptr, &len)))
+ 	 {
+ 	    if (len == 1)
+ 	    {
+@@ -276,7 +278,7 @@
+       field[cnt--].type = C_MBSTRN ;
+    }
+ 
+-   if (cp == &c)  free_STRING(string(cp)) ;
++   if (cp == &c) { free_STRING(string(cp)) ; }
+ }
+ 
+ /*
+@@ -503,7 +505,7 @@
+ 	 memcpy(p, string(cp)->str, string(cp)->len) ;
+ 	 p += string(cp)->len ;
+ 	 /* if not really string, free temp use of ptr */
+-	 if (cp->type < C_STRING)  free_STRING(string(cp)) ;
++	 if (cp->type < C_STRING) { free_STRING(string(cp)) ; }
+ 	 if (++cp == cp_limit)
+ 	 {
+ 	    cp = *++fbp ;
+diff -urNad 05.mawk.tmp/files.c 05.mawk/files.c
+--- 05.mawk.tmp/files.c	2003-04-09 22:27:02.000000000 +0100
++++ 05.mawk/files.c	2003-04-09 22:26:26.000000000 +0100
+@@ -61,6 +61,9 @@
+ #include "memory.h"
+ #include "fin.h"
+ 
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
+ 
+ #ifdef	V7
+ #include  <sgtty.h>		/* defines FIOCLEX */
+@@ -188,7 +191,7 @@
+       if (strcmp(name, p->name->str) == 0 &&
+ 	  (p->type == type ||
+       /* no distinction between F_APPEND and F_TRUNC here */
+-	   p->type >= F_APPEND && type >= F_APPEND))
++	   (p->type >= F_APPEND && type >= F_APPEND)))
+ 
+       {
+ 	 /* found */
+@@ -550,7 +553,7 @@
+       add_to_child_list(id, exit_status) ;
+    }
+    /* see if an earlier wait() caught our child */
+-   else if (p = remove_from_child_list(pid))
++   else if ((p = remove_from_child_list(pid)))
+    {
+       exit_status = p->exit_status ;
+       ZFREE(p) ;
+diff -urNad 05.mawk.tmp/fin.c 05.mawk/fin.c
+--- 05.mawk.tmp/fin.c	1995-12-24 22:23:22.000000000 +0000
++++ 05.mawk/fin.c	2003-04-09 22:26:26.000000000 +0100
+@@ -108,8 +108,8 @@
+    fin->nbuffs = 1 ;
+    fin->buff[0] = 0 ;
+ 
+-   if (isatty(fd) && rs_shadow.type == SEP_CHAR && rs_shadow.c == '\n'
+-       || interactive_flag && fd == 0 )
++   if ((isatty(fd) && rs_shadow.type == SEP_CHAR && rs_shadow.c == '\n')
++       || (interactive_flag && fd == 0) )
+    {
+       /* interactive, i.e., line buffer this file */
+       if (fd == 0)  fin->fp = stdin ;
+@@ -169,8 +169,10 @@
+       zfree(fin->buff, fin->nbuffs * BUFFSZ + 1) ;
+ 
+       if (fin->fd)
++	{
+ 	 if (fin->fp)  fclose(fin->fp) ;
+ 	 else  close(fin->fd) ;
++	}
+ 
+       fin->buff = fin->buffp = &dead ;	 /* marks it semi_closed */
+    }
+diff -urNad 05.mawk.tmp/init.c 05.mawk/init.c
+--- 05.mawk.tmp/init.c	1995-08-20 18:35:21.000000000 +0100
++++ 05.mawk/init.c	2003-04-09 22:26:26.000000000 +0100
+@@ -69,6 +69,7 @@
+ #include "init.h"
+ #include "bi_vars.h"
+ #include "field.h"
++#include <stdlib.h>
+ 
+ #ifdef MSDOS
+ #include <fcntl.h>
+@@ -370,7 +371,7 @@
+ 
+    while (*p)
+    {
+-      if (s = strchr(*p, '='))	/* shouldn't fail */
++      if ((s = strchr(*p, '=')))	/* shouldn't fail */
+       {
+ 	 int len = s - *p ;
+ 	 c.ptr = (PTR) new_STRING0(len) ;
+diff -urNad 05.mawk.tmp/kw.c 05.mawk/kw.c
+--- 05.mawk.tmp/kw.c	1993-07-17 14:22:59.000000000 +0100
++++ 05.mawk/kw.c	2003-04-09 22:26:26.000000000 +0100
+@@ -41,29 +41,29 @@
+ keywords[] =
+ {
+ 
+-   "print", PRINT,
+-   "printf", PRINTF,
+-   "do", DO,
+-   "while", WHILE,
+-   "for", FOR,
+-   "break", BREAK,
+-   "continue", CONTINUE,
+-   "if", IF,
+-   "else", ELSE,
+-   "in", IN,
+-   "delete", DELETE,
+-   "split", SPLIT,
+-   "match", MATCH_FUNC,
+-   "BEGIN", BEGIN,
+-   "END", END,
+-   "exit", EXIT,
+-   "next", NEXT,
+-   "return", RETURN,
+-   "getline", GETLINE,
+-   "sub", SUB,
+-   "gsub", GSUB,
+-   "function", FUNCTION,
+-   (char *) 0, 0
++   {"print", PRINT},
++   {"printf", PRINTF},
++   {"do", DO},
++   {"while", WHILE},
++   {"for", FOR},
++   {"break", BREAK},
++   {"continue", CONTINUE},
++   {"if", IF},
++   {"else", ELSE},
++   {"in", IN},
++   {"delete", DELETE},
++   {"split", SPLIT},
++   {"match", MATCH_FUNC},
++   {"BEGIN", BEGIN},
++   {"END", END},
++   {"exit", EXIT},
++   {"next", NEXT},
++   {"return", RETURN},
++   {"getline", GETLINE},
++   {"sub", SUB},
++   {"gsub", GSUB},
++   {"function", FUNCTION},
++   {(char *) 0, 0}
+ } ;
+ 
+ /* put keywords in the symbol table */
+diff -urNad 05.mawk.tmp/mawk.h 05.mawk/mawk.h
+--- 05.mawk.tmp/mawk.h	2003-04-09 22:27:02.000000000 +0100
++++ 05.mawk/mawk.h	2003-04-09 22:26:26.000000000 +0100
+@@ -146,7 +146,7 @@
+ void  PROTO( overflow, (char *, unsigned) ) ;
+ void  PROTO( rt_overflow, (char *, unsigned) ) ;
+ void  PROTO( rt_error, ( char *, ...) ) ;
+-void  PROTO( mawk_exit, (int) ) ;
++void  PROTO( mawk_exit, (int) ) __attribute__ ((noreturn)) ;
+ void PROTO( da, (INST *, FILE *)) ;
+ char *PROTO( str_str, (char*, char*, unsigned) ) ;
+ char *PROTO( rm_escape, (char *) ) ;
+@@ -160,7 +160,7 @@
+ void PROTO( yyerror, (char *) ) ;
+ void PROTO( scan_cleanup, (void)) ;
+ 
+-void PROTO( bozo, (char *) ) ;
++void PROTO( bozo, (char *) ) __attribute__ ((noreturn));
+ void PROTO( errmsg , (int, char*, ...) ) ;
+ void PROTO( compile_error, ( char *, ...) ) ;
+ 
+diff -urNad 05.mawk.tmp/re_cmpl.c 05.mawk/re_cmpl.c
+--- 05.mawk.tmp/re_cmpl.c	1994-12-13 00:14:58.000000000 +0000
++++ 05.mawk/re_cmpl.c	2003-04-09 22:26:26.000000000 +0100
+@@ -138,6 +138,8 @@
+       if (p->re == m)  return p->sval->str ;
+ #ifdef	DEBUG
+    bozo("non compiled machine") ;
++#else
++   return NULL;
+ #endif
+ }
+ 
+@@ -240,7 +242,7 @@
+       p = (STRING **) cp->ptr ;
+       for (cnt = cp->vcnt; cnt; cnt--)
+       {
+-	 if (*p)  free_STRING(*p) ;
++	 if (*p) { free_STRING(*p) ; }
+ 	 p++ ;
+       }
+       zfree(cp->ptr, cp->vcnt * sizeof(STRING *)) ;
+@@ -365,6 +367,8 @@
+ 
+ #if  DEBUG
+    bozo("unable to uncompile an repl") ;
++#else
++   return NULL;
+ #endif
+ }
+ 
+diff -urNad 05.mawk.tmp/rexp/rexp.c 05.mawk/rexp/rexp.c
+--- 05.mawk.tmp/rexp/rexp.c	1996-09-02 19:47:36.000000000 +0100
++++ 05.mawk/rexp/rexp.c	2003-04-09 22:26:26.000000000 +0100
+@@ -65,14 +65,14 @@
+ static  short  table[8][8]  =  {
+ 
+ /*        0   |   CAT   *   +   ?   (   )   */
+-/* 0 */   0,  L,  L,    L,  L,  L,  L,  E1,
+-/* | */   G,  G,  L,    L,  L,  L,  L,  G,
+-/* CAT*/  G,  G,  G,    L,  L,  L,  L,  G,
+-/* * */   G,  G,  G,    G,  G,  G, E7,  G,
+-/* + */   G,  G,  G,    G,  G,  G, E7,  G,
+-/* ? */   G,  G,  G,    G,  G,  G, E7,  G,
+-/* ( */   E2, L,  L,    L,  L,  L,  L,  EQ,
+-/* ) */   G , G,  G,    G,  G,  G,  E7,  G     }   ;
++/* 0 */   {0,  L,  L,    L,  L,  L,  L,  E1},
++/* | */   {G,  G,  L,    L,  L,  L,  L,  G},
++/* CAT*/  {G,  G,  G,    L,  L,  L,  L,  G},
++/* * */   {G,  G,  G,    G,  G,  G, E7,  G},
++/* + */   {G,  G,  G,    G,  G,  G, E7,  G},
++/* ? */   {G,  G,  G,    G,  G,  G, E7,  G},
++/* ( */   {E2, L,  L,    L,  L,  L,  L,  EQ},
++/* ) */   {G , G,  G,    G,  G,  G,  E7,  G}     }   ;
+ 
+ 
+ #define	 STACKSZ   64
+diff -urNad 05.mawk.tmp/rexp/rexp.h 05.mawk/rexp/rexp.h
+--- 05.mawk.tmp/rexp/rexp.h	1993-07-23 14:21:35.000000000 +0100
++++ 05.mawk/rexp/rexp.h	2003-04-09 22:26:26.000000000 +0100
+@@ -152,7 +152,7 @@
+ void      PROTO( RE_close, (MACHINE *) ) ;
+ void      PROTO( RE_poscl, (MACHINE *) ) ;
+ void      PROTO( RE_01, (MACHINE *) ) ;
+-void      PROTO( RE_panic, (char *) ) ;
++void      PROTO( RE_panic, (char *) ) __attribute__((noreturn)) ;
+ char     *PROTO( str_str, (char *, char *, unsigned) ) ;
+ 
+ void      PROTO( RE_lex_init , (char *) ) ;
+diff -urNad 05.mawk.tmp/rexp/rexp0.c 05.mawk/rexp/rexp0.c
+--- 05.mawk.tmp/rexp/rexp0.c	1996-11-08 15:39:27.000000000 +0000
++++ 05.mawk/rexp/rexp0.c	2003-04-09 22:26:26.000000000 +0100
+@@ -113,7 +113,6 @@
+ {
+    register int c ;
+ 
+-reswitch:
+    switch (c = char2token(*lp))
+    {
+       case T_PLUS:
+@@ -165,7 +164,7 @@
+ 	 {
+ 	    case T_ANY:
+ 	       {
+-		  static plus_is_star_flag = 0 ;
++		  static int plus_is_star_flag = 0 ;
+ 
+ 		  if (*++lp == '*')
+ 		  {
+@@ -560,14 +559,14 @@
+ }
+ escape_test[ET_END + 1] =
+ {
+-   'n', '\n',
+-   't', '\t',
+-   'f', '\f',
+-   'b', '\b',
+-   'r', '\r',
+-   'a', '\07',
+-   'v', '\013',
+-   0, 0
++   {'n', '\n'},
++   {'t', '\t'},
++   {'f', '\f'},
++   {'b', '\b'},
++   {'r', '\r'},
++   {'a', '\07'},
++   {'v', '\013'},
++   {0, 0}
+ } ;
+ 
+ 
+diff -urNad 05.mawk.tmp/rexp/rexp3.c 05.mawk/rexp/rexp3.c
+--- 05.mawk.tmp/rexp/rexp3.c	1993-07-24 18:55:15.000000000 +0100
++++ 05.mawk/rexp/rexp3.c	2003-04-09 22:26:26.000000000 +0100
+@@ -89,7 +89,7 @@
+    /* check for the easy case */
+    if ((m + 1)->type == M_ACCEPT && m->type == M_STR)
+    {
+-      if (ts = str_str(s, m->data.str, m->len))	 *lenp = m->len ;
++      if ((ts = str_str(s, m->data.str, m->len)))	 *lenp = m->len ;
+       return ts ;
+    }
+ 
+@@ -315,7 +315,7 @@
+ 
+       case M_ACCEPT + U_OFF:
+ 	 if (!ss)  ss = s ;
+-	 if (!cb_ss || ss < cb_ss || ss == cb_ss && s > cb_e)
++	 if (!cb_ss || ss < cb_ss || (ss == cb_ss && s > cb_e))
+ 	 {
+ 	    /* we have a new current best */
+ 	    cb_ss = ss ; cb_e = s ;
+@@ -326,7 +326,7 @@
+ 	 if (!ss)  ss = s ;
+ 	 else  s = str_end ? str_end : (str_end = s + strlen(s)) ;
+ 
+-	 if (!cb_ss || ss < cb_ss || ss == cb_ss && s > cb_e)
++	 if (!cb_ss || ss < cb_ss || (ss == cb_ss && s > cb_e))
+ 	 {
+ 	    /* we have a new current best */
+ 	    cb_ss = ss ; cb_e = s ;
+diff -urNad 05.mawk.tmp/scan.c 05.mawk/scan.c
+--- 05.mawk.tmp/scan.c	1996-07-28 22:47:05.000000000 +0100
++++ 05.mawk/scan.c	2003-04-09 22:26:26.000000000 +0100
+@@ -420,7 +420,7 @@
+ 	    {
+ 	       if (*p == current_token)
+ 	       {
+-		  if (*p != INC_or_DEC)	 test1_ret('=', DIV_ASG, DIV) ;
++		  if (*p != INC_or_DEC)	{ test1_ret('=', DIV_ASG, DIV) ; }
+ 
+ 		  if (next() == '=')
+ 		  {
+@@ -852,7 +852,7 @@
+ #define	 hex_value(x)	hex_val[(x)-'A']
+ 
+ #define ishex(x) (scan_code[x] == SC_DIGIT ||\
+-		  'A' <= (x) && (x) <= 'f' && hex_value(x))
++		  ('A' <= (x) && (x) <= 'f' && hex_value(x)))
+ 
+ static int PROTO(octal, (char **)) ;
+ static int PROTO(hex, (char **)) ;
+@@ -909,16 +909,16 @@
+ }
+ escape_test[ET_END + 1] =
+ {
+-   'n', '\n',
+-   't', '\t',
+-   'f', '\f',
+-   'b', '\b',
+-   'r', '\r',
+-   'a', '\07',
+-   'v', '\013',
+-   '\\', '\\',
+-   '\"', '\"',
+-   0, 0
++  {'n', '\n'},
++  {'t', '\t'},
++  {'f', '\f'},
++  {'b', '\b'},
++  {'r', '\r'},
++  {'a', '\07'},
++  {'v', '\013'},
++  {'\\', '\\'},
++  {'\"', '\"'},
++  {0, 0}
+ } ;
+ 
+ 
+diff -urNad 05.mawk.tmp/split.c 05.mawk/split.c
+--- 05.mawk.tmp/split.c	1996-02-01 05:05:43.000000000 +0000
++++ 05.mawk/split.c	2003-04-09 22:26:26.000000000 +0100
+@@ -164,7 +164,7 @@
+    register char *s ;
+ PTR re ; unsigned *lenp ;
+ {
+-   while (s = REmatch(s, re, lenp))
++   while ((s = REmatch(s, re, lenp)))
+       if (*lenp)  return s ;
+       else if (*s == 0)	 break ;
+       else  s++ ;
+@@ -225,7 +225,7 @@
+    char *t ;
+    unsigned len, mlen ;
+ 
+-   while (t = re_pos_match(s, re, &mlen))
++   while ((t = re_pos_match(s, re, &mlen)))
+    {
+       tail = tail->link = ZMALLOC(SPLIT_OV) ;
+       tail->sval = new_STRING0(len = t - s) ;
+diff -urNad 05.mawk.tmp/version.c 05.mawk/version.c
+--- 05.mawk.tmp/version.c	1996-07-28 22:47:07.000000000 +0100
++++ 05.mawk/version.c	2003-04-09 22:26:26.000000000 +0100
+@@ -46,6 +46,9 @@
+ #define DOS_STRING	""
+ #endif
+ 
++int print_compiler_id();
++int print_aux_limits();
++
+ static char fmt[] = "%-14s%10lu\n" ;
+ 
+ /* print VERSION and exit */
+diff -urNad 05.mawk.tmp/zmalloc.c 05.mawk/zmalloc.c
+--- 05.mawk.tmp/zmalloc.c	1995-06-06 01:18:35.000000000 +0100
++++ 05.mawk/zmalloc.c	2003-04-09 22:26:26.000000000 +0100
+@@ -115,7 +115,7 @@
+       return (PTR) p ;
+    }
+ 
+-   if (p = pool[blocks - 1])
++   if ((p = pool[blocks - 1]))
+    {
+       pool[blocks - 1] = p->link ;
+       return (PTR) p ;

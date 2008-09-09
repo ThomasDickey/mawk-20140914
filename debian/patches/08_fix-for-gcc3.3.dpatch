@@ -1,0 +1,47 @@
+#!/bin/sh -e
+## 08_fix-for-gcc3.3.dpatch.dpatch by James Troup <james@nocrew.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Gross hack to work-around gcc-3.3 including a builtin log()
+## DP: function which broken the configure script.  This should definitely
+## DP: be fixed better but current autoconf/m4 chokes on mawk.ac.m4.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad /home/james/debian/packages/mawk/mawk-1.3.3/configure mawk-1.3.3/configure
+--- /home/james/debian/packages/mawk/mawk-1.3.3/configure	1996-09-05 00:43:01.000000000 +0100
++++ mawk-1.3.3/configure	2003-05-30 14:43:18.000000000 +0100
+@@ -532,6 +532,8 @@
+ log()
+ ; return 0; }
+ EOF
++XCFLAGS=$CFLAGS
++CFLAGS="-fno-builtin $CFLAGS"
+ if eval $ac_link; then
+   rm -rf conftest*
+   eval "ac_cv_lib_m=yes"
+@@ -540,6 +542,7 @@
+   eval "ac_cv_lib_m=no"
+ fi
+ rm -f conftest*
++CFLAGS=$XCFLAGS
+ LIBS="$ac_save_LIBS"
+ 
+ fi

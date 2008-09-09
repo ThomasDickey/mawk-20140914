@@ -1,0 +1,8 @@
+01_error-on-full-fs
+02_fix-examples
+03_read-and-close-redefinition
+04_mawk.1-fix-pi
+05_-Wall-fixes
+06_parse.y-semicolons
+07_mawktest-check-devfull
+08_fix-for-gcc3.3

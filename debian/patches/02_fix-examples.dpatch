@@ -1,0 +1,142 @@
+#! /bin/sh -e
+## 02_fix-examples.dpatch by Edward Betts <edward@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Fix bang paths and echo usage in examples.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+case "$1" in
+       -patch) patch -f --no-backup-if-mismatch -p1 < $0;;
+       -unpatch) patch -f --no-backup-if-mismatch -R -p1 < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad 02.mawk.tmp/examples/ct_length.awk 02.mawk/examples/ct_length.awk
+--- 02.mawk.tmp/examples/ct_length.awk	1993-07-03 19:58:46.000000000 +0100
++++ 02.mawk/examples/ct_length.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,4 +1,4 @@
+-#!/usr/local/bin/mawk -f
++#!/usr/bin/mawk -f
+ 
+ #  ct_length.awk
+ #
+diff -urNad 02.mawk.tmp/examples/decl.awk 02.mawk/examples/decl.awk
+--- 02.mawk.tmp/examples/decl.awk	1993-07-03 19:58:44.000000000 +0100
++++ 02.mawk/examples/decl.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,3 +1,4 @@
++#!/usr/bin/awk -f
+ 
+ # parse a C declaration by recursive descent
+ # based on a C program in KR ANSI edition
+@@ -137,7 +138,3 @@
+     }
+ 
+ }
+-
+-
+-
+-
+diff -urNad 02.mawk.tmp/examples/deps.awk 02.mawk/examples/deps.awk
+--- 02.mawk.tmp/examples/deps.awk	1994-02-24 02:54:30.000000000 +0000
++++ 02.mawk/examples/deps.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,3 +1,4 @@
++#!/usr/bin/mawk -f
+ 
+ # find include dependencies in C source
+ #
+diff -urNad 02.mawk.tmp/examples/eatc.awk 02.mawk/examples/eatc.awk
+--- 02.mawk.tmp/examples/eatc.awk	1993-07-03 19:58:46.000000000 +0100
++++ 02.mawk/examples/eatc.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,4 +1,4 @@
+-
++#!/usr/bin/mawk -f
+ 
+ #  eatc.awk
+ #  another program to remove comments
+diff -urNad 02.mawk.tmp/examples/gdecl.awk 02.mawk/examples/gdecl.awk
+--- 02.mawk.tmp/examples/gdecl.awk	1993-07-03 19:58:45.000000000 +0100
++++ 02.mawk/examples/gdecl.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,3 +1,4 @@
++#!/usr/bin/mawk
+ 
+ # parse a C declaration by recursive descent
+ # 
+@@ -130,7 +131,3 @@
+     }
+ 
+ }
+-
+-
+-
+-
+diff -urNad 02.mawk.tmp/examples/hcal 02.mawk/examples/hcal
+--- 02.mawk.tmp/examples/hcal	1996-08-25 19:45:47.000000000 +0100
++++ 02.mawk/examples/hcal	2003-04-09 22:14:56.000000000 +0100
+@@ -1,4 +1,5 @@
+-#!/usr/local/bin/mawk -We
++#!/usr/bin/mawk -We
++
+ # edit the above to be the full pathname of 'mawk'
+ # @(#) hcal - v01.00.02 - Tue Feb 27 21:21:21 EST 1996
+ # @(#) prints a 3-month (highlighted) calendar centered on the target month
+@@ -414,5 +415,3 @@
+ 	if ( ! j ) Get_J()
+ 	return Get_Num("01/01/0001",m,d,y,j)
+ }
+-
+-
+diff -urNad 02.mawk.tmp/examples/hical 02.mawk/examples/hical
+--- 02.mawk.tmp/examples/hical	1995-06-03 10:37:59.000000000 +0100
++++ 02.mawk/examples/hical	2003-04-09 22:14:56.000000000 +0100
+@@ -1,4 +1,5 @@
+-:
++#!/usr/sh
++
+ # @(#) hical - displays previous, current & next months - today highlighted
+ # @(#) an "internationalizationable" version of a 3-month 'cal' display, it
+ # @(#) may be edited for week to start with Sun or Mon & for local language
+@@ -19,8 +20,10 @@
+ # the 'awk' program file is written to a temporary file to avoid any
+ # "arg list too long" error messages, yet have all the code in one file
+ # observe when editing the program file that '\n' must be '\\n'
+-# NOTE: for the 'bash' shell on Linux, use 'echo -e' in the next line
+-echo '{
++# NOTE: to make this script portable /bin/echo has been used instead of the
++#  echo built into the shell for the 'bash' shell on Linux, use 'echo -e' in
++#  the next line (Modification made by Edward Betts <edward@debian.org>)
++/bin/echo '{
+ # USER EDITS MAY BE REQUIRED (for FMT, day & month names, and the time stuff)
+ # FMT = 0  # for weekdays ordered "Mo Tu We Th Fr Sa Su"
+   FMT = 1  # for weekdays ordered "Su Mo Tu We Th Fr Sa"
+diff -urNad 02.mawk.tmp/examples/nocomment.awk 02.mawk/examples/nocomment.awk
+--- 02.mawk.tmp/examples/nocomment.awk	1993-07-03 19:58:45.000000000 +0100
++++ 02.mawk/examples/nocomment.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,3 +1,4 @@
++#!/usr/bin/mawk -f
+ 
+ # remove C comments  from a list of files
+ # using a comment as the record separator
+diff -urNad 02.mawk.tmp/examples/primes.awk 02.mawk/examples/primes.awk
+--- 02.mawk.tmp/examples/primes.awk	1993-07-03 19:58:46.000000000 +0100
++++ 02.mawk/examples/primes.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,3 +1,4 @@
++#!/usr/bin/mawk -f
+ 
+ # primes.awk
+ #
+diff -urNad 02.mawk.tmp/examples/qsort.awk 02.mawk/examples/qsort.awk
+--- 02.mawk.tmp/examples/qsort.awk	1993-07-03 19:58:46.000000000 +0100
++++ 02.mawk/examples/qsort.awk	2003-04-09 22:14:56.000000000 +0100
+@@ -1,4 +1,4 @@
+-
++#!/usr/bin/mawk -f
+ 
+ # qsort text files
+ #

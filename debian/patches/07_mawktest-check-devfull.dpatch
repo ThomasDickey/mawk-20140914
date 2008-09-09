@@ -1,0 +1,50 @@
+#! /bin/sh -e
+## 07_mawktest-check-devfull.dpatch by James Troup <james@nocrew.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Apparently some systems don't have /dev/full...
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+case "$1" in
+       -patch) patch -f --no-backup-if-mismatch -p1 < $0;;
+       -unpatch) patch -f --no-backup-if-mismatch -R -p1 < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad 07.mawk.tmp/test/mawktest 07.mawk/test/mawktest
+--- 07.mawk.tmp/test/mawktest	2003-04-10 02:20:24.000000000 +0100
++++ 07.mawk/test/mawktest	2003-04-10 02:15:46.000000000 +0100
+@@ -39,14 +39,19 @@
+ #######################################
+ 
+ echo
+-echo testing checking for write errors
+-# Check for write errors noticed when closing the file
+-mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
+-# Check for write errors noticed on writing
+-# The file has to be bigger than the buffer size of the libc
+-mawk '{print}' <../scan.c >/dev/full 2>/dev/null && exit
++if [ -c /dev/full ]; then
++    echo testing checking for write errors
++    # Check for write errors noticed when closing the file
++    mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
++    # Check for write errors noticed on writing
++    # The file has to be bigger than the buffer size of the libc
++    mawk '{print}' <../scan.c >/dev/full 2>/dev/null && exit
++
++    echo checking for write errors OK
++else
++    echo "No /dev/full - check for write errors skipped"
++fi
+ 
+-echo checking for write errors OK
+ #######################################
+ 
+ echo

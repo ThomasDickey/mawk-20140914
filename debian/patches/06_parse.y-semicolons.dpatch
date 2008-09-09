@@ -1,0 +1,80 @@
+#! /bin/sh -e
+## 06_parse.y-semicolons.dpatch by Paul Eggert <eggert@twinsun.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Fix missing semicolons in parse.y to keep recent versions of bison happy.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+case "$1" in
+       -patch) patch -f --no-backup-if-mismatch -p1 < $0;;
+       -unpatch) patch -f --no-backup-if-mismatch -R -p1 < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad 06.mawk.tmp/parse.y 06.mawk/parse.y
+--- 06.mawk.tmp/parse.y	1995-06-11 23:55:31.000000000 +0100
++++ 06.mawk/parse.y	2003-04-09 22:34:10.000000000 +0100
+@@ -274,6 +274,7 @@
+                        code1(_PUSHINT) ; code1(0) ;
+                        code2(_PRINT, bi_print) ;
+                      }
++	;
+ 
+ statement_list :  statement
+         |  statement_list   statement
+@@ -482,6 +483,7 @@
+ /* an empty production to store the code_ptr */
+ mark : /* empty */
+          { $$ = code_offset ; }
++	;
+ 
+ /* print_statement */
+ statement :  print mark pr_args pr_direction separator
+@@ -540,6 +542,7 @@
+                 { patch_jmp(code_ptr) ; 
+ 		  patch_jmp(CDP($4)) ; 
+ 		}
++	;
+ 
+ 
+ /*  LOOPS   */
+@@ -883,7 +886,7 @@
+                  } 
+                }
+              }
+-                
++	;                
+ 
+ 
+ /* exit_statement */
+@@ -892,12 +895,14 @@
+                       code1(_EXIT0) ; }
+                |  EXIT   expr  separator
+                     { $$ = $2 ; code1(_EXIT) ; }
++	;
+ 
+ return_statement :  RETURN   separator
+                     { $$ = code_offset ;
+                       code1(_RET0) ; }
+                |  RETURN   expr  separator
+                     { $$ = $2 ; code1(_RET) ; }
++	;
+ 
+ /* getline */
+ 
+@@ -931,7 +936,7 @@
+           }
+        ;
+ 
+-getline :   GETLINE  { getline_flag = 1 ; }
++getline :   GETLINE  { getline_flag = 1 ; } ;
+ 
+ fvalue  :   lvalue  |  field  ;
+ 

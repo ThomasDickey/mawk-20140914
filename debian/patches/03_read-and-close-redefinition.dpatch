@@ -1,0 +1,41 @@
+#! /bin/sh -e
+## 03_read-and-close-redefinition.dpatch by LaMont Jones <lamont@ia.mmjgroup.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Don't prototype read() and close() in mawk.h, #include <unistd.h> instead.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+case "$1" in
+       -patch) patch -f --no-backup-if-mismatch -p1 < $0;;
+       -unpatch) patch -f --no-backup-if-mismatch -R -p1 < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad 03.mawk.tmp/mawk.h 03.mawk/mawk.h
+--- 03.mawk.tmp/mawk.h	1996-11-08 14:54:52.000000000 +0000
++++ 03.mawk/mawk.h	2003-04-09 22:18:33.000000000 +0100
+@@ -52,6 +52,7 @@
+ 
+ #include  "nstd.h"
+ #include <stdio.h>
++#include <unistd.h>
+ #include "types.h"
+ 
+ #ifdef   DEBUG
+@@ -153,9 +154,6 @@
+ int   PROTO( binmode, (void)) ;
+ 
+ 
+-int   PROTO( close, (int) ) ;
+-int   PROTO( read, (int , PTR, unsigned) ) ;
+-
+ void PROTO ( parse, (void) ) ;
+ int  PROTO ( yylex, (void) ) ;
+ int  PROTO( yyparse, (void) ) ;
