@@ -52,6 +52,7 @@ the GNU General Public License, version 2, 1991.
 
 #include  "nstd.h"
 #include <stdio.h>
+#include <unistd.h>
 #include "types.h"
 
 #ifdef   DEBUG
@@ -152,9 +153,6 @@ char *PROTO( rm_escape, (char *) ) ;
 char *PROTO( re_pos_match, (char *, PTR, unsigned *) ) ;
 int   PROTO( binmode, (void)) ;
 
-
-int   PROTO( close, (int) ) ;
-int   PROTO( read, (int , PTR, unsigned) ) ;
 
 void PROTO ( parse, (void) ) ;
 int  PROTO ( yylex, (void) ) ;
