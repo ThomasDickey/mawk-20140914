@@ -61,16 +61,19 @@ typedef  unsigned  size_t ;
 #endif
 
 /* stdlib.h */
-
+#ifdef NO_STDLIB_H
 double  PROTO(strtod, (const char*, char**)) ;
 void    PROTO(free, (void*)) ;
 PTR     PROTO(malloc, (size_t)) ;
 PTR     PROTO(realloc, (void*,size_t)) ;
 void    PROTO(exit, (int)) ;
 char*   PROTO(getenv, (const char*)) ;
+#else
+#include <stdlib.h>
+#endif
 
 /* string.h */
-
+#ifdef NO_STRING_H
 int	PROTO(memcmp, (const void*,const void*,size_t)) ;
 PTR	PROTO(memcpy, (void*,const void*,size_t)) ;
 PTR	PROTO(memset, (void*,int,size_t)) ;
@@ -82,6 +85,9 @@ int  	PROTO(strncmp, (const char*,const char*,size_t)) ;
 char*	PROTO(strncpy, (char*, const char*, size_t)) ;
 char*   PROTO(strrchr, (const char*,int)) ;
 char*	PROTO(strerror, (int)) ;
+#else
+#include <string.h>
+#endif
 
 
 #ifdef  NO_ERRNO_H
@@ -91,7 +97,11 @@ extern  int errno ;
 #endif
 
 /* math.h */
+#ifdef NO_MATH_H
 double  PROTO(fmod,(double,double)) ;
+#else
+#include <math.h>
+#endif
 
 /* if have to diddle with errno to get errors from the math library */
 #ifndef STDC_MATHERR
