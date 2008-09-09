@@ -1,0 +1,3 @@
+This has to be a small file to check if mawk handles write errors correctly 
+even on a full disk. It has to be smaller than the write buffer of the 
+C library.
