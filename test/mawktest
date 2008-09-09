@@ -39,14 +39,19 @@ echo regular expression matching OK
 #######################################
 
 echo
-echo testing checking for write errors
-# Check for write errors noticed when closing the file
-mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
-# Check for write errors noticed on writing
-# The file has to be bigger than the buffer size of the libc
-mawk '{print}' <../scan.c >/dev/full 2>/dev/null && exit
+if [ -c /dev/full ]; then
+    echo testing checking for write errors
+    # Check for write errors noticed when closing the file
+    mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
+    # Check for write errors noticed on writing
+    # The file has to be bigger than the buffer size of the libc
+    mawk '{print}' <../scan.c >/dev/full 2>/dev/null && exit
 
-echo checking for write errors OK
+    echo checking for write errors OK
+else
+    echo "No /dev/full - check for write errors skipped"
+fi
+
 #######################################
 
 echo
