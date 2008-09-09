@@ -532,6 +532,8 @@ int t() {
 log()
 ; return 0; }
 EOF
+XCFLAGS=$CFLAGS
+CFLAGS="-fno-builtin $CFLAGS"
 if eval $ac_link; then
   rm -rf conftest*
   eval "ac_cv_lib_m=yes"
@@ -540,6 +542,7 @@ else
   eval "ac_cv_lib_m=no"
 fi
 rm -f conftest*
+CFLAGS=$XCFLAGS
 LIBS="$ac_save_LIBS"
 
 fi
