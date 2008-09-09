@@ -274,6 +274,7 @@ block_or_separator  :  block
                        code1(_PUSHINT) ; code1(0) ;
                        code2(_PRINT, bi_print) ;
                      }
+	;
 
 statement_list :  statement
         |  statement_list   statement
@@ -482,6 +483,7 @@ builtin :
 /* an empty production to store the code_ptr */
 mark : /* empty */
          { $$ = code_offset ; }
+	;
 
 /* print_statement */
 statement :  print mark pr_args pr_direction separator
@@ -540,6 +542,7 @@ statement :  if_front statement else statement
                 { patch_jmp(code_ptr) ; 
 		  patch_jmp(CDP($4)) ; 
 		}
+	;
 
 
 /*  LOOPS   */
@@ -883,7 +886,7 @@ re_arg   :   expr
                  } 
                }
              }
-                
+	;                
 
 
 /* exit_statement */
@@ -892,12 +895,14 @@ statement      :  EXIT   separator
                       code1(_EXIT0) ; }
                |  EXIT   expr  separator
                     { $$ = $2 ; code1(_EXIT) ; }
+	;
 
 return_statement :  RETURN   separator
                     { $$ = code_offset ;
                       code1(_RET0) ; }
                |  RETURN   expr  separator
                     { $$ = $2 ; code1(_RET) ; }
+	;
 
 /* getline */
 
@@ -931,7 +936,7 @@ p_expr :  getline      %prec  GETLINE
           }
        ;
 
-getline :   GETLINE  { getline_flag = 1 ; }
+getline :   GETLINE  { getline_flag = 1 ; } ;
 
 fvalue  :   lvalue  |  field  ;
 
