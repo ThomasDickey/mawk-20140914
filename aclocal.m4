@@ -4,70 +4,13 @@ dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
 dnl renamed for consistency by Thomas E Dickey.
 dnl 
 dnl ---------------------------------------------------------------------------
-AC_DEFUN([CF_MAWK_MAINTAINER], [brennan@whidbey.com])
 dnl ---------------------------------------------------------------------------
-dnl **********  look for math library *****************
-AC_DEFUN([CF_MAWK_MATHLIB],[
-if test "${MATHLIB+set}" != set  ; then
-AC_CHECK_LIB(m,log,[MATHLIB=-lm ; LIBS="$LIBS -lm"],
-[# maybe don't need separate math library
-AC_CHECK_FUNC(log, log=yes)
-if test "$log$" = yes
-then
-   MATHLIB='' # evidently don't need one
-else
-   AC_MSG_ERROR(
-Cannot find a math library. You need to set MATHLIB in config.user)
-fi])dnl
-fi
-AC_SUBST(MATHLIB)])dnl
-dnl ---------------------------------------------------------------------------
-dnl  I can't get AC_DEFINE_NOQUOTE to work so give up
-AC_DEFUN([CF_MAWK_DEFINE],[AC_DEFINE($1)
-echo  X '$1' 'ifelse($2,,1,$2)' >> defines.out])dnl
-dnl ---------------------------------------------------------------------------
-AC_DEFUN([CF_MAWK_DEFINE2],
-[echo  X '$1' '$2' >> defines.out])dnl
-dnl ---------------------------------------------------------------------------
-dnl mawk wants #define NO_STRERROR
-dnl instead of #define HAVE_STRERROR
-AC_DEFUN([CF_MAWK_XADD_NO],[NO_[$1]])dnl 
-dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_ADD_NO version: 1 updated: 2008/09/09 19:18:22
+dnl --------------
 AC_DEFUN([CF_MAWK_ADD_NO], [CF_MAWK_XADD_NO(translit($1, a-z. , A-Z_))])dnl
 dnl ---------------------------------------------------------------------------
-AC_DEFUN([CF_MAWK_CHECK_HEADER],[AC_CHECK_HEADER($1, ,CF_MAWK_DEFINE(CF_MAWK_ADD_NO($1)))])dnl
-dnl ---------------------------------------------------------------------------
-AC_DEFUN([CF_MAWK_CHECK_FUNC],[AC_CHECK_FUNC($1, ,CF_MAWK_DEFINE(CF_MAWK_ADD_NO($1)))])dnl
-dnl ---------------------------------------------------------------------------
-dnl how to repeat a macro on a list of args
-dnl (probably won't work if the args are expandable
-AC_DEFUN([CF_MAWK_REPEAT_IT],
-[ifelse($#,1,[$1],$#,2,[$1($2)],
-[$1($2) 
-CF_MAWK_REPEAT_IT([$1],
-builtin(shift,builtin(shift,$*)))])])dnl
-dnl ---------------------------------------------------------------------------
-AC_DEFUN([CF_MAWK_CHECK_HEADERS],[CF_MAWK_REPEAT_IT([CF_MAWK_CHECK_HEADER],$*)])dnl
-dnl ---------------------------------------------------------------------------
-AC_DEFUN([CF_MAWK_CHECK_FUNCS],[CF_MAWK_REPEAT_IT([CF_MAWK_CHECK_FUNC],$*)])dnl
-dnl ---------------------------------------------------------------------------
-dnl Find size_t.
-AC_DEFUN([CF_MAWK_CHECK_SIZE_T],[
-  [if test "$size_t_defed" != 1 ; then]
-   AC_CHECK_HEADER($1,size_t_header=ok)
-   [if test "$size_t_header" = ok ; then]
-   AC_TRY_COMPILE([
-#include <$1>],
-[size_t *n ;
-], [size_t_defed=1;
-CF_MAWK_DEFINE2($2,1)
-echo getting size_t from '<$1>'])
-[fi;fi]])dnl
-dnl ---------------------------------------------------------------------------
-AC_DEFUN([CF_MAWK_FIND_SIZE_T],
-[CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
-CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
-dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CC_FEATURES version: 1 updated: 2008/09/09 19:18:22
+dnl -------------------
 dnl Check compiler.
 AC_DEFUN([CF_MAWK_CC_FEATURES],
 [AC_MSG_CHECKING(compiler supports void*)
@@ -84,11 +27,55 @@ test "$protos" = no && CF_MAWK_DEFINE2(NO_PROTOS,1)
 AC_C_CONST
 test "$ac_cv_c_const" = no && CF_MAWK_DEFINE2(const)])dnl
 dnl ---------------------------------------------------------------------------
-dnl Which yacc.
-AC_DEFUN([CF_MAWK_PROG_YACC],
-[AC_CHECK_PROGS(YACC, byacc bison yacc)
-test "$YACC" = bison && YACC='bison -y'])dnl
+dnl CF_MAWK_CHECK_FPRINTF version: 1 updated: 2008/09/09 19:18:22
+dnl ---------------------
+dnl [sf]printf checks needed for print.c
+dnl
+dnl sometimes fprintf() and sprintf() are not proto'ed in stdio.h
+AC_DEFUN([CF_MAWK_CHECK_FPRINTF],
+[AC_EGREP_HEADER([[[^v]]fprintf],stdio.h,,CF_MAWK_DEFINE(NO_FPRINTF_IN_STDIO))
+AC_EGREP_HEADER([[[^v]]sprintf],stdio.h,,CF_MAWK_DEFINE(NO_SPRINTF_IN_STDIO))])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CHECK_FUNC version: 1 updated: 2008/09/09 19:18:22
+dnl ------------------
+AC_DEFUN([CF_MAWK_CHECK_FUNC],[AC_CHECK_FUNC($1, ,CF_MAWK_DEFINE(CF_MAWK_ADD_NO($1)))])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CHECK_FUNCS version: 1 updated: 2008/09/09 19:18:22
+dnl -------------------
+AC_DEFUN([CF_MAWK_CHECK_FUNCS],[CF_MAWK_REPEAT_IT([CF_MAWK_CHECK_FUNC],$*)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CHECK_HEADER version: 1 updated: 2008/09/09 19:18:22
+dnl --------------------
+AC_DEFUN([CF_MAWK_CHECK_HEADER],[AC_CHECK_HEADER($1, ,CF_MAWK_DEFINE(CF_MAWK_ADD_NO($1)))])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CHECK_HEADERS version: 1 updated: 2008/09/09 19:18:22
+dnl ---------------------
+AC_DEFUN([CF_MAWK_CHECK_HEADERS],[CF_MAWK_REPEAT_IT([CF_MAWK_CHECK_HEADER],$*)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CHECK_LIMITS_MSG version: 1 updated: 2008/09/09 19:18:22
+dnl ------------------------
+dnl Write error-message if CF_MAWK_FIND_MAX_INT fails.
+AC_DEFUN([CF_MAWK_CHECK_LIMITS_MSG],
+[AC_MSG_ERROR(C program to compute maxint and maxlong failed.
+Please send bug report to CF_MAWK_MAINTAINER.)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CHECK_SIZE_T version: 1 updated: 2008/09/09 19:18:22
+dnl --------------------
+dnl Find size_t.
+AC_DEFUN([CF_MAWK_CHECK_SIZE_T],[
+  [if test "$size_t_defed" != 1 ; then]
+   AC_CHECK_HEADER($1,size_t_header=ok)
+   [if test "$size_t_header" = ok ; then]
+   AC_TRY_COMPILE([
+#include <$1>],
+[size_t *n ;
+], [size_t_defed=1;
+CF_MAWK_DEFINE2($2,1)
+echo getting size_t from '<$1>'])
+[fi;fi]])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CONFIG_H_HEADER version: 1 updated: 2008/09/09 19:18:22
+dnl -----------------------
 dnl Header for config.h
 AC_DEFUN([CF_MAWK_CONFIG_H_HEADER],
 [cat<<'EOF'
@@ -98,6 +85,8 @@ AC_DEFUN([CF_MAWK_CONFIG_H_HEADER],
 
 EOF])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_CONFIG_H_TRAILER version: 1 updated: 2008/09/09 19:18:22
+dnl ------------------------
 dnl Footer for config.h
 AC_DEFUN([CF_MAWK_CONFIG_H_TRAILER],
 [cat<<'EOF'
@@ -106,24 +95,101 @@ AC_DEFUN([CF_MAWK_CONFIG_H_TRAILER],
 #endif /* CONFIG_H */
 EOF])dnl
 dnl ---------------------------------------------------------------------------
-dnl Build config.h
-AC_DEFUN([CF_MAWK_OUTPUT_CONFIG_H],
-[# output config.h
-rm -f config.h
-(
-CF_MAWK_CONFIG_H_HEADER
-[sed 's/^X/#define/' defines.out]
-CF_MAWK_CONFIG_H_TRAILER
-) | tee config.h
-rm defines.out])dnl
+dnl CF_MAWK_DEFINE version: 1 updated: 2008/09/09 19:18:22
+dnl --------------
+dnl  I can't get AC_DEFINE_NOQUOTE to work so give up
+AC_DEFUN([CF_MAWK_DEFINE],[AC_DEFINE($1)
+echo  X '$1' 'ifelse($2,,1,$2)' >> defines.out])dnl
 dnl ---------------------------------------------------------------------------
-dnl [sf]printf checks needed for print.c
-dnl
-dnl sometimes fprintf() and sprintf() are not proto'ed in stdio.h
-AC_DEFUN([CF_MAWK_CHECK_FPRINTF],
-[AC_EGREP_HEADER([[[^v]]fprintf],stdio.h,,CF_MAWK_DEFINE(NO_FPRINTF_IN_STDIO))
-AC_EGREP_HEADER([[[^v]]sprintf],stdio.h,,CF_MAWK_DEFINE(NO_SPRINTF_IN_STDIO))])dnl
+dnl CF_MAWK_DEFINE2 version: 1 updated: 2008/09/09 19:18:22
+dnl ---------------
+AC_DEFUN([CF_MAWK_DEFINE2],
+[echo  X '$1' '$2' >> defines.out])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_FIND_MAX_INT version: 1 updated: 2008/09/09 19:18:22
+dnl --------------------
+dnl Try to find a definition of MAX__INT from limits.h else compute.
+AC_DEFUN([CF_MAWK_FIND_MAX_INT],
+[AC_CHECK_HEADER(limits.h,limits_h=yes)
+if test "$limits_h" = yes ; then :
+else
+AC_CHECK_HEADER(values.h,values_h=yes)
+   if test "$values_h" = yes ; then
+   AC_TRY_RUN(
+[#include <values.h>
+#include <stdio.h>
+int main()
+{   FILE *out = fopen("maxint.out", "w") ;
+    if ( ! out ) exit(1) ;
+    fprintf(out, "X MAX__INT 0x%x\n", MAXINT) ;
+    fprintf(out, "X MAX__LONG 0x%lx\n", MAXLONG) ;
+    exit(0) ; return(0) ;
+}
+], maxint_set=1,[CF_MAWK_CHECK_LIMITS_MSG])
+   fi
+if test "$maxint_set" != 1 ; then 
+# compute it  --  assumes two's complement
+AC_TRY_RUN(CF_MAWK_MAX__INT_PROGRAM,:,[CF_MAWK_CHECK_LIMITS_MSG])
+fi
+cat maxint.out >> defines.out ; rm -f maxint.out
+fi ;])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_FIND_SIZE_T version: 1 updated: 2008/09/09 19:18:22
+dnl -------------------
+AC_DEFUN([CF_MAWK_FIND_SIZE_T],
+[CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
+CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_FPE_SIGINFO version: 1 updated: 2008/09/09 19:18:22
+dnl -------------------
+dnl SYSv and Solaris FPE checks
+AC_DEFUN([CF_MAWK_FPE_SIGINFO],
+[AC_CHECK_FUNC(sigaction, sigaction=1)
+AC_CHECK_HEADER(siginfo.h,siginfo_h=1)
+if test "$sigaction" = 1 && test "$siginfo_h" = 1 ; then
+   CF_MAWK_DEFINE(SV_SIGINFO)
+else
+   AC_CHECK_FUNC(sigvec,sigvec=1)
+   if test "$sigvec" = 1 && ./fpe_check phoney_arg >> defines.out ; then :
+   else CF_MAWK_DEFINE(NOINFO_SIGFPE)
+   fi
+fi])
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_GET_CONFIG_USER version: 1 updated: 2008/09/09 19:18:22
+dnl -----------------------
+dnl Input config.user
+AC_DEFUN([CF_MAWK_GET_CONFIG_USER],
+[cat < /dev/null > defines.out
+test -f config.user && . ./config.user
+CF_MAWK_SET_IF_UNSET(BINDIR,/usr/local/bin)
+CF_MAWK_SET_IF_UNSET(MANDIR,/usr/local/man/man1)
+CF_MAWK_SET_IF_UNSET(MANEXT,1)
+echo "$USER_DEFINES" >> defines.out])
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_MAINTAINER version: 1 updated: 2008/09/09 19:18:22
+dnl ------------------
+AC_DEFUN([CF_MAWK_MAINTAINER], [brennan@whidbey.com])
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_MATHLIB version: 1 updated: 2008/09/09 19:18:22
+dnl ---------------
+dnl Look for math library.
+AC_DEFUN([CF_MAWK_MATHLIB],[
+if test "${MATHLIB+set}" != set  ; then
+AC_CHECK_LIB(m,log,[MATHLIB=-lm ; LIBS="$LIBS -lm"],
+[# maybe don't need separate math library
+AC_CHECK_FUNC(log, log=yes)
+if test "$log$" = yes
+then
+   MATHLIB='' # evidently don't need one
+else
+   AC_MSG_ERROR(
+Cannot find a math library. You need to set MATHLIB in config.user)
+fi])dnl
+fi
+AC_SUBST(MATHLIB)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_MAX__INT_PROGRAM version: 1 updated: 2008/09/09 19:18:22
+dnl ------------------------
 dnl C program to compute MAX__INT and MAX__LONG if looking at headers fails
 AC_DEFUN([CF_MAWK_MAX__INT_PROGRAM],
 [[#include <stdio.h>
@@ -143,64 +209,21 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl Try to find a definition of MAX__INT from limits.h else compute.
-AC_DEFUN([CF_MAWK_FIND_MAX_INT],
-[AC_CHECK_HEADER(limits.h,limits_h=yes)
-if test "$limits_h" = yes ; then :
-else
-AC_CHECK_HEADER(values.h,values_h=yes)
-   if test "$values_h" = yes ; then
-   AC_TRY_RUN(
-[#include <values.h>
-#include <stdio.h>
-int main()
-{   FILE *out = fopen("maxint.out", "w") ;
-    if ( ! out ) exit(1) ;
-    fprintf(out, "X MAX__INT 0x%x\n", MAXINT) ;
-    fprintf(out, "X MAX__LONG 0x%lx\n", MAXLONG) ;
-    exit(0) ; return(0) ;
-}
-], maxint_set=1,[CF_CHECK_LIMITS_MSG])
-   fi
-if test "$maxint_set" != 1 ; then 
-# compute it  --  assumes two's complement
-AC_TRY_RUN(CF_MAWK_MAX__INT_PROGRAM,:,[CF_CHECK_LIMITS_MSG])
-fi
-cat maxint.out >> defines.out ; rm -f maxint.out
-fi ;])dnl
+dnl CF_MAWK_OUTPUT_CONFIG_H version: 1 updated: 2008/09/09 19:18:22
+dnl -----------------------
+dnl Build config.h
+AC_DEFUN([CF_MAWK_OUTPUT_CONFIG_H],
+[# output config.h
+rm -f config.h
+(
+CF_MAWK_CONFIG_H_HEADER
+[sed 's/^X/#define/' defines.out]
+CF_MAWK_CONFIG_H_TRAILER
+) | tee config.h
+rm defines.out])dnl
 dnl ---------------------------------------------------------------------------
-dnl Write error-message if CF_MAWK_FIND_MAX_INT fails.
-AC_DEFUN([CF_CHECK_LIMITS_MSG],
-[AC_MSG_ERROR(C program to compute maxint and maxlong failed.
-Please send bug report to CF_MAWK_MAINTAINER.)])dnl
-dnl ---------------------------------------------------------------------------
-dnl Input config.user
-AC_DEFUN([CF_MAWK_GET_CONFIG_USER],
-[cat < /dev/null > defines.out
-test -f config.user && . ./config.user
-CF_MAWK_SET_IF_UNSET(BINDIR,/usr/local/bin)
-CF_MAWK_SET_IF_UNSET(MANDIR,/usr/local/man/man1)
-CF_MAWK_SET_IF_UNSET(MANEXT,1)
-echo "$USER_DEFINES" >> defines.out])
-dnl ---------------------------------------------------------------------------
-dnl Set a variable if it is not set by configure script.
-AC_DEFUN([CF_MAWK_SET_IF_UNSET],
-[test "[$]{$1+set}" = set || $1="$2"
-AC_SUBST($1)])dnl
-dnl ---------------------------------------------------------------------------
-dnl SYSv and Solaris FPE checks
-AC_DEFUN([CF_MAWK_FPE_SIGINFO],
-[AC_CHECK_FUNC(sigaction, sigaction=1)
-AC_CHECK_HEADER(siginfo.h,siginfo_h=1)
-if test "$sigaction" = 1 && test "$siginfo_h" = 1 ; then
-   CF_MAWK_DEFINE(SV_SIGINFO)
-else
-   AC_CHECK_FUNC(sigvec,sigvec=1)
-   if test "$sigvec" = 1 && ./fpe_check phoney_arg >> defines.out ; then :
-   else CF_MAWK_DEFINE(NOINFO_SIGFPE)
-   fi
-fi])
-dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_PROG_GCC version: 1 updated: 2008/09/09 19:18:22
+dnl ----------------
 dnl AC_PROG_CC with default -g to cflags
 AC_DEFUN([CF_MAWK_PROG_GCC],
 [AC_BEFORE([$0], [AC_PROG_CPP])dnl
@@ -223,6 +246,25 @@ AC_MSG_RESULT($ac_cv_prog_gcc)
 rm -f conftest*
 ])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_PROG_YACC version: 1 updated: 2008/09/09 19:18:22
+dnl -----------------
+dnl Which yacc.
+AC_DEFUN([CF_MAWK_PROG_YACC],
+[AC_CHECK_PROGS(YACC, byacc bison yacc)
+test "$YACC" = bison && YACC='bison -y'])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_REPEAT_IT version: 1 updated: 2008/09/09 19:18:22
+dnl -----------------
+dnl how to repeat a macro on a list of args
+dnl (probably won't work if the args are expandable
+AC_DEFUN([CF_MAWK_REPEAT_IT],
+[ifelse($#,1,[$1],$#,2,[$1($2)],
+[$1($2) 
+CF_MAWK_REPEAT_IT([$1],
+builtin(shift,builtin(shift,$*)))])])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_RUN_FPE_TESTS version: 1 updated: 2008/09/09 19:18:22
+dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
 [if echo "$USER_DEFINES" | grep FPE_TRAPS_ON >/dev/null
@@ -318,3 +360,16 @@ EOF
 esac 
 rm -f fpe_check  # whew!!]
 fi])
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_SET_IF_UNSET version: 1 updated: 2008/09/09 19:18:22
+dnl --------------------
+dnl Set a variable if it is not set by configure script.
+AC_DEFUN([CF_MAWK_SET_IF_UNSET],
+[test "[$]{$1+set}" = set || $1="$2"
+AC_SUBST($1)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_MAWK_XADD_NO version: 1 updated: 2008/09/09 19:18:22
+dnl ---------------
+dnl mawk wants #define NO_STRERROR
+dnl instead of #define HAVE_STRERROR
+AC_DEFUN([CF_MAWK_XADD_NO],[NO_[$1]])dnl 
