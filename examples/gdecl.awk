@@ -1,3 +1,4 @@
+#!/usr/bin/mawk
 
 # parse a C declaration by recursive descent
 # 
@@ -130,7 +131,3 @@ BEGIN { id = "[_A-Za-z][_A-Za-z0-9]*"
     }
 
 }
-
-
-
-

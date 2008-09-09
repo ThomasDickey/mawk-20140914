@@ -1,4 +1,4 @@
-
+#!/usr/bin/mawk -f
 
 # qsort text files
 #

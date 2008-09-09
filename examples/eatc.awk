@@ -1,4 +1,4 @@
-
+#!/usr/bin/mawk -f
 
 #  eatc.awk
 #  another program to remove comments

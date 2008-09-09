@@ -1,4 +1,5 @@
-#!/usr/local/bin/mawk -We
+#!/usr/bin/mawk -We
+
 # edit the above to be the full pathname of 'mawk'
 # @(#) hcal - v01.00.02 - Tue Feb 27 21:21:21 EST 1996
 # @(#) prints a 3-month (highlighted) calendar centered on the target month
@@ -414,5 +415,3 @@ function Get_Y1() {
 	if ( ! j ) Get_J()
 	return Get_Num("01/01/0001",m,d,y,j)
 }
-
-
