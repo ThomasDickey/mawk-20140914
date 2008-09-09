@@ -1,4 +1,8 @@
 20080909
+	regenerate configure with autoconf version 2.13.20030927
+
+	regenerate parse.c with byacc - 1.9 20080827
+
 	ifdef'd prototypes in nstd.h which belong to stdlib.h, string.h to
 	use standard C by default.
 
