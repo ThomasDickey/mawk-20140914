@@ -1,3 +1,35 @@
+-------------------------------------------------------------------------------
+Debian patches:
+
+(Peter Eisentraut <petere@debian.org>  Sat, 05 Apr 2008 17:11:11 +0200)
+
+08_fix-for-gcc3.3
+	Debian #195371
+
+07_mawktest-check-devfull
+	Debian #51875
+
+06_parse.y-semicolons
+	Debian #170973
+
+(James Troup <james@nocrew.org>  Fri, 30 May 2003 15:24:50 +0100)
+
+05_-Wall-fixes
+
+04_mawk.1-fix-pi
+	Debian #103699
+
+03_read-and-close-redefinition
+	Debian #104124
+
+02_fix-examples
+	Debian #36011
+
+01_error-on-full-fs
+	Debian #28249
+	Debian #4293
+
+-------------------------------------------------------------------------------
 1.3.1 -> 1.3.2 Sep 1996
 
 1) Numeric but not integer indices caused core dump in new array scheme.
