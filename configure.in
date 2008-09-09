@@ -31,7 +31,12 @@ dnl
 dnl
 dnl
 AC_INIT(mawk.h)
-builtin(include,mawk.ac.m4)
+
+
+
+
+
+
 GET_USER_DEFAULTS
 PROG_CC_NO_MINUS_G_NONSENSE
 AC_PROG_CPP
