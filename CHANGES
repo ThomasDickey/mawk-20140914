@@ -1,4 +1,8 @@
 20080909
+	transform mawk.ac.m4 to aclocal.m4, renaming macros to use "CF_" or
+	"CF_MAWK_" prefixes depending on their reusability.  Modified macros
+	to use quoting consistent with recent autoconf versions.
+
 	regenerate configure with autoconf version 2.13.20030927
 
 	regenerate parse.c with byacc - 1.9 20080827
