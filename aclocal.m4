@@ -36,21 +36,29 @@ AC_DEFUN([CF_MAWK_CHECK_FPRINTF],
 [AC_EGREP_HEADER([[[^v]]fprintf],stdio.h,,CF_MAWK_DEFINE(NO_FPRINTF_IN_STDIO))
 AC_EGREP_HEADER([[[^v]]sprintf],stdio.h,,CF_MAWK_DEFINE(NO_SPRINTF_IN_STDIO))])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_FUNC version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_CHECK_FUNC version: 2 updated: 2008/09/09 19:49:23
 dnl ------------------
-AC_DEFUN([CF_MAWK_CHECK_FUNC],[AC_CHECK_FUNC($1, ,CF_MAWK_DEFINE(CF_MAWK_ADD_NO($1)))])dnl
+AC_DEFUN([CF_MAWK_CHECK_FUNC],[AC_CHECK_FUNC([$1],,[CF_MAWK_DEFINE([CF_MAWK_ADD_NO([$1])])])])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_FUNCS version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_CHECK_FUNCS version: 2 updated: 2008/09/09 19:49:23
 dnl -------------------
-AC_DEFUN([CF_MAWK_CHECK_FUNCS],[CF_MAWK_REPEAT_IT([CF_MAWK_CHECK_FUNC],$*)])dnl
+AC_DEFUN([CF_MAWK_CHECK_FUNCS],[
+for cf_func in $1
+do
+  CF_MAWK_CHECK_FUNC($cf_func)
+done])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_HEADER version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_CHECK_HEADER version: 2 updated: 2008/09/09 19:49:23
 dnl --------------------
-AC_DEFUN([CF_MAWK_CHECK_HEADER],[AC_CHECK_HEADER($1, ,CF_MAWK_DEFINE(CF_MAWK_ADD_NO($1)))])dnl
+AC_DEFUN([CF_MAWK_CHECK_HEADER],[AC_CHECK_HEADER($1,,CF_MAWK_DEFINE(CF_MAWK_ADD_NO([$1])))])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_HEADERS version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_CHECK_HEADERS version: 2 updated: 2008/09/09 19:49:23
 dnl ---------------------
-AC_DEFUN([CF_MAWK_CHECK_HEADERS],[CF_MAWK_REPEAT_IT([CF_MAWK_CHECK_HEADER],$*)])dnl
+AC_DEFUN([CF_MAWK_CHECK_HEADERS],[
+for cf_func in $1
+do
+    CF_MAWK_CHECK_HEADER($cf_func)
+done])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_LIMITS_MSG version: 1 updated: 2008/09/09 19:18:22
 dnl ------------------------
@@ -252,16 +260,6 @@ dnl Which yacc.
 AC_DEFUN([CF_MAWK_PROG_YACC],
 [AC_CHECK_PROGS(YACC, byacc bison yacc)
 test "$YACC" = bison && YACC='bison -y'])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_REPEAT_IT version: 1 updated: 2008/09/09 19:18:22
-dnl -----------------
-dnl how to repeat a macro on a list of args
-dnl (probably won't work if the args are expandable
-AC_DEFUN([CF_MAWK_REPEAT_IT],
-[ifelse($#,1,[$1],$#,2,[$1($2)],
-[$1($2) 
-CF_MAWK_REPEAT_IT([$1],
-builtin(shift,builtin(shift,$*)))])])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_RUN_FPE_TESTS version: 1 updated: 2008/09/09 19:18:22
 dnl ---------------------
