@@ -1,3 +1,9 @@
+20080909
+	ifdef'd prototypes in nstd.h which belong to stdlib.h, string.h to
+	use standard C by default.
+
+	source-in Debian patches 01-08 (see below).
+
 -------------------------------------------------------------------------------
 Debian patches:
 
@@ -6,13 +12,13 @@ Debian patches:
 08_fix-for-gcc3.3
 	Debian #195371
 
+(James Troup <james@nocrew.org>  Fri, 30 May 2003 15:24:50 +0100)
+
 07_mawktest-check-devfull
 	Debian #51875
 
 06_parse.y-semicolons
 	Debian #170973
-
-(James Troup <james@nocrew.org>  Fri, 30 May 2003 15:24:50 +0100)
 
 05_-Wall-fixes
 
