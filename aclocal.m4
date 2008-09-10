@@ -5,9 +5,12 @@ dnl renamed for consistency by Thomas E Dickey.
 dnl 
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_ADD_NO version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_ADD_NO version: 2 updated: 2008/09/09 20:32:43
 dnl --------------
-AC_DEFUN([CF_MAWK_ADD_NO], [CF_MAWK_XADD_NO(translit($1, a-z. , A-Z_))])dnl
+AC_DEFUN([CF_MAWK_ADD_NO], [
+    CF_UPPER(cf_upper,$1)
+    CF_MAWK_XADD_NO($cf_upper)
+])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CC_FEATURES version: 1 updated: 2008/09/09 19:18:22
 dnl -------------------
@@ -36,28 +39,37 @@ AC_DEFUN([CF_MAWK_CHECK_FPRINTF],
 [AC_EGREP_HEADER([[[^v]]fprintf],stdio.h,,CF_MAWK_DEFINE(NO_FPRINTF_IN_STDIO))
 AC_EGREP_HEADER([[[^v]]sprintf],stdio.h,,CF_MAWK_DEFINE(NO_SPRINTF_IN_STDIO))])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_FUNC version: 2 updated: 2008/09/09 19:49:23
+dnl CF_MAWK_CHECK_FUNC version: 3 updated: 2008/09/09 20:32:43
 dnl ------------------
-AC_DEFUN([CF_MAWK_CHECK_FUNC],[AC_CHECK_FUNC([$1],,[CF_MAWK_DEFINE([CF_MAWK_ADD_NO([$1])])])])dnl
+AC_DEFUN([CF_MAWK_CHECK_FUNC],[
+    AC_CHECK_FUNC($1,,[
+        CF_UPPER(cf_check_func,NO_$1)
+        CF_MAWK_DEFINE($cf_check_func)])
+])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_FUNCS version: 2 updated: 2008/09/09 19:49:23
+dnl CF_MAWK_CHECK_FUNCS version: 3 updated: 2008/09/09 20:32:43
 dnl -------------------
 AC_DEFUN([CF_MAWK_CHECK_FUNCS],[
 for cf_func in $1
 do
-  CF_MAWK_CHECK_FUNC($cf_func)
-done])dnl
+    CF_MAWK_CHECK_FUNC(${cf_func})
+done
+])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_HEADER version: 2 updated: 2008/09/09 19:49:23
+dnl CF_MAWK_CHECK_HEADER version: 3 updated: 2008/09/09 20:38:19
 dnl --------------------
-AC_DEFUN([CF_MAWK_CHECK_HEADER],[AC_CHECK_HEADER($1,,CF_MAWK_DEFINE(CF_MAWK_ADD_NO([$1])))])dnl
+AC_DEFUN([CF_MAWK_CHECK_HEADER],[
+    AC_CHECK_HEADER($1,,[
+        CF_UPPER(cf_check_header,NO_$1)
+        CF_MAWK_DEFINE($cf_check_header)])
+])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_HEADERS version: 2 updated: 2008/09/09 19:49:23
+dnl CF_MAWK_CHECK_HEADERS version: 3 updated: 2008/09/09 20:32:43
 dnl ---------------------
 AC_DEFUN([CF_MAWK_CHECK_HEADERS],[
 for cf_func in $1
 do
-    CF_MAWK_CHECK_HEADER($cf_func)
+    CF_MAWK_CHECK_HEADER(${cf_func})
 done])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_LIMITS_MSG version: 1 updated: 2008/09/09 19:18:22
@@ -103,11 +115,11 @@ AC_DEFUN([CF_MAWK_CONFIG_H_TRAILER],
 #endif /* CONFIG_H */
 EOF])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_DEFINE version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_DEFINE version: 2 updated: 2008/09/09 20:32:43
 dnl --------------
 dnl  I can't get AC_DEFINE_NOQUOTE to work so give up
 AC_DEFUN([CF_MAWK_DEFINE],[AC_DEFINE($1)
-echo  X '$1' 'ifelse($2,,1,$2)' >> defines.out])dnl
+echo  X $1 'ifelse($2,,1,$2)' >> defines.out])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_DEFINE2 version: 1 updated: 2008/09/09 19:18:22
 dnl ---------------
@@ -371,3 +383,12 @@ dnl ---------------
 dnl mawk wants #define NO_STRERROR
 dnl instead of #define HAVE_STRERROR
 AC_DEFUN([CF_MAWK_XADD_NO],[NO_[$1]])dnl 
+dnl ---------------------------------------------------------------------------
+dnl CF_UPPER version: 5 updated: 2001/01/29 23:40:59
+dnl --------
+dnl Make an uppercase version of a variable
+dnl $1=uppercase($2)
+AC_DEFUN([CF_UPPER],
+[
+$1=`echo "$2" | sed y%abcdefghijklmnopqrstuvwxyz./-%ABCDEFGHIJKLMNOPQRSTUVWXYZ___%`
+])dnl
