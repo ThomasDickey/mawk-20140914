@@ -1035,7 +1035,7 @@ fi
 rm -f conftest*
 fi;fi
 
-for cf_func in fcntl.h errno.h time.h stdarg.h
+for cf_func in fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h
 do
     
     ac_safe=`echo "${cf_func}" | sed 'y%./+-%__p_%'`
