@@ -5,13 +5,6 @@ dnl renamed for consistency by Thomas E Dickey.
 dnl 
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_ADD_NO version: 2 updated: 2008/09/09 20:32:43
-dnl --------------
-AC_DEFUN([CF_MAWK_ADD_NO], [
-    CF_UPPER(cf_upper,$1)
-    CF_MAWK_XADD_NO($cf_upper)
-])dnl
-dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CC_FEATURES version: 1 updated: 2008/09/09 19:18:22
 dnl -------------------
 dnl Check compiler.
@@ -377,12 +370,6 @@ dnl Set a variable if it is not set by configure script.
 AC_DEFUN([CF_MAWK_SET_IF_UNSET],
 [test "[$]{$1+set}" = set || $1="$2"
 AC_SUBST($1)])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_XADD_NO version: 1 updated: 2008/09/09 19:18:22
-dnl ---------------
-dnl mawk wants #define NO_STRERROR
-dnl instead of #define HAVE_STRERROR
-AC_DEFUN([CF_MAWK_XADD_NO],[NO_[$1]])dnl 
 dnl ---------------------------------------------------------------------------
 dnl CF_UPPER version: 5 updated: 2001/01/29 23:40:59
 dnl --------
