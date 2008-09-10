@@ -205,8 +205,8 @@ reverse_find(type, ptr)
    int type ;
    PTR ptr ;
 {
-   CELL *cp ;
-   ARRAY array ;
+   CELL *cp  = 0;
+   ARRAY array  = 0;
    static char uk[] = "unknown" ;
 
    int i ;

@@ -529,7 +529,7 @@ is_cmdline_assign(s)
    register char *p ;
    int c ;
    SYMTAB *stp ;
-   CELL *cp ;
+   CELL *cp = 0 ;
    unsigned len ;
    CELL cell ;			 /* used if command line assign to pseudo field */
    CELL *fp = (CELL *) 0 ;	 /* ditto */

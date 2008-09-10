@@ -191,8 +191,8 @@ execute(cdp, sp, fp)
    ALOOP_STATE *aloop_state = (ALOOP_STATE*) 0 ;
 
    /* for moving the eval stack on deep recursion */
-   CELL *old_stack_base ;
-   CELL *old_sp ;
+   CELL *old_stack_base  = 0;
+   CELL *old_sp  = 0;
 
 #ifdef	DEBUG
    CELL *entry_sp = sp ;
@@ -1233,7 +1233,7 @@ execute(cdp, sp, fp)
 	       int a_args = cdp++->op ;	 /* actual number of args */
 	       CELL *nfp = sp - a_args + 1 ;	 /* new fp for callee */
 	       CELL *local_p = sp + 1 ;	 /* first local argument on stack */
-	       char *type_p ;	 /* pts to type of an argument */
+	       char *type_p  = 0;	 /* pts to type of an argument */
 
 	       if (fbp->nargs)	type_p = fbp->typev + a_args - 1 ;
 

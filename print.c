@@ -240,10 +240,10 @@ do_printf(fp, format, argcnt, cp)
    int l_flag, h_flag ;		 /* seen %ld or %hd  */
    int ast_cnt ;
    int ast[2] ;
-   Int Ival ;
+   Int Ival = 0 ;
    int num_conversion = 0 ;	 /* for error messages */
    char *who ;			 /*ditto*/
-   int pf_type ;		 /* conversion type */
+   int pf_type  = 0 ;		 /* conversion type */
    PRINTER printer ;		 /* pts at fprintf() or sprintf() */
 
 #ifdef	 SHORT_INTS

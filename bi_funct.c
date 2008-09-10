@@ -78,7 +78,6 @@ the GNU General Public License, version 2, 1991.
 
 /* statics */
 static STRING *PROTO(gsub, (PTR, CELL *, char *, int)) ;
-static void PROTO(fplib_err, (char *, double, char *)) ;
 
 /* global for the disassembler */
 BI_REC bi_funct[] =
@@ -364,14 +363,16 @@ bi_tolower(sp)
   arithemetic builtins
  ************************************************/
 
+#if STDC_MATHERR
 static void
-fplib_err(fname, val, error)
-   char *fname ;
-   double val;
-   char *error ;
+fplib_err(
+   char *fname,
+   double val,
+   char *error)
 {
    rt_error("%s(%g) : %s", fname, val, error) ;
 }
+#endif
 
 
 CELL *

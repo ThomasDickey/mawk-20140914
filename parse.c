@@ -1184,12 +1184,12 @@ static void  field_A2I()
   {
     cp = (CELL *) code_ptr[-1].ptr ;
 
-    if ( cp == field  ||
+    if ( (cp == field)  || (
 
 #ifdef  MSDOS
 	 SAMESEG(cp,field) &&
 #endif
-         cp > NF && cp <= LAST_PFIELD )
+         (cp > NF) && (cp <= LAST_PFIELD) ) )
     {
          code_ptr[-2].op = _PUSHI  ;
     }
