@@ -1,4 +1,8 @@
+Changes by Thomas E Dickey <dickey@invisible-island.net>
+
 20080909
+	fix gcc 4.3.1 -Wall warnings
+
 	transform mawk.ac.m4 to aclocal.m4, renaming macros to use "CF_" or
 	"CF_MAWK_" prefixes depending on their reusability.  Modified macros
 	to use quoting consistent with recent autoconf versions.
