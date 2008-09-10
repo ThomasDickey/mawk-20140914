@@ -1,4 +1,3 @@
-
 /* This code attempts to figure out what the default
    floating point exception handling does.
 */
@@ -25,6 +24,8 @@
  *
 */
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <setjmp.h>
 #include <signal.h>
 #include <math.h>
