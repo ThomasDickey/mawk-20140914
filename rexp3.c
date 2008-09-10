@@ -82,7 +82,7 @@ stackp->u = (ux)
 
    /* state of current best match stored here */
    char *cb_ss ;		 /* the start */
-   char *cb_e ;			 /* the end , pts at first char not matched */
+   char *cb_e = 0 ;		 /* the end , pts at first char not matched */
 
    *lenp = 0 ;
 

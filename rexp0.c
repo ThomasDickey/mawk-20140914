@@ -113,7 +113,7 @@ RE_lex(mp)
 {
    register int c ;
 
-   switch (c = char2token(*lp))
+   switch (c = char2token((unsigned char)(*lp)))
    {
       case T_PLUS:
       case T_STAR:
@@ -256,7 +256,7 @@ do_str(c, pp, mp)
    MACHINE *mp ;		 /* where to put the string machine */
 {
    register char *p ;		 /* runs thru the input */
-   char *pt ;			 /* trails p by one */
+   char *pt = 0 ;		 /* trails p by one */
    char *str ;			 /* collect it here */
    register char *s ;		 /* runs thru the output */
    unsigned len ;		 /* length collected */
@@ -270,7 +270,7 @@ do_str(c, pp, mp)
    {
       char *save ;   
 
-      switch (char2token(*p))
+      switch (char2token((unsigned char)(*p)))
       {
 	 case T_CHAR:
 	    pt = p ;
