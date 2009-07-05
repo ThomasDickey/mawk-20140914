@@ -1,5 +1,9 @@
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
+20090705
+	fixes to build on BeOS (if LIBS is set to -lroot), and QNX (redefinition
+	of setmode).
+
 20080909
 	fix gcc 4.3.1 -Wall warnings
 
