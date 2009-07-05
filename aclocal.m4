@@ -183,7 +183,7 @@ dnl CF_MAWK_MAINTAINER version: 1 updated: 2008/09/09 19:18:22
 dnl ------------------
 AC_DEFUN([CF_MAWK_MAINTAINER], [brennan@whidbey.com])
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_MATHLIB version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_MATHLIB version: 2 updated: 2009/07/05 13:56:25
 dnl ---------------
 dnl Look for math library.
 AC_DEFUN([CF_MAWK_MATHLIB],[
@@ -191,7 +191,7 @@ if test "${MATHLIB+set}" != set  ; then
 AC_CHECK_LIB(m,log,[MATHLIB=-lm ; LIBS="$LIBS -lm"],
 [# maybe don't need separate math library
 AC_CHECK_FUNC(log, log=yes)
-if test "$log$" = yes
+if test "$log" = yes
 then
    MATHLIB='' # evidently don't need one
 else
