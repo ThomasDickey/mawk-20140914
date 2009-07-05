@@ -755,7 +755,7 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-if test "$log$" = yes
+if test "$log" = yes
 then
    MATHLIB='' # evidently don't need one
 else
