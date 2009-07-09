@@ -1,4 +1,3 @@
-
 /********************************************
 rexp2.c
 copyright 1991, Michael D. Brennan
