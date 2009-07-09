@@ -1,7 +1,9 @@
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090709
-	add patch from Aleksey Cheusov for external regexp libraries.
+	add patch from Aleksey Cheusov for external regexp libraries
+	(originally comp.lang.awk June 15 2005, also cited in Debian #355442
+	March 6, 2006).
 
 20090705
 	fixes to build on BeOS (if LIBS is set to -lroot), and QNX (redefinition
