@@ -1,4 +1,3 @@
-
 /********************************************
 scan.c
 copyright 1991, Michael D. Brennan
@@ -292,7 +291,7 @@ eat_nl()			/* eat all space including newlines */
 	       while (scan_code[c = next()] == SC_SPACE) ;
 	       if (c == '\n')
 		  token_lineno = ++lineno ;
-	       else if (c == 0)  
+	       else if (c == 0)
 	       {
 		  un_next() ;
 		  return ;
@@ -309,7 +308,7 @@ eat_nl()			/* eat all space including newlines */
 	       }
 	    }
 	    break ;
-	     
+
 	 default:
 	    un_next() ;
 	    return ;
@@ -1033,6 +1032,15 @@ collect_RE()
    STRING *sval ;
 
    while (1)
+   {
+      if (p == (unsigned char *) (string_buff + SPRINTF_SZ - 2))
+      {
+	 compile_error(
+		       "regular expression /%.10s ..."
+		       " exceeds implementation size limit",
+		       string_buff) ;
+		       mawk_exit(2) ;
+      }
       switch (scan_code[*p++ = next()])
       {
 	 case SC_DIV:		/* done */
@@ -1070,6 +1078,7 @@ collect_RE()
 	    }
 	    break ;
       }
+   }
 
 out:
    /* now we've got the RE, so compile it */
