@@ -1,5 +1,8 @@
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
+20090709
+	add patch from Aleksey Cheusov for external regexp libraries.
+
 20090705
 	fixes to build on BeOS (if LIBS is set to -lroot), and QNX (redefinition
 	of setmode).
