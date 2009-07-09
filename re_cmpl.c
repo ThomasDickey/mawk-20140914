@@ -102,10 +102,10 @@ re_compile(sval)
    if (!(p->re = REcompile(s)))
    {
       if (mawk_state == EXECUTION)
-	 rt_error(efmt, REerrlist[REerrno], s) ;
+	 rt_error(efmt, REerror (), s) ;
       else  /* compiling */
       {
-	 compile_error(efmt, REerrlist[REerrno], s) ;
+	 compile_error(efmt, REerror(), s) ;
 	 return (PTR) 0 ;
       }
    }

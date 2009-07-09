@@ -236,3 +236,9 @@ RE_panic(s)
    fprintf(stderr, "REcompile() - panic:  %s\n", s) ;
    exit(100) ;
 }
+
+/* getting regexp error message */
+char *REerror (void)
+{
+   return REerrlist [REerrno];
+}

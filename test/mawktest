@@ -22,16 +22,16 @@ mawk -W version
 echo
 echo testing input and field splitting
 
-mawk -f wc.awk $dat | cmp -s - wc-awk.out || exit
+LC_ALL=C mawk -f wc.awk $dat | cmp -s - wc-awk.out || exit
 
 echo input and field splitting OK
 #####################################
 
 echo
 echo testing regular expression matching
-mawk -f reg0.awk $dat > temp$$
-mawk -f reg1.awk $dat >> temp$$
-mawk -f reg2.awk $dat >> temp$$
+LC_ALL=C mawk -f reg0.awk $dat > temp$$
+LC_ALL=C mawk -f reg1.awk $dat >> temp$$
+LC_ALL=C mawk -f reg2.awk $dat >> temp$$
 
 cmp -s  reg-awk.out temp$$ || exit
 
@@ -42,10 +42,10 @@ echo
 if [ -c /dev/full ]; then
     echo testing checking for write errors
     # Check for write errors noticed when closing the file
-    mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
+    LC_ALL=C mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
     # Check for write errors noticed on writing
     # The file has to be bigger than the buffer size of the libc
-    mawk '{print}' <../scan.c >/dev/full 2>/dev/null && exit
+    LC_ALL=C mawk '{print}' <../scan.c >/dev/full 2>/dev/null && exit
 
     echo checking for write errors OK
 else
@@ -57,7 +57,7 @@ fi
 echo
 echo testing arrays and flow of control
 
-mawk -f wfrq0.awk $dat | cmp -s - wfrq-awk.out || exit
+LC_ALL=C mawk -f wfrq0.awk $dat | cmp -s - wfrq-awk.out || exit
 
 echo array test OK
 #################################
@@ -65,7 +65,7 @@ echo array test OK
 echo
 echo testing function calls and general stress test
 
-mawk -f ../examples/decl.awk $dat | cmp -s - decl-awk.out || exit 
+LC_ALL=C mawk -f ../examples/decl.awk $dat | cmp -s - decl-awk.out || exit 
 
 echo general stress test passed
 

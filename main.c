@@ -44,6 +44,10 @@ the GNU General Public License, version 2, 1991.
 
 /*  main.c  */
 
+#ifndef LOCAL_REGEXP
+#		include <locale.h>
+#endif
+
 #include "mawk.h"
 #include "init.h"
 #include "code.h"
@@ -53,11 +57,22 @@ the GNU General Public License, version 2, 1991.
 short mawk_state ;		 /* 0 is compiling */
 int exit_code ;
 
+static void initialize_locale (void)
+{
+#ifndef LOCAL_REGEXP
+   setlocale(LC_CTYPE, "");
+   setlocale(LC_COLLATE, "");
+   setlocale(LC_MESSAGES, "");
+   setlocale(LC_NUMERIC, "C");
+   setlocale(LC_TIME, "");
+#endif
+}
+
 int
 main(argc, argv)
 int argc ; char **argv ;
 {
-
+   initialize_locale ();
    initialize(argc, argv) ;
 
    parse() ;

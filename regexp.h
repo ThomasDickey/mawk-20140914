@@ -25,8 +25,4 @@ PTR   PROTO( REcompile , (char *) ) ;
 int   PROTO( REtest, (char *, PTR) ) ;
 char *PROTO( REmatch, (char *, PTR, unsigned *) ) ;
 void  PROTO( REmprint, (PTR , FILE*) ) ;
-
-extern  int  REerrno ;
-extern  char *REerrlist[] ;
-
-
+char *PROTO( REerror, (void)) ;

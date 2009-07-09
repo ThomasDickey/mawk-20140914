@@ -32,16 +32,20 @@ dnl
 dnl
 AC_INIT(mawk.h)
 
-
-
-
-
-
 CF_MAWK_GET_CONFIG_USER
 CF_MAWK_PROG_GCC
 AC_PROG_CPP
 CF_MAWK_SET_IF_UNSET(CFLAGS,-O)
 CF_MAWK_MATHLIB
+ 
+AC_ARG_WITH(local-regexp,
+[  --with-local-regexp             use the mawk's regexp engine],
+[
+if test "x${withval}" = xyes; then
+    CFLAGS="$CFLAGS -DLOCAL_REGEXP"
+fi
+])
+
 CF_MAWK_PROG_YACC
 CF_MAWK_CC_FEATURES
 CF_MAWK_FIND_SIZE_T

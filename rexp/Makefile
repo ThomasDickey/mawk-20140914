@@ -9,8 +9,8 @@
 CC = cc
 CFLAGS = -O  -DMAWK -I..
 
-O=rexp.o rexp0.o rexp1.o rexp2.o rexp3.o 
-DB=rexpdb.o
+O=regexp.o
+DB=
 
 all : $(O)
 	@cat </dev/null > .done
