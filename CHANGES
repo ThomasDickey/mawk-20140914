@@ -23,7 +23,8 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	ifdef'd prototypes in nstd.h which belong to stdlib.h, string.h to
 	use standard C by default.
 
-	source-in Debian patches 01-08 (see below).
+	source-in Debian patches 01-08 (see below).  Changes for 20080909 fix
+	Debian #496980 as well.
 
 -------------------------------------------------------------------------------
 Debian patches:
