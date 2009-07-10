@@ -1,4 +1,3 @@
-
 /********************************************
 print.c
 copyright 1991-1993.  Michael D. Brennan
@@ -194,13 +193,17 @@ bi_print(sp)
 }
 
 /*---------- types and defs for doing printf and sprintf----*/
-#define	 PF_C		0	/* %c */
-#define	 PF_S		1	/* %s */
-#define	 PF_D		2	/* int conversion */
-#define	 PF_F		3	/* float conversion */
+typedef enum {
+	PF_C = 0,	/* %c */
+	PF_S,		/* %s */
+	PF_D,		/* int conversion */
+	PF_F,		/* float conversion */
+	PF_U,		/* unsigned conversion */
+	PF_last
+} PF_enum;
 
 /* for switch on number of '*' and type */
-#define	 AST(num,type)	((PF_F+1)*(num)+(type))
+#define	 AST(num,type)	((PF_last)*(num)+(type))
 
 /* some picky ANSI compilers go berserk without this */
 #ifdef NO_PROTOS
@@ -230,7 +233,7 @@ do_printf(fp, format, argcnt, cp)
    FILE *fp ;
    char *format ;
    unsigned argcnt ;		 /* number of args on eval stack */
-   CELL *cp ;			 /* ptr to an array of arguments 
+   CELL *cp ;			 /* ptr to an array of arguments
 				    (on the eval stack) */
 {
    char save ;
@@ -240,6 +243,7 @@ do_printf(fp, format, argcnt, cp)
    int l_flag, h_flag ;		 /* seen %ld or %hd  */
    int ast_cnt ;
    int ast[2] ;
+   UInt Uval = 0 ;
    Int Ival = 0 ;
    int num_conversion = 0 ;	 /* for error messages */
    char *who ;			 /*ditto*/
@@ -394,14 +398,19 @@ do_printf(fp, format, argcnt, cp)
 	    break ;
 
 	 case 'd':
-	 case 'o':
-	 case 'x':
-	 case 'X':
 	 case 'i':
-	 case 'u':
 	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
 	    Ival = d_to_I(cp->dval) ;
 	    pf_type = PF_D ;
+	    break ;
+
+	 case 'o':
+	 case 'x':
+	 case 'X':
+	 case 'u':
+	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
+	    Uval = d_to_U(cp->dval) ;
+	    pf_type = PF_U ;
 	    break ;
 
 	 case 'e':
@@ -496,8 +505,19 @@ do_printf(fp, format, argcnt, cp)
 	    (*printer) ((PTR) target, FMT, ast[0], ast[1], Ival) ;
 	    break ;
 
-#undef	FMT
+	 case AST(0, PF_U):
+	    (*printer) ((PTR) target, FMT, Uval) ;
+	    break ;
 
+	 case AST(1, PF_U):
+	    (*printer) ((PTR) target, FMT, ast[0], Uval) ;
+	    break ;
+
+	 case AST(2, PF_U):
+	    (*printer) ((PTR) target, FMT, ast[0], ast[1], Uval) ;
+	    break ;
+
+#undef	FMT
 
 	 case AST(0, PF_F):
 	    (*printer) ((PTR) target, p, cp->dval) ;
@@ -572,7 +592,7 @@ bi_sprintf(sp)
 }
 
 
-static void 
+static void
 write_error()
 {
    errmsg(errno, "write failure") ;

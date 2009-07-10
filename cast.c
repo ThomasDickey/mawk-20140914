@@ -1,4 +1,3 @@
-
 /********************************************
 cast.c
 copyright 1991, Michael D. Brennan
@@ -415,4 +414,19 @@ d_to_I(d)
    if (d >= Max_Int)	return Max_Int ;
    if (d > -Max_Int)	return (Int) d ;
    return -Max_Int ;
+}
+
+
+/* convert a double to UInt (this is not as simple as a
+   cast because the results are undefined if it won't fit).
+   Truncate large values to +Max_Int or -Max_Int
+   Send nans to -Max_Int
+*/
+
+UInt
+d_to_U(double d)
+{
+   if (d >= Max_UInt)	return Max_UInt ;
+   if (d > -Max_UInt)	return (UInt) d ;
+   return -Max_UInt ;
 }

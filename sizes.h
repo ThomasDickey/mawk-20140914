@@ -1,4 +1,3 @@
-
 /********************************************
 sizes.h
 copyright 1991, 1992.  Michael D. Brennan
@@ -54,6 +53,7 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef  MAX__INT
 #include <limits.h>
+#define  MAX__UINT UINT_MAX
 #define  MAX__INT  INT_MAX
 #define  MAX__LONG LONG_MAX
 #endif   /* MAX__INT */
@@ -61,16 +61,20 @@ the GNU General Public License, version 2, 1991.
 #if  MAX__INT <= 0x7fff
 #define  SHORT_INTS
 #define  INT_FMT "%ld"
+typedef  unsigned long UInt ;
 typedef  long Int ;
+#define  Max_UInt MAX__ULONG
 #define  Max_Int MAX__LONG
 #else
 #define  INT_FMT "%d"
+typedef  unsigned UInt ;
 typedef  int Int ;
+#define  Max_UInt  MAX__UINT
 #define  Max_Int  MAX__INT
 #endif
 
 #define EVAL_STACK_SIZE  256  /* initial size , can grow */
-/* number of fields at startup, must be a power of 2 
+/* number of fields at startup, must be a power of 2
    and FBANK_SZ-1 must be divisible by 3! */
 #define  FBANK_SZ	256
 #define  FB_SHIFT	  8   /* lg(FBANK_SZ) */
@@ -84,7 +88,7 @@ typedef  int Int ;
 
 
 #define  BUFFSZ         4096
-  /* starting buffer size for input files, grows if 
+  /* starting buffer size for input files, grows if
      necessary */
 
 #ifdef  MSDOS

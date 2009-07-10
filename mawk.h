@@ -1,4 +1,3 @@
-
 /********************************************
 mawk.h
 copyright 1991-94, Michael D. Brennan
@@ -48,7 +47,7 @@ the GNU General Public License, version 2, 1991.
 /*  mawk.h  */
 
 #ifndef  MAWK_H
-#define  MAWK_H   
+#define  MAWK_H
 
 #include  "nstd.h"
 #include <stdio.h>
@@ -135,6 +134,7 @@ void  PROTO( cast_for_split, (CELL *) ) ;
 void  PROTO( check_strnum, (CELL *) ) ;
 void  PROTO( cast_to_REPL, (CELL *) ) ;
 Int   PROTO( d_to_I, (double)) ;
+UInt  d_to_U(double d);
 
 #define d_to_i(d)     ((int)d_to_I(d))
 
