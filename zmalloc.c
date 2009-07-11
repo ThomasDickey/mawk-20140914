@@ -140,6 +140,7 @@ zmalloc(unsigned size)
 	    avail += blocks;
 	    amt_avail -= blocks;
 	}
+	memset(p, 0, size);
     }
     return (PTR) p;
 }
