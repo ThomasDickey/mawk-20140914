@@ -1,4 +1,3 @@
-
 /********************************************
 zmalloc.h
 copyright 1991, Michael D. Brennan
@@ -29,17 +28,9 @@ the GNU General Public License, version 2, 1991.
 
 #include "nstd.h"
 
-PTR  PROTO( bmalloc, (unsigned) ) ;
-void PROTO( bfree, (PTR, unsigned) ) ;
-PTR  PROTO( zrealloc , (PTR,unsigned,unsigned) ) ;
-
-
-#define ZBLOCKSZ    8    
-#define ZSHIFT      3
-
-
-#define zmalloc(size)  bmalloc((((unsigned)size)+ZBLOCKSZ-1)>>ZSHIFT)
-#define zfree(p,size)  bfree(p,(((unsigned)size)+ZBLOCKSZ-1)>>ZSHIFT)
+PTR  zmalloc(unsigned);
+void zfree(PTR, unsigned);
+PTR  zrealloc(PTR, unsigned, unsigned);
 
 #define ZMALLOC(type)  ((type*)zmalloc(sizeof(type)))
 #define ZFREE(p)	zfree(p,sizeof(*(p)))
