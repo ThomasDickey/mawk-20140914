@@ -1,13 +1,10 @@
--- $Id: CHANGES,v 1.15 2009/07/11 12:12:27 tom Exp $
+-- $Id: CHANGES,v 1.16 2009/07/11 12:34:25 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090711
 	fix Debian #38353 (absent expression on last part of "for" statement
 	caused core-dump).
-
-	change zmalloc() to ensure memory is cleared; there are places in the
-	parser which rely on this.
 
 	fix Debian #303825 (printf %x clamps numbers to signed range rather
 	than unsigned range).
