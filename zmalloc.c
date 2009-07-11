@@ -47,8 +47,8 @@ the GNU General Public License, version 2, 1991.
 #include  "mawk.h"
 #include  "zmalloc.h"
 
-#define ZBLOCKSZ    8
 #define ZSHIFT      3
+#define ZBLOCKSZ    BlocksToBytes(1)
 
 #define BytesToBlocks(size) ((((unsigned)size) + ZBLOCKSZ - 1) >> ZSHIFT)
 #define BlocksToBytes(size) ((size) << ZSHIFT)
@@ -108,7 +108,7 @@ zmalloc(unsigned size)
     static ZBLOCK *avail;
 
     if (blocks > POOLSZ) {
-	p = (ZBLOCK *) calloc(blocks << ZSHIFT, 1);
+	p = (ZBLOCK *) calloc(BlocksToBytes(blocks), 1);
 	if (!p)
 	    out_of_mem();
     } else {
@@ -127,7 +127,7 @@ zmalloc(unsigned size)
 		if (!(avail = (ZBLOCK *) malloc(CHUNK * ZBLOCKSZ))) {
 		    /* if we get here, almost out of memory */
 		    amt_avail = 0;
-		    p = (ZBLOCK *) calloc(blocks << ZSHIFT, 1);
+		    p = (ZBLOCK *) calloc(BlocksToBytes(blocks), 1);
 		    if (!p)
 			out_of_mem();
 		    return (PTR) p;
@@ -162,8 +162,8 @@ zrealloc(PTR p, unsigned old_size, unsigned new_size)
 {
     register PTR q;
 
-    if (new_size > (POOLSZ << ZSHIFT) &&
-	old_size > (POOLSZ << ZSHIFT)) {
+    if (new_size > (BlocksToBytes(POOLSZ)) &&
+	old_size > (BlocksToBytes(POOLSZ))) {
 	if (!(q = realloc(p, new_size)))
 	    out_of_mem();
     } else {
