@@ -108,7 +108,7 @@ zmalloc(unsigned size)
     static ZBLOCK *avail;
 
     if (blocks > POOLSZ) {
-	p = (ZBLOCK *) calloc(BlocksToBytes(blocks), 1);
+	p = (ZBLOCK *) malloc(BlocksToBytes(blocks));
 	if (!p)
 	    out_of_mem();
     } else {
@@ -127,7 +127,7 @@ zmalloc(unsigned size)
 		if (!(avail = (ZBLOCK *) malloc(CHUNK * ZBLOCKSZ))) {
 		    /* if we get here, almost out of memory */
 		    amt_avail = 0;
-		    p = (ZBLOCK *) calloc(BlocksToBytes(blocks), 1);
+		    p = (ZBLOCK *) malloc(BlocksToBytes(blocks));
 		    if (!p)
 			out_of_mem();
 		    return (PTR) p;
