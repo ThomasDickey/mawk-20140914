@@ -1,4 +1,3 @@
-
 /********************************************
 jmp.c
 copyright 1991, Michael D. Brennan
@@ -231,7 +230,10 @@ code_push(code, len, scope, fbp)
 	 p->scope = scope ;
 	 p->move_level = code_move_level ;
 	 p->fbp = fbp ;
-	 p->offset = code - code_base ;
+	 if (code)
+	    p->offset = code - code_base ;
+	 else
+	    p->offset = 0;
       }
    }
    code_move_level++ ;
