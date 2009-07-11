@@ -47,6 +47,12 @@ the GNU General Public License, version 2, 1991.
 #include  "mawk.h"
 #include  "zmalloc.h"
 
+#define ZBLOCKSZ    8
+#define ZSHIFT      3
+
+#define BytesToBlocks(size) ((((unsigned)size) + ZBLOCKSZ - 1) >> ZSHIFT)
+#define BlocksToBytes(size) ((size) << ZSHIFT)
+
 /*
   zmalloc() gets mem from malloc() in CHUNKS of 2048 bytes
   and cuts these blocks into smaller pieces that are multiples
@@ -93,11 +99,10 @@ typedef union zblock {
 
 static ZBLOCK *pool[POOLSZ];
 
-/* zmalloc() is a macro in front of bmalloc "BLOCK malloc" */
-
 PTR
-bmalloc(unsigned blocks)
+zmalloc(unsigned size)
 {
+    unsigned blocks = BytesToBlocks(size);
     register ZBLOCK *p;
     static unsigned amt_avail;
     static ZBLOCK *avail;
@@ -140,8 +145,9 @@ bmalloc(unsigned blocks)
 }
 
 void
-bfree(PTR p, unsigned blocks)
+zfree(PTR p, unsigned size)
 {
+    unsigned blocks = BytesToBlocks(size);
 
     if (blocks > POOLSZ)
 	free(p);
