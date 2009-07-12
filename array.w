@@ -1,4 +1,4 @@
-% $MawkId: array.w,v 1.2 2009/07/12 17:05:00 tom Exp $
+% $MawkId: array.w,v 1.3 2009/07/12 17:25:28 tom Exp $
 % @Log: array.w,v @
 % Revision 1.4  1996/09/18 00:37:25  mike
 % 1) Fix stupid bozo in A[expr], expr is numeric and not integer.
@@ -237,7 +237,7 @@ back to double.  If we get the same number we started with, then
    Int ival = d_to_I(d) ;
    if ((double)ival == d) {
       if (A->type == AY_SPLIT) {
-         if (ival >= 1 && ival <= A->size) 
+         if (ival >= 1 && ival <= (int) A->size) 
             return (CELL*)A->ptr+(ival-1) ;
          if (!create_flag) return (CELL*) 0 ;
          convert_split_array_to_table(A) ;
@@ -267,8 +267,8 @@ static ANODE* find_by_ival(A, ival, create_flag)
    int create_flag ;
 {
    DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
-   unsigned index = ival & A->hmask ;
-   ANODE *p = table[index].ilink ; /* walks ilist */
+   unsigned indx = ival & A->hmask ;
+   ANODE *p = table[indx].ilink ; /* walks ilist */
    ANODE *q = (ANODE*) 0 ; /* trails p */
    while(1) {
       if (!p) {
@@ -287,8 +287,8 @@ static ANODE* find_by_ival(A, ival, create_flag)
       q = p ; p = q->ilink ;
    }
    /* insert at the front */
-   p->ilink = table[index].ilink ;
-   table[index].ilink = p ;
+   p->ilink = table[indx].ilink ;
+   table[indx].ilink = p ;
    return p ;
 }
 
@@ -319,7 +319,7 @@ else if (create_flag) {
    if (++A->size > A->limit) {
       double_the_hash_table(A) ; /* changes table, may change index */
       table = (DUAL_LINK*) A->ptr ;
-      index = A->hmask & ival ;
+      indx = A->hmask & ival ;
    }
 }
 else return (ANODE*) 0 ;
@@ -341,13 +341,13 @@ static ANODE* find_by_sval(A, sval, create_flag)
    unsigned hval = ahash(sval) ;
    char *str = sval->str ;
    DUAL_LINK *table ;
-   int index ;
+   int indx ;
    ANODE *p ;  /* walks list */
    ANODE *q = (ANODE*) 0 ; /* trails p */
    if (! (A->type & AY_STR)) add_string_associations(A) ;
    table = (DUAL_LINK*) A->ptr ;
-   index = hval & A->hmask ;
-   p = table[index].slink ;
+   indx = hval & A->hmask ;
+   p = table[indx].slink ;
    while(1) {
       if (!p)  {
          if (create_flag) {
@@ -367,8 +367,8 @@ static ANODE* find_by_sval(A, sval, create_flag)
       }
       q = p ; p = q->slink ;
    }
-   p->slink = table[index].slink ;
-   table[index].slink = p ;
+   p->slink = table[indx].slink ;
+   table[indx].slink = p ;
    return p ;
 }
 
@@ -390,7 +390,7 @@ This works because [[d_to_I]] returns a value in [[[-Max_Int, Max_Int]]].
    if (++A->size > A->limit) {
       double_the_hash_table(A) ; /* changes table, may change index */
       table = (DUAL_LINK*) A->ptr ;
-      index = hval & A->hmask ;
+      indx = hval & A->hmask ;
    }
 }
 
@@ -411,7 +411,7 @@ static void add_string_associations(A)
       char buff[256] ;
       if (A->type == AY_SPLIT) convert_split_array_to_table(A) ;
       table = (DUAL_LINK*) A->ptr ;
-      for(i=0;i <= A->hmask; i++) {
+      for(i=0; (unsigned) i <= A->hmask; i++) {
 	 p = table[i].ilink ;
 	 while(p) {
 	    sprintf(buff, INT_FMT, p->ival) ;
@@ -468,7 +468,7 @@ void array_delete(A, cp)
    }
    if (ap) { /* remove from the front of the slist */
       DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
-      table[ap->hval&A->hmask].slink = ap->slink ;
+      table[ap->hval & A->hmask].slink = ap->slink ;
       <<if [[ival]] is valid, remove [[ap]] from its ilist>>
       free_STRING(ap->sval) ;
       cell_destroy(&ap->cell) ;
@@ -481,7 +481,8 @@ void array_delete(A, cp)
 {
    if (A->type == AY_SPLIT)
      {
-      if (ival >=1 && ival <= A->size) convert_split_array_to_table(A) ;
+      if (ival >=1 && ival <= (int) A->size)
+          convert_split_array_to_table(A) ;
       else return ; /* ival not in range */
      }
    ap = find_by_ival(A, ival, NO_CREATE) ;
@@ -503,22 +504,22 @@ be on an slist and vice-versa.
 <<if [[sval]] is valid, remove [[ap]] from its slist>>=
 if (ap->sval) {
    ANODE *p, *q = 0 ;
-   int index = ap->hval & A->hmask ;
-   p = table[index].slink ;
+   int indx = ap->hval & A->hmask ;
+   p = table[indx].slink ;
    while(p != ap) { q = p ; p = q->slink ; }
    if (q) q->slink = p->slink ;
-   else table[index].slink = p->slink ;
+   else table[indx].slink = p->slink ;
    free_STRING(ap->sval) ;
 }
 
 <<if [[ival]] is valid, remove [[ap]] from its ilist>>=
 if (ap->ival != NOT_AN_IVALUE) {
    ANODE *p, *q = 0 ;
-   int index = ap->ival & A->hmask ;
-   p = table[index].ilink ;
+   int indx = ap->ival & A->hmask ;
+   p = table[indx].ilink ;
    while(p != ap) { q = p ; p = q->ilink ; }
    if (q) q->ilink = p->ilink ;
-   else table[index].ilink = p->ilink ;
+   else table[indx].ilink = p->ilink ;
 }
 
 @
@@ -586,14 +587,17 @@ When we allocate a block of [[CELLs]] for a split array, we round up
 to a multiple of 4.
 
 <<clean up the existing array and prepare an empty split array>>=
-if (A->type != AY_SPLIT || A->limit < cnt) {
+if (A->type != AY_SPLIT || A->limit < (unsigned) cnt) {
    array_clear(A) ;
    A->limit = (cnt&~3)+4 ;
    A->ptr = zmalloc(A->limit*sizeof(CELL)) ;
    A->type = AY_SPLIT ;
 }
 else
-   for(i=0;i < A->size; i++)  cell_destroy((CELL*)A->ptr+i) ;
+{
+   for(i=0; (unsigned) i < A->size; i++)
+       cell_destroy((CELL*)A->ptr + i) ;
+}
 
 @ Array Clear
 The function [[array_clear(ARRAY A)]] converts [[A]] to type [[AY_NULL]]
@@ -603,18 +607,18 @@ itself.  This function gets called in two contexts:
 (2)~execution of the [[AWK]] statement, [[delete A]].
 
 <<interface functions>>=
-void array_clear(A)
-   ARRAY A ;
+void array_clear(ARRAY A)
 {
-   int i ;
+   unsigned i ;
    ANODE *p, *q ;
    if (A->type == AY_SPLIT) {
-      for(i=0;i < A->size; i++) cell_destroy((CELL*)A->ptr+i) ;
+      for(i = 0; i < A->size; i++)
+          cell_destroy((CELL*)A->ptr+i) ;
       zfree(A->ptr, A->limit * sizeof(CELL)) ;
    }
    else if (A->type & AY_STR) {
       DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
-      for(i=0;i <= A->hmask; i++) {
+      for(i=0; (unsigned) i <= A->hmask; i++) {
 	 p = table[i].slink ;
 	 while(p) {
 	    q = p ; p = q->slink ;
@@ -627,7 +631,7 @@ void array_clear(A)
    }
    else if (A->type & AY_INT) {
       DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
-      for(i=0;i <= A->hmask; i++) {
+      for(i=0; (unsigned) i <= A->hmask; i++) {
 	 p = table[i].ilink ;
 	 while(p) {
 	    q = p ; p = q->ilink ;
@@ -691,13 +695,13 @@ static void convert_split_array_to_table(A)
    ARRAY A ;
 {
    CELL *cells = (CELL*) A->ptr ;
-   int i ; /* walks cells */
+   unsigned i ; /* walks cells */
    DUAL_LINK *table ;
    int j ; /* walks table */
    unsigned entry_limit = A->limit ;
    <<determine the size of the hash table and allocate>>
    /* insert each cells[i] in the new hash table on an ilist */
-   for(i=0, j=1 ;i < A->size; i++) {
+   for(i=0, j=1; i < A->size; i++) {
       ANODE *p = ZMALLOC(ANODE) ;
       p->sval = (STRING*) 0 ;
       p->ival = i+1 ;
@@ -773,7 +777,7 @@ if (A->type & AY_STR) {
    ANODE *q ; /* trails p for deletion */
    ANODE *tail ; /* builds new list from the back */
    ANODE dummy0, dummy1 ;
-   for(i=0, j=old_hmask+1;i <= old_hmask; i++, j++) 
+   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++) 
       <<walk one old string list, creating one new string list>>
 }
 
@@ -794,7 +798,7 @@ special handling of boundary conditions.
    q->slink = p = table[i].slink ;
    tail = &dummy1 ;
    while (p) {
-      if ((p->hval&new_hmask) != i) { /* move it */
+      if ((p->hval & new_hmask) != (unsigned) i) { /* move it */
 	 q->slink = p->slink ;
 	 tail = tail->slink = p ;
       }
@@ -818,7 +822,7 @@ if (A->type & AY_INT) {
    ANODE *q ; /* trails p for deletion */
    ANODE *tail ; /* builds new list from the back */
    ANODE dummy0, dummy1 ;
-   for(i=0, j=old_hmask+1;i <= old_hmask; i++, j++) 
+   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++) 
       <<walk one old integer list, creating one new integer list>>
 }
 
@@ -828,7 +832,7 @@ if (A->type & AY_INT) {
    q->ilink = p = table[i].ilink ;
    tail = &dummy1 ;
    while (p) {
-      if ((p->ival&new_hmask) != i) { /* move it */
+      if ((p->ival & new_hmask) != (unsigned) i) { /* move it */
 	 q->ilink = p->ilink ;
 	 tail = tail->ilink = p ;
       }
@@ -896,7 +900,7 @@ return value is responsible for these new reference counts.
    DUAL_LINK* table = (DUAL_LINK*) A->ptr ;
    int i ; /* indexes table */
    ANODE *p ; /* walks slists */
-   for(i=0;i <= A->hmask; i++) {
+   for(i=0; (unsigned) i <= A->hmask; i++) {
       for(p = table[i].slink; p ; p = p->slink) {
 	 ret[r++] = p->sval ;
 	 p->sval->ref_cnt++ ;
