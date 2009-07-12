@@ -1,4 +1,3 @@
-
 /********************************************
 fin.h
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: fin.h,v @
+/*
+ * $MawkId: fin.h,v 1.4 2009/07/12 10:50:03 tom Exp $
+ * @Log: fin.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:13  mike
  * move source to cvs
  *
@@ -19,7 +20,7 @@ the GNU General Public License, version 2, 1991.
  *
  * Revision 5.1  91/12/05  07:59:20  brennan
  * 1.1 pre-release
- * 
+ *
 */
 
 /* fin.h */

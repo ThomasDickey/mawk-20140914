@@ -1,4 +1,3 @@
-
 /********************************************
 main.c
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: main.c,v @
+/*
+ * $MawkId: main.c,v 1.4 2009/07/12 10:48:34 tom Exp $
+ * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
  *

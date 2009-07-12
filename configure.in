@@ -1,3 +1,4 @@
+dnl $MawkId: configure.in,v 1.10 2009/07/12 10:47:53 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -37,7 +38,7 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 
 CF_MAWK_MATHLIB
- 
+
 CF_GCC_WARNINGS
 
 AC_ARG_WITH([local-regexp],

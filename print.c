@@ -9,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: print.c,v @
+/*
+ * $MawkId: print.c,v 1.5 2009/07/12 10:47:49 tom Exp $
+ * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
  *

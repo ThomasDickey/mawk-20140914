@@ -1,3 +1,4 @@
+dnl $MawkId: aclocal.m4,v 1.12 2009/07/12 10:47:49 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,

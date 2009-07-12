@@ -1,4 +1,3 @@
-
 /********************************************
 regexp.h
 copyright 1991, Michael D. Brennan
@@ -10,14 +9,16 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: regexp.h,v @
+/*
+ * $MawkId: regexp.h,v 1.3 2009/07/12 10:52:13 tom Exp $
+ * @Log: regexp.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs
  *
  * Revision 5.1  1991/12/05  07:59:30  brennan
  * 1.1 pre-release
  *
-*/
+ */
 
 #include <stdio.h>
 

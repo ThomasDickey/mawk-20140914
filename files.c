@@ -1,4 +1,3 @@
-
 /********************************************
 files.c
 copyright 1991-94.  Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: files.c,v @
+/*
+ * $MawkId: files.c,v 1.6 2009/07/12 10:48:29 tom Exp $
+ * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
  *
@@ -239,15 +240,15 @@ file_close(sval)
       {
 	 /* found */
 
-         /* Remove it from the list first because we might be called 
-            again if an error occurs leading to an infinite loop. 
+         /* Remove it from the list first because we might be called
+            again if an error occurs leading to an infinite loop.
 
-            Note that we don't have to consider the list corruption 
+            Note that we don't have to consider the list corruption
             caused by a recursive call because it will never return. */
 
 	 q->link = p->link ;
          file_list = dummy.link ;   /* maybe it was the first file */
-         
+
          switch (p->type)
 	 {
 	    case F_TRUNC:
@@ -297,7 +298,7 @@ file_close(sval)
       }
       else
       {
-	 q = p ; p = p->link ; 
+	 q = p ; p = p->link ;
       }
    }
 
@@ -317,13 +318,13 @@ file_flush(sval)
    unsigned len = sval->len ;
    char *str = sval->str ;
 
-   if (len==0) 
+   if (len==0)
    {
       /* for consistency with gawk */
       flush_all_output() ;
       return 0 ;
    }
-      
+
    while( p )
    {
       if ( IS_OUTPUT(p->type) &&
@@ -341,7 +342,7 @@ file_flush(sval)
 }
 
 void
-flush_all_output() 
+flush_all_output()
 {
    FILE_NODE *p ;
 
@@ -365,7 +366,7 @@ efflush(fp)
 
 #ifdef   HAVE_REAL_PIPES
 
-/* work around for bug in AIX 4.1 -- If there are exactly 16 or 
+/* work around for bug in AIX 4.1 -- If there are exactly 16 or
    32 or 48 ..., open files then the last one doesn't get flushed on
    exit.  So the following is now a misnomer as we'll really close
    all output.
@@ -382,13 +383,13 @@ close_out_pipes()
       {
 	 if( fclose((FILE *) p->ptr) != 0 )
          {
-            /* if another error occurs we do not want to be called 
+            /* if another error occurs we do not want to be called
                for the same file again */
 
             file_list = p->link ;
 	    close_error(p) ;
          }
-	 if (p->type == PIPE_OUT) wait_for(p->pid) ; 
+	 if (p->type == PIPE_OUT) wait_for(p->pid) ;
       }
 
       p = p->link ;
@@ -522,12 +523,12 @@ remove_from_child_list(pid)
       }
       else
       {
-	 q = p ; p = p->link ; 
+	 q = p ; p = p->link ;
       }
    }
 
    child_list = dummy.link ;
-   return p ;	
+   return p ;
    /* null return if not in the list */
 }
 
@@ -586,12 +587,12 @@ wait_for(pid)
 void
 set_stderr()   /* and stdout */
 {
-   FILE_NODE *p, *q ; 
+   FILE_NODE *p, *q ;
 
-   /* We insert stderr first to get it at the end of the list. This is 
-      needed because we want to output errors encountered on closing 
+   /* We insert stderr first to get it at the end of the list. This is
+      needed because we want to output errors encountered on closing
       stdout. */
-   
+
    q = ZMALLOC(FILE_NODE);
    q->link = (FILE_NODE*) 0 ;
    q->type = F_TRUNC ;
@@ -645,12 +646,12 @@ stdout_init()
    if (!isatty(1))  enlarge_output_buffer(stdout) ;
    if (binmode() & 2)
    {
-      setmode(1,O_BINARY) ; setmode(2,O_BINARY) ; 
+      setmode(1,O_BINARY) ; setmode(2,O_BINARY) ;
    }
 }
 #endif /* MSDOS */
 
-/* An error occured closing the file referred to by P. We tell the 
+/* An error occured closing the file referred to by P. We tell the
    user and terminate the program. */
 
 static void close_error(p)

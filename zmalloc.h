@@ -9,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: zmalloc.h,v @
+/*
+ * $MawkId: zmalloc.h,v 1.3 2009/07/12 10:51:25 tom Exp $
+ * @Log: zmalloc.h,v @
  * Revision 1.2  1993/07/04  12:52:22  mike
  * start on autoconfig changes
  *
@@ -19,7 +21,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1  1991/12/05  07:59:41  brennan
  * 1.1 pre-release
  *
-*/
+ */
 
 /* zmalloc.h */
 

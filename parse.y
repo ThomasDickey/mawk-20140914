@@ -9,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: parse.y,v @
+/*
+ * $MawkId: parse.y,v 1.5 2009/07/12 10:47:49 tom Exp $
+ * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
  * cleanup of parse()

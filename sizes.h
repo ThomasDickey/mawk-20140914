@@ -9,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: sizes.h,v @
+/*
+ * $MawkId: sizes.h,v 1.3 2009/07/12 10:47:49 tom Exp $
+ * @Log: sizes.h,v @
  * Revision 1.8  1995/10/14  22:09:51  mike
  * getting MAX__INT from values.h didn't really work since the value was
  * unusable in an #if MAX__INT <= 0x7fff

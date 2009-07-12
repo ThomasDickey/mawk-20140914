@@ -1,4 +1,3 @@
-
 /********************************************
 re_cmpl.c
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: re_cmpl.c,v @
+/*
+ * $MawkId: re_cmpl.c,v 1.4 2009/07/12 10:52:03 tom Exp $
+ * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
  *
@@ -84,13 +85,13 @@ re_compile(sval)
 	    goto _return ;
 	 else  /* delete from list for move to front */
 	 {
-	    q->link = p->link ; goto found ; 
+	    q->link = p->link ; goto found ;
 	 }
 
       }
       else
       {
-	 q = p ; p = p->link ; 
+	 q = p ; p = p->link ;
       }
    }
 
@@ -318,7 +319,7 @@ repl_compile(sval)
       }
       else
       {
-	 q = p ; p = p->link ; 
+	 q = p ; p = p->link ;
       }
    }
 

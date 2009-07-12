@@ -1,4 +1,3 @@
-
 /********************************************
 bi_vars.c
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: bi_vars.c,v @
+/*
+ * $MawkId: bi_vars.c,v 1.3 2009/07/12 10:49:08 tom Exp $
+ * @Log: bi_vars.c,v @
  * Revision 1.1.1.1  1993/07/03  18:58:09  mike
  * move source to cvs
  *
@@ -20,8 +21,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1  1991/12/05  07:55:38  brennan
  * 1.1 pre-release
  *
-*/
-
+ */
 
 /* bi_vars.c */
 
@@ -47,7 +47,7 @@ static char *bi_var_names[NUM_BI_VAR] = {
 "RLENGTH" ,
 "RSTART" ,
 "SUBSEP"
-#ifdef MSDOS 
+#ifdef MSDOS
 , "BINMODE"
 #endif
 } ;
@@ -58,10 +58,10 @@ void  bi_vars_init()
 { register int i ;
   register SYMTAB *s ;
 
-  
+
   for ( i = 0 ; i < NUM_BI_VAR ; i++ )
   { s = insert( bi_var_names[i] ) ;
-    s->type = i <= 1 ? ST_NR : ST_VAR ; 
+    s->type = i <= 1 ? ST_NR : ST_VAR ;
     s->stval.cp = bi_vars + i ;
     /* bi_vars[i].type = 0 which is C_NOINIT */
   }
@@ -72,11 +72,11 @@ void  bi_vars_init()
   /* set defaults */
 
   FILENAME->type = C_STRING ;
-  FILENAME->ptr = (PTR) new_STRING( "" ) ; 
+  FILENAME->ptr = (PTR) new_STRING( "" ) ;
 
   OFS->type = C_STRING ;
   OFS->ptr = (PTR) new_STRING( " " ) ;
-  
+
   ORS->type = C_STRING ;
   ORS->ptr = (PTR) new_STRING( "\n" ) ;
 
@@ -86,7 +86,7 @@ void  bi_vars_init()
   NR->type = FNR->type = C_DOUBLE ;
   /* dval is already 0.0 */
 
-#ifdef  MSDOS  
+#ifdef  MSDOS
   BINMODE->type = C_DOUBLE ;
 #endif
 }

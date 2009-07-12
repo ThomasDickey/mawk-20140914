@@ -1,4 +1,3 @@
-
 /********************************************
 field.c
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: field.c,v @
+/*
+ * $MawkId: field.c,v 1.4 2009/07/12 10:49:41 tom Exp $
+ * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
  * with 16bit ints, i.e., the PC is a long.  This fixes implicit assumption

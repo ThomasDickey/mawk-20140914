@@ -1,4 +1,3 @@
-
 /********************************************
 bi_funct.c
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: bi_funct.c,v @
+/*
+ * $MawkId: bi_funct.c,v 1.6 2009/07/12 10:48:18 tom Exp $
+ * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
  *
@@ -1012,4 +1013,3 @@ bi_gsub(sp)
    sp->dval = (double) repl_cnt ;
    return sp ;
 }
-

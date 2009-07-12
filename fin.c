@@ -1,4 +1,3 @@
-
 /********************************************
 fin.c
 copyright 1991, 1992.  Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: fin.c,v @
+/*
+ * $MawkId: fin.c,v 1.5 2009/07/12 10:49:49 tom Exp $
+ * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
  *

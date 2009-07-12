@@ -1,4 +1,3 @@
-
 /********************************************
 version.c
 copyright 1991-95.  Michael D. Brennan
@@ -10,9 +9,11 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: version.c,v @
- *Revision 1.10  1996/07/28 21:47:07  mike
- *gnuish patch
+/*
+ * $MawkId: version.c,v 1.4 2009/07/12 10:50:23 tom Exp $
+ * @Log: version.c,v @
+ * Revision 1.10  1996/07/28 21:47:07  mike
+ * gnuish patch
  *
  * Revision 1.9  1996/02/01  04:44:15  mike
  * roll a beta version
@@ -23,7 +24,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 1.7  1995/06/10  17:04:10  mike
  * "largest field" replaced by "max NF"
  *
-*/
+ */
 
 #include "mawk.h"
 #include "patchlev.h"

@@ -9,10 +9,11 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/*   @Log: mawk.h,v @
- *   Revision 1.10  1996/08/25 19:31:04  mike
- *   Added work-around for solaris strtod overflow bug.
+/*
+ * $MawkId: mawk.h,v 1.5 2009/07/12 10:51:34 tom Exp $
+ * @Log: mawk.h,v @
+ * Revision 1.10  1996/08/25 19:31:04  mike
+ * Added work-around for solaris strtod overflow bug.
  *
  * Revision 1.9  1995/06/18  19:42:21  mike
  * Remove some redundant declarations and add some prototypes

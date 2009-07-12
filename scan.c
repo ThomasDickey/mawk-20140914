@@ -9,8 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/* @Log: scan.c,v @
+/*
+ * $MawkId: scan.c,v 1.4 2009/07/12 10:51:47 tom Exp $
+ * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
  *

@@ -9,8 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/*   @Log: cast.c,v @
+/*
+ * $MawkId: cast.c,v 1.4 2009/07/12 10:47:59 tom Exp $
+ * @Log: cast.c,v @
  *   Revision 1.6  1996/08/11 22:07:50  mike
  *   Fix small bozo in rt_error("overflow converting ...")
  *

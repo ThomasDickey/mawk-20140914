@@ -1,4 +1,3 @@
-
 /********************************************
 init.c
 copyright 1991, Michael D. Brennan
@@ -10,8 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/* @Log: init.c,v @
+/*
+ * $MawkId: init.c,v 1.4 2009/07/12 10:50:11 tom Exp $
+ * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
  *
