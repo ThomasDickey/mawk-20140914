@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.2 2009/07/12 17:58:25 tom Exp $
+ * $MawkId: regexp_system.c,v 1.3 2009/07/12 18:26:40 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -7,6 +7,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+
+#include "regexp.h"
 
 typedef struct {
     regex_t re;
@@ -18,7 +20,7 @@ static int err_code = 0;
 
 /*#define MAWK_EXTRACT_REGEXP_DEBUG*/
 
-void
+static void
 prepare_regexp(char *regexp)
 {
 #ifdef MAWK_EXTRACT_REGEXP_DEBUG
@@ -140,8 +142,9 @@ REcompile(char *regexp)
 }
 
 int
-REtest(char *str, mawk_re_t * re)
+REtest(char *str, PTR q)
 {
+    mawk_re_t *re = (mawk_re_t *) q;
     /* fprintf (stderr, "REtest:  \"%s\" ~ /%s/", str, re -> regexp); */
 
     last_used_regexp = re;
@@ -156,8 +159,9 @@ REtest(char *str, mawk_re_t * re)
 }
 
 char *
-REmatch(char *str, mawk_re_t * re, unsigned *lenp)
+REmatch(char *str, PTR q, unsigned *lenp)
 {
+    mawk_re_t *re = (mawk_re_t *) q;
     regmatch_t match[100];
     /* fprintf (stderr, "REmatch:  \"%s\" ~ /%s/", str, re -> regexp); */
 
