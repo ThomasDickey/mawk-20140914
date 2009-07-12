@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.5 2009/07/12 13:53:30 tom Exp $
+ * $MawkId: matherr.c,v 1.6 2009/07/12 13:58:03 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -78,21 +78,18 @@ static fp_except working_mask ;
 
 #ifdef   SV_SIGINFO
 static void
-fpe_catch(signal, sip)
-   int signal; 
-   siginfo_t *sip ;
+fpe_catch(int signal, siginfo_t *sip)
 {
    int why = sip->si_code ;
 
 #else
 
 static void
-fpe_catch(signal, why)
-   int signal, why ;
+fpe_catch(int signal, int why)
 {
 #endif /* SV_SIGINFO  */
 
-#if   NOINFO_SIGFPE
+#ifdef NOINFO_SIGFPE
    rt_error("floating point exception, probably overflow") ;
    /* does not return */
 #else
@@ -112,7 +109,7 @@ fpe_catch(signal, why)
 }
 
 void
-fpe_init()
+fpe_init(void)
 {
    TURN_ON_FPE_TRAPS() ;
 
@@ -162,8 +159,7 @@ matherr(struct exception *e)
 #else /* print error message and exit */
 
 int
-matherr(e)
-   struct exception *e ;
+matherr(struct exception *e)
 {
    char *error ;
 
@@ -262,9 +258,7 @@ fpcheck(void)
    strtod can generate an fpe  */
 
 double
-strtod_with_ovf_bug(s, ep)
-   const char *s ;
-   char **ep ;
+strtod_with_ovf_bug(const char *s, char **ep)
 {
    double ret ;
 
