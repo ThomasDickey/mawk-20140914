@@ -9,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: rexp2.c,v @
+/*
+ * $MawkId: rexp2.c,v 1.4 2009/07/12 18:44:07 tom Exp $
+ * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
  *
@@ -56,8 +58,6 @@ the GNU General Public License, version 2, 1991.
  *
 */
 
-
-
 /*  test a string against a machine   */
 
 #include "rexp.h"
@@ -65,27 +65,25 @@ the GNU General Public License, version 2, 1991.
 #define	 STACKGROWTH	16
 
 #ifdef	DEBUG
-static RT_STATE *PROTO(slow_push, (RT_STATE *, STATE *, char *, int)) ;
+static RT_STATE *PROTO(slow_push, (RT_STATE *, STATE *, char *, int));
 #endif
 
-
-RT_STATE *RE_run_stack_base ;
-RT_STATE *RE_run_stack_limit ;
+RT_STATE *RE_run_stack_base;
+RT_STATE *RE_run_stack_limit;
 
 /* Large model DOS segment arithemetic breaks the current stack.
    This hack fixes it without rewriting the whole thing, 5/31/91 */
-RT_STATE *RE_run_stack_empty ;
+RT_STATE *RE_run_stack_empty;
 
 void
-RE_run_stack_init()
+RE_run_stack_init(void)
 {
-   if (!RE_run_stack_base)
-   {
-      RE_run_stack_base = (RT_STATE *)
-      RE_malloc(sizeof(RT_STATE) * STACKGROWTH) ;
-      RE_run_stack_limit = RE_run_stack_base + STACKGROWTH ;
-      RE_run_stack_empty = RE_run_stack_base - 1 ;
-   }
+    if (!RE_run_stack_base) {
+	RE_run_stack_base = (RT_STATE *)
+	    RE_malloc(sizeof(RT_STATE) * STACKGROWTH);
+	RE_run_stack_limit = RE_run_stack_base + STACKGROWTH;
+	RE_run_stack_empty = RE_run_stack_base - 1;
+    }
 }
 
 /* sometimes during REmatch(), this stack can grow pretty large.
@@ -95,47 +93,50 @@ RE_run_stack_init()
 */
 
 RT_STATE *
-RE_new_run_stack()
+RE_new_run_stack(void)
 {
-   int oldsize = RE_run_stack_limit - RE_run_stack_base ;
-   int newsize = oldsize + STACKGROWTH ;
+    int oldsize = RE_run_stack_limit - RE_run_stack_base;
+    int newsize = oldsize + STACKGROWTH;
 
 #ifdef	LMDOS			/* large model DOS */
-   /* have to worry about overflow on multiplication (ugh) */
-   if (newsize >= 4096)	 RE_run_stack_base = (RT_STATE *) 0 ;
-   else
+    /* have to worry about overflow on multiplication (ugh) */
+    if (newsize >= 4096)
+	RE_run_stack_base = (RT_STATE *) 0;
+    else
 #endif
 
-      RE_run_stack_base = (RT_STATE *) realloc(RE_run_stack_base,
-					newsize * sizeof(RT_STATE)) ;
+	RE_run_stack_base = (RT_STATE *) realloc(RE_run_stack_base,
+						 newsize * sizeof(RT_STATE));
 
-   if (!RE_run_stack_base)
-   {
-      fprintf(stderr, "out of memory for RE run time stack\n") ;
-      /* this is pretty unusual, I've only seen it happen on
-       weird input to REmatch() under 16bit DOS , the same
-       situation worked easily on 32bit machine.  */
-      exit(100) ;
-   }
+    if (!RE_run_stack_base) {
+	fprintf(stderr, "out of memory for RE run time stack\n");
+	/* this is pretty unusual, I've only seen it happen on
+	   weird input to REmatch() under 16bit DOS , the same
+	   situation worked easily on 32bit machine.  */
+	exit(100);
+    }
 
-   RE_run_stack_limit = RE_run_stack_base + newsize ;
-   RE_run_stack_empty = RE_run_stack_base - 1 ;
+    RE_run_stack_limit = RE_run_stack_base + newsize;
+    RE_run_stack_empty = RE_run_stack_base - 1;
 
-   /* return the new stackp */
-   return RE_run_stack_base + oldsize ;
+    /* return the new stackp */
+    return RE_run_stack_base + oldsize;
 }
 
 #ifdef	DEBUG
 static RT_STATE *
-slow_push(sp, m, s, u)
-   RT_STATE *sp ;
-   STATE *m ;
-   char *s ;
-   int u ;
+slow_push(
+	     RT_STATE * sp,
+	     STATE * m,
+	     char *s,
+	     int u)
 {
-   if (sp == RE_run_stack_limit)  sp = RE_new_run_stack() ;
-   sp->m = m ; sp->s = s ; sp->u = u ;
-   return sp ;
+    if (sp == RE_run_stack_limit)
+	sp = RE_new_run_stack();
+    sp->m = m;
+    sp->s = s;
+    sp->u = u;
+    return sp;
 }
 #endif
 
@@ -147,217 +148,253 @@ slow_push(sp, m, s, u)
 stackp->m=(mx);stackp->s=(sx);stackp->u=(ux)
 #endif
 
-
 #define	  CASE_UANY(x)	case  x + U_OFF :  case	 x + U_ON
 
 /* test if str ~ /machine/
 */
 
 int
-REtest(str, machine)
-   char *str ;
-   PTR machine ;
+REtest(
+	  char *str,
+	  PTR machine)
 {
-   register STATE *m = (STATE *) machine ;
-   register char *s = str ;
-   register RT_STATE *stackp ;
-   int u_flag ;
-   char *str_end ;
-   int t ;			 /*convenient temps */
-   STATE *tm ;
+    register STATE *m = (STATE *) machine;
+    register char *s = str;
+    register RT_STATE *stackp;
+    int u_flag;
+    char *str_end;
+    int t;			/*convenient temps */
+    STATE *tm;
 
-   /* handle the easy case quickly */
-   if ((m + 1)->type == M_ACCEPT && m->type == M_STR)
-      return str_str(s, m->data.str, m->len) != (char *) 0 ;
-   else
-   {
-      u_flag = U_ON ; str_end = (char *) 0 ;
-      stackp = RE_run_stack_empty ;
-      goto reswitch ;
-   }
+    /* handle the easy case quickly */
+    if ((m + 1)->type == M_ACCEPT && m->type == M_STR)
+	return str_str(s, m->data.str, m->len) != (char *) 0;
+    else {
+	u_flag = U_ON;
+	str_end = (char *) 0;
+	stackp = RE_run_stack_empty;
+	goto reswitch;
+    }
 
-refill :
-   if (stackp == RE_run_stack_empty)  return 0 ;
-   m = stackp->m ;
-   s = stackp->s ;
-   u_flag = stackp--->u ;
+  refill:
+    if (stackp == RE_run_stack_empty)
+	return 0;
+    m = stackp->m;
+    s = stackp->s;
+    u_flag = stackp--->u;
 
+  reswitch:
 
-reswitch  :
+    switch (m->type + u_flag) {
+    case M_STR + U_OFF + END_OFF:
+	if (strncmp(s, m->data.str, m->len))
+	    goto refill;
+	s += m->len;
+	m++;
+	goto reswitch;
 
-   switch (m->type + u_flag)
-   {
-      case M_STR + U_OFF + END_OFF:
-	 if (strncmp(s, m->data.str, m->len))  goto refill ;
-	 s += m->len ;	m++ ;
-	 goto reswitch ;
+    case M_STR + U_OFF + END_ON:
+	if (strcmp(s, m->data.str))
+	    goto refill;
+	s += m->len;
+	m++;
+	goto reswitch;
 
-      case M_STR + U_OFF + END_ON:
-	 if (strcmp(s, m->data.str))  goto refill ;
-	 s += m->len ;	m++ ;
-	 goto reswitch ;
+    case M_STR + U_ON + END_OFF:
+	if (!(s = str_str(s, m->data.str, m->len)))
+	    goto refill;
+	push(m, s + 1, U_ON);
+	s += m->len;
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_STR + U_ON + END_OFF:
-	 if (!(s = str_str(s, m->data.str, m->len)))  goto refill ;
-	 push(m, s + 1, U_ON) ;
-	 s += m->len ; m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_STR + U_ON + END_ON:
+	if (!str_end)
+	    str_end = s + strlen(s);
+	t = (str_end - s) - m->len;
+	if (t < 0 || memcmp(s + t, m->data.str, m->len))
+	    goto refill;
+	s = str_end;
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_STR + U_ON + END_ON:
-	 if (!str_end)	str_end = s + strlen(s) ;
-	 t = (str_end - s) - m->len ;
-	 if (t < 0 || memcmp(s + t, m->data.str, m->len))
-	    goto refill ;
-	 s = str_end ; m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_CLASS + U_OFF + END_OFF:
+	if (!ison(*m->data.bvp, s[0]))
+	    goto refill;
+	s++;
+	m++;
+	goto reswitch;
 
-      case M_CLASS + U_OFF + END_OFF:
-	 if (!ison(*m->data.bvp, s[0]))	 goto refill ;
-	 s++ ; m++ ;
-	 goto reswitch ;
+    case M_CLASS + U_OFF + END_ON:
+	if (s[1] || !ison(*m->data.bvp, s[0]))
+	    goto refill;
+	s++;
+	m++;
+	goto reswitch;
 
-      case M_CLASS + U_OFF + END_ON:
-	 if (s[1] || !ison(*m->data.bvp, s[0]))	 goto refill ;
-	 s++ ; m++ ;
-	 goto reswitch ;
+    case M_CLASS + U_ON + END_OFF:
+	while (!ison(*m->data.bvp, s[0])) {
+	    if (s[0] == 0)
+		goto refill;
+	    else
+		s++;
+	}
+	s++;
+	push(m, s, U_ON);
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_CLASS + U_ON + END_OFF:
-	 while (!ison(*m->data.bvp, s[0]))
-	 {
-	    if (s[0] == 0)  goto refill ;
-	    else  s++ ;
-	 }
-	 s++ ;
-	 push(m, s, U_ON) ;
-	 m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_CLASS + U_ON + END_ON:
+	if (!str_end)
+	    str_end = s + strlen(s);
+	if (s[0] == 0 || !ison(*m->data.bvp, str_end[-1]))
+	    goto refill;
+	s = str_end;
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_CLASS + U_ON + END_ON:
-	 if (!str_end)	str_end = s + strlen(s) ;
-	 if (s[0] == 0 || !ison(*m->data.bvp, str_end[-1]))
-	    goto refill ;
-	 s = str_end ; m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_ANY + U_OFF + END_OFF:
+	if (s[0] == 0)
+	    goto refill;
+	s++;
+	m++;
+	goto reswitch;
 
-      case M_ANY + U_OFF + END_OFF:
-	 if (s[0] == 0)	 goto refill ;
-	 s++ ; m++ ;
-	 goto reswitch ;
+    case M_ANY + U_OFF + END_ON:
+	if (s[0] == 0 || s[1] != 0)
+	    goto refill;
+	s++;
+	m++;
+	goto reswitch;
 
-      case M_ANY + U_OFF + END_ON:
-	 if (s[0] == 0 || s[1] != 0)  goto refill ;
-	 s++ ; m++ ;
-	 goto reswitch ;
+    case M_ANY + U_ON + END_OFF:
+	if (s[0] == 0)
+	    goto refill;
+	s++;
+	push(m, s, U_ON);
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_ANY + U_ON + END_OFF:
-	 if (s[0] == 0)	 goto refill ;
-	 s++ ;
-	 push(m, s, U_ON) ;
-	 m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_ANY + U_ON + END_ON:
+	if (s[0] == 0)
+	    goto refill;
+	if (!str_end)
+	    str_end = s + strlen(s);
+	s = str_end;
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_ANY + U_ON + END_ON:
-	 if (s[0] == 0)	 goto refill ;
-	 if (!str_end)	str_end = s + strlen(s) ;
-	 s = str_end ; m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_START + U_OFF + END_OFF:
+    case M_START + U_ON + END_OFF:
+	if (s != str)
+	    goto refill;
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_START + U_OFF + END_OFF:
-      case M_START + U_ON + END_OFF:
-	 if (s != str)	goto refill ;
-	 m++ ;	u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_START + U_OFF + END_ON:
+    case M_START + U_ON + END_ON:
+	if (s != str || s[0] != 0)
+	    goto refill;
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_START + U_OFF + END_ON:
-      case M_START + U_ON + END_ON:
-	 if (s != str || s[0] != 0)  goto refill ;
-	 m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+    case M_END + U_OFF:
+	if (s[0] != 0)
+	    goto refill;
+	m++;
+	goto reswitch;
 
-      case M_END + U_OFF:
-	 if (s[0] != 0)	 goto refill ;
-	 m++ ; goto reswitch ;
+    case M_END + U_ON:
+	s += strlen(s);
+	m++;
+	u_flag = U_OFF;
+	goto reswitch;
 
-      case M_END + U_ON:
-	 s += strlen(s) ;
-	 m++ ; u_flag = U_OFF ;
-	 goto reswitch ;
+      CASE_UANY(M_U):
+	u_flag = U_ON;
+	m++;
+	goto reswitch;
 
-       CASE_UANY(M_U):
-	 u_flag = U_ON ; m++ ;
-	 goto reswitch ;
+      CASE_UANY(M_1J):
+	m += m->data.jump;
+	goto reswitch;
 
-       CASE_UANY(M_1J):
-	 m += m->data.jump ;
-	 goto reswitch ;
+      CASE_UANY(M_2JA):	/* take the non jump branch */
+	/* don't stack an ACCEPT */
+	if ((tm = m + m->data.jump)->type == M_ACCEPT)
+	    return 1;
+	push(tm, s, u_flag);
+	m++;
+	goto reswitch;
 
-       CASE_UANY(M_2JA):	/* take the non jump branch */
-	 /* don't stack an ACCEPT */
-	 if ((tm = m + m->data.jump)->type == M_ACCEPT)	 return 1 ;
-	 push(tm, s, u_flag) ;
-	 m++ ;
-	 goto reswitch ;
+      CASE_UANY(M_2JB):	/* take the jump branch */
+	/* don't stack an ACCEPT */
+	if ((tm = m + 1)->type == M_ACCEPT)
+	    return 1;
+	push(tm, s, u_flag);
+	m += m->data.jump;
+	goto reswitch;
 
-       CASE_UANY(M_2JB):	/* take the jump branch */
-	 /* don't stack an ACCEPT */
-	 if ((tm = m + 1)->type == M_ACCEPT)  return 1 ;
-	 push(tm, s, u_flag) ;
-	 m += m->data.jump ;
-	 goto reswitch ;
+      CASE_UANY(M_ACCEPT):
+	return 1;
 
-       CASE_UANY(M_ACCEPT):
-	 return 1 ;
-
-      default:
-	 RE_panic("unexpected case in REtest") ;
-   }
+    default:
+	RE_panic("unexpected case in REtest");
+    }
 }
-
-
 
 #ifdef	MAWK
 
 #else /* mawk provides its own str_str */
 
 char *
-str_str(target, key, klen)
-   register char *target ;
-   register char *key ;
-   unsigned klen ;
+str_str(
+	   char *target,
+	   char *key,
+	   unsigned klen)
 {
-   int c = key[0] ;
+    int c = key[0];
 
-   switch (klen)
-   {
-      case 0:
-	 return (char *) 0 ;
+    switch (klen) {
+    case 0:
+	return (char *) 0;
 
-      case 1:
-	 return strchr(target, c) ;
+    case 1:
+	return strchr(target, c);
 
-      case 2:
-	 {
-	    int c1 = key[1] ;
+    case 2:
+	{
+	    int c1 = key[1];
 
-	    while (target = strchr(target, c))
-	    {
-	       if (target[1] == c1)  return target ;
-	       else  target++ ;
+	    while (target = strchr(target, c)) {
+		if (target[1] == c1)
+		    return target;
+		else
+		    target++;
 	    }
-	    break ;
-	 }
+	    break;
+	}
 
-      default:
-	 klen-- ; key++ ;
-	 while (target = strchr(target, c))
-	 {
-	    if (memcmp(target + 1, key, klen) == 0)  return target ;
-	    else  target++ ;
-	 }
-	 break ;
-   }
-   return (char *) 0 ;
+    default:
+	klen--;
+	key++;
+	while (target = strchr(target, c)) {
+	    if (memcmp(target + 1, key, klen) == 0)
+		return target;
+	    else
+		target++;
+	}
+	break;
+    }
+    return (char *) 0;
 }
-
 
 #endif /* MAWK */

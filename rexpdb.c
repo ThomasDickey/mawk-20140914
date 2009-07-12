@@ -1,4 +1,3 @@
-
 /********************************************
 rexpdb.c
 copyright 1991, Michael D. Brennan
@@ -10,8 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/*@Log: rexpdb.c,v @
+/*
+ * $MawkId: rexpdb.c,v 1.2 2009/07/12 18:37:55 tom Exp $
+ * @Log: rexpdb.c,v @
  * Revision 1.2  1993/07/23  13:21:51  mike
  * cleanup rexp code
  *
@@ -26,60 +26,67 @@ the GNU General Public License, version 2, 1991.
  * 
 */
 
-
 #include "rexp.h"
 #include <ctype.h>
 
 /*  print a machine for debugging  */
 
-static  char *xlat[] = {
-"M_STR"  ,
-"M_CLASS" ,
-"M_ANY" ,
-"M_START" ,
-"M_END" ,
-"M_U",
-"M_1J" ,
-"M_2JA" ,
-"M_2JB" ,
-"M_ACCEPT" } ;
+static char *xlat[] =
+{
+    "M_STR",
+    "M_CLASS",
+    "M_ANY",
+    "M_START",
+    "M_END",
+    "M_U",
+    "M_1J",
+    "M_2JA",
+    "M_2JB",
+    "M_ACCEPT"};
 
-void  REmprint(m, f)
-  PTR  m ; 
-  FILE *f ;
-{ register STATE *p = (STATE *) m ;
-  char *end_on_string ;
+void
+REmprint(PTR m, FILE *f)
+{
+    STATE *p = (STATE *) m;
+    char *end_on_string;
 
-  while ( 1 )
-  { 
-    if ( p->type >= END_ON ) 
-    { p->type -= END_ON ; end_on_string = "$" ; }
-    else end_on_string = "" ;
+    while (1) {
+	if (p->type >= END_ON) {
+	    p->type -= END_ON;
+	    end_on_string = "$";
+	} else
+	    end_on_string = "";
 
-    if ( p->type < 0 || p->type >= END_ON )
-    { fprintf(f, "unknown STATE type\n") ; return ; }
+	if (p->type < 0 || p->type >= END_ON) {
+	    fprintf(f, "unknown STATE type\n");
+	    return;
+	}
 
-    fprintf(f, "%-10s" , xlat[p->type]) ;
-    switch( p->type )
-    {
-     case M_STR : fprintf(f, "%s", p->data.str ) ;
-                  break ;
+	fprintf(f, "%-10s", xlat[(unsigned char) (p->type)]);
+	switch (p->type) {
+	case M_STR:
+	    fprintf(f, "%s", p->data.str);
+	    break;
 
-     case M_1J:
-     case M_2JA:  
-     case M_2JB : fprintf(f, "%d", p->data.jump) ;
-                 break ;
-     case M_CLASS:
-          { unsigned char *q = (unsigned char *) p->data.bvp ;
-            unsigned char *r = q +  sizeof(BV) ;
-            while ( q < r )  fprintf(f, "%x " , *q++) ;
-          }
-          break ;
+	case M_1J:
+	case M_2JA:
+	case M_2JB:
+	    fprintf(f, "%d", p->data.jump);
+	    break;
+	case M_CLASS:
+	    {
+		unsigned char *q = (unsigned char *) p->data.bvp;
+		unsigned char *r = q + sizeof(BV);
+		while (q < r)
+		    fprintf(f, "%x ", *q++);
+	    }
+	    break;
+	}
+	fprintf(f, "%s\n", end_on_string);
+	if (end_on_string[0])
+	    p->type += END_ON;
+	if (p->type == M_ACCEPT)
+	    return;
+	p++;
     }
-    fprintf(f, "%s\n" , end_on_string) ;
-    if ( end_on_string[0] )  p->type += END_ON ;
-    if ( p->type == M_ACCEPT )  return ;
-    p++ ;
-   }
 }
-
