@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.4 2009/07/12 15:31:40 tom Exp $
+ * $MawkId: error.c,v 1.5 2009/07/12 15:33:03 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -228,8 +228,8 @@ VA_ALIST2(int, errnum, char *, format)
     fprintf(stderr, "\n");
 }
 
-void compile_error
-VA_ALIST(char *, format)
+void
+compile_error(char *format,...)
 {
     va_list args;
     char *s0, *s1;
@@ -252,8 +252,8 @@ VA_ALIST(char *, format)
 	mawk_exit(2);
 }
 
-void rt_error
-VA_ALIST(char *, format)
+void
+rt_error(char *format,...)
 {
     va_list args;
 
