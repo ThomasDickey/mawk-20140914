@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.4 2009/07/12 18:45:57 tom Exp $
+ * $MawkId: rexp.c,v 1.5 2009/07/12 18:49:54 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -41,11 +41,12 @@ the GNU General Public License, version 2, 1991.
  * moved parser stacks inside REcompile
  * removed unnecessary copying
  *
-*/
+ */
 
 /*  op precedence  parser for regular expressions  */
 
-#include  "rexp.h"
+#include "rexp.h"
+#include "regexp.h"
 
 /*  DATA   */
 int REerrno;
