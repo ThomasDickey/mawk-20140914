@@ -1,10 +1,76 @@
-dnl $MawkId: aclocal.m4,v 1.13 2009/07/12 13:11:34 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.14 2009/07/12 13:25:31 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
 dnl renamed for consistency by Thomas E Dickey.
 dnl 
 dnl ---------------------------------------------------------------------------
+dnl ---------------------------------------------------------------------------
+dnl CF_ARG_DISABLE version: 3 updated: 1999/03/30 17:24:31
+dnl --------------
+dnl Allow user to disable a normally-on option.
+AC_DEFUN([CF_ARG_DISABLE],
+[CF_ARG_OPTION($1,[$2],[$3],[$4],yes)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_ARG_OPTION version: 3 updated: 1997/10/18 14:42:41
+dnl -------------
+dnl Restricted form of AC_ARG_ENABLE that ensures user doesn't give bogus
+dnl values.
+dnl
+dnl Parameters:
+dnl $1 = option name
+dnl $2 = help-string
+dnl $3 = action to perform if option is not default
+dnl $4 = action if perform if option is default
+dnl $5 = default option value (either 'yes' or 'no')
+AC_DEFUN([CF_ARG_OPTION],
+[AC_ARG_ENABLE($1,[$2],[test "$enableval" != ifelse($5,no,yes,no) && enableval=ifelse($5,no,no,yes)
+  if test "$enableval" != "$5" ; then
+ifelse($3,,[    :]dnl
+,[    $3]) ifelse($4,,,[
+  else
+    $4])
+  fi],[enableval=$5 ifelse($4,,,[
+  $4
+])dnl
+  ])])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_DISABLE_ECHO version: 10 updated: 2003/04/17 22:27:11
+dnl ---------------
+dnl You can always use "make -n" to see the actual options, but it's hard to
+dnl pick out/analyze warning messages when the compile-line is long.
+dnl
+dnl Sets:
+dnl	ECHO_LT - symbol to control if libtool is verbose
+dnl	ECHO_LD - symbol to prefix "cc -o" lines
+dnl	RULE_CC - symbol to put before implicit "cc -c" lines (e.g., .c.o)
+dnl	SHOW_CC - symbol to put before explicit "cc -c" lines
+dnl	ECHO_CC - symbol to put before any "cc" line
+dnl
+AC_DEFUN([CF_DISABLE_ECHO],[
+AC_MSG_CHECKING(if you want to see long compiling messages)
+CF_ARG_DISABLE(echo,
+	[  --disable-echo          display "compiling" commands],
+	[
+    ECHO_LT='--silent'
+    ECHO_LD='@echo linking [$]@;'
+    RULE_CC='	@echo compiling [$]<'
+    SHOW_CC='	@echo compiling [$]@'
+    ECHO_CC='@'
+],[
+    ECHO_LT=''
+    ECHO_LD=''
+    RULE_CC='# compiling'
+    SHOW_CC='# compiling'
+    ECHO_CC=''
+])
+AC_MSG_RESULT($enableval)
+AC_SUBST(ECHO_LT)
+AC_SUBST(ECHO_LD)
+AC_SUBST(RULE_CC)
+AC_SUBST(SHOW_CC)
+AC_SUBST(ECHO_CC)
+])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_GCC_VERSION version: 4 updated: 2005/08/27 09:53:42
 dnl --------------
