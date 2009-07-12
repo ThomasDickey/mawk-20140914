@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.6 2009/07/12 10:48:29 tom Exp $
+ * $MawkId: files.c,v 1.7 2009/07/12 17:47:51 tom Exp $
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -61,6 +61,7 @@ the GNU General Public License, version 2, 1991.
 #include "files.h"
 #include "memory.h"
 #include "fin.h"
+#include "init.h"
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -79,143 +80,131 @@ the GNU General Public License, version 2, 1991.
 #define	 CLOSE_ON_EXEC(fd) ioctl(fd, FIOCLEX, (PTR) 0)
 #endif
 
-
 /* We store dynamically created files on a linked linear
    list with move to the front (big surprise)  */
 
-typedef struct file
-{
-   struct file *link ;
-   STRING *name ;
-   short type ;
-   int pid ;			 /* we need to wait() when we close a pipe */
-   /* holds temp file index under MSDOS */
+typedef struct file {
+    struct file *link;
+    STRING *name;
+    short type;
+    int pid;			/* we need to wait() when we close a pipe */
+    /* holds temp file index under MSDOS */
 
 #ifdef  HAVE_FAKE_PIPES
-   int inpipe_exit ;
+    int inpipe_exit;
 #endif
 
-   PTR ptr ;			 /* FIN*   or  FILE*   */
-}
-FILE_NODE ;
+    PTR ptr;			/* FIN*   or  FILE*   */
+} FILE_NODE;
 
-static FILE_NODE *file_list ;
+static FILE_NODE *file_list;
 
 /* Prototypes for local functions */
 
-static FILE *PROTO(tfopen, (char *, char *)) ;
-static void PROTO(efflush, (FILE*)) ;
-static void PROTO(add_to_child_list, (int, int)) ;
-static struct child *PROTO(remove_from_child_list, (int)) ;
-extern int PROTO(isatty, (int)) ;
-static void PROTO(close_error, (FILE_NODE *p));
+extern int isatty(int);
+
+static FILE *tfopen(char *, char *);
+static void efflush(FILE *);
+static void close_error(FILE_NODE * p);
 
 /* find a file on file_list */
 PTR
-file_find(sval, type)
-   STRING *sval ;
-   int type ;
+file_find(STRING * sval, int type)
 {
-   register FILE_NODE *p = file_list ;
-   FILE_NODE *q = (FILE_NODE *) 0 ;
-   char *name = sval->str ;
-   char *ostr ;
+    register FILE_NODE *p = file_list;
+    FILE_NODE *q = (FILE_NODE *) 0;
+    char *name = sval->str;
+    char *ostr;
 
-   while (1)
-   {
-      if (!p)
-      {
-	 /* open a new one */
-	 p = ZMALLOC(FILE_NODE) ;
+    while (1) {
+	if (!p) {
+	    /* open a new one */
+	    p = ZMALLOC(FILE_NODE);
 
-	 switch (p->type = type)
-	 {
+	    switch (p->type = type) {
 	    case F_TRUNC:
 #ifdef MSDOS
-	       ostr = (binmode() & 2) ? "wb" : "w" ;
+		ostr = (binmode() & 2) ? "wb" : "w";
 #else
-	       ostr = "w" ;
+		ostr = "w";
 #endif
-	       if (!(p->ptr = (PTR) tfopen(name, ostr)))
-		  goto out_failure ;
-	       break ;
+		if (!(p->ptr = (PTR) tfopen(name, ostr)))
+		    goto out_failure;
+		break;
 
 	    case F_APPEND:
 #ifdef MSDOS
-	       ostr = (binmode() & 2) ? "ab" : "a" ;
+		ostr = (binmode() & 2) ? "ab" : "a";
 #else
-	       ostr = "a" ;
+		ostr = "a";
 #endif
-	       if (!(p->ptr = (PTR) tfopen(name, ostr)))
-		  goto out_failure ;
-	       break ;
+		if (!(p->ptr = (PTR) tfopen(name, ostr)))
+		    goto out_failure;
+		break;
 
 	    case F_IN:
-	       if (!(p->ptr = (PTR) FINopen(name, 0)))
-	       {
-		  zfree(p, sizeof(FILE_NODE)) ;
-		  return (PTR) 0 ;
-	       }
-	       break ;
+		if (!(p->ptr = (PTR) FINopen(name, 0))) {
+		    zfree(p, sizeof(FILE_NODE));
+		    return (PTR) 0;
+		}
+		break;
 
 	    case PIPE_OUT:
 	    case PIPE_IN:
 
 #if    defined(HAVE_REAL_PIPES) || defined(HAVE_FAKE_PIPES)
 
-	       if (!(p->ptr = get_pipe(name, type, &p->pid)))
-	       {
-		  if (type == PIPE_OUT)	 goto out_failure ;
-		  else
-		  {
-		     zfree(p, sizeof(FILE_NODE)) ;
-		     return (PTR) 0 ;
-		  }
-	       }
+		if (!(p->ptr = get_pipe(name, type, &p->pid))) {
+		    if (type == PIPE_OUT)
+			goto out_failure;
+		    else {
+			zfree(p, sizeof(FILE_NODE));
+			return (PTR) 0;
+		    }
+		}
 #else
-	       rt_error("pipes not supported") ;
+		rt_error("pipes not supported");
 #endif
-	       break ;
+		break;
 
 #ifdef	DEBUG
 	    default:
-	       bozo("bad file type") ;
+		bozo("bad file type");
 #endif
-	 }
-	 /* successful open */
-	 p->name = sval ;
-	 sval->ref_cnt++ ;
-	 break ;		 /* while loop */
-      }
+	    }
+	    /* successful open */
+	    p->name = sval;
+	    sval->ref_cnt++;
+	    break;		/* while loop */
+	}
 
-      /* search is by name and type */
-      if (strcmp(name, p->name->str) == 0 &&
-	  (p->type == type ||
-      /* no distinction between F_APPEND and F_TRUNC here */
-	   (p->type >= F_APPEND && type >= F_APPEND)))
+	/* search is by name and type */
+	if (strcmp(name, p->name->str) == 0 &&
+	    (p->type == type ||
+	/* no distinction between F_APPEND and F_TRUNC here */
+	     (p->type >= F_APPEND && type >= F_APPEND)))
+	 {
+	    /* found */
+	    if (!q)		/*at front of list */
+		return p->ptr;
+	    /* delete from list for move to front */
+	    q->link = p->link;
+	    break;		/* while loop */
+	}
 
-      {
-	 /* found */
-	 if (!q)		/*at front of list */
-	    return p->ptr ;
-	 /* delete from list for move to front */
-	 q->link = p->link ;
-	 break ;		 /* while loop */
-      }
+	q = p;
+	p = p->link;
+    }				/* end while loop */
 
-      q = p ; p = p->link ;
-   }				/* end while loop */
+    /* put p at the front of the list */
+    p->link = file_list;
+    return (PTR) (file_list = p)->ptr;
 
-   /* put p at the front of the list */
-   p->link = file_list ;
-   return (PTR) (file_list = p)->ptr ;
-
-out_failure:
-   errmsg(errno, "cannot open \"%s\" for output", name) ;
-   mawk_exit(2) ;
+  out_failure:
+    errmsg(errno, "cannot open \"%s\" for output", name);
+    mawk_exit(2);
 
 }
-
 
 /* Close a file and delete it's node from the file_list.
    Walk the whole list, in case a name has two nodes,
@@ -223,86 +212,81 @@ out_failure:
 */
 
 int
-file_close(sval)
-   STRING *sval ;
+file_close(STRING * sval)
 {
-   FILE_NODE dummy ;
-   register FILE_NODE *p ;
-   FILE_NODE *q = &dummy ;	 /* trails p */
-   FILE_NODE *hold ;
-   char *name = sval->str ;
-   int retval = -1 ;
+    FILE_NODE dummy;
+    register FILE_NODE *p;
+    FILE_NODE *q = &dummy;	/* trails p */
+    FILE_NODE *hold;
+    char *name = sval->str;
+    int retval = -1;
 
-   dummy.link = p = file_list ;
-   while (p)
-   {
-      if (strcmp(name, p->name->str) == 0)
-      {
-	 /* found */
+    dummy.link = p = file_list;
+    while (p) {
+	if (strcmp(name, p->name->str) == 0) {
+	    /* found */
 
-         /* Remove it from the list first because we might be called
-            again if an error occurs leading to an infinite loop.
+	    /* Remove it from the list first because we might be called
+	       again if an error occurs leading to an infinite loop.
 
-            Note that we don't have to consider the list corruption
-            caused by a recursive call because it will never return. */
+	       Note that we don't have to consider the list corruption
+	       caused by a recursive call because it will never return. */
 
-	 q->link = p->link ;
-         file_list = dummy.link ;   /* maybe it was the first file */
+	    q->link = p->link;
+	    file_list = dummy.link;	/* maybe it was the first file */
 
-         switch (p->type)
-	 {
+	    switch (p->type) {
 	    case F_TRUNC:
 	    case F_APPEND:
-	       if( fclose((FILE *) p->ptr) != 0 )
-		  close_error(p) ;
-	       retval = 0 ;
-	       break ;
+		if (fclose((FILE *) p->ptr) != 0)
+		    close_error(p);
+		retval = 0;
+		break;
 
 	    case PIPE_OUT:
-	       if( fclose((FILE *) p->ptr) != 0 )
-	       	  close_error(p) ;
+		if (fclose((FILE *) p->ptr) != 0)
+		    close_error(p);
 
 #ifdef  HAVE_REAL_PIPES
-	       retval = wait_for(p->pid) ;
+		retval = wait_for(p->pid);
 #endif
 #ifdef  HAVE_FAKE_PIPES
-	       retval = close_fake_outpipe(p->name->str, p->pid) ;
+		retval = close_fake_outpipe(p->name->str, p->pid);
 #endif
-	       break ;
+		break;
 
 	    case F_IN:
-	       FINclose((FIN *) p->ptr) ;
-	       retval = 0 ;
-	       break ;
+		FINclose((FIN *) p->ptr);
+		retval = 0;
+		break;
 
 	    case PIPE_IN:
-	       FINclose((FIN *) p->ptr) ;
+		FINclose((FIN *) p->ptr);
 
 #ifdef  HAVE_REAL_PIPES
-	       retval = wait_for(p->pid) ;
+		retval = wait_for(p->pid);
 #endif
 #ifdef  HAVE_FAKE_PIPES
-	       {
-		  char xbuff[100] ;
-		  unlink(tmp_file_name(p->pid, xbuff)) ;
-		  retval = p->inpipe_exit ;
-	       }
+		{
+		    char xbuff[100];
+		    unlink(tmp_file_name(p->pid, xbuff));
+		    retval = p->inpipe_exit;
+		}
 #endif
-	       break ;
-	 }
+		break;
+	    }
 
-	 free_STRING(p->name) ;
-         hold = p ;
-	 p = p->link ;
-	 ZFREE(hold) ;
-      }
-      else
-      {
-	 q = p ; p = p->link ;
-      }
-   }
+	    free_STRING(p->name);
+	    hold = p;
+	    p = p->link;
+	    ZFREE(hold);
+	} else {
+	    q = p;
+	    p = p->link;
+	}
+    }
 
-   return retval ;
+    return retval;
 }
 
 /*
@@ -310,57 +294,51 @@ find an output file with name == sval and fflush it
 */
 
 int
-file_flush(sval)
-   STRING *sval ;
+file_flush(STRING * sval)
 {
-   int ret = -1 ;
-   register FILE_NODE *p = file_list ;
-   unsigned len = sval->len ;
-   char *str = sval->str ;
+    int ret = -1;
+    register FILE_NODE *p = file_list;
+    unsigned len = sval->len;
+    char *str = sval->str;
 
-   if (len==0)
-   {
-      /* for consistency with gawk */
-      flush_all_output() ;
-      return 0 ;
-   }
+    if (len == 0) {
+	/* for consistency with gawk */
+	flush_all_output();
+	return 0;
+    }
 
-   while( p )
-   {
-      if ( IS_OUTPUT(p->type) &&
-	   len == p->name->len &&
-	   strcmp(str,p->name->str) == 0 )
-      {
-	 ret = 0 ;
-	 efflush((FILE*)p->ptr) ;
-         /* it's possible for a command and a file to have the same
-	    name -- so keep looking */
-      }
-      p = p->link ;
-   }
-   return ret ;
+    while (p) {
+	if (IS_OUTPUT(p->type) &&
+	    len == p->name->len &&
+	    strcmp(str, p->name->str) == 0) {
+	    ret = 0;
+	    efflush((FILE *) p->ptr);
+	    /* it's possible for a command and a file to have the same
+	       name -- so keep looking */
+	}
+	p = p->link;
+    }
+    return ret;
 }
 
 void
-flush_all_output()
+flush_all_output(void)
 {
-   FILE_NODE *p ;
+    FILE_NODE *p;
 
-   for(p=file_list; p ; p = p->link)
-      if (IS_OUTPUT(p->type)) efflush((FILE*)p->ptr) ;
+    for (p = file_list; p; p = p->link)
+	if (IS_OUTPUT(p->type))
+	    efflush((FILE *) p->ptr);
 }
 
 static void
-efflush(fp)
-   FILE *fp ;
+efflush(FILE *fp)
 {
-   if (fflush(fp) < 0)
-   {
-      errmsg(errno, "unexpected write error") ;
-      mawk_exit(2) ;
-   }
+    if (fflush(fp) < 0) {
+	errmsg(errno, "unexpected write error");
+	mawk_exit(2);
+    }
 }
-
 
 /* When we exit, we need to close and wait for all output pipes */
 
@@ -373,113 +351,103 @@ efflush(fp)
 */
 
 void
-close_out_pipes()
+close_out_pipes(void)
 {
-   register FILE_NODE *p = file_list ;
+    register FILE_NODE *p = file_list;
 
-   while (p)
-   {
-      if (IS_OUTPUT(p->type))
-      {
-	 if( fclose((FILE *) p->ptr) != 0 )
-         {
-            /* if another error occurs we do not want to be called
-               for the same file again */
+    while (p) {
+	if (IS_OUTPUT(p->type)) {
+	    if (fclose((FILE *) p->ptr) != 0) {
+		/* if another error occurs we do not want to be called
+		   for the same file again */
 
-            file_list = p->link ;
-	    close_error(p) ;
-         }
-	 if (p->type == PIPE_OUT) wait_for(p->pid) ;
-      }
+		file_list = p->link;
+		close_error(p);
+	    }
+	    if (p->type == PIPE_OUT)
+		wait_for(p->pid);
+	}
 
-      p = p->link ;
-   }
+	p = p->link;
+    }
 }
 
 #else
 #ifdef  HAVE_FAKE_PIPES		/* pipes are faked with temp files */
 
 void
-close_fake_pipes()
+close_fake_pipes(void)
 {
-   register FILE_NODE *p = file_list ;
-   char xbuff[100] ;
+    register FILE_NODE *p = file_list;
+    char xbuff[100];
 
-   /* close input pipes first to free descriptors for children */
-   while (p)
-   {
-      if (p->type == PIPE_IN)
-      {
-	 FINclose((FIN *) p->ptr) ;
-	 unlink(tmp_file_name(p->pid, xbuff)) ;
-      }
-      p = p->link ;
-   }
-   /* doit again */
-   p = file_list ;
-   while (p)
-   {
-      if (p->type == PIPE_OUT)
-      {
-	 if( fclose(p->ptr) != 0 )
-	    close_error(p) ;
-	 close_fake_outpipe(p->name->str, p->pid) ;
-      }
-      p = p->link ;
-   }
+    /* close input pipes first to free descriptors for children */
+    while (p) {
+	if (p->type == PIPE_IN) {
+	    FINclose((FIN *) p->ptr);
+	    unlink(tmp_file_name(p->pid, xbuff));
+	}
+	p = p->link;
+    }
+    /* doit again */
+    p = file_list;
+    while (p) {
+	if (p->type == PIPE_OUT) {
+	    if (fclose(p->ptr) != 0)
+		close_error(p);
+	    close_fake_outpipe(p->name->str, p->pid);
+	}
+	p = p->link;
+    }
 }
 #endif /* HAVE_FAKE_PIPES */
 #endif /* ! HAVE_REAL_PIPES */
 
 /* hardwire to /bin/sh for portability of programs */
-char *shell = "/bin/sh" ;
+char *shell = "/bin/sh";
 
 #ifdef  HAVE_REAL_PIPES
 
 PTR
-get_pipe(name, type, pid_ptr)
-   char *name ;
-   int type ;
-   int *pid_ptr ;
+get_pipe(char *name, int type, int *pid_ptr)
 {
-   int the_pipe[2], local_fd, remote_fd ;
+    int the_pipe[2], local_fd, remote_fd;
 
-   if (pipe(the_pipe) == -1)  return (PTR) 0 ;
-   local_fd = the_pipe[type == PIPE_OUT] ;
-   remote_fd = the_pipe[type == PIPE_IN] ;
-   /* to keep output ordered correctly */
-   fflush(stdout) ; fflush(stderr) ;
+    if (pipe(the_pipe) == -1)
+	return (PTR) 0;
+    local_fd = the_pipe[type == PIPE_OUT];
+    remote_fd = the_pipe[type == PIPE_IN];
+    /* to keep output ordered correctly */
+    fflush(stdout);
+    fflush(stderr);
 
-   switch (*pid_ptr = fork())
-   {
-      case -1:
-	 close(local_fd) ;
-	 close(remote_fd) ;
-	 return (PTR) 0 ;
+    switch (*pid_ptr = fork()) {
+    case -1:
+	close(local_fd);
+	close(remote_fd);
+	return (PTR) 0;
 
-      case 0:
-	 close(local_fd) ;
-	 close(type == PIPE_IN) ;
-	 dup(remote_fd) ;
-	 close(remote_fd) ;
-	 execl(shell, shell, "-c", name, (char *) 0) ;
-	 errmsg(errno, "failed to exec %s -c %s", shell, name) ;
-	 fflush(stderr) ;
-	 _exit(128) ;
+    case 0:
+	close(local_fd);
+	close(type == PIPE_IN);
+	dup(remote_fd);
+	close(remote_fd);
+	execl(shell, shell, "-c", name, (char *) 0);
+	errmsg(errno, "failed to exec %s -c %s", shell, name);
+	fflush(stderr);
+	_exit(128);
 
-      default:
-	 close(remote_fd) ;
-	 /* we could deadlock if future child inherit the local fd ,
+    default:
+	close(remote_fd);
+	/* we could deadlock if future child inherit the local fd ,
 	   set close on exec flag */
-	 CLOSE_ON_EXEC(local_fd) ;
-	 break ;
-   }
+	CLOSE_ON_EXEC(local_fd);
+	break;
+    }
 
-   return type == PIPE_IN ? (PTR) FINdopen(local_fd, 0) :
-      (PTR) fdopen(local_fd, "w") ;
+    return type == PIPE_IN ? (PTR) FINdopen(local_fd, 0) :
+	(PTR) fdopen(local_fd, "w");
 }
-
-
 
 /*------------ children ------------------*/
 
@@ -488,50 +456,45 @@ get_pipe(name, type, pid_ptr)
 
 /* dead children are kept on this list */
 
-static struct child
-{
-   int pid ;
-   int exit_status ;
-   struct child *link ;
-} *child_list ;
+static struct child {
+    int pid;
+    int exit_status;
+    struct child *link;
+} *child_list;
 
 static void
-add_to_child_list(pid, exit_status)
-   int pid, exit_status ;
+add_to_child_list(int pid, int exit_status)
 {
-   register struct child *p = ZMALLOC(struct child) ;
+    register struct child *p = ZMALLOC(struct child);
 
-   p->pid = pid ; p->exit_status = exit_status ;
-   p->link = child_list ; child_list = p ;
+    p->pid = pid;
+    p->exit_status = exit_status;
+    p->link = child_list;
+    child_list = p;
 }
 
 static struct child *
-remove_from_child_list(pid)
-   int pid ;
+remove_from_child_list(int pid)
 {
-   struct child dummy ;
-   register struct child *p ;
-   struct child *q = &dummy ;
+    struct child dummy;
+    register struct child *p;
+    struct child *q = &dummy;
 
-   dummy.link = p = child_list ;
-   while (p)
-   {
-      if (p->pid == pid)
-      {
-	 q->link = p->link ;
-	 break ;
-      }
-      else
-      {
-	 q = p ; p = p->link ;
-      }
-   }
+    dummy.link = p = child_list;
+    while (p) {
+	if (p->pid == pid) {
+	    q->link = p->link;
+	    break;
+	} else {
+	    q = p;
+	    p = p->link;
+	}
+    }
 
-   child_list = dummy.link ;
-   return p ;
-   /* null return if not in the list */
+    child_list = dummy.link;
+    return p;
+    /* null return if not in the list */
 }
-
 
 /* wait for a specific child to complete and return its
    exit status
@@ -541,122 +504,113 @@ remove_from_child_list(pid)
 */
 
 int
-wait_for(pid)
-   int pid ;
+wait_for(int pid)
 {
-   int exit_status ;
-   struct child *p ;
-   int id ;
+    int exit_status;
+    struct child *p;
+    int id;
 
-   if (pid == 0)
-   {
-      id = wait(&exit_status) ;
-      add_to_child_list(id, exit_status) ;
-   }
-   /* see if an earlier wait() caught our child */
-   else if ((p = remove_from_child_list(pid)))
-   {
-      exit_status = p->exit_status ;
-      ZFREE(p) ;
-   }
-   else
-   {
-      /* need to really wait */
-      while ((id = wait(&exit_status)) != pid)
-      {
-	 if (id == -1)		/* can't happen */
-	    bozo("wait_for") ;
-	 else
-	 {
-	    /* we got the exit status of another child
-	    put it on the child list and try again */
-	    add_to_child_list(id, exit_status) ;
-	 }
-      }
-   }
+    if (pid == 0) {
+	id = wait(&exit_status);
+	add_to_child_list(id, exit_status);
+    }
+    /* see if an earlier wait() caught our child */
+    else if ((p = remove_from_child_list(pid))) {
+	exit_status = p->exit_status;
+	ZFREE(p);
+    } else {
+	/* need to really wait */
+	while ((id = wait(&exit_status)) != pid) {
+	    if (id == -1)	/* can't happen */
+		bozo("wait_for");
+	    else {
+		/* we got the exit status of another child
+		   put it on the child list and try again */
+		add_to_child_list(id, exit_status);
+	    }
+	}
+    }
 
-   if (exit_status & 0xff)  exit_status = 128 + (exit_status & 0xff) ;
-   else	 exit_status = (exit_status & 0xff00) >> 8 ;
+    if (exit_status & 0xff)
+	exit_status = 128 + (exit_status & 0xff);
+    else
+	exit_status = (exit_status & 0xff00) >> 8;
 
-   return exit_status ;
+    return exit_status;
 }
 
 #endif /* HAVE_REAL_PIPES */
 
-
 void
-set_stderr()   /* and stdout */
+set_stderr(void)		/* and stdout */
 {
-   FILE_NODE *p, *q ;
+    FILE_NODE *p, *q;
 
-   /* We insert stderr first to get it at the end of the list. This is
-      needed because we want to output errors encountered on closing
-      stdout. */
+    /* We insert stderr first to get it at the end of the list. This is
+       needed because we want to output errors encountered on closing
+       stdout. */
 
-   q = ZMALLOC(FILE_NODE);
-   q->link = (FILE_NODE*) 0 ;
-   q->type = F_TRUNC ;
-   q->name = new_STRING("/dev/stderr") ;
-   q->ptr = (PTR) stderr ;
+    q = ZMALLOC(FILE_NODE);
+    q->link = (FILE_NODE *) 0;
+    q->type = F_TRUNC;
+    q->name = new_STRING("/dev/stderr");
+    q->ptr = (PTR) stderr;
 
-   p = ZMALLOC(FILE_NODE) ;
-   p->link = q;
-   p->type = F_TRUNC ;
-   p->name = new_STRING("/dev/stdout") ;
-   p->ptr = (PTR) stdout ;
+    p = ZMALLOC(FILE_NODE);
+    p->link = q;
+    p->type = F_TRUNC;
+    p->name = new_STRING("/dev/stdout");
+    p->ptr = (PTR) stdout;
 
-   file_list = p ;
+    file_list = p;
 }
 
 /* fopen() but no buffering to ttys */
 static FILE *
-tfopen(name, mode)
-   char *name, *mode ;
+tfopen(char *name, char *mode)
 {
-   FILE *retval = fopen(name, mode) ;
+    FILE *retval = fopen(name, mode);
 
-   if (retval)
-   {
-      if (isatty(fileno(retval)))  setbuf(retval, (char *) 0) ;
-      else
-      {
+    if (retval) {
+	if (isatty(fileno(retval)))
+	    setbuf(retval, (char *) 0);
+	else {
 #ifdef MSDOS
-	 enlarge_output_buffer(retval) ;
+	    enlarge_output_buffer(retval);
 #endif
-      }
-   }
-   return retval ;
+	}
+    }
+    return retval;
 }
 
 #ifdef  MSDOS
 void
-enlarge_output_buffer(fp)
-   FILE *fp ;
+enlarge_output_buffer(FILE *fp)
 {
-   if (setvbuf(fp, (char *) 0, _IOFBF, BUFFSZ) < 0)
-   {
-      errmsg(errno, "setvbuf failed on fileno %d", fileno(fp)) ;
-      mawk_exit(2) ;
-   }
+    if (setvbuf(fp, (char *) 0, _IOFBF, BUFFSZ) < 0) {
+	errmsg(errno, "setvbuf failed on fileno %d", fileno(fp));
+	mawk_exit(2);
+    }
 }
 
 void
-stdout_init()
+stdout_init(void)
 {
-   if (!isatty(1))  enlarge_output_buffer(stdout) ;
-   if (binmode() & 2)
-   {
-      setmode(1,O_BINARY) ; setmode(2,O_BINARY) ;
-   }
+    if (!isatty(1))
+	enlarge_output_buffer(stdout);
+    if (binmode() & 2) {
+	setmode(1, O_BINARY);
+	setmode(2, O_BINARY);
+    }
 }
 #endif /* MSDOS */
 
 /* An error occured closing the file referred to by P. We tell the
    user and terminate the program. */
 
-static void close_error(p)
-   FILE_NODE *p ;
+static void
+close_error(FILE_NODE * p)
 {
-   errmsg(errno, "close failed on file %s", p->name->str) ;
-   mawk_exit(2) ;
+    errmsg(errno, "close failed on file %s", p->name->str);
+    mawk_exit(2);
 }
