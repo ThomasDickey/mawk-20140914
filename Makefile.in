@@ -1,50 +1,68 @@
+# Makefile-template for MAWK
 
 SHELL=/bin/sh
 
 ####################################
 
-CC = @CC@
+x               = @EXEEXT@
+o               = .@OBJEXT@
 
-CFLAGS =   @CFLAGS@
-LDFLAGS = @LDFLAGS@
-MATHLIB = @MATHLIB@
+manext		= 1
+bindir		= @bindir@
+mandir		= @mandir@/man$(manext)
 
-YACC = @YACC@ 
+CC              = @CC@
+
+CFLAGS          = @CFLAGS@
+LDFLAGS         = @LDFLAGS@
+MATHLIB         = @MATHLIB@
+
+YACC            = @YACC@ 
+
+INSTALL         = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
 
 # where to put mawk
-BINDIR = @BINDIR@
+BINDIR          = $(DESTDIR)$(bindir)
+
 # where to put the man pages
-MANDIR = @MANDIR@
-MANEXT = @MANEXT@
+MANDIR          = $(DESTDIR)$(mandir)
+
 #######################################
 
+PROG  = mawk$x
 
-O=parse.o scan.o memory.o main.o hash.o execute.o code.o\
-  da.o error.o init.o bi_vars.o cast.o print.o bi_funct.o\
-  kw.o jmp.o array.o field.o  split.o re_cmpl.o zmalloc.o\
-  fin.o files.o  scancode.o matherr.o  fcall.o version.o\
-  missing.o
+OBJS = parse$o scan$o memory$o main$o hash$o execute$o code$o \
+  da$o error$o init$o bi_vars$o cast$o print$o bi_funct$o \
+  kw$o jmp$o array$o field$o  split$o re_cmpl$o zmalloc$o \
+  fin$o files$o  scancode$o matherr$o  fcall$o version$o \
+  missing$o
 
-REXP_O=rexp/regexp.o
-REXP_C=rexp/regexp.c
+REXP_O = rexp/regexp$o
+REXP_C = rexp/regexp.c
 
-mawk_and_test :  mawk  mawk_test  fpe_test
+all :	$(PROG)
 
-mawk : $(O)  rexp/.done
-	$(CC) $(LDFLAGS) -o mawk $(O) $(REXP_O) $(MATHLIB) 
+check :  mawk_test fpe_test
 
-mawk_test :  mawk  # test that we have a sane mawk
-	@cp mawk test/mawk
+REXP_DONE = rexp/.done
+
+$(PROG) : $(OBJS)  $(REXP_DONE)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(REXP_O) $(MATHLIB) 
+
+mawk_test :  $(PROG)  # test that we have a sane mawk
+	@cp $(PROG) test/$(PROG)
 	cd test ; ./mawktest 
-	@rm test/mawk
+	@rm test/$(PROG)
 
-fpe_test :  mawk # test FPEs are handled OK
-	@cp mawk test/mawk
+fpe_test :  $(PROG) # test FPEs are handled OK
+	@cp $(PROG) test/$(PROG)
 	@echo ; echo testing floating point exception handling
 	cd test ; ./fpe_test
-	@rm test/mawk
+	@rm test/$(PROG)
 
-rexp/.done : $(REXP_C)
+$(REXP_DONE) : $(REXP_C)
 	cd rexp ;\
 	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS) -DMAWK -I.." 
 
@@ -68,26 +86,22 @@ scancode.c :  makescan.c  scan.h
 	./makescan.exe > scancode.c
 	rm makescan.exe
 
-MAWKMAN = $(MANDIR)/mawk.$(MANEXT)
-install :  mawk
-	cp mawk $(BINDIR)
-	chmod  0755  $(BINDIR)/mawk
-	cp  man/mawk.1  $(MAWKMAN)
-	chmod  0644  $(MAWKMAN)
+MAWKMAN = $(MANDIR)/mawk.$(manext)
+install :  $(PROG)
+	$(INSTALL_PROGRAM) $(PROG) $(BINDIR)/$(PROG)
+	$(INSTALL_DATA)  man/mawk.1  $(MAWKMAN)
+
+uninstall :
+	rm -f $(BINDIR)/$(PROG)
+	rm -f $(MAWKMAN)
 
 clean :
-	rm -f *.o rexp/*.o rexp/.done test/mawk core test/core mawk 
+	rm -f *$o rexp/*$o $(REXP_DONE) test/$(PROG) core test/core $(PROG) 
 
 distclean :  clean
 	rm -f config.h Makefile \
-	    config.status config.user config.log config.cache
+	    config.status config.log config.cache
 	rm -f defines.out maxint.out fpe_check
-	cp config-user/.config.user config.user ; chmod +w config.user
-
-configure  :  configure.in mawk.ac.m4
-	autoconf
-
-
 
 # output from  mawk -f deps.awk *.c
 array.o : config.h field.h bi_vars.h mawk.h symtype.h nstd.h memory.h array.h zmalloc.h types.h sizes.h
