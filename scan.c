@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.4 2009/07/12 10:51:47 tom Exp $
+ * $MawkId: scan.c,v 1.5 2009/07/12 19:59:36 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -1028,13 +1028,15 @@ out:
 static int
 collect_RE()
 {
-   register unsigned char *p = (unsigned char *) string_buff ;
+   char *p = string_buff ;
+   char *first = string_buff;
    int c ;
+   int boxed = 0;
    STRING *sval ;
 
    while (1)
    {
-      if (p == (unsigned char *) (string_buff + SPRINTF_SZ - 2))
+      if (p == (string_buff + MIN_SPRINTF - 2))
       {
 	 compile_error(
 		       "regular expression /%.10s ..."
@@ -1042,11 +1044,41 @@ collect_RE()
 		       string_buff) ;
 		       mawk_exit(2) ;
       }
-      switch (scan_code[*p++ = next()])
+      switch (scan_code[(unsigned char) (*p++ = next())])
       {
+	case SC_POW:
+	    if (p == first + 1) {
+		first = p;
+	    }
+	    break;
+
+	 case SC_LBOX:
+	    /*
+	     * If we're starting a bracket expression, remember where that
+	     * started, so we can make comparisons to handle things like
+	     * "[]xxxx]" and "[^]xxxx]".
+	     */
+	    if (!boxed)
+		first = p;
+	    ++boxed;
+	    break;
+
+	 case SC_RBOX:
+	    /*
+	     * A right square-bracket loses its special meaning if it occurs
+	     * first in the list (after an optional "^").
+	     */
+	    if (p != first + 1) {
+		--boxed;
+	    }
+	    break;
+
 	 case SC_DIV:		/* done */
-	    *--p = 0 ;
-	    goto out ;
+	     if (!boxed) {
+		*--p = 0 ;
+		goto out ;
+	     }
+	     break;
 
 	 case SC_NL:
 	    p[-1] = 0 ;
