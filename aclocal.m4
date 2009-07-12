@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.12 2009/07/12 10:47:49 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.13 2009/07/12 13:11:34 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -320,9 +320,9 @@ else
    fi
 fi])
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_MAINTAINER version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_MAINTAINER version: 2 updated: 2009/07/12 09:10:33
 dnl ------------------
-AC_DEFUN([CF_MAWK_MAINTAINER], [brennan@whidbey.com])
+AC_DEFUN([CF_MAWK_MAINTAINER], [dickey@invisible-island.net])
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_MATHLIB version: 2 updated: 2009/07/05 13:56:25
 dnl ---------------
