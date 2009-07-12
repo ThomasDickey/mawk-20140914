@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.26 2009/07/12 14:34:59 tom Exp $
+-- $MawkId: CHANGES,v 1.27 2009/07/12 15:06:25 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 2009071?
+	drop support for varargs; use stdarg only.
+
+	add tags rule to makefile.
+
 	rename configure option "--with-local-regexp" to "--with-builtin-regex"
 
 	add build-fix from NetBSD port:  enable vax FP support when
