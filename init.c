@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.5 2009/07/12 13:07:14 tom Exp $
+ * $MawkId: init.c,v 1.6 2009/07/12 14:50:02 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -78,15 +78,15 @@ the GNU General Public License, version 2, 1991.
 #endif
 #endif
 
-static void PROTO(process_cmdline, (int, char **)) ;
-static void PROTO(set_ARGV, (int, char **, int)) ;
-static void PROTO(bad_option, (char *)) ;
-static void PROTO(no_program, (void)) ;
+static void process_cmdline (int, char **) ;
+static void set_ARGV (int, char **, int) ;
+static void bad_option (char *) ;
+static void no_program (void) ;
 
 #ifdef  MSDOS
-void PROTO(stdout_init, (void)) ;
+void stdout_init (void) ;
 #if  HAVE_REARGV
-void PROTO(reargv, (int *, char ***)) ;
+void reargv (int *, char ***) ;
 #endif
 #endif
 
@@ -100,8 +100,7 @@ short interactive_flag = 0 ;
 #endif
 
 void
-initialize(argc, argv)
-int argc ; char **argv ;
+initialize( int argc , char **argv )
 {
 
    SET_PROGNAME() ;
@@ -140,25 +139,22 @@ int dump_RE ;			 /* if on dump compiled REs  */
 
 
 static void
-bad_option(s)
-   char *s ;
+bad_option(char *s )
 {
    errmsg(0, "not an option: %s", s) ; mawk_exit(2) ; 
 }
 
 static void
-no_program()
+no_program(void)
 {
    mawk_exit(0) ;
 }
 
 static void
-process_cmdline(argc, argv)
-   int argc ;
-   char **argv ;
+process_cmdline( int argc , char **argv )
 {
    int i, nextarg ;
-   char *optarg ;
+   char *optArg ;
    PFILE dummy ;		 /* starts linked list of filenames */
    PFILE *tail = &dummy ;
 
@@ -183,12 +179,12 @@ process_cmdline(argc, argv)
 	    bad_option(argv[i]) ;
 	 }
 
-	 optarg = argv[i + 1] ;
+	 optArg = argv[i + 1] ;
 	 nextarg = i + 2 ;
       }
       else  /* argument glued to option */
       {
-	 optarg = &argv[i][2] ;
+	 optArg = &argv[i][2] ;
 	 nextarg = i + 1 ;
       }
 
@@ -196,38 +192,38 @@ process_cmdline(argc, argv)
       {
 	 case 'W':
 
-	    if (optarg[0] >= 'a' && optarg[0] <= 'z')
-	       optarg[0] += 'A' - 'a' ;
-	    if (optarg[0] == 'V')  print_version() ;
-	    else if (optarg[0] == 'D')
+	    if (optArg[0] >= 'a' && optArg[0] <= 'z')
+	       optArg[0] += 'A' - 'a' ;
+	    if (optArg[0] == 'V')  print_version() ;
+	    else if (optArg[0] == 'D')
 	    {
 	       dump_code_flag = 1 ;
 	    }
-	    else if (optarg[0] == 'S')
+	    else if (optArg[0] == 'S')
 	    {
-	       char *p = strchr(optarg, '=') ;
+	       char *p = strchr(optArg, '=') ;
 	       int x = p ? atoi(p + 1) : 0 ;
 
-	       if (x > SPRINTF_SZ)
+	       if (x > (int) SPRINTF_SZ)
 	       {
 		  sprintf_buff = (char *) zmalloc(x) ;
 		  sprintf_limit = sprintf_buff + x ;
 	       }
 	    }
 #ifdef  MSDOS
-	    else if (optarg[0] == 'B')
+	    else if (optArg[0] == 'B')
 	    {
-	       char *p = strchr(optarg, '=') ;
+	       char *p = strchr(optArg, '=') ;
 	       int x = p ? atoi(p + 1) : 0 ;
 
 	       set_binmode(x) ;
 	    }
 #endif
-	    else if (optarg[0] == 'P')
+	    else if (optArg[0] == 'P')
 	    {
 	       posix_space_flag = 1 ;
 	    }
-	    else if (optarg[0] == 'E')
+	    else if (optArg[0] == 'E')
 	    {
 	       if ( pfile_name )
 	       {
@@ -240,30 +236,30 @@ process_cmdline(argc, argv)
 	       i = nextarg + 1 ;
 	       goto no_more_opts ;
 	    }
-	    else if (optarg[0] == 'I')
+	    else if (optArg[0] == 'I')
 	    {
 	       interactive_flag = 1 ;
 	       setbuf(stdout,(char*)0) ;
 	    }
-	    else  errmsg(0, "vacuous option: -W %s", optarg) ;
+	    else  errmsg(0, "vacuous option: -W %s", optArg) ;
 
 
 	    break ;
 
 	 case 'v':
-	    if (!is_cmdline_assign(optarg))
+	    if (!is_cmdline_assign(optArg))
 	    {
-	       errmsg(0, "improper assignment: -v %s", optarg) ;
+	       errmsg(0, "improper assignment: -v %s", optArg) ;
 	       mawk_exit(2) ;
 	    }
 	    break ;
 
 	 case 'F':
 
-	    rm_escape(optarg) ;	 /* recognize escape sequences */
+	    rm_escape(optArg) ;	 /* recognize escape sequences */
 	    cell_destroy(FS) ;
 	    FS->type = C_STRING ;
-	    FS->ptr = (PTR) new_STRING(optarg) ;
+	    FS->ptr = (PTR) new_STRING(optArg) ;
 	    cast_for_split(cellcpy(&fs_shadow, FS)) ;
 	    break ;
 
@@ -275,11 +271,11 @@ process_cmdline(argc, argv)
 	 case 'f':
 	    /* first file goes in pfile_name ; any more go
 	       on a list */
-	    if (!pfile_name)  pfile_name = optarg ;
+	    if (!pfile_name)  pfile_name = optArg ;
 	    else
 	    {
 	       tail = tail->link = ZMALLOC(PFILE) ;
-	       tail->fname = optarg ;
+	       tail->fname = optArg ;
 	    }
 	    break ;
 
@@ -317,10 +313,9 @@ process_cmdline(argc, argv)
 }
 
 
+   /* argv[i] = ARGV[i] */
 static void
-set_ARGV(argc, argv, i)
-int argc ; char **argv ;
-   int i ;			 /* argv[i] = ARGV[i] */
+set_ARGV( int argc , char **argv , int i )
 {
    SYMTAB *st_p ;
    CELL argi ;
@@ -352,14 +347,14 @@ int argc ; char **argv ;
 
 /*----- ENVIRON ----------*/
 
-void
-load_environ(ENV)
-   ARRAY ENV ;
-{
-   CELL c ;
 #ifndef	 MSDOS_MSC		/* MSC declares it near */
    extern char **environ ;
 #endif
+
+void
+load_environ(ARRAY ENV )
+{
+   CELL c ;
    register char **p = environ ; /* walks environ */
    char *s ;			 /* looks for the '=' */
    CELL *cp ;			 /* pts at ENV[&c] */
