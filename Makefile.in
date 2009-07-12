@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.7 2009/07/12 13:36:15 tom Exp $
+# $MawkId: Makefile.in,v 1.8 2009/07/12 14:13:09 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -103,7 +103,7 @@ scancode.c :  makescan.c  scan.h
 	rm makescan.exe
 
 MAWKMAN = $(MANDIR)/mawk.$(manext)
-install :  $(PROG)
+install :  $(BINDIR) $(MANDIR) $(PROG)
 	$(INSTALL_PROGRAM) $(PROG) $(BINDIR)/$(PROG)
 	$(INSTALL_DATA)  man/mawk.1  $(MAWKMAN)
 
@@ -118,6 +118,10 @@ distclean :  clean
 	rm -f config.h Makefile \
 	    config.status config.log config.cache
 	rm -f defines.out maxint.out fpe_check
+
+$(BINDIR) \
+$(MANDIR) :
+	sh -c "mkdirs.sh $@"
 
 # output from  mawk -f deps.awk *.c
 array.o : config.h field.h bi_vars.h mawk.h symtype.h nstd.h memory.h array.h zmalloc.h types.h sizes.h
