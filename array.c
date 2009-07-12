@@ -44,19 +44,19 @@ typedef struct anode {
 #define MAX_AVE_LIST_LENGTH   12
 #define hmask_to_limit(x) (((x)+1)*MAX_AVE_LIST_LENGTH)
 
-static ANODE* PROTO(find_by_ival,(ARRAY, Int, int)) ;
-static ANODE* PROTO(find_by_sval,(ARRAY, STRING*, int)) ;
-static void PROTO(add_string_associations,(ARRAY)) ;
-static void PROTO(make_empty_table,(ARRAY, int)) ;
-static void PROTO(convert_split_array_to_table,(ARRAY)) ;
-static void PROTO(double_the_hash_table,(ARRAY)) ;
-static unsigned PROTO(ahash, (STRING*)) ;
+static ANODE* find_by_ival(ARRAY, Int, int);
+static ANODE* find_by_sval(ARRAY, STRING*, int);
+static void add_string_associations(ARRAY);
+static void make_empty_table(ARRAY, int);
+static void convert_split_array_to_table(ARRAY);
+static void double_the_hash_table(ARRAY);
+static unsigned ahash(STRING*);
 
 
-CELL* array_find(A, cp, create_flag)
-   ARRAY A ;
-   CELL *cp ;
-   int create_flag ;
+CELL* array_find(
+   ARRAY A,
+   CELL *cp,
+   int create_flag)
 {
    ANODE *ap ;
    if (A->size == 0 && !create_flag) 
@@ -99,9 +99,9 @@ CELL* array_find(A, cp, create_flag)
    return ap ? &ap->cell : (CELL *) 0 ;
 }
 
-void array_delete(A, cp)
-   ARRAY A ;
-   CELL *cp ;
+void array_delete(
+   ARRAY A,
+   CELL *cp)
 {
    ANODE *ap ;
    if (A->size == 0) return ; 
@@ -178,9 +178,9 @@ void array_delete(A, cp)
    }
 }
 
-void array_load(A, cnt)
-   ARRAY A ;
-   int cnt ;
+void array_load(
+   ARRAY A,
+   int cnt)
 {
    CELL *cells ; /* storage for A[1..cnt] */
    int i ;  /* index into cells[] */
@@ -257,9 +257,9 @@ void array_clear(ARRAY A)
 
 
 
-STRING** array_loop_vector(A, sizep)
-   ARRAY A ;
-   unsigned *sizep ;
+STRING** array_loop_vector(
+   ARRAY A,
+   unsigned *sizep)
 {
    STRING** ret ;
    *sizep = A->size ;
@@ -284,9 +284,9 @@ STRING** array_loop_vector(A, sizep)
    else return (STRING**) 0 ;
 }
 
-CELL *array_cat(sp, cnt)
-   CELL *sp ;
-   int cnt ;
+CELL *array_cat(
+   CELL *sp,
+   int cnt)
 {
    CELL *p ;  /* walks the eval stack */
    CELL subsep ;  /* local copy of SUBSEP */
@@ -330,10 +330,10 @@ CELL *array_cat(sp, cnt)
 
 }
 
-static ANODE* find_by_ival(A, ival, create_flag)
-   ARRAY A ;
-   Int ival ;
-   int create_flag ;
+static ANODE* find_by_ival(
+   ARRAY A ,
+   Int ival ,
+   int create_flag )
 {
    DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
    unsigned indx = ival & A->hmask ;
@@ -384,10 +384,10 @@ static ANODE* find_by_ival(A, ival, create_flag)
    return p ;
 }
 
-static ANODE* find_by_sval(A, sval, create_flag)
-   ARRAY A ;
-   STRING *sval ;
-   int create_flag ;
+static ANODE* find_by_sval(
+   ARRAY A ,
+   STRING *sval ,
+   int create_flag )
 {
    unsigned hval = ahash(sval) ;
    char *str = sval->str ;
@@ -436,8 +436,7 @@ static ANODE* find_by_sval(A, sval, create_flag)
    return p ;
 }
 
-static void add_string_associations(A)
-   ARRAY A ;
+static void add_string_associations(ARRAY A)
 {
    if (A->type == AY_NULL) make_empty_table(A, AY_STR) ;
    else {
@@ -462,9 +461,9 @@ static void add_string_associations(A)
    }
 }
 
-static void make_empty_table(A, type)
-   ARRAY A ;
-   int type ; /* AY_INT or AY_STR */
+static void make_empty_table(
+   ARRAY A ,
+   int type ) /* AY_INT or AY_STR */
 {
    size_t sz = (STARTING_HMASK+1)*sizeof(DUAL_LINK) ;
    A->type = type ;
@@ -473,8 +472,7 @@ static void make_empty_table(A, type)
    A->ptr = memset(zmalloc(sz), 0, sz) ;
 }
 
-static void convert_split_array_to_table(A)
-   ARRAY A ;
+static void convert_split_array_to_table(ARRAY A)
 {
    CELL *cells = (CELL*) A->ptr ;
    unsigned i ; /* walks cells */
@@ -508,8 +506,7 @@ static void convert_split_array_to_table(A)
    zfree(cells, entry_limit*sizeof(CELL)) ;
 }
 
-static void double_the_hash_table(A)
-   ARRAY A ;
+static void double_the_hash_table(ARRAY A)
 {
    unsigned old_hmask = A->hmask ;
    unsigned new_hmask = (old_hmask<<1)+1 ;
@@ -579,8 +576,7 @@ static void double_the_hash_table(A)
 }
 
 
-static unsigned ahash(sval)
-   STRING* sval ;
+static unsigned ahash(STRING* sval)
 {
    unsigned sum1 = sval->len ;
    unsigned sum2 = sum1 ;

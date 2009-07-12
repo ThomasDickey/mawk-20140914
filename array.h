@@ -40,12 +40,12 @@ typedef struct array {
 
 #define new_ARRAY()  ((ARRAY)memset(ZMALLOC(struct array),0,sizeof(struct array)))
 
-CELL* PROTO(array_find, (ARRAY,CELL*,int)) ;
-void  PROTO(array_delete, (ARRAY,CELL*)) ;
-void  PROTO(array_load, (ARRAY,int)) ;
-void  PROTO(array_clear, (ARRAY)) ;
-STRING** PROTO(array_loop_vector, (ARRAY,unsigned*)) ;
-CELL* PROTO(array_cat, (CELL*,int)) ;
+CELL* array_find(ARRAY, CELL*, int);
+void  array_delete(ARRAY, CELL*);
+void  array_load(ARRAY, int);
+void  array_clear(ARRAY);
+STRING** array_loop_vector(ARRAY, unsigned*);
+CELL* array_cat(CELL*, int);
 
 #endif /* ARRAY_H */
 

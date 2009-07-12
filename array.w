@@ -1,4 +1,4 @@
-% $MawkId: array.w,v 1.3 2009/07/12 17:25:28 tom Exp $
+% $MawkId: array.w,v 1.4 2009/07/12 17:39:32 tom Exp $
 % @Log: array.w,v @
 % Revision 1.4  1996/09/18 00:37:25  mike
 % 1) Fix stupid bozo in A[expr], expr is numeric and not integer.
@@ -173,12 +173,12 @@ $\circ$ denotes concatenation.
 
 
 <<interface prototypes>>=
-CELL* PROTO(array_find, (ARRAY,CELL*,int)) ;
-void  PROTO(array_delete, (ARRAY,CELL*)) ;
-void  PROTO(array_load, (ARRAY,int)) ;
-void  PROTO(array_clear, (ARRAY)) ;
-STRING** PROTO(array_loop_vector, (ARRAY,unsigned*)) ;
-CELL* PROTO(array_cat, (CELL*,int)) ;
+CELL* array_find(ARRAY, CELL*, int);
+void  array_delete(ARRAY, CELL*);
+void  array_load(ARRAY, int);
+void  array_clear(ARRAY);
+STRING** array_loop_vector(ARRAY, unsigned*);
+CELL* array_cat(CELL*, int);
 
 @ Array Find
 Any reference to $A[\expr]$ creates a call to 
@@ -202,10 +202,10 @@ go to case~2.
 using [[find_by_sval]].
 
 <<interface functions>>=
-CELL* array_find(A, cp, create_flag)
-   ARRAY A ;
-   CELL *cp ;
-   int create_flag ;
+CELL* array_find(
+   ARRAY A,
+   CELL *cp,
+   int create_flag)
 {
    ANODE *ap ;
    if (A->size == 0 && !create_flag) 
@@ -261,10 +261,10 @@ When we get to the function [[find_by_ival]], the search has been reduced
 to lookup in a hash table by integer value.
 
 <<local functions>>=
-static ANODE* find_by_ival(A, ival, create_flag)
-   ARRAY A ;
-   Int ival ;
-   int create_flag ;
+static ANODE* find_by_ival(
+   ARRAY A ,
+   Int ival ,
+   int create_flag )
 {
    DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
    unsigned indx = ival & A->hmask ;
@@ -333,10 +333,10 @@ then we have to convert the array to a dual hash table with strings
 which is done by the function [[add_string_associations]].
 
 <<local functions>>=
-static ANODE* find_by_sval(A, sval, create_flag)
-   ARRAY A ;
-   STRING *sval ;
-   int create_flag ;
+static ANODE* find_by_sval(
+   ARRAY A ,
+   STRING *sval ,
+   int create_flag )
 {
    unsigned hval = ahash(sval) ;
    char *str = sval->str ;
@@ -400,8 +400,7 @@ is not set. We convert to a dual hash table, then walk all the integer
 lists and put each [[ANODE]] on a string list.
 
 <<local functions>>=
-static void add_string_associations(A)
-   ARRAY A ;
+static void add_string_associations(ARRAY A)
 {
    if (A->type == AY_NULL) make_empty_table(A, AY_STR) ;
    else {
@@ -437,9 +436,9 @@ the list.  The case where $A[\expr]$ is on two lists, e.g.,
 [[ival]] fields of the returned [[ANODE*]].
 
 <<interface functions>>=
-void array_delete(A, cp)
-   ARRAY A ;
-   CELL *cp ;
+void array_delete(
+   ARRAY A,
+   CELL *cp)
 {
    ANODE *ap ;
    if (A->size == 0) return ; 
@@ -543,9 +542,9 @@ pieces in the global buffer [[split_buff]].  The call
 created.
 
 <<interface functions>>=
-void array_load(A, cnt)
-   ARRAY A ;
-   int cnt ;
+void array_load(
+   ARRAY A,
+   int cnt)
 {
    CELL *cells ; /* storage for A[1..cnt] */
    int i ;  /* index into cells[] */
@@ -675,9 +674,9 @@ the hash table grows in size by doubling the number of lists.
 #define hmask_to_limit(x) (((x)+1)*MAX_AVE_LIST_LENGTH)
 
 <<local functions>>=
-static void make_empty_table(A, type)
-   ARRAY A ;
-   int type ; /* AY_INT or AY_STR */
+static void make_empty_table(
+   ARRAY A ,
+   int type ) /* AY_INT or AY_STR */
 {
    size_t sz = (STARTING_HMASK+1)*sizeof(DUAL_LINK) ;
    A->type = type ;
@@ -691,8 +690,7 @@ The other way a hash table gets constructed is when a split array is
 converted to a hash table of type [[AY_INT]].
 
 <<local functions>>=
-static void convert_split_array_to_table(A)
-   ARRAY A ;
+static void convert_split_array_to_table(ARRAY A)
 {
    CELL *cells = (CELL*) A->ptr ;
    unsigned i ; /* walks cells */
@@ -748,8 +746,7 @@ then the elements that move, all move to the new chain at
 ${\it table}[i+2^n]$.
 
 <<local functions>>=
-static void double_the_hash_table(A)
-   ARRAY A ;
+static void double_the_hash_table(ARRAY A)
 {
    unsigned old_hmask = A->hmask ;
    unsigned new_hmask = (old_hmask<<1)+1 ;
@@ -874,9 +871,9 @@ of the string vector.  The rest of the implementation
 is in the file [[execute.c]].
 
 <<interface functions>>=
-STRING** array_loop_vector(A, sizep)
-   ARRAY A ;
-   unsigned *sizep ;
+STRING** array_loop_vector(
+   ARRAY A,
+   unsigned *sizep)
 {
    STRING** ret ;
    *sizep = A->size ;
@@ -917,8 +914,7 @@ Note that for strings with length greater than 10, we only hash on
 the first five characters, the last five character and the length.
 
 <<local functions>>=
-static unsigned ahash(sval)
-   STRING* sval ;
+static unsigned ahash(STRING* sval)
 {
    unsigned sum1 = sval->len ;
    unsigned sum2 = sum1 ;
@@ -964,9 +960,9 @@ historical reasons.)
 
 
 <<interface functions>>=
-CELL *array_cat(sp, cnt)
-   CELL *sp ;
-   int cnt ;
+CELL *array_cat(
+   CELL *sp,
+   int cnt)
 {
    CELL *p ;  /* walks the eval stack */
    CELL subsep ;  /* local copy of SUBSEP */
@@ -1046,13 +1042,13 @@ put a copyright and links to the source file, [[array.w]], in each
 output file.
 
 <<local constants, defs and prototypes>>=
-static ANODE* PROTO(find_by_ival,(ARRAY, Int, int)) ;
-static ANODE* PROTO(find_by_sval,(ARRAY, STRING*, int)) ;
-static void PROTO(add_string_associations,(ARRAY)) ;
-static void PROTO(make_empty_table,(ARRAY, int)) ;
-static void PROTO(convert_split_array_to_table,(ARRAY)) ;
-static void PROTO(double_the_hash_table,(ARRAY)) ;
-static unsigned PROTO(ahash, (STRING*)) ;
+static ANODE* find_by_ival(ARRAY, Int, int);
+static ANODE* find_by_sval(ARRAY, STRING*, int);
+static void add_string_associations(ARRAY);
+static void make_empty_table(ARRAY, int);
+static void convert_split_array_to_table(ARRAY);
+static void double_the_hash_table(ARRAY);
+static unsigned ahash(STRING*);
 
 
 <<array.c notice>>=
