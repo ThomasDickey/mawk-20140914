@@ -1,4 +1,5 @@
 #!/bin/sh
+# $MawkId: fpe_test,v 1.2 2009/07/12 22:33:47 tom Exp $
 
 # tests if mawk has been compiled to correctly handle
 # floating point exceptions
@@ -11,12 +12,14 @@
 # recognize NAN printed as ? for hpux
 #
 
+echo "testing floating point exception handling"
+
 PATH=.:$PATH
 
 test1='BEGIN{ print 4/0 }'
 
 
-test2='BEGIN { 
+test2='BEGIN {
   x = 100
   do { y = x ; x *= 1000 } while ( y != x )
   print "loop terminated"
@@ -76,7 +79,7 @@ same=0
 if [ $same = 1 ]
    then
    if [ $ret1 = 0 ]
-      then 
+      then
 	echo results consistent: ignoring floating exceptions
 	# some versions of hpux print NAN as ?
 	if  egrep '[nN][aA][nN]|\?' temp$$  > /dev/null
