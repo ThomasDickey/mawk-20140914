@@ -50,7 +50,7 @@ PTR  PROTO(get_pipe, (char *, int, int *) ) ;
 int  PROTO(wait_for, (int) ) ;
 void  PROTO( close_out_pipes, (void) ) ;
 
-#if  HAVE_FAKE_PIPES
+#ifdef  HAVE_FAKE_PIPES
 void PROTO(close_fake_pipes, (void)) ;
 int  PROTO(close_fake_outpipe, (char *,int)) ;
 char *PROTO(tmp_file_name, (int, char*)) ;

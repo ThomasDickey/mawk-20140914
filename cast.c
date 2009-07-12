@@ -89,7 +89,7 @@ cast1_to_d(cp)
 	 {
 	    register STRING *s = (STRING *) cp->ptr ;
 
-#if FPE_TRAPS_ON		/* look for overflow error */
+#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	    errno = 0 ;
 	    cp->dval = strtod(s->str, (char **) 0) ;
 	    if (errno && cp->dval != 0.0)	/* ignore underflow */
@@ -135,7 +135,7 @@ cast2_to_d(cp)
       case C_STRING:
 	 s = (STRING *) cp->ptr ;
 
-#if FPE_TRAPS_ON		/* look for overflow error */
+#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	 errno = 0 ;
 	 cp->dval = strtod(s->str, (char **) 0) ;
 	 if (errno && cp->dval != 0.0)	/* ignore underflow */
@@ -169,7 +169,7 @@ cast2_to_d(cp)
       case C_STRING:
 	 s = (STRING *) cp->ptr ;
 
-#if FPE_TRAPS_ON		/* look for overflow error */
+#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	 errno = 0 ;
 	 cp->dval = strtod(s->str, (char **) 0) ;
 	 if (errno && cp->dval != 0.0)	/* ignore underflow */
@@ -370,7 +370,7 @@ check_strnum(cp)
       case SC_MINUS:
       case SC_DOT:
 
-#if FPE_TRAPS_ON
+#ifdef FPE_TRAPS_ON
 	 errno = 0 ;
 	 cp->dval = strtod((char *) s, &test) ;
 	 /* make overflow pure string */

@@ -638,7 +638,7 @@ bi_fflush(sp)
 
 
 
-#if   HAVE_REAL_PIPES
+#ifdef   HAVE_REAL_PIPES
 
 CELL *
 bi_system(sp)
@@ -758,7 +758,7 @@ bi_getline(sp)
 	 if (!(p = FINgets(fin_p, &len)))
 	 {
 	    FINsemi_close(fin_p) ;
-#if  HAVE_REAL_PIPES
+#ifdef  HAVE_REAL_PIPES
 	    /* reclaim process slot */
 	    wait_for(0) ;
 #endif

@@ -90,7 +90,7 @@ typedef struct file
    int pid ;			 /* we need to wait() when we close a pipe */
    /* holds temp file index under MSDOS */
 
-#if  HAVE_FAKE_PIPES
+#ifdef  HAVE_FAKE_PIPES
    int inpipe_exit ;
 #endif
 
@@ -160,7 +160,7 @@ file_find(sval, type)
 	    case PIPE_OUT:
 	    case PIPE_IN:
 
-#if    HAVE_REAL_PIPES || HAVE_FAKE_PIPES
+#if    defined(HAVE_REAL_PIPES) || defined(HAVE_FAKE_PIPES)
 
 	       if (!(p->ptr = get_pipe(name, type, &p->pid)))
 	       {
@@ -261,10 +261,10 @@ file_close(sval)
 	       if( fclose((FILE *) p->ptr) != 0 )
 	       	  close_error(p) ;
 
-#if  HAVE_REAL_PIPES
+#ifdef  HAVE_REAL_PIPES
 	       retval = wait_for(p->pid) ;
 #endif
-#if  HAVE_FAKE_PIPES
+#ifdef  HAVE_FAKE_PIPES
 	       retval = close_fake_outpipe(p->name->str, p->pid) ;
 #endif
 	       break ;
@@ -277,10 +277,10 @@ file_close(sval)
 	    case PIPE_IN:
 	       FINclose((FIN *) p->ptr) ;
 
-#if  HAVE_REAL_PIPES
+#ifdef  HAVE_REAL_PIPES
 	       retval = wait_for(p->pid) ;
 #endif
-#if  HAVE_FAKE_PIPES
+#ifdef  HAVE_FAKE_PIPES
 	       {
 		  char xbuff[100] ;
 		  unlink(tmp_file_name(p->pid, xbuff)) ;
@@ -363,7 +363,7 @@ efflush(fp)
 
 /* When we exit, we need to close and wait for all output pipes */
 
-#if   HAVE_REAL_PIPES
+#ifdef   HAVE_REAL_PIPES
 
 /* work around for bug in AIX 4.1 -- If there are exactly 16 or 
    32 or 48 ..., open files then the last one doesn't get flushed on
@@ -396,7 +396,7 @@ close_out_pipes()
 }
 
 #else
-#if  HAVE_FAKE_PIPES		/* pipes are faked with temp files */
+#ifdef  HAVE_FAKE_PIPES		/* pipes are faked with temp files */
 
 void
 close_fake_pipes()
@@ -433,7 +433,7 @@ close_fake_pipes()
 /* hardwire to /bin/sh for portability of programs */
 char *shell = "/bin/sh" ;
 
-#if  HAVE_REAL_PIPES
+#ifdef  HAVE_REAL_PIPES
 
 PTR
 get_pipe(name, type, pid_ptr)

@@ -105,7 +105,7 @@ double  PROTO(fmod,(double,double)) ;
 
 /* if have to diddle with errno to get errors from the math library */
 #ifndef STDC_MATHERR
-#define STDC_MATHERR   (FPE_TRAPS_ON && NO_MATHERR)
+#define STDC_MATHERR   (defined(FPE_TRAPS_ON) && NO_MATHERR)
 #endif
 
 #endif  /* NSTD_H */

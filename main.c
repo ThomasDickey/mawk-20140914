@@ -87,10 +87,10 @@ void
 mawk_exit(x)
    int x ;
 {
-#if  HAVE_REAL_PIPES
+#ifdef  HAVE_REAL_PIPES
    close_out_pipes() ;		 /* no effect, if no out pipes */
 #else
-#if  HAVE_FAKE_PIPES
+#ifdef  HAVE_FAKE_PIPES
    close_fake_pipes() ;
 #endif
 #endif
