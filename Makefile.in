@@ -47,6 +47,16 @@ OBJS = parse$o scan$o memory$o main$o hash$o execute$o code$o \
 REXP_O = rexp/regexp$o
 REXP_C = rexp/regexp.c
 
+ 
+.SUFFIXES: .c .i $o
+ 
+.c.i :
+@RULE_CC@
+	@ECHO_CC@$(CPP) -C $(CPPFLAGS) $< >$@
+.c$o :
+@RULE_CC@
+	@ECHO_CC@$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+
 all :	$(PROG)
 
 check :  mawk_test fpe_test
