@@ -204,7 +204,7 @@ matherr(e)
 thing on bsd43_vax
 */
 
-#ifdef	 BSD43_VAX
+#if defined(BSD43_VAX) || defined(__vax__)
 
 #include <errno.h>
 
