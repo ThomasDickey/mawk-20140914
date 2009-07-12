@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.6 2009/07/12 15:33:48 tom Exp $
+ * $MawkId: error.c,v 1.7 2009/07/12 15:39:08 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -44,15 +44,14 @@ the GNU General Public License, version 2, 1991.
 #include  "mawk.h"
 #include  "scan.h"
 #include  "bi_vars.h"
-#include  "vargs.h"
+
+#include <stdarg.h>
 
 #ifndef  EOF
 #define  EOF  (-1)
 #endif
 
-static void PROTO(rt_where, (void));
-static void PROTO(missing, (int, char *, int));
-static char *PROTO(type_to_str, (int));
+static void rt_where(void);
 
 #ifdef  NO_VFPRINTF
 #define  vfprintf  simple_vfprintf
@@ -218,7 +217,7 @@ errmsg(int errnum, char *format,...)
 
     fprintf(stderr, "%s: ", progname);
 
-    VA_START2(args, int, errnum, char *, format);
+    va_start(args, format);
     vfprintf(stderr, format, args);
     va_end(args);
 
@@ -244,7 +243,7 @@ compile_error(char *format,...)
     }
 
     fprintf(stderr, "%s: %s%sline %u: ", progname, s0, s1, token_lineno);
-    VA_START(args, char *, format);
+    va_start(args, format);
     vfprintf(stderr, format, args);
     va_end(args);
     fprintf(stderr, "\n");
@@ -258,7 +257,7 @@ rt_error(char *format,...)
     va_list args;
 
     fprintf(stderr, "%s: run time error: ", progname);
-    VA_START(args, char *, format);
+    va_start(args, format);
     vfprintf(stderr, format, args);
     va_end(args);
     putc('\n', stderr);
