@@ -1,4 +1,3 @@
-
 /********************************************
 vargs.h
 copyright 1992 Michael D. Brennan
@@ -11,7 +10,8 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
-@Log: vargs.h,v @
+ * $MawkId: vargs.h,v 1.2 2009/07/12 15:06:48 tom Exp $
+ * @Log: vargs.h,v @
  * Revision 1.4  1994/12/14  14:36:54  mike
  * sometimes stdarg.h exists, but depending on compiler flags it is
  * unusable -- assume NO_PROTOS => NO_STDARG_H
@@ -34,31 +34,6 @@ the GNU General Public License, version 2, 1991.
    only used for error messages
 */
 
-#ifdef     NO_PROTOS
-#ifndef    NO_STDARG_H   
-#define    NO_STDARG_H  1
-#endif
-#endif
-
-#if     NO_STDARG_H
-#include <varargs.h>
-
-#ifndef  VA_ALIST
-
-#define  VA_ALIST(type, arg)  (va_alist) va_dcl { type arg ;
-#define  VA_ALIST2(t1,a1,t2,a2) (va_alist) va_dcl { t1 a1 ; t2 a2 ;
-
-#endif
-
-#define  VA_START(p,type, last)  va_start(p) ;\
-                                 last = va_arg(p,type)
-
-
-#define  VA_START2(p,t1,a1,t2,a2)  va_start(p) ;\
-                                  a1 = va_arg(p,t1);\
-                                  a2 = va_arg(p,t2)
-
-#else  /* have stdarg.h */
 #include <stdarg.h>
 
 #ifndef  VA_ALIST
@@ -69,6 +44,3 @@ the GNU General Public License, version 2, 1991.
 #define  VA_START(p,type,last)   va_start(p,last)
 
 #define  VA_START2(p,t1,a1,t2,a2)  va_start(p,a2)
-
-#endif
-
