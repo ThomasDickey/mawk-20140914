@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.4 2009/07/12 13:50:16 tom Exp $
+ * $MawkId: matherr.c,v 1.5 2009/07/12 13:53:30 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -208,8 +208,8 @@ thing on bsd43_vax
 
 #include <errno.h>
 
-double	infnan(arg)
-   int arg ;
+double
+infnan(int arg)
 {
    switch (arg)
    {
@@ -237,7 +237,7 @@ double	infnan(arg)
 #define INFNAN		64
 
 void
-fpcheck()
+fpcheck(void)
 {
    register int fperrval ;
    char *errdesc ;
@@ -250,7 +250,7 @@ fpcheck()
    if (fperrval & INFNAN)  errdesc = "arg is infinity or NAN" ;
    else if (fperrval & ZERODIV)	 errdesc = "division by zero" ;
    else if (fperrval & OVFLOW)	errdesc = "overflow" ;
-   else if (fperrval & UFLOW) ; /* ignored */
+   else if (fperrval & UFLOW) { ; /* ignored */ }
 
    if (errdesc)	 rt_error("%s", errdesc) ;
 }
