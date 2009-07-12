@@ -32,10 +32,8 @@ dnl
 dnl
 AC_INIT(mawk.h)
 
-CF_MAWK_GET_CONFIG_USER
 CF_MAWK_PROG_GCC
 AC_PROG_CPP
-CF_MAWK_SET_IF_UNSET(CFLAGS,-O)
 CF_MAWK_MATHLIB
  
 AC_ARG_WITH(local-regexp,
@@ -51,7 +49,6 @@ CF_MAWK_CC_FEATURES
 CF_MAWK_FIND_SIZE_T
 CF_MAWK_CHECK_HEADERS(fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h)
 CF_MAWK_CHECK_FUNCS(memcpy strchr strerror vfprintf strtod fmod matherr)
-CF_MAWK_CHECK_FPRINTF
 CF_MAWK_FIND_MAX_INT
 CF_MAWK_RUN_FPE_TESTS
 CF_MAWK_OUTPUT_CONFIG_H
