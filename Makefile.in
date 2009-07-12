@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.8 2009/07/12 14:13:09 tom Exp $
+# $MawkId: Makefile.in,v 1.9 2009/07/12 15:37:02 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -23,7 +23,7 @@ CFLAGS          = @CFLAGS@ $(EXTRA_CFLAGS)
 LDFLAGS         = @LDFLAGS@
 MATHLIB         = @MATHLIB@
 
-YACC            = @YACC@ 
+YACC            = @YACC@
 
 INSTALL         = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -48,9 +48,9 @@ OBJS = parse$o scan$o memory$o main$o hash$o execute$o code$o \
 REXP_O = rexp/regexp$o
 REXP_C = rexp/regexp.c
 
- 
+
 .SUFFIXES: .c .i $o
- 
+
 .c.i :
 @RULE_CC@
 	@ECHO_CC@$(CPP) -C $(CPPFLAGS) $< >$@
@@ -65,11 +65,11 @@ check :  mawk_test fpe_test
 REXP_DONE = rexp/.done
 
 $(PROG) : $(OBJS)  $(REXP_DONE)
-	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(REXP_O) $(MATHLIB) 
+	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(REXP_O) $(MATHLIB)
 
 mawk_test :  $(PROG)  # test that we have a sane mawk
 	@cp $(PROG) test/$(PROG)
-	cd test ; ./mawktest 
+	cd test ; ./mawktest
 	@rm test/$(PROG)
 
 fpe_test :  $(PROG) # test FPEs are handled OK
@@ -80,9 +80,9 @@ fpe_test :  $(PROG) # test FPEs are handled OK
 
 $(REXP_DONE) : $(REXP_C)
 	cd rexp ;\
-	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS) -DMAWK -I.." 
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS) -DMAWK -I.."
 
-parse.c  : parse.y  
+parse.c  : parse.y
 	@echo  expect 4 shift/reduce conflicts
 	$(YACC) -d parse.y
 	mv y.tab.c parse.c
@@ -112,12 +112,18 @@ uninstall :
 	rm -f $(MAWKMAN)
 
 clean :
-	rm -f *$o rexp/*$o $(REXP_DONE) test/$(PROG) core test/core $(PROG) 
+	rm -f *$o rexp/*$o $(REXP_DONE) test/$(PROG) *core* test/*core* tags $(PROG)
 
 distclean :  clean
 	rm -f config.h Makefile \
 	    config.status config.log config.cache
 	rm -f defines.out maxint.out fpe_check
+
+tags :
+	ctags *.[ch] */*.[ch]
+
+TAGS :
+	etags *.[ch] */*.[ch]
 
 $(BINDIR) \
 $(MANDIR) :
@@ -130,7 +136,7 @@ bi_vars.o : config.h field.h bi_vars.h mawk.h init.h symtype.h nstd.h memory.h a
 cast.o : config.h field.h mawk.h parse.h symtype.h nstd.h memory.h repl.h scan.h array.h zmalloc.h types.h sizes.h
 code.o : config.h field.h code.h mawk.h init.h symtype.h nstd.h memory.h array.h jmp.h zmalloc.h types.h sizes.h
 da.o : config.h field.h code.h mawk.h symtype.h nstd.h memory.h repl.h bi_funct.h array.h zmalloc.h types.h sizes.h
-error.o : config.h bi_vars.h mawk.h parse.h vargs.h symtype.h nstd.h scan.h array.h types.h sizes.h
+error.o : config.h bi_vars.h mawk.h parse.h symtype.h nstd.h scan.h array.h types.h sizes.h
 execute.o : config.h field.h bi_vars.h code.h mawk.h regexp.h symtype.h nstd.h memory.h repl.h bi_funct.h array.h zmalloc.h types.h fin.h sizes.h
 fcall.o : config.h code.h mawk.h symtype.h nstd.h memory.h array.h zmalloc.h types.h sizes.h
 field.o : config.h field.h bi_vars.h mawk.h init.h parse.h regexp.h symtype.h nstd.h memory.h repl.h scan.h array.h zmalloc.h types.h sizes.h
