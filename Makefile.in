@@ -1,3 +1,4 @@
+# $MawkId: Makefile.in,v 1.7 2009/07/12 13:36:15 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -64,7 +65,7 @@ check :  mawk_test fpe_test
 REXP_DONE = rexp/.done
 
 $(PROG) : $(OBJS)  $(REXP_DONE)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(REXP_O) $(MATHLIB) 
+	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(REXP_O) $(MATHLIB) 
 
 mawk_test :  $(PROG)  # test that we have a sane mawk
 	@cp $(PROG) test/$(PROG)
@@ -96,7 +97,7 @@ array.h : array.w
 	notangle -R'"array.h"' array.w | cpif array.h
 
 scancode.c :  makescan.c  scan.h
-	$(CC) -o makescan.exe  makescan.c
+	@ECHO_LD@$(CC) -o makescan.exe  makescan.c
 	rm -f scancode.c
 	./makescan.exe > scancode.c
 	rm makescan.exe
