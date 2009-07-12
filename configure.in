@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.13 2009/07/12 14:34:44 tom Exp $
+dnl $MawkId: configure.in,v 1.14 2009/07/12 20:48:08 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -44,13 +44,18 @@ CF_MAWK_MATHLIB
 CF_DISABLE_ECHO
 CF_GCC_WARNINGS
 
+AC_MSG_CHECKING(if you want to use mawk's own regular-expressions engine)
 AC_ARG_WITH([builtin-regex],
 [  --with-builtin-regex    use mawk's own regular-expressions engine],
 [
-if test "x${withval}" = xyes; then
+	with_builtin_regex=$withval
+])
+if test "x${with_builtin_regex}" != xyes; then
+	with_builtin_regex=no
+else
     CFLAGS="$CFLAGS -DLOCAL_REGEXP"
 fi
-])
+AC_MSG_RESULT($with_builtin_regex)
 
 CF_MAWK_PROG_YACC
 CF_MAWK_CC_FEATURES
