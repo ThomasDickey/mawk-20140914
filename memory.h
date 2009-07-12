@@ -1,4 +1,3 @@
-
 /********************************************
 memory.h
 copyright 1991, Michael D. Brennan
@@ -21,8 +20,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1  1991/12/05  07:59:28  brennan
  * 1.1 pre-release
  *
-*/
-
+ */
 
 /*  memory.h  */
 
@@ -31,20 +29,21 @@ the GNU General Public License, version 2, 1991.
 
 #include "zmalloc.h"
 
-
-STRING *PROTO(new_STRING, (char*)) ;
-STRING *PROTO(new_STRING0, (unsigned)) ;
+STRING *new_STRING(char*);
+STRING *new_STRING0(unsigned);
 
 #ifdef   DEBUG
-void  PROTO( DB_free_STRING , (STRING *) ) ;
+void  DB_free_STRING(STRING *);
 
 #define  free_STRING(s)  DB_free_STRING(s)
 
 #else
 
-#define  free_STRING(sval)   if ( -- (sval)->ref_cnt == 0 )\
-                                zfree(sval, (sval)->len+STRING_OH) ; else
+#define  free_STRING(sval) \
+	    do { \
+		if ( -- (sval)->ref_cnt == 0 ) \
+		    zfree(sval, (sval)->len+STRING_OH) ; \
+	    } while (0)
 #endif
-
 
 #endif   /* MEMORY_H */
