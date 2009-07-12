@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.10 2009/07/12 17:13:18 tom Exp $
+# $MawkId: Makefile.in,v 1.11 2009/07/12 22:37:23 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -10,6 +10,8 @@ o               = .@OBJEXT@
 
 prefix          = @prefix@
 exec_prefix     = @exec_prefix@
+
+srcdir		= @srcdir@
 
 manext		= 1
 bindir		= @bindir@
@@ -67,16 +69,13 @@ REXP_DONE = rexp/.done
 $(PROG) : $(OBJS)  $(REXP_DONE)
 	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(REXP_O) $(MATHLIB)
 
+TESTPATH= PATH=`pwd`:$(srcdir)/test:$$PATH; export PATH
+
 mawk_test :  $(PROG)  # test that we have a sane mawk
-	@cp $(PROG) test/$(PROG)
-	cd test ; ./mawktest
-	@rm test/$(PROG)
+	sh -c "$(TESTPATH); cd $(srcdir)/test ; mawktest"
 
 fpe_test :  $(PROG) # test FPEs are handled OK
-	@cp $(PROG) test/$(PROG)
-	@echo ; echo testing floating point exception handling
-	cd test ; ./fpe_test
-	@rm test/$(PROG)
+	sh -c "$(TESTPATH); cd $(srcdir)/test ; fpe_test"
 
 $(REXP_DONE) : $(REXP_C)
 	cd rexp ;\
