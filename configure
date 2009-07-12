@@ -637,7 +637,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
 
   --disable-echo          display "compiling" commands
-  --with-local-regexp             use the mawk's regexp engine
+  --with-builtin-regex    use mawk's own regular-expressions engine
 
 Some influential environment variables:
   CC          C compiler command
@@ -2390,9 +2390,9 @@ echo "${as_me-configure}:2380: testing feature is broken in gcc $GCC_VERSION ...
 fi
 rm -f conftest*
 
-# Check whether --with-local-regexp or --without-local-regexp was given.
-if test "${with_local_regexp+set}" = set; then
-  withval="$with_local_regexp"
+# Check whether --with-builtin-regex or --without-builtin-regex was given.
+if test "${with_builtin_regex+set}" = set; then
+  withval="$with_builtin_regex"
 
 if test "x${withval}" = xyes; then
     CFLAGS="$CFLAGS -DLOCAL_REGEXP"
