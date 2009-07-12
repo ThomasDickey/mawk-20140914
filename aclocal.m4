@@ -5,6 +5,166 @@ dnl renamed for consistency by Thomas E Dickey.
 dnl 
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
+dnl CF_GCC_VERSION version: 4 updated: 2005/08/27 09:53:42
+dnl --------------
+dnl Find version of gcc
+AC_DEFUN([CF_GCC_VERSION],[
+AC_REQUIRE([AC_PROG_CC])
+GCC_VERSION=none
+if test "$GCC" = yes ; then
+	AC_MSG_CHECKING(version of $CC)
+	GCC_VERSION="`${CC} --version| sed -e '2,$d' -e 's/^.*(GCC) //' -e 's/^[[^0-9.]]*//' -e 's/[[^0-9.]].*//'`"
+	test -z "$GCC_VERSION" && GCC_VERSION=unknown
+	AC_MSG_RESULT($GCC_VERSION)
+fi
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_GCC_WARNINGS version: 24 updated: 2009/02/01 15:21:00
+dnl ---------------
+dnl Check if the compiler supports useful warning options.  There's a few that
+dnl we don't use, simply because they're too noisy:
+dnl
+dnl	-Wconversion (useful in older versions of gcc, but not in gcc 2.7.x)
+dnl	-Wredundant-decls (system headers make this too noisy)
+dnl	-Wtraditional (combines too many unrelated messages, only a few useful)
+dnl	-Wwrite-strings (too noisy, but should review occasionally).  This
+dnl		is enabled for ncurses using "--enable-const".
+dnl	-pedantic
+dnl
+dnl Parameter:
+dnl	$1 is an optional list of gcc warning flags that a particular
+dnl		application might want to use, e.g., "no-unused" for
+dnl		-Wno-unused
+dnl Special:
+dnl	If $with_ext_const is "yes", add a check for -Wwrite-strings
+dnl
+AC_DEFUN([CF_GCC_WARNINGS],
+[
+AC_REQUIRE([CF_GCC_VERSION])
+CF_INTEL_COMPILER(GCC,INTEL_COMPILER,CFLAGS)
+
+cat > conftest.$ac_ext <<EOF
+#line __oline__ "${as_me-configure}"
+int main(int argc, char *argv[[]]) { return (argv[[argc-1]] == 0) ; }
+EOF
+
+if test "$INTEL_COMPILER" = yes
+then
+# The "-wdXXX" options suppress warnings:
+# remark #1419: external declaration in primary source file
+# remark #1683: explicit conversion of a 64-bit integral type to a smaller integral type (potential portability problem)
+# remark #1684: conversion from pointer to same-sized integral type (potential portability problem)
+# remark #193: zero used for undefined preprocessing identifier
+# remark #593: variable "curs_sb_left_arrow" was set but never used
+# remark #810: conversion from "int" to "Dimension={unsigned short}" may lose significant bits
+# remark #869: parameter "tw" was never referenced
+# remark #981: operands are evaluated in unspecified order
+# warning #279: controlling expression is constant
+
+	AC_CHECKING([for $CC warning options])
+	cf_save_CFLAGS="$CFLAGS"
+	EXTRA_CFLAGS="-Wall"
+	for cf_opt in \
+		wd1419 \
+		wd1683 \
+		wd1684 \
+		wd193 \
+		wd593 \
+		wd279 \
+		wd810 \
+		wd869 \
+		wd981
+	do
+		CFLAGS="$cf_save_CFLAGS $EXTRA_CFLAGS -$cf_opt"
+		if AC_TRY_EVAL(ac_compile); then
+			test -n "$verbose" && AC_MSG_RESULT(... -$cf_opt)
+			EXTRA_CFLAGS="$EXTRA_CFLAGS -$cf_opt"
+		fi
+	done
+	CFLAGS="$cf_save_CFLAGS"
+
+elif test "$GCC" = yes
+then
+	AC_CHECKING([for $CC warning options])
+	cf_save_CFLAGS="$CFLAGS"
+	EXTRA_CFLAGS="-W -Wall"
+	cf_warn_CONST=""
+	test "$with_ext_const" = yes && cf_warn_CONST="Wwrite-strings"
+	for cf_opt in \
+		Wbad-function-cast \
+		Wcast-align \
+		Wcast-qual \
+		Winline \
+		Wmissing-declarations \
+		Wmissing-prototypes \
+		Wnested-externs \
+		Wpointer-arith \
+		Wshadow \
+		Wstrict-prototypes \
+		Wundef $cf_warn_CONST $1
+	do
+		CFLAGS="$cf_save_CFLAGS $EXTRA_CFLAGS -$cf_opt"
+		if AC_TRY_EVAL(ac_compile); then
+			test -n "$verbose" && AC_MSG_RESULT(... -$cf_opt)
+			case $cf_opt in #(vi
+			Wcast-qual) #(vi
+				CPPFLAGS="$CPPFLAGS -DXTSTRINGDEFINES"
+				;;
+			Winline) #(vi
+				case $GCC_VERSION in
+				[[34]].*)
+					CF_VERBOSE(feature is broken in gcc $GCC_VERSION)
+					continue;;
+				esac
+				;;
+			esac
+			EXTRA_CFLAGS="$EXTRA_CFLAGS -$cf_opt"
+		fi
+	done
+	CFLAGS="$cf_save_CFLAGS"
+fi
+rm -f conftest*
+
+AC_SUBST(EXTRA_CFLAGS)
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_INTEL_COMPILER version: 3 updated: 2005/08/06 18:37:29
+dnl -----------------
+dnl Check if the given compiler is really the Intel compiler for Linux.  It
+dnl tries to imitate gcc, but does not return an error when it finds a mismatch
+dnl between prototypes, e.g., as exercised by CF_MISSING_CHECK.
+dnl
+dnl This macro should be run "soon" after AC_PROG_CC or AC_PROG_CPLUSPLUS, to
+dnl ensure that it is not mistaken for gcc/g++.  It is normally invoked from
+dnl the wrappers for gcc and g++ warnings.
+dnl
+dnl $1 = GCC (default) or GXX
+dnl $2 = INTEL_COMPILER (default) or INTEL_CPLUSPLUS
+dnl $3 = CFLAGS (default) or CXXFLAGS
+AC_DEFUN([CF_INTEL_COMPILER],[
+ifelse($2,,INTEL_COMPILER,[$2])=no
+
+if test "$ifelse($1,,[$1],GCC)" = yes ; then
+	case $host_os in
+	linux*|gnu*)
+		AC_MSG_CHECKING(if this is really Intel ifelse($1,GXX,C++,C) compiler)
+		cf_save_CFLAGS="$ifelse($3,,CFLAGS,[$3])"
+		ifelse($3,,CFLAGS,[$3])="$ifelse($3,,CFLAGS,[$3]) -no-gcc"
+		AC_TRY_COMPILE([],[
+#ifdef __INTEL_COMPILER
+#else
+make an error
+#endif
+],[ifelse($2,,INTEL_COMPILER,[$2])=yes
+cf_save_CFLAGS="$cf_save_CFLAGS -we147 -no-gcc"
+],[])
+		ifelse($3,,CFLAGS,[$3])="$cf_save_CFLAGS"
+		AC_MSG_RESULT($ifelse($2,,INTEL_COMPILER,[$2]))
+		;;
+	esac
+fi
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CC_FEATURES version: 1 updated: 2008/09/09 19:18:22
 dnl -------------------
 dnl Check compiler.
@@ -344,6 +504,14 @@ esac
 rm -f fpe_check  # whew!!]
 fi])
 dnl ---------------------------------------------------------------------------
+dnl CF_MSG_LOG version: 4 updated: 2007/07/29 09:55:12
+dnl ----------
+dnl Write a debug message to config.log, along with the line number in the
+dnl configure script.
+AC_DEFUN([CF_MSG_LOG],[
+echo "${as_me-configure}:__oline__: testing $* ..." 1>&AC_FD_CC
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_UPPER version: 5 updated: 2001/01/29 23:40:59
 dnl --------
 dnl Make an uppercase version of a variable
@@ -351,4 +519,12 @@ dnl $1=uppercase($2)
 AC_DEFUN([CF_UPPER],
 [
 $1=`echo "$2" | sed y%abcdefghijklmnopqrstuvwxyz./-%ABCDEFGHIJKLMNOPQRSTUVWXYZ___%`
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_VERBOSE version: 3 updated: 2007/07/29 09:55:12
+dnl ----------
+dnl Use AC_VERBOSE w/o the warnings
+AC_DEFUN([CF_VERBOSE],
+[test -n "$verbose" && echo "	$1" 1>&AC_FD_MSG
+CF_MSG_LOG([$1])
 ])dnl

@@ -13,7 +13,9 @@ mandir		= @mandir@/man$(manext)
 
 CC              = @CC@
 
-CFLAGS          = @CFLAGS@
+CPPFLAGS	= @CPPFLAGS@
+EXTRA_CFLAGS	= @EXTRA_CFLAGS@
+CFLAGS          = @CFLAGS@ $(EXTRA_CFLAGS)
 LDFLAGS         = @LDFLAGS@
 MATHLIB         = @MATHLIB@
 

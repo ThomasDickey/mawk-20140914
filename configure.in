@@ -36,7 +36,9 @@ CF_MAWK_PROG_GCC
 AC_PROG_CPP
 CF_MAWK_MATHLIB
  
-AC_ARG_WITH(local-regexp,
+CF_GCC_WARNINGS
+
+AC_ARG_WITH([local-regexp],
 [  --with-local-regexp             use the mawk's regexp engine],
 [
 if test "x${withval}" = xyes; then
