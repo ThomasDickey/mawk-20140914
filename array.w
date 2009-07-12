@@ -1,4 +1,4 @@
-
+% $MawkId: array.w,v 1.2 2009/07/12 17:05:00 tom Exp $
 % @Log: array.w,v @
 % Revision 1.4  1996/09/18 00:37:25  mike
 % 1) Fix stupid bozo in A[expr], expr is numeric and not integer.
@@ -480,8 +480,10 @@ void array_delete(A, cp)
 <<delete by integer value and return>>=
 {
    if (A->type == AY_SPLIT)
+     {
       if (ival >=1 && ival <= A->size) convert_split_array_to_table(A) ;
       else return ; /* ival not in range */
+     }
    ap = find_by_ival(A, ival, NO_CREATE) ;
    if (ap) { /* remove from the front of the ilist */
       DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
