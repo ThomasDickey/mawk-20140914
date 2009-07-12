@@ -1,10 +1,12 @@
--- $MawkId: CHANGES,v 1.22 2009/07/12 10:59:22 tom Exp $
+-- $MawkId: CHANGES,v 1.23 2009/07/12 13:12:05 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 2009071?
 	identify updated files with "MawkId" keywords, retaining old log
 	comments for reference.  Ongoing changes are recorded here.
+
+	update maintainer email address.
 
 20090711
 	add configure --enable-warnings option (fixed some warnings...)
