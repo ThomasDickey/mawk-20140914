@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fcall.c,v 1.3 2009/07/12 15:49:48 tom Exp $
+ * $MawkId: fcall.c,v 1.4 2009/07/12 15:51:08 tom Exp $
  * @Log: fcall.c,v @
  * Revision 1.7  1995/08/27  15:46:47  mike
  * change some errmsgs to compile_errors
@@ -66,11 +66,10 @@ static int check_progress;
    returns a list of arguments whose type is still unknown
 */
 static CA_REC *
-call_arg_check(
-		  FBLOCK * callee,
-		  CA_REC * entry_list,
-		  INST * start,
-		  unsigned line_no)
+call_arg_check(FBLOCK * callee,
+	       CA_REC * entry_list,
+	       INST * start,
+	       unsigned line_no)
 {
     register CA_REC *q;
     CA_REC *exit_list = (CA_REC *) 0;
@@ -163,14 +162,11 @@ call_arg_check(
 }
 
 static int
-arg_cnt_ok(
-	      FBLOCK * fbp,
-	      CA_REC * q,
-	      unsigned line_no)
+arg_cnt_ok(FBLOCK * fbp,
+	   CA_REC * q,
+	   unsigned line_no)
 {
-    if ((int) q->arg_num >= (int) fbp->nargs)
-	/* casts shutup stupid warning from solaris sun cc */
-    {
+    if ((int) q->arg_num >= (int) fbp->nargs) {
 	compile_error("too many arguments in call to %s", fbp->name);
 	return 0;
     } else
