@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.6 2009/07/12 11:11:23 tom Exp $
+ * $MawkId: mawk.h,v 1.7 2009/07/12 15:56:55 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -100,7 +100,9 @@ extern  char *pfile_name ; /* program input file */
 extern  int current_token ;
 extern  unsigned  token_lineno ; /* lineno of current token */
 extern  unsigned  compile_error_count ;
-extern  int  paren_cnt, brace_cnt ;
+extern  int  NR_flag;
+extern	int  paren_cnt;
+extern	int  brace_cnt ;
 extern  int  print_flag, getline_flag ;
 extern  short mawk_state ;
 #define EXECUTION       1  /* other state is 0 compiling */
