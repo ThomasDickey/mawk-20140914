@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.3 2009/07/12 13:49:23 tom Exp $
+ * $MawkId: matherr.c,v 1.4 2009/07/12 13:50:16 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -140,7 +140,7 @@ fpe_init()
 #else /* FPE_TRAPS not defined */
 
 void
-fpe_init()
+fpe_init(void)
 {
    TURN_OFF_FPE_TRAPS() ;
 }
@@ -154,8 +154,7 @@ fpe_init()
 */
 
 int
-matherr(e)
-   struct exception *e ;
+matherr(struct exception *e)
 {
    return 1 ;
 }
@@ -228,7 +227,7 @@ double	infnan(arg)
     Error check routine to be called after fp arithmetic.
 */
 
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 /* Definitions of bit values in iserr() return value */
 
 #define OVFLOW		2
