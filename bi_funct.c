@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.7 2009/07/12 16:19:14 tom Exp $
+ * $MawkId: bi_funct.c,v 1.8 2009/07/12 23:48:24 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -893,7 +893,7 @@ static unsigned repl_cnt;	/* number of global replacements */
 static STRING *
 gsub(PTR re, CELL * repl, char *target, int flag)
 {
-    char *front, *middle;
+    char *front = 0, *middle;
     STRING *back;
     unsigned front_len, middle_len;
     STRING *ret_val;
