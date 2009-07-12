@@ -1,14 +1,24 @@
--- $MawkId: CHANGES,v 1.23 2009/07/12 13:12:05 tom Exp $
+-- $MawkId: CHANGES,v 1.24 2009/07/12 13:27:27 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 2009071?
+	add configure --disable-echo option
+
 	identify updated files with "MawkId" keywords, retaining old log
 	comments for reference.  Ongoing changes are recorded here.
 
 	update maintainer email address.
 
 20090711
+	use conventional install/uninstall rules in makefile.
+
+	add install-sh script, mkdirs.sh, config.guess and config.sub
+
+	add $DESTDIR support to makefile
+
+	add uninstall make-target
+
 	add configure --enable-warnings option (fixed some warnings...)
 
 	update configure script to autoconf 2.52 to permit cross-compiles.
