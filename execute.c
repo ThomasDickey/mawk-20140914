@@ -150,9 +150,13 @@ typedef struct aloop_state {
 } ALOOP_STATE ;
 
 /* clean up aloop stack on next, return, exit */
-#define CLEAR_ALOOP_STACK() if(aloop_state){\
-	    clear_aloop_stack(aloop_state);\
-	    aloop_state=(ALOOP_STATE*)0;}else
+#define CLEAR_ALOOP_STACK() \
+	do { \
+	    if (aloop_state) { \
+		    clear_aloop_stack(aloop_state); \
+		    aloop_state = (ALOOP_STATE *) 0; \
+	    } \
+	} while (0)
 
 static void clear_aloop_stack(top)
    ALOOP_STATE *top ;
