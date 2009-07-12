@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.27 2009/07/12 15:06:25 tom Exp $
+-- $MawkId: CHANGES,v 1.28 2009/07/12 20:17:49 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 2009071?
+	fix Debian #127293 "mawk does not understand unescaped '/' in character
+	classes", noting that gawk 3.1.6 also has problems with this area.
+
 	drop support for varargs; use stdarg only.
 
 	add tags rule to makefile.
