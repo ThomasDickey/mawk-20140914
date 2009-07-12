@@ -23,15 +23,6 @@ test "$protos" = no && CF_MAWK_DEFINE2(NO_PROTOS,1)
 AC_C_CONST
 test "$ac_cv_c_const" = no && CF_MAWK_DEFINE2(const)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_FPRINTF version: 1 updated: 2008/09/09 19:18:22
-dnl ---------------------
-dnl [sf]printf checks needed for print.c
-dnl
-dnl sometimes fprintf() and sprintf() are not proto'ed in stdio.h
-AC_DEFUN([CF_MAWK_CHECK_FPRINTF],
-[AC_EGREP_HEADER([[[^v]]fprintf],stdio.h,,CF_MAWK_DEFINE(NO_FPRINTF_IN_STDIO))
-AC_EGREP_HEADER([[[^v]]sprintf],stdio.h,,CF_MAWK_DEFINE(NO_SPRINTF_IN_STDIO))])dnl
-dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_FUNC version: 3 updated: 2008/09/09 20:32:43
 dnl ------------------
 AC_DEFUN([CF_MAWK_CHECK_FUNC],[
@@ -167,17 +158,6 @@ else
    else CF_MAWK_DEFINE(NOINFO_SIGFPE)
    fi
 fi])
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_GET_CONFIG_USER version: 1 updated: 2008/09/09 19:18:22
-dnl -----------------------
-dnl Input config.user
-AC_DEFUN([CF_MAWK_GET_CONFIG_USER],
-[cat < /dev/null > defines.out
-test -f config.user && . ./config.user
-CF_MAWK_SET_IF_UNSET(BINDIR,/usr/local/bin)
-CF_MAWK_SET_IF_UNSET(MANDIR,/usr/local/man/man1)
-CF_MAWK_SET_IF_UNSET(MANEXT,1)
-echo "$USER_DEFINES" >> defines.out])
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_MAINTAINER version: 1 updated: 2008/09/09 19:18:22
 dnl ------------------
@@ -363,13 +343,6 @@ EOF
 esac 
 rm -f fpe_check  # whew!!]
 fi])
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_SET_IF_UNSET version: 1 updated: 2008/09/09 19:18:22
-dnl --------------------
-dnl Set a variable if it is not set by configure script.
-AC_DEFUN([CF_MAWK_SET_IF_UNSET],
-[test "[$]{$1+set}" = set || $1="$2"
-AC_SUBST($1)])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_UPPER version: 5 updated: 2001/01/29 23:40:59
 dnl --------
