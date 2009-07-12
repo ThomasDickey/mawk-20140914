@@ -1,4 +1,3 @@
-
 /********************************************
 execute.c
 copyright 1991-1996, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: execute.c,v @
+/*
+ * $MawkId: execute.c,v 1.4 2009/07/12 13:02:54 tom Exp $
+ * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
  *
@@ -158,8 +159,8 @@ typedef struct aloop_state {
 	    } \
 	} while (0)
 
-static void clear_aloop_stack(top)
-   ALOOP_STATE *top ;
+static void
+clear_aloop_stack(ALOOP_STATE *top)
 {
    ALOOP_STATE *q ;
 
@@ -501,11 +502,11 @@ execute(cdp, sp, fp)
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
 
-#if SW_FP_CHECK			/* specific to V7 and XNX23A */
+#ifdef SW_FP_CHECK			/* specific to V7 and XNX23A */
 	    clrerr() ;
 #endif
 	    cp->dval += sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -516,11 +517,11 @@ execute(cdp, sp, fp)
 	    if (sp->type != C_DOUBLE)  cast1_to_d(sp) ;
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    cp->dval -= sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -531,11 +532,11 @@ execute(cdp, sp, fp)
 	    if (sp->type != C_DOUBLE)  cast1_to_d(sp) ;
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    cp->dval *= sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -547,15 +548,15 @@ execute(cdp, sp, fp)
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
 
-#if  NOINFO_SIGFPE
+#ifdef  NOINFO_SIGFPE
 	    CHECK_DIVZERO(sp->dval) ;
 #endif
 
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    cp->dval /= sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -567,7 +568,7 @@ execute(cdp, sp, fp)
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
 
-#if  NOINFO_SIGFPE
+#ifdef  NOINFO_SIGFPE
 	    CHECK_DIVZERO(sp->dval) ;
 #endif
 
@@ -591,11 +592,11 @@ execute(cdp, sp, fp)
 	    if (sp->type != C_DOUBLE)  cast1_to_d(sp) ;
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    cast1_to_d(cellcpy(&tc, cp)) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    tc.dval += sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -607,11 +608,11 @@ execute(cdp, sp, fp)
 	    if (sp->type != C_DOUBLE)  cast1_to_d(sp) ;
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    cast1_to_d(cellcpy(&tc, cp)) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    tc.dval -= sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -623,11 +624,11 @@ execute(cdp, sp, fp)
 	    if (sp->type != C_DOUBLE)  cast1_to_d(sp) ;
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    cast1_to_d(cellcpy(&tc, cp)) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    tc.dval *= sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -640,15 +641,15 @@ execute(cdp, sp, fp)
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    cast1_to_d(cellcpy(&tc, cp)) ;
 
-#if  NOINFO_SIGFPE
+#ifdef  NOINFO_SIGFPE
 	    CHECK_DIVZERO(sp->dval) ;
 #endif
 
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    tc.dval /= sp--->dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    sp->type = C_DOUBLE ;
@@ -661,7 +662,7 @@ execute(cdp, sp, fp)
 	    cp = (CELL *) (sp - 1)->ptr ;
 	    cast1_to_d(cellcpy(&tc, cp)) ;
 
-#if  NOINFO_SIGFPE
+#ifdef  NOINFO_SIGFPE
 	    CHECK_DIVZERO(sp->dval) ;
 #endif
 
@@ -684,11 +685,11 @@ execute(cdp, sp, fp)
 	 case _ADD:
 	    sp-- ;
 	    if (TEST2(sp) != TWO_DOUBLES)  cast2_to_d(sp) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    sp[0].dval += sp[1].dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    break ;
@@ -696,11 +697,11 @@ execute(cdp, sp, fp)
 	 case _SUB:
 	    sp-- ;
 	    if (TEST2(sp) != TWO_DOUBLES)  cast2_to_d(sp) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    sp[0].dval -= sp[1].dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    break ;
@@ -708,11 +709,11 @@ execute(cdp, sp, fp)
 	 case _MUL:
 	    sp-- ;
 	    if (TEST2(sp) != TWO_DOUBLES)  cast2_to_d(sp) ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    sp[0].dval *= sp[1].dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    break ;
@@ -721,15 +722,15 @@ execute(cdp, sp, fp)
 	    sp-- ;
 	    if (TEST2(sp) != TWO_DOUBLES)  cast2_to_d(sp) ;
 
-#if  NOINFO_SIGFPE
+#ifdef  NOINFO_SIGFPE
 	    CHECK_DIVZERO(sp[1].dval) ;
 #endif
 
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    clrerr() ;
 #endif
 	    sp[0].dval /= sp[1].dval ;
-#if SW_FP_CHECK
+#ifdef SW_FP_CHECK
 	    fpcheck() ;
 #endif
 	    break ;
@@ -738,7 +739,7 @@ execute(cdp, sp, fp)
 	    sp-- ;
 	    if (TEST2(sp) != TWO_DOUBLES)  cast2_to_d(sp) ;
 
-#if  NOINFO_SIGFPE
+#ifdef  NOINFO_SIGFPE
 	    CHECK_DIVZERO(sp[1].dval) ;
 #endif
 
@@ -1416,8 +1417,7 @@ cellcpy(target, source)
 #ifdef	 DEBUG
 
 void
-DB_cell_destroy(cp)		/* HANGOVER time */
-   register CELL *cp ;
+DB_cell_destroy(CELL *cp)
 {
    switch (cp->type)
    {
@@ -1445,8 +1445,7 @@ DB_cell_destroy(cp)		/* HANGOVER time */
 
 /* convert a double d to a field index	$d -> $i */
 static int
-d_to_index(d)
-   double d;
+d_to_index(double d)
 {
 
    if (d > MAX_FIELD)
