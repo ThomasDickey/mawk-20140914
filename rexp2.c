@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.4 2009/07/12 18:44:07 tom Exp $
+ * $MawkId: rexp2.c,v 1.5 2009/07/12 18:59:06 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -63,10 +63,6 @@ the GNU General Public License, version 2, 1991.
 #include "rexp.h"
 
 #define	 STACKGROWTH	16
-
-#ifdef	DEBUG
-static RT_STATE *PROTO(slow_push, (RT_STATE *, STATE *, char *, int));
-#endif
 
 RT_STATE *RE_run_stack_base;
 RT_STATE *RE_run_stack_limit;
@@ -398,3 +394,5 @@ str_str(
 }
 
 #endif /* MAWK */
+
+#undef push

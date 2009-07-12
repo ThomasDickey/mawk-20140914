@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.4 2009/07/12 18:40:34 tom Exp $
+ * $MawkId: rexp3.c,v 1.5 2009/07/12 18:58:23 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -384,3 +384,4 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	RE_panic("unexpected case in REmatch");
     }
 }
+#undef push
