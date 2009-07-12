@@ -74,19 +74,6 @@ static STRING *PROTO(do_printf, (FILE *, char *, unsigned, CELL *)) ;
 static void PROTO(bad_conversion, (int, char *, char *)) ;
 static void PROTO(write_error,(void)) ;
 
-/* prototyping fprintf() or sprintf() is a loser as ellipses will
-   always cause problems with ansi compilers depending on what
-   they've already seen,
-   but we need them here and sometimes they are missing
-*/
-
-#ifdef NO_FPRINTF_IN_STDIO
-int PROTO(fprintf, (FILE *, const char *,...)) ;
-#endif
-#ifdef NO_SPRINTF_IN_STDIO
-int PROTO(sprintf, (char *, const char *,...)) ;
-#endif
-
 /* this can be moved and enlarged  by -W sprintf=num  */
 char *sprintf_buff = string_buff ;
 char *sprintf_limit = string_buff + SPRINTF_SZ ;
