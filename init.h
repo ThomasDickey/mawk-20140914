@@ -1,4 +1,3 @@
-
 /********************************************
 init.h
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: init.h,v @
+/*
+ * $MawkId: init.h,v 1.2 2009/07/12 13:08:27 tom Exp $
+ * @Log: init.h,v @
  * Revision 1.2  1995/06/18  19:42:18  mike
  * Remove some redundant declarations and add some prototypes
  *
@@ -20,7 +21,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1  1991/12/05  07:59:22  brennan
  * 1.1 pre-release
  *
-*/
+ */
 
 /* init.h  */
 
@@ -56,5 +57,8 @@ void  PROTO( field_init, (void) ) ;
 void  PROTO( fpe_init, (void) ) ;
 void  PROTO( load_environ, (ARRAY)) ;
 void  PROTO( set_stderr, (void)) ;
+
+void PROTO(print_version, (void)) ;
+int PROTO(is_cmdline_assign, (char *)) ;
 
 #endif   /* INIT_H  */
