@@ -1,8 +1,10 @@
--- $Id: CHANGES,v 1.18 2009/07/12 00:11:03 tom Exp $
+-- $Id: CHANGES,v 1.19 2009/07/12 00:13:17 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090711
+	update configure script to autoconf 2.52 to permit cross-compiles.
+
 	drop config.user file; replace with conventional autoconf --prefix, etc.
 
 	fill-in CA_REC.type in two places in parse.y which weren't initialized.
