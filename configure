@@ -2981,9 +2981,9 @@ else
 echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
 { { echo "$as_me:2983: error: C program to compute maxint and maxlong failed.
-Please send bug report to brennan@whidbey.com." >&5
+Please send bug report to dickey@invisible-island.net." >&5
 echo "$as_me: error: C program to compute maxint and maxlong failed.
-Please send bug report to brennan@whidbey.com." >&2;}
+Please send bug report to dickey@invisible-island.net." >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f core core.* *.core conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
@@ -3033,9 +3033,9 @@ else
 echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
 { { echo "$as_me:3035: error: C program to compute maxint and maxlong failed.
-Please send bug report to brennan@whidbey.com." >&5
+Please send bug report to dickey@invisible-island.net." >&5
 echo "$as_me: error: C program to compute maxint and maxlong failed.
-Please send bug report to brennan@whidbey.com." >&2;}
+Please send bug report to dickey@invisible-island.net." >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f core core.* *.core conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
@@ -3829,7 +3829,7 @@ Please report this so I can fix this script to do it automatically.
 EOF
 ;;
     esac
-echo brennan@whidbey.com
+echo dickey@invisible-island.net
 echo You can continue with the build and the resulting mawk will be
 echo useable, but getting FPE_TRAPS_ON correct eventually is best.
 fi  ;;
@@ -3837,7 +3837,7 @@ fi  ;;
   *)  # some sort of disaster
 cat 1>&2 <<'EOF'
 The program `fpe_check' compiled from fpe_check.c seems to have
-unexpectly blown up.  Please report this to brennan@whidbey.com.
+unexpectly blown up.  Please report this to dickey@invisible-island.net.
 EOF
 # quit or not ???
 ;;
