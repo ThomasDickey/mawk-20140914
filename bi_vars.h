@@ -46,7 +46,7 @@ the GNU General Public License, version 2, 1991.
 #define  RSTART    (bi_vars+7)
 #define  SUBSEP    (bi_vars+8)
 
-#if  MSDOS 
+#ifdef  MSDOS 
 #define  BINMODE   (bi_vars+9)
 #define  NUM_BI_VAR  10
 #else

@@ -37,7 +37,7 @@ static char mawkid[] = MAWK_ID ;
    mark that in VERSION	 */
 
 #ifndef DOS_STRING
-#if  MSDOS && ! HAVE_REARGV
+#if  defined(MSDOS) && ! HAVE_REARGV
 #define DOS_STRING  "MsDOS"
 #endif
 #endif

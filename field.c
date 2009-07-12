@@ -649,7 +649,7 @@ load_field_ov()
 }
 
 
-#if  MSDOS
+#ifdef  MSDOS
 
 int
 binmode()			/* read current value of BINMODE */

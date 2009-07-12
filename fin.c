@@ -136,14 +136,14 @@ FINopen(filename, main_flag)
    int fd ;
    int oflag = O_RDONLY ;
 
-#if  MSDOS
+#ifdef  MSDOS
    int bm = binmode() & 1 ;
    if (bm)  oflag |= O_BINARY ;
 #endif
 
    if (filename[0] == '-' && filename[1] == 0)
    {
-#if  MSDOS
+#ifdef  MSDOS
       if (bm)  setmode(0, O_BINARY) ;
 #endif
       return FINdopen(0, main_flag) ;
@@ -427,7 +427,7 @@ open_main()
 {
    CELL argc ;
 
-#if  MSDOS
+#ifdef  MSDOS
    int k = binmode() ;
 
    if (k & 1)  setmode(0, O_BINARY) ;

@@ -56,7 +56,7 @@ int  PROTO(close_fake_outpipe, (char *,int)) ;
 char *PROTO(tmp_file_name, (int, char*)) ;
 #endif
 
-#if MSDOS
+#ifdef MSDOS
 int  PROTO(DOSexec, (char *)) ;
 int  PROTO(binmode, (void)) ;
 void PROTO(set_binmode, (int)) ;

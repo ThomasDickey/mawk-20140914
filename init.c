@@ -86,7 +86,7 @@ static void PROTO(no_program, (void)) ;
 extern void PROTO(print_version, (void)) ;
 extern int PROTO(is_cmdline_assign, (char *)) ;
 
-#if  MSDOS
+#ifdef  MSDOS
 void PROTO(stdout_init, (void)) ;
 #if  HAVE_REARGV
 void PROTO(reargv, (int *, char ***)) ;
@@ -114,7 +114,7 @@ int argc ; char **argv ;
    kw_init() ;			 /* load the keywords */
    field_init() ;
 
-#if   MSDOS
+#ifdef   MSDOS
    {
       char *p = getenv("MAWKBINMODE") ;
 
@@ -129,7 +129,7 @@ int argc ; char **argv ;
    fpe_init() ;
    set_stderr() ;
 
-#if  MSDOS
+#ifdef  MSDOS
    stdout_init() ;
 #endif
 }
@@ -217,7 +217,7 @@ process_cmdline(argc, argv)
 		  sprintf_limit = sprintf_buff + x ;
 	       }
 	    }
-#if  MSDOS
+#ifdef  MSDOS
 	    else if (optarg[0] == 'B')
 	    {
 	       char *p = strchr(optarg, '=') ;
@@ -306,7 +306,7 @@ process_cmdline(argc, argv)
       if (i == argc)  no_program() ;
       set_ARGV(argc, argv, i + 1) ;
 
-#if  MSDOS && ! HAVE_REARGV	/* reversed quotes */
+#if  defined(MSDOS) && ! HAVE_REARGV	/* reversed quotes */
       {
 	 char *p ;
 

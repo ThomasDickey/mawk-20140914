@@ -130,7 +130,7 @@ file_find(sval, type)
 	 switch (p->type = type)
 	 {
 	    case F_TRUNC:
-#if MSDOS
+#ifdef MSDOS
 	       ostr = (binmode() & 2) ? "wb" : "w" ;
 #else
 	       ostr = "w" ;
@@ -140,7 +140,7 @@ file_find(sval, type)
 	       break ;
 
 	    case F_APPEND:
-#if MSDOS
+#ifdef MSDOS
 	       ostr = (binmode() & 2) ? "ab" : "a" ;
 #else
 	       ostr = "a" ;

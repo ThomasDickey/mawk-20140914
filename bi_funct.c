@@ -680,7 +680,7 @@ bi_system(sp)
 
 
 
-#if   MSDOS
+#ifdef   MSDOS
 
 
 CELL *

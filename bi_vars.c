@@ -47,7 +47,7 @@ static char *bi_var_names[NUM_BI_VAR] = {
 "RLENGTH" ,
 "RSTART" ,
 "SUBSEP"
-#if MSDOS 
+#ifdef MSDOS 
 , "BINMODE"
 #endif
 } ;
@@ -86,7 +86,7 @@ void  bi_vars_init()
   NR->type = FNR->type = C_DOUBLE ;
   /* dval is already 0.0 */
 
-#if  MSDOS  
+#ifdef  MSDOS  
   BINMODE->type = C_DOUBLE ;
 #endif
 }
