@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.4 2009/07/12 10:48:34 tom Exp $
+ * $MawkId: main.c,v 1.5 2009/07/12 14:52:20 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -39,9 +39,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1	 1991/12/05  07:56:14  brennan
  * 1.1 pre-release
  *
-*/
-
-
+ */
 
 /*  main.c  */
 
@@ -58,7 +56,8 @@ the GNU General Public License, version 2, 1991.
 short mawk_state ;		 /* 0 is compiling */
 int exit_code ;
 
-static void initialize_locale (void)
+static void
+initialize_locale (void)
 {
 #ifndef LOCAL_REGEXP
    setlocale(LC_CTYPE, "");
@@ -70,8 +69,7 @@ static void initialize_locale (void)
 }
 
 int
-main(argc, argv)
-int argc ; char **argv ;
+main( int argc , char **argv )
 {
    initialize_locale ();
    initialize(argc, argv) ;
@@ -85,8 +83,7 @@ int argc ; char **argv ;
 }
 
 void
-mawk_exit(x)
-   int x ;
+mawk_exit( int x )
 {
 #ifdef  HAVE_REAL_PIPES
    close_out_pipes() ;		 /* no effect, if no out pipes */
