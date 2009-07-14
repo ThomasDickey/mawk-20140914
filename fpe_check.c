@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.3 2009/07/12 21:18:40 tom Exp $
+ * $MawkId: fpe_check.c,v 1.4 2009/07/14 21:53:34 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -34,6 +34,9 @@
 
 /* Sets up NetBSD 1.0A for ieee floating point */
 #if defined(_LIB_VERSION_TYPE) && defined(_LIB_VERSION) && defined(_IEEE_)
+#ifdef _CONST
+_CONST				/* needed for cygwin */
+#endif
 _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
 #endif
 
