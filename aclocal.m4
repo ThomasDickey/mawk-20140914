@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.15 2009/07/12 14:26:06 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.16 2009/07/14 22:24:42 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -406,7 +406,7 @@ AC_DEFUN([CF_MAWK_FIND_SIZE_T],
 [CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
 CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FPE_SIGINFO version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_FPE_SIGINFO version: 2 updated: 2009/07/14 18:24:42
 dnl -------------------
 dnl SYSv and Solaris FPE checks
 AC_DEFUN([CF_MAWK_FPE_SIGINFO],
@@ -416,7 +416,7 @@ if test "$sigaction" = 1 && test "$siginfo_h" = 1 ; then
    CF_MAWK_DEFINE(SV_SIGINFO)
 else
    AC_CHECK_FUNC(sigvec,sigvec=1)
-   if test "$sigvec" = 1 && ./fpe_check phoney_arg >> defines.out ; then :
+   if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then :
    else CF_MAWK_DEFINE(NOINFO_SIGFPE)
    fi
 fi])
@@ -508,7 +508,7 @@ AC_DEFUN([CF_MAWK_PROG_YACC],
 [AC_CHECK_PROGS(YACC, byacc bison yacc)
 test "$YACC" = bison && YACC='bison -y'])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_RUN_FPE_TESTS version: 2 updated: 2009/07/14 18:24:42
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
@@ -518,9 +518,9 @@ else
 AC_TYPE_SIGNAL
 [
 echo checking handling of floating point exceptions
-rm -f fpe_check
+rm -f fpe_check$ac_exeext 
 $CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -o fpe_check fpe_check.c $MATHLIB
-if test -f fpe_check  ; then
+if test -f fpe_check$ac_exeext   ; then
    ./fpe_check 2>/dev/null
    status=$?
 else 
@@ -546,7 +546,7 @@ CF_MAWK_DEFINE2([TURN_ON_FPE_TRAPS()],
 CF_MAWK_FPE_SIGINFO 
 # look for strtod overflow bug
 AC_MSG_CHECKING([strtod bug on overflow])
-rm -f fpe_check
+rm -f fpe_check$ac_exeext 
 $CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -DUSE_IEEEFP_H \
 	    -o fpe_check fpe_check.c $MATHLIB
 if ./fpe_check phoney_arg phoney_arg 2>/dev/null
@@ -603,7 +603,7 @@ EOF
 # quit or not ???
 ;;
 esac 
-rm -f fpe_check  # whew!!]
+rm -f fpe_check$ac_exeext   # whew!!]
 fi])
 dnl ---------------------------------------------------------------------------
 dnl CF_MSG_LOG version: 4 updated: 2007/07/29 09:55:12
