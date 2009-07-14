@@ -3237,9 +3237,9 @@ cat >>confdefs.h <<EOF
 EOF
 
 echo checking handling of floating point exceptions
-rm -f fpe_check
+rm -f fpe_check$ac_exeext
 $CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -o fpe_check fpe_check.c $MATHLIB
-if test -f fpe_check  ; then
+if test -f fpe_check$ac_exeext   ; then
    ./fpe_check 2>/dev/null
    status=$?
 else
@@ -3427,7 +3427,7 @@ if test $ac_cv_func_sigvec = yes; then
   sigvec=1
 fi
 
-   if test "$sigvec" = 1 && ./fpe_check phoney_arg >> defines.out ; then :
+   if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then :
    else cat >>confdefs.h <<\EOF
 #define NOINFO_SIGFPE 1
 EOF
@@ -3725,7 +3725,7 @@ if test $ac_cv_func_sigvec = yes; then
   sigvec=1
 fi
 
-   if test "$sigvec" = 1 && ./fpe_check phoney_arg >> defines.out ; then :
+   if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then :
    else cat >>confdefs.h <<\EOF
 #define NOINFO_SIGFPE 1
 EOF
@@ -3736,7 +3736,7 @@ fi
 # look for strtod overflow bug
 echo "$as_me:3737: checking strtod bug on overflow" >&5
 echo $ECHO_N "checking strtod bug on overflow... $ECHO_C" >&6
-rm -f fpe_check
+rm -f fpe_check$ac_exeext
 $CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -DUSE_IEEEFP_H \
 	    -o fpe_check fpe_check.c $MATHLIB
 if ./fpe_check phoney_arg phoney_arg 2>/dev/null
@@ -3928,7 +3928,7 @@ if test $ac_cv_func_sigvec = yes; then
   sigvec=1
 fi
 
-   if test "$sigvec" = 1 && ./fpe_check phoney_arg >> defines.out ; then :
+   if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then :
    else cat >>confdefs.h <<\EOF
 #define NOINFO_SIGFPE 1
 EOF
@@ -3978,7 +3978,7 @@ EOF
 # quit or not ???
 ;;
 esac
-rm -f fpe_check  # whew!!
+rm -f fpe_check$ac_exeext   # whew!!
 fi
 # output config.h
 rm -f config.h
