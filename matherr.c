@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.7 2009/07/12 17:51:37 tom Exp $
+ * $MawkId: matherr.c,v 1.8 2009/07/14 22:03:28 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -48,6 +48,9 @@ the GNU General Public License, version 2, 1991.
 
 /* Sets up NetBSD 1.0A for ieee floating point */
 #if defined(_LIB_VERSION_TYPE) && defined(_LIB_VERSION) && defined(_IEEE_)
+#ifdef _CONST
+_CONST				/* needed for cygwin */
+#endif
 _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
 #endif
 
