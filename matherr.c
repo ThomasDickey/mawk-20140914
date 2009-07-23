@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.9 2009/07/23 00:39:50 tom Exp $
+ * $MawkId: matherr.c,v 1.10 2009/07/23 09:27:07 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -67,7 +67,7 @@ static fp_except working_mask;
 #endif
 
 #ifndef	 TURN_ON_FPE_TRAPS
-#define	 TURN_ON_FPE_TRAPS()	/* nothing */
+#define	 TURN_ON_FPE_TRAPS	/* nothing */
 #endif
 
 #ifdef  MAWK_SV_SIGINFO
@@ -115,7 +115,7 @@ fpe_catch(int signal, int why)
 void
 fpe_init(void)
 {
-    TURN_ON_FPE_TRAPS();
+    TURN_ON_FPE_TRAPS;
 
 #ifndef  MAWK_SV_SIGINFO
     signal(SIGFPE, fpe_catch);
