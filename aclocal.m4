@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.18 2009/07/23 09:00:55 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.19 2009/07/23 09:15:07 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -376,28 +376,34 @@ dnl CF_MAWK_FIND_MAX_INT version: 1 updated: 2008/09/09 19:18:22
 dnl --------------------
 dnl Try to find a definition of MAX__INT from limits.h else compute.
 AC_DEFUN([CF_MAWK_FIND_MAX_INT],
-[AC_CHECK_HEADER(limits.h,limits_h=yes)
-if test "$limits_h" = yes ; then :
+[AC_CHECK_HEADER(limits.h,cf_limits_h=yes)
+if test "$cf_limits_h" = yes ; then :
 else
-AC_CHECK_HEADER(values.h,values_h=yes)
-   if test "$values_h" = yes ; then
+AC_CHECK_HEADER(values.h,cf_values_h=yes)
+   if test "$cf_values_h" = yes ; then
    AC_TRY_RUN(
 [#include <values.h>
 #include <stdio.h>
 int main()
-{   FILE *out = fopen("maxint.out", "w") ;
+{   FILE *out = fopen("conftest.out", "w") ;
     if ( ! out ) exit(1) ;
-    fprintf(out, "X MAX__INT 0x%x\n", MAXINT) ;
-    fprintf(out, "X MAX__LONG 0x%lx\n", MAXLONG) ;
+    fprintf(out, "MAX__INT 0x%x\n", MAXINT) ;
+    fprintf(out, "MAX__LONG 0x%lx\n", MAXLONG) ;
     exit(0) ; return(0) ;
 }
-], maxint_set=1,[CF_MAWK_CHECK_LIMITS_MSG])
+], cf_maxint_set=yes,[CF_MAWK_CHECK_LIMITS_MSG])
    fi
-if test "$maxint_set" != 1 ; then 
+if test "x$cf_maxint_set" != xyes ; then 
 # compute it  --  assumes two's complement
 AC_TRY_RUN(CF_MAWK_MAX__INT_PROGRAM,:,[CF_MAWK_CHECK_LIMITS_MSG])
 fi
-cat maxint.out >> defines.out ; rm -f maxint.out
+cat conftest.out | while true
+do
+	read name value
+	test -z "$name" && break
+	AC_DEFINE_UNQUOTED($name,$value)
+done
+rm -f conftest.out
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
@@ -453,14 +459,14 @@ int main()
 { int y ; long yy ;
   FILE *out ;
 
-    if ( !(out = fopen("maxint.out","w")) ) exit(1) ;
+    if ( !(out = fopen("conftest.out","w")) ) exit(1) ;
     /* find max int and max long */
     y = 0x1000 ;
     while ( y > 0 ) y *= 2 ;
-    fprintf(out,"X MAX__INT 0x%x\n", y-1) ;
+    fprintf(out,"MAX__INT 0x%x\n", y-1) ;
     yy = 0x1000 ;
     while ( yy > 0 ) yy *= 2 ;
-    fprintf(out,"X MAX__LONG 0x%lx\n", yy-1) ;
+    fprintf(out,"MAX__LONG 0x%lx\n", yy-1) ;
     exit(0) ;
     return 0 ;
  }]])dnl
