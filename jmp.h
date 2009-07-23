@@ -1,4 +1,3 @@
-
 /********************************************
 jmp.h
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: jmp.h,v @
+/*
+ * $MawkId: jmp.h,v 1.2 2009/07/23 23:58:39 tom Exp $
+ * @Log: jmp.h,v @
  * Revision 1.2  1995/04/21  14:20:19  mike
  * move_level variable to fix bug in arglist patching of moved code.
  *
@@ -23,23 +24,22 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1  1991/12/05  07:59:24  brennan
  * 1.1 pre-release
  *
-*/
+ */
 
-#ifndef   JMP_H
-#define   JMP_H
+#ifndef   MAWK_JMP_H
+#define   MAWK_JMP_H
 
-void  PROTO(BC_new, (void) ) ;
-void  PROTO(BC_insert, (int, INST*) ) ;
-void  PROTO(BC_clear, (INST *, INST *) ) ;
-void  PROTO(code_push, (INST *, unsigned, int, FBLOCK*) ) ;
-unsigned  PROTO(code_pop, (INST *) ) ;
-void  PROTO(code_jmp, (int, INST *) ) ;
-void  PROTO(patch_jmp, (INST *) ) ;
+void BC_new(void);
+void BC_insert(int, INST *);
+void BC_clear(INST *, INST *);
+void code_push(INST *, unsigned, int, FBLOCK *);
+unsigned code_pop(INST *);
+void code_jmp(int, INST *);
+void patch_jmp(INST *);
 
-extern int code_move_level ;
+extern int code_move_level;
    /* used to as one part of unique identification of context when
       moving code.  Global for communication with parser.
-   */
+    */
 
-#endif  /* JMP_H  */
-
+#endif /* MAWK_JMP_H  */

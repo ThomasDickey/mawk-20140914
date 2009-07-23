@@ -1,4 +1,3 @@
-
 /********************************************
 field.h
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/* @Log: field.h,v @
+/*
+ * $MawkId: field.h,v 1.2 2009/07/24 00:05:27 tom Exp $
+ * @Log: field.h,v @
  * Revision 1.2  1995/06/18  19:42:16  mike
  * Remove some redundant declarations and add some prototypes
  *
@@ -23,43 +24,41 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1  91/12/05  07:59:16  brennan
  * 1.1 pre-release
  * 
-*/
+ */
 
 /* field.h */
 
+#ifndef  MAWK_FIELD_H
+#define  MAWK_FIELD_H   1
 
-#ifndef  FIELD_H
-#define  FIELD_H   1
-
-void  PROTO( set_field0, (char *, unsigned) ) ;
-void  PROTO( split_field0, (void) ) ;
-int   PROTO( space_split, (char *, unsigned) ) ;
-int   PROTO( re_split, (char *, PTR) ) ;
-int   PROTO( null_split, (char *)) ;
-void  PROTO( field_assign, (CELL*, CELL *) ) ;
-char *PROTO( is_string_split, (PTR , unsigned *) ) ;
-void  PROTO( slow_cell_assign, (CELL*, CELL*)) ;
-CELL *PROTO( slow_field_ptr, (int)) ;
-int   PROTO( field_addr_to_index, (CELL*)) ;
-void  PROTO( set_binmode, (int)) ;
-
+void set_field0(char *, unsigned);
+void split_field0(void);
+int space_split(char *, unsigned);
+int re_split(char *, PTR);
+int null_split(char *);
+void field_assign(CELL *, CELL *);
+char *is_string_split(PTR, unsigned *);
+void slow_cell_assign(CELL *, CELL *);
+CELL *slow_field_ptr(int);
+int field_addr_to_index(CELL *);
+void set_binmode(int);
 
 #define  NUM_PFIELDS		5
-extern  CELL  field[FBANK_SZ+NUM_PFIELDS] ;
+extern CELL field[FBANK_SZ + NUM_PFIELDS];
 	/* $0, $1 ... $(MAX_SPLIT), NF, RS, RS, CONVFMT, OFMT */
 
 /* more fields if needed go here */
-extern CELL *fbank[NUM_FBANK] ; /* fbank[0] == field */
+extern CELL *fbank[NUM_FBANK];	/* fbank[0] == field */
 
 /* index to CELL *  for a field */
-#define field_ptr(i) ((i)<=MAX_SPLIT?field+(i):slow_field_ptr(i))
+#define field_ptr(i) ((i) <= MAX_SPLIT ? field + (i) : slow_field_ptr(i))
 
 /* the pseudo fields, assignment has side effects */
-#define  NF     (field+MAX_SPLIT+1)   /* must be first */
-#define  RS     (field+MAX_SPLIT+2)
-#define  FS     (field+MAX_SPLIT+3)
-#define  CONVFMT  (field+MAX_SPLIT+4)
-#define  OFMT   (field+MAX_SPLIT+5)   /* must be last */
+#define  NF       (field + MAX_SPLIT + 1)	/* must be first */
+#define  RS       (field + MAX_SPLIT + 2)
+#define  FS       (field + MAX_SPLIT + 3)
+#define  CONVFMT  (field + MAX_SPLIT + 4)
+#define  OFMT     (field + MAX_SPLIT + 5)	/* must be last */
 
 #define  LAST_PFIELD	OFMT
 
@@ -67,13 +66,12 @@ extern CELL *fbank[NUM_FBANK] ; /* fbank[0] == field */
    even though it's constant so ...
 */
 #define  NF_field    (MAX_SPLIT+1)
-#define  RS_field    (MAX_SPLIT+2) 
-#define  FS_field    (MAX_SPLIT+3) 
+#define  RS_field    (MAX_SPLIT+2)
+#define  FS_field    (MAX_SPLIT+3)
 #define  CONVFMT_field (MAX_SPLIT+4)
-#define  OFMT_field  (MAX_SPLIT+5) 
+#define  OFMT_field  (MAX_SPLIT+5)
 
-
-extern  int  nf ; /* shadows NF */
+extern int nf;			/* shadows NF */
 
 /* a shadow type for RS and FS */
 #define  SEP_SPACE      0
@@ -82,24 +80,22 @@ extern  int  nf ; /* shadows NF */
 #define  SEP_RE         3
 #define  SEP_MLR	4
 
-typedef  struct {
-char  type ;
-char  c ;
-PTR ptr ; /* STRING* or RE machine* */
-} SEPARATOR ;
+typedef struct {
+    char type;
+    char c;
+    PTR ptr;			/* STRING* or RE machine* */
+} SEPARATOR;
 
-extern   SEPARATOR  rs_shadow  ;
-extern   CELL  fs_shadow ;
-
+extern SEPARATOR rs_shadow;
+extern CELL fs_shadow;
 
 /*  types for splitting overflow */
 
-typedef  struct spov {
-struct spov  *link ;
-STRING  *sval ;
-} SPLIT_OV ;
+typedef struct spov {
+    struct spov *link;
+    STRING *sval;
+} SPLIT_OV;
 
-extern  SPLIT_OV  *split_ov_list ;
+extern SPLIT_OV *split_ov_list;
 
-
-#endif   /* FIELD_H  */
+#endif /* MAWK_FIELD_H  */

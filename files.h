@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.h,v 1.4 2009/07/12 10:48:48 tom Exp $
+ * $MawkId: files.h,v 1.5 2009/07/24 00:01:20 tom Exp $
  * @Log: files.h,v @
  * Revision 1.3  1996/01/14  17:14:11  mike
  * flush_all_output()
@@ -30,8 +30,8 @@ the GNU General Public License, version 2, 1991.
  *
 */
 
-#ifndef   FILES_H
-#define   FILES_H
+#ifndef   MAWK_FILES_H
+#define   MAWK_FILES_H
 
 /* IO redirection types */
 #define  F_IN           (-5)
@@ -41,28 +41,27 @@ the GNU General Public License, version 2, 1991.
 #define  F_TRUNC        (-1)
 #define  IS_OUTPUT(type)  ((type)>=PIPE_OUT)
 
-extern char *shell ; /* for pipes and system() */
+extern char *shell;		/* for pipes and system() */
 
-PTR  PROTO(file_find, (STRING *, int)) ;
-int  PROTO(file_close, (STRING *)) ;
-int  PROTO(file_flush, (STRING *)) ;
-void PROTO(flush_all_output, (void)) ;
-PTR  PROTO(get_pipe, (char *, int, int *) ) ;
-int  PROTO(wait_for, (int) ) ;
-void  PROTO( close_out_pipes, (void) ) ;
+PTR file_find(STRING *, int);
+int file_close(STRING *);
+int file_flush(STRING *);
+void flush_all_output(void);
+PTR get_pipe(char *, int, int *);
+int wait_for(int);
+void close_out_pipes(void);
 
 #ifdef  HAVE_FAKE_PIPES
-void PROTO(close_fake_pipes, (void)) ;
-int  PROTO(close_fake_outpipe, (char *,int)) ;
-char *PROTO(tmp_file_name, (int, char*)) ;
+void close_fake_pipes(void);
+int close_fake_outpipe(char *, int);
+char *tmp_file_name(int, char *);
 #endif
 
 #ifdef MSDOS
-int  PROTO(DOSexec, (char *)) ;
-int  PROTO(binmode, (void)) ;
-void PROTO(set_binmode, (int)) ;
-void PROTO(enlarge_output_buffer, (FILE*)) ;
+int DOSexec(char *);
+int binmode(void);
+void set_binmode(int);
+void enlarge_output_buffer(FILE *);
 #endif
 
-
-#endif
+#endif /* MAWK_FILES_H */

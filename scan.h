@@ -1,4 +1,3 @@
-
 /********************************************
 scan.h
 copyright 1991, Michael D. Brennan
@@ -10,8 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/* @Log: scan.h,v @
+/*
+ * $MawkId: scan.h,v 1.2 2009/07/23 23:59:42 tom Exp $
+ * @Log: scan.h,v @
  * Revision 1.3  1995/06/18  19:42:26  mike
  * Remove some redundant declarations and add some prototypes
  *
@@ -24,8 +24,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 5.1  1991/12/05  07:59:33  brennan
  * 1.1 pre-release
  *
-*/
-
+ */
 
 /* scan.h  */
 
@@ -39,8 +38,7 @@ the GNU General Public License, version 2, 1991.
 #include  "parse.h"
 #endif
 
-
-extern  char scan_code[256] ;
+extern char scan_code[256];
 
 /*  the scan codes to compactify the main switch */
 
@@ -81,10 +79,10 @@ extern  char scan_code[256] ;
 
 #ifndef  MAKESCAN
 
-void  PROTO(eat_nl, (void) ) ;
+void eat_nl(void);
 
 /* in error.c */
-void  PROTO( unexpected_char, (void) ) ;
+void unexpected_char(void);
 
 #define  ct_ret(x)  return current_token = (x)
 
@@ -99,5 +97,6 @@ void  PROTO( unexpected_char, (void) ) ;
                                      case c2: ct_ret(x2) ;\
                                      default: un_next() ;\
                                               ct_ret(d) ; }
-#endif  /* ! MAKESCAN  */
-#endif
+#endif /* ! MAKESCAN  */
+
+#endif /* SCAN_H_INCLUDED */

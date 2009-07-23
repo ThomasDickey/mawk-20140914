@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.h,v 1.2 2009/07/12 13:08:27 tom Exp $
+ * $MawkId: init.h,v 1.3 2009/07/23 23:56:08 tom Exp $
  * @Log: init.h,v @
  * Revision 1.2  1995/06/18  19:42:18  mike
  * Remove some redundant declarations and add some prototypes
@@ -25,7 +25,6 @@ the GNU General Public License, version 2, 1991.
 
 /* init.h  */
 
-
 #ifndef  INIT_H
 #define  INIT_H
 
@@ -35,30 +34,29 @@ the GNU General Public License, version 2, 1991.
    -f option */
 
 typedef struct pfile {
-struct pfile *link ;
-char *fname ;
-} PFILE ;
+    struct pfile *link;
+    char *fname;
+} PFILE;
 
-extern PFILE *pfile_list ;
+extern PFILE *pfile_list;
 
-extern char *sprintf_buff, *sprintf_limit ;
+extern char *sprintf_buff, *sprintf_limit;
 
+void initialize(int, char **);
+void code_init(void);
+void code_cleanup(void);
+void compile_cleanup(void);
+void scan_init(char *);
+void bi_vars_init(void);
+void bi_funct_init(void);
+void print_init(void);
+void kw_init(void);
+void field_init(void);
+void fpe_init(void);
+void load_environ(ARRAY);
+void set_stderr(void);
 
-void  PROTO( initialize, (int, char **) ) ;
-void  PROTO( code_init, (void) ) ;
-void  PROTO( code_cleanup, (void) ) ;
-void  PROTO( compile_cleanup, (void) ) ;
-void PROTO(scan_init, ( char *) ) ;
-void PROTO(bi_vars_init, (void) ) ;
-void PROTO(bi_funct_init, (void) ) ;
-void PROTO(print_init, (void) ) ;
-void PROTO(kw_init, (void) ) ;
-void  PROTO( field_init, (void) ) ;
-void  PROTO( fpe_init, (void) ) ;
-void  PROTO( load_environ, (ARRAY)) ;
-void  PROTO( set_stderr, (void)) ;
+void print_version(void);
+int is_cmdline_assign(char *);
 
-void PROTO(print_version, (void)) ;
-int PROTO(is_cmdline_assign, (char *)) ;
-
-#endif   /* INIT_H  */
+#endif /* INIT_H  */

@@ -1,4 +1,3 @@
-
 /********************************************
 code.h
 copyright 1991, Michael D. Brennan
@@ -10,8 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/* @Log: code.h,v @
+/*
+ * $MawkId: code.h,v 1.2 2009/07/24 00:04:06 tom Exp $
+ * @Log: code.h,v @
  * Revision 1.5  1995/06/18  19:42:15  mike
  * Remove some redundant declarations and add some prototypes
  *
@@ -38,11 +38,10 @@ the GNU General Public License, version 2, 1991.
  *
 */
 
-
 /*  code.h  */
 
-#ifndef  CODE_H
-#define  CODE_H
+#ifndef  MAWK_CODE_H
+#define  MAWK_CODE_H
 
 #include "memory.h"
 
@@ -52,23 +51,22 @@ the GNU General Public License, version 2, 1991.
 
 /* coding scope */
 #define   SCOPE_MAIN    0
-#define   SCOPE_BEGIN   1  
+#define   SCOPE_BEGIN   1
 #define   SCOPE_END     2
 #define   SCOPE_FUNCT   3
 
-
 typedef struct {
-INST *base, *limit, *warn, *ptr ;
-} CODEBLOCK ;
+    INST *base, *limit, *warn, *ptr;
+} CODEBLOCK;
 
-extern CODEBLOCK active_code ;
-extern CODEBLOCK *main_code_p, *begin_code_p, *end_code_p ;
+extern CODEBLOCK active_code;
+extern CODEBLOCK *main_code_p, *begin_code_p, *end_code_p;
 
-extern INST *main_start, *begin_start, *end_start  ;
-extern unsigned main_size, begin_size  ;
-extern INST *execution_start ;
-extern INST *next_label ;  /* next statements jump to here */
-extern int dump_code_flag ;
+extern INST *main_start, *begin_start, *end_start;
+extern unsigned main_size, begin_size;
+extern INST *execution_start;
+extern INST *next_label;	/* next statements jump to here */
+extern int dump_code_flag;
 
 #define code_ptr  active_code.ptr
 #define code_base active_code.base
@@ -78,22 +76,20 @@ extern int dump_code_flag ;
 
 #define INST_BYTES(x) (sizeof(INST)*(unsigned)(x))
 
-extern  CELL  eval_stack[] ;
-extern int exit_code ;
-
+extern CELL eval_stack[];
+extern int exit_code;
 
 #define  code1(x)  code_ptr++ -> op = (x)
 /* shutup picky compilers */
 #define  code2(x,p)  xcode2(x,(PTR)(p))
 
-void  PROTO(xcode2, (int, PTR)) ;
-void  PROTO(code2op, (int, int)) ;
-INST *PROTO(code_shrink, (CODEBLOCK*, unsigned*)) ;
-void  PROTO(code_grow, (void)) ;
-void  PROTO(set_code, (void)) ;
-void  PROTO(be_setup, (int)) ;
-void  PROTO(dump_code, (void)) ;
-
+void xcode2(int, PTR);
+void code2op(int, int);
+INST *code_shrink(CODEBLOCK *, unsigned *);
+void code_grow(void);
+void set_code(void);
+void be_setup(int);
+void dump_code(void);
 
 /*  the machine opcodes  */
 /* to avoid confusion with a ptr FE_PUSHA must have op code 0 */
@@ -187,6 +183,6 @@ void  PROTO(dump_code, (void)) ;
 #define OL_GL_NR       85
 #define _OMAIN         86
 #define _JMAIN         87
-#define DEL_A	       88	
+#define DEL_A          88
 
-#endif  /* CODE_H */
+#endif /* MAWK_CODE_H */
