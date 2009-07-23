@@ -9,9 +9,8 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
 /*
- * $MawkId: bi_vars.h,v 1.3 2009/07/12 10:49:30 tom Exp $
+ * $MawkId: bi_vars.h,v 1.4 2009/07/23 23:35:31 tom Exp $
  * @Log: bi_vars.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:09  mike
  * move source to cvs
@@ -28,7 +27,6 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef  BI_VARS_H
 #define  BI_VARS_H  1
-
 
 /* builtin variables NF, RS, FS, OFMT are stored
    internally in field[], so side effects of assignment can
@@ -53,6 +51,6 @@ the GNU General Public License, version 2, 1991.
 #define  NUM_BI_VAR  9
 #endif
 
-extern CELL bi_vars[NUM_BI_VAR] ;
+extern CELL bi_vars[NUM_BI_VAR];
 
 #endif

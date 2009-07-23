@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: sizes.h,v 1.3 2009/07/12 10:47:49 tom Exp $
+ * $MawkId: sizes.h,v 1.4 2009/07/23 23:34:59 tom Exp $
  * @Log: sizes.h,v @
  * Revision 1.8  1995/10/14  22:09:51  mike
  * getting MAX__INT from values.h didn't really work since the value was
@@ -58,36 +58,34 @@ the GNU General Public License, version 2, 1991.
 #define  MAX__UINT UINT_MAX
 #define  MAX__INT  INT_MAX
 #define  MAX__LONG LONG_MAX
-#endif   /* MAX__INT */
+#endif /* MAX__INT */
 
 #if  MAX__INT <= 0x7fff
 #define  SHORT_INTS
 #define  INT_FMT "%ld"
-typedef  unsigned long UInt ;
-typedef  long Int ;
+typedef unsigned long UInt;
+typedef long Int;
 #define  Max_UInt MAX__ULONG
 #define  Max_Int MAX__LONG
 #else
 #define  INT_FMT "%d"
-typedef  unsigned UInt ;
-typedef  int Int ;
+typedef unsigned UInt;
+typedef int Int;
 #define  Max_UInt  MAX__UINT
 #define  Max_Int  MAX__INT
 #endif
 
-#define EVAL_STACK_SIZE  256  /* initial size , can grow */
+#define EVAL_STACK_SIZE  256	/* initial size , can grow */
 /* number of fields at startup, must be a power of 2
    and FBANK_SZ-1 must be divisible by 3! */
 #define  FBANK_SZ	256
-#define  FB_SHIFT	  8   /* lg(FBANK_SZ) */
-#define  NUM_FBANK	128   /* see MAX_FIELD below */
+#define  FB_SHIFT	  8	/* lg(FBANK_SZ) */
+#define  NUM_FBANK	128	/* see MAX_FIELD below */
 
-
-#define  MAX_SPLIT	(FBANK_SZ-1)   /* needs to be divisble by 3*/
+#define  MAX_SPLIT	(FBANK_SZ-1)	/* needs to be divisble by 3 */
 #define  MAX_FIELD	(NUM_FBANK*FBANK_SZ - 1)
 
 #define  MIN_SPRINTF	400
-
 
 #define  BUFFSZ         4096
   /* starting buffer size for input files, grows if
@@ -104,7 +102,6 @@ typedef  int Int ;
 #define  HASH_PRIME  53
 #define  A_HASH_PRIME 199
 
+#define  MAX_COMPILE_ERRORS  5	/* quit if more than 4 errors */
 
-#define  MAX_COMPILE_ERRORS  5 /* quit if more than 4 errors */
-
-#endif   /* SIZES_H */
+#endif /* SIZES_H */
