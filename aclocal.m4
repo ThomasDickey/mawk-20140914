@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.19 2009/07/23 09:15:07 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.20 2009/07/23 09:25:22 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -267,7 +267,7 @@ cf_save_CFLAGS="$cf_save_CFLAGS -we147 -no-gcc"
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CC_FEATURES version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_CC_FEATURES version: 2 updated: 2009/07/23 05:15:39
 dnl -------------------
 dnl Check compiler.
 AC_DEFUN([CF_MAWK_CC_FEATURES],
@@ -285,7 +285,7 @@ test "$protos" = no && AC_DEFINE_UNQUOTED(NO_PROTOS,1)
 AC_C_CONST
 test "$ac_cv_c_const" = no && AC_DEFINE_UNQUOTED(const)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_FUNC version: 3 updated: 2008/09/09 20:32:43
+dnl CF_MAWK_CHECK_FUNC version: 4 updated: 2009/07/23 05:15:39
 dnl ------------------
 AC_DEFUN([CF_MAWK_CHECK_FUNC],[
     AC_CHECK_FUNC($1,,[
@@ -302,7 +302,7 @@ do
 done
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_HEADER version: 3 updated: 2008/09/09 20:38:19
+dnl CF_MAWK_CHECK_HEADER version: 4 updated: 2009/07/23 05:15:39
 dnl --------------------
 AC_DEFUN([CF_MAWK_CHECK_HEADER],[
     AC_CHECK_HEADER($1,,[
@@ -325,7 +325,7 @@ AC_DEFUN([CF_MAWK_CHECK_LIMITS_MSG],
 [AC_MSG_ERROR(C program to compute maxint and maxlong failed.
 Please send bug report to CF_MAWK_MAINTAINER.)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_SIZE_T version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_CHECK_SIZE_T version: 2 updated: 2009/07/23 05:15:39
 dnl --------------------
 dnl Check if size_t is found in the given header file, unless we have already
 dnl found it.
@@ -372,7 +372,7 @@ AC_DEFUN([CF_MAWK_CONFIG_H_TRAILER],
 #endif /* CONFIG_H */
 EOF])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FIND_MAX_INT version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_FIND_MAX_INT version: 2 updated: 2009/07/23 05:15:39
 dnl --------------------
 dnl Try to find a definition of MAX__INT from limits.h else compute.
 AC_DEFUN([CF_MAWK_FIND_MAX_INT],
@@ -413,7 +413,7 @@ AC_DEFUN([CF_MAWK_FIND_SIZE_T],
 [CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
 CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FPE_SIGINFO version: 2 updated: 2009/07/14 18:24:42
+dnl CF_MAWK_FPE_SIGINFO version: 3 updated: 2009/07/23 05:15:39
 dnl -------------------
 dnl SYSv and Solaris FPE checks
 AC_DEFUN([CF_MAWK_FPE_SIGINFO],
@@ -450,7 +450,7 @@ fi])dnl
 fi
 AC_SUBST(MATHLIB)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_MAX__INT_PROGRAM version: 1 updated: 2008/09/09 19:18:22
+dnl CF_MAWK_MAX__INT_PROGRAM version: 2 updated: 2009/07/23 05:15:39
 dnl ------------------------
 dnl C program to compute MAX__INT and MAX__LONG if looking at headers fails
 AC_DEFUN([CF_MAWK_MAX__INT_PROGRAM],
@@ -502,7 +502,7 @@ AC_DEFUN([CF_MAWK_PROG_YACC],
 [AC_CHECK_PROGS(YACC, byacc bison yacc)
 test "$YACC" = bison && YACC='bison -y'])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 2 updated: 2009/07/14 18:24:42
+dnl CF_MAWK_RUN_FPE_TESTS version: 3 updated: 2009/07/23 05:15:39
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
