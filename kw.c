@@ -1,4 +1,3 @@
-
 /********************************************
 kw.c
 copyright 1991, Michael D. Brennan
@@ -10,8 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-
-/* @Log: kw.c,v @
+/*
+ * $MawkId: kw.c,v 1.3 2009/07/23 23:34:12 tom Exp $
+ * @Log: kw.c,v @
  * Revision 1.2  1993/07/17  13:22:59  mike
  * indent and general code cleanup
  *
@@ -23,73 +23,69 @@ the GNU General Public License, version 2, 1991.
  *
 */
 
-
 /* kw.c */
-
 
 #include "mawk.h"
 #include "symtype.h"
 #include "parse.h"
 #include "init.h"
-
-
+/* *INDENT-OFF* */
 static struct kw
 {
-   char *text ;
-   short kw ;
+    char *text;
+    short kw;
 }
 keywords[] =
 {
-
-   {"print", PRINT},
-   {"printf", PRINTF},
-   {"do", DO},
-   {"while", WHILE},
-   {"for", FOR},
-   {"break", BREAK},
-   {"continue", CONTINUE},
-   {"if", IF},
-   {"else", ELSE},
-   {"in", IN},
-   {"delete", DELETE},
-   {"split", SPLIT},
-   {"match", MATCH_FUNC},
-   {"BEGIN", BEGIN},
-   {"END", END},
-   {"exit", EXIT},
-   {"next", NEXT},
-   {"return", RETURN},
-   {"getline", GETLINE},
-   {"sub", SUB},
-   {"gsub", GSUB},
-   {"function", FUNCTION},
-   {(char *) 0, 0}
-} ;
+    { "print",    PRINT },
+    { "printf",   PRINTF },
+    { "do",       DO },
+    { "while",    WHILE },
+    { "for",      FOR },
+    { "break",    BREAK },
+    { "continue", CONTINUE },
+    { "if",       IF },
+    { "else",     ELSE },
+    { "in",       IN },
+    { "delete",   DELETE },
+    { "split",    SPLIT },
+    { "match",    MATCH_FUNC },
+    { "BEGIN",    BEGIN },
+    { "END",      END },
+    { "exit",     EXIT },
+    { "next",     NEXT },
+    { "return",   RETURN },
+    { "getline",  GETLINE },
+    { "sub",      SUB },
+    { "gsub",     GSUB },
+    { "function", FUNCTION },
+    { (char *) 0, 0 }
+};
+/* *INDENT-ON* */
 
 /* put keywords in the symbol table */
 void
-kw_init()
+kw_init(void)
 {
-   register struct kw *p = keywords ;
-   register SYMTAB *q ;
+    register struct kw *p = keywords;
+    register SYMTAB *q;
 
-   while (p->text)
-   {
-      q = insert(p->text) ;
-      q->type = ST_KEYWORD ;
-      q->stval.kw = p++->kw ;
-   }
+    while (p->text) {
+	q = insert(p->text);
+	q->type = ST_KEYWORD;
+	q->stval.kw = p++->kw;
+    }
 }
 
 /* find a keyword to emit an error message */
 char *
-find_kw_str(kw_token)
-   int kw_token ;
+find_kw_str(int kw_token)
 {
-   struct kw *p ;
+    struct kw *p;
 
-   for (p = keywords; p->text; p++)
-      if (p->kw == kw_token)  return p->text ;
-   /* search failed */
-   return (char *) 0 ;
+    for (p = keywords; p->text; p++)
+	if (p->kw == kw_token)
+	    return p->text;
+    /* search failed */
+    return (char *) 0;
 }
