@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.14 2009/07/12 20:48:08 tom Exp $
+dnl $MawkId: configure.in,v 1.15 2009/07/23 00:51:09 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -33,6 +33,7 @@ dnl
 dnl
 AC_INIT(mawk.h)
 
+AC_CONFIG_HEADER(config.h:config_h.in)
 CF_CHECK_CACHE
 
 CF_MAWK_PROG_GCC
@@ -64,5 +65,4 @@ CF_MAWK_CHECK_HEADERS(fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h)
 CF_MAWK_CHECK_FUNCS(memcpy strchr strerror vfprintf strtod fmod matherr)
 CF_MAWK_FIND_MAX_INT
 CF_MAWK_RUN_FPE_TESTS
-CF_MAWK_OUTPUT_CONFIG_H
 AC_OUTPUT(Makefile)
