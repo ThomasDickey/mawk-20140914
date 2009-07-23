@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.9 2009/07/12 10:47:49 tom Exp $
+ * $MawkId: zmalloc.c,v 1.10 2009/07/23 22:42:18 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -72,10 +72,8 @@ the GNU General Public License, version 2, 1991.
 #define	 CHUNK		256
  /* number of blocks to get from malloc */
 
-static void PROTO(out_of_mem, (void));
-
 static void
-out_of_mem()
+out_of_mem(void)
 {
     static char out[] = "out of memory";
 
