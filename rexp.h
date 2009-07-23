@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.3 2009/07/23 00:31:15 tom Exp $
+ * $MawkId: rexp.h,v 1.4 2009/07/23 23:01:32 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -54,8 +54,8 @@ the GNU General Public License, version 2, 1991.
 #include <stdio.h>
 #include  <setjmp.h>
 
-PTR PROTO(RE_malloc, (unsigned));
-PTR PROTO(RE_realloc, (void *, unsigned));
+PTR RE_malloc (unsigned);
+PTR RE_realloc (void *, unsigned);
 
 /*  finite machine  state types  */
 
@@ -136,7 +136,7 @@ typedef struct {
 
 /*  error  trap   */
 extern int REerrno;
-void PROTO(RE_error_trap, (int));
+void RE_error_trap (int);
 
 #ifndef GCC_NORETURN
 #define GCC_NORETURN		/* nothing */

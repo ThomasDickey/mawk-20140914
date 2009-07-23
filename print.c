@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.5 2009/07/12 10:47:49 tom Exp $
+ * $MawkId: print.c,v 1.6 2009/07/23 22:59:39 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -71,58 +71,53 @@ the GNU General Public License, version 2, 1991.
 #include "scan.h"
 #include "files.h"
 
-static void PROTO(print_cell, (CELL *, FILE *)) ;
-static STRING *PROTO(do_printf, (FILE *, char *, unsigned, CELL *)) ;
-static void PROTO(bad_conversion, (int, char *, char *)) ;
-static void PROTO(write_error,(void)) ;
+static void write_error(void);
 
 /* this can be moved and enlarged  by -W sprintf=num  */
-char *sprintf_buff = string_buff ;
-char *sprintf_limit = string_buff + SPRINTF_SZ ;
+char *sprintf_buff = string_buff;
+char *sprintf_limit = string_buff + SPRINTF_SZ;
 
 /* Once execute() starts the sprintf code is (belatedly) the only
    code allowed to use string_buff  */
 
 static void
-print_cell(p, fp)
-   register CELL *p ;
-   register FILE *fp ;
+print_cell(CELL * p, FILE *fp)
 {
-   int len ;
+    int len;
 
-   switch (p->type)
-   {
-      case C_NOINIT:
-	 break ;
-      case C_MBSTRN:
-      case C_STRING:
-      case C_STRNUM:
-	 switch (len = string(p)->len)
-	 {
-	    case 0:
-	       break ;
-	    case 1:
-	       putc(string(p)->str[0], fp) ;
-	       break ;
+    switch (p->type) {
+    case C_NOINIT:
+	break;
+    case C_MBSTRN:
+    case C_STRING:
+    case C_STRNUM:
+	switch (len = string(p)->len) {
+	case 0:
+	    break;
+	case 1:
+	    putc(string(p)->str[0], fp);
+	    break;
 
-	    default:
-	       fwrite(string(p)->str, 1, len, fp) ;
-	 }
-	 break ;
+	default:
+	    fwrite(string(p)->str, 1, len, fp);
+	}
+	break;
 
-      case C_DOUBLE:
-	 {
-	    Int ival = d_to_I(p->dval) ;
+    case C_DOUBLE:
+	{
+	    Int ival = d_to_I(p->dval);
 
 	    /* integers print as "%[l]d" */
-	    if ((double) ival == p->dval)  fprintf(fp, INT_FMT, ival) ;
-	    else  fprintf(fp, string(OFMT)->str, p->dval) ;
-	 }
-	 break ;
+	    if ((double) ival == p->dval)
+		fprintf(fp, INT_FMT, ival);
+	    else
+		fprintf(fp, string(OFMT)->str, p->dval);
+	}
+	break;
 
-      default:
-	 bozo("bad cell passed to print_cell") ;
-   }
+    default:
+	bozo("bad cell passed to print_cell");
+    }
 }
 
 /* on entry to bi_print or bi_printf the stack is:
@@ -136,80 +131,74 @@ print_cell(p, fp)
 */
 
 CELL *
-bi_print(sp)
-   CELL *sp ;			 /* stack ptr passed in */
+bi_print(
+	    CELL * sp)		/* stack ptr passed in */
 {
-   register CELL *p ;
-   register int k ;
-   FILE *fp ;
+    register CELL *p;
+    register int k;
+    FILE *fp;
 
-   k = sp->type ;
-   if (k < 0)
-   {
-      /* k holds redirection */
-      if ((--sp)->type < C_STRING)  cast1_to_s(sp) ;
-      fp = (FILE *) file_find(string(sp), k) ;
-      free_STRING(string(sp)) ;
-      k = (--sp)->type ;
-      /* k now has number of arguments */
-   }
-   else	 fp = stdout ;
+    k = sp->type;
+    if (k < 0) {
+	/* k holds redirection */
+	if ((--sp)->type < C_STRING)
+	    cast1_to_s(sp);
+	fp = (FILE *) file_find(string(sp), k);
+	free_STRING(string(sp));
+	k = (--sp)->type;
+	/* k now has number of arguments */
+    } else
+	fp = stdout;
 
-   if (k)
-   {
-      p = sp - k ;		 /* clear k variables off the stack */
-      sp = p - 1 ;
-      k-- ;
+    if (k) {
+	p = sp - k;		/* clear k variables off the stack */
+	sp = p - 1;
+	k--;
 
-      while (k > 0)
-      {
-	 print_cell(p,fp) ; print_cell(OFS,fp) ;
-	 cell_destroy(p) ;
-	 p++ ; k-- ;
-      }
+	while (k > 0) {
+	    print_cell(p, fp);
+	    print_cell(OFS, fp);
+	    cell_destroy(p);
+	    p++;
+	    k--;
+	}
 
-      print_cell(p, fp) ;  cell_destroy(p) ;
-   }
-   else
-   {				/* print $0 */
-      sp-- ;
-      print_cell(&field[0], fp) ;
-   }
+	print_cell(p, fp);
+	cell_destroy(p);
+    } else {			/* print $0 */
+	sp--;
+	print_cell(&field[0], fp);
+    }
 
-   print_cell(ORS, fp) ;
-   if (ferror(fp)) write_error() ;
-   return sp ;
+    print_cell(ORS, fp);
+    if (ferror(fp))
+	write_error();
+    return sp;
 }
 
 /*---------- types and defs for doing printf and sprintf----*/
 typedef enum {
-	PF_C = 0,	/* %c */
-	PF_S,		/* %s */
-	PF_D,		/* int conversion */
-	PF_F,		/* float conversion */
-	PF_U,		/* unsigned conversion */
-	PF_last
+    PF_C = 0,			/* %c */
+    PF_S,			/* %s */
+    PF_D,			/* int conversion */
+    PF_F,			/* float conversion */
+    PF_U,			/* unsigned conversion */
+    PF_last
 } PF_enum;
 
 /* for switch on number of '*' and type */
 #define	 AST(num,type)	((PF_last)*(num)+(type))
 
 /* some picky ANSI compilers go berserk without this */
-#ifdef NO_PROTOS
-typedef int (*PRINTER) () ;
-#else
-typedef int (*PRINTER) (PTR, const char *,...) ;
-#endif
+typedef int (*PRINTER) (PTR, const char *,...);
 
 /*-------------------------------------------------------*/
 
 static void
-bad_conversion(cnt, who, format)
-   int cnt ;
-   char *who, *format ;
+bad_conversion(int cnt, char *who, char *format)
 {
-   rt_error("improper conversion(number %d) in %s(\"%s\")",
-	    cnt, who, format) ;
+    rt_error("improper conversion(number %d) in %s(\"%s\")",
+	     cnt, who, format);
 }
 
 /* the contents of format are preserved,
@@ -218,372 +207,376 @@ bad_conversion(cnt, who, format)
    This routine does both printf and sprintf (if fp==0)
 */
 static STRING *
-do_printf(fp, format, argcnt, cp)
-   FILE *fp ;
-   char *format ;
-   unsigned argcnt ;		 /* number of args on eval stack */
-   CELL *cp ;			 /* ptr to an array of arguments
-				    (on the eval stack) */
+do_printf(
+	     FILE *fp,
+	     char *format,
+	     unsigned argcnt,	/* number of args on eval stack */
+	     CELL * cp)		/* ptr to an array of arguments
+				   (on the eval stack) */
 {
-   char save ;
-   char *p ;
-   register char *q = format ;
-   register char *target ;
-   int l_flag, h_flag ;		 /* seen %ld or %hd  */
-   int ast_cnt ;
-   int ast[2] ;
-   UInt Uval = 0 ;
-   Int Ival = 0 ;
-   int num_conversion = 0 ;	 /* for error messages */
-   char *who ;			 /*ditto*/
-   int pf_type  = 0 ;		 /* conversion type */
-   PRINTER printer ;		 /* pts at fprintf() or sprintf() */
+    char save;
+    char *p;
+    register char *q = format;
+    register char *target;
+    int l_flag, h_flag;		/* seen %ld or %hd  */
+    int ast_cnt;
+    int ast[2];
+    UInt Uval = 0;
+    Int Ival = 0;
+    int num_conversion = 0;	/* for error messages */
+    char *who;			/*ditto */
+    int pf_type = 0;		/* conversion type */
+    PRINTER printer;		/* pts at fprintf() or sprintf() */
 
 #ifdef	 SHORT_INTS
-   char xbuff[256] ;		 /* splice in l qualifier here */
+    char xbuff[256];		/* splice in l qualifier here */
 #endif
 
-   if (fp == (FILE *) 0)	/* doing sprintf */
-   {
-      target = sprintf_buff ;
-      printer = (PRINTER) sprintf ;
-      who = "sprintf" ;
-   }
-   else	 /* doing printf */
-   {
-      target = (char *) fp ;	 /* will never change */
-      printer = (PRINTER) fprintf ;
-      who = "printf" ;
-   }
+    if (fp == (FILE *) 0)	/* doing sprintf */
+    {
+	target = sprintf_buff;
+	printer = (PRINTER) sprintf;
+	who = "sprintf";
+    } else {			/* doing printf */
+	target = (char *) fp;	/* will never change */
+	printer = (PRINTER) fprintf;
+	who = "printf";
+    }
 
-   while (1)
-   {
-      if (fp)			/* printf */
-      {
-	 while (*q != '%') {
-	    if (*q == 0)  {
-	       if (ferror(fp)) write_error() ;
-	       /* return is ignored */
-	       return (STRING *) 0 ;
+    while (1) {
+	if (fp)			/* printf */
+	{
+	    while (*q != '%') {
+		if (*q == 0) {
+		    if (ferror(fp))
+			write_error();
+		    /* return is ignored */
+		    return (STRING *) 0;
+		} else {
+		    putc(*q, fp);
+		    q++;
+		}
 	    }
-	    else  { putc(*q,fp) ; q++ ; }
-	 }
-      }
-      else  /* sprintf */
-      {
-	 while (*q != '%')
-	    if (*q == 0)
-	    {
-	       if (target > sprintf_limit)	/* damaged */
-	       {
-		  /* hope this works */
-		  rt_overflow("sprintf buffer",
-			      sprintf_limit - sprintf_buff) ;
-	       }
-	       else  /* really done */
-	       {
-		  STRING *retval ;
-		  int len = target - sprintf_buff ;
+	} else {		/* sprintf */
+	    while (*q != '%')
+		if (*q == 0) {
+		    if (target > sprintf_limit)		/* damaged */
+		    {
+			/* hope this works */
+			rt_overflow("sprintf buffer",
+				    sprintf_limit - sprintf_buff);
+		    } else {	/* really done */
+			STRING *retval;
+			int len = target - sprintf_buff;
 
-		  retval = new_STRING0(len) ;
-		  memcpy(retval->str, sprintf_buff, len) ;
-		  return retval ;
-	       }
-	    }
-	    else  *target++ = *q++ ;
-      }
+			retval = new_STRING0(len);
+			memcpy(retval->str, sprintf_buff, len);
+			return retval;
+		    }
+		} else
+		    *target++ = *q++;
+	}
 
+	/* *q == '%' */
+	num_conversion++;
 
-      /* *q == '%' */
-      num_conversion++ ;
+	if (*++q == '%')	/* %% */
+	{
+	    if (fp)
+		putc(*q, fp);
+	    else
+		*target++ = *q;
 
-      if (*++q == '%')		/* %% */
-      {
-	 if (fp)  putc(*q, fp) ;
-	 else  *target++ = *q ;
+	    q++;
+	    continue;
+	}
 
-	 q++ ; continue ;
-      }
+	/* mark the '%' with p */
+	p = q - 1;
 
-      /* mark the '%' with p */
-      p = q - 1 ;
+	/* eat the flags */
+	while (*q == '-' || *q == '+' || *q == ' ' ||
+	       *q == '#' || *q == '0')
+	    q++;
 
-      /* eat the flags */
-      while (*q == '-' || *q == '+' || *q == ' ' ||
-	     *q == '#' || *q == '0')
-	 q++ ;
+	ast_cnt = 0;
+	if (*q == '*') {
+	    if (cp->type != C_DOUBLE)
+		cast1_to_d(cp);
+	    ast[ast_cnt++] = d_to_i(cp++->dval);
+	    argcnt--;
+	    q++;
+	} else
+	    while (scan_code[*(unsigned char *) q] == SC_DIGIT)
+		q++;
+	/* width is done */
 
-      ast_cnt = 0 ;
-      if (*q == '*')
-      {
-	 if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
-	 ast[ast_cnt++] = d_to_i(cp++->dval) ;
-	 argcnt-- ; q++ ;
-      }
-      else
-	 while (scan_code[*(unsigned char *) q] == SC_DIGIT)  q++ ;
-      /* width is done */
+	if (*q == '.')		/* have precision */
+	{
+	    q++;
+	    if (*q == '*') {
+		if (cp->type != C_DOUBLE)
+		    cast1_to_d(cp);
+		ast[ast_cnt++] = d_to_i(cp++->dval);
+		argcnt--;
+		q++;
+	    } else
+		while (scan_code[*(unsigned char *) q] == SC_DIGIT)
+		    q++;
+	}
 
-      if (*q == '.')		/* have precision */
-      {
-	 q++ ;
-	 if (*q == '*')
-	 {
-	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
-	    ast[ast_cnt++] = d_to_i(cp++->dval) ;
-	    argcnt-- ; q++ ;
-	 }
-	 else
-	    while (scan_code[*(unsigned char *) q] == SC_DIGIT)	 q++ ;
-      }
+	if (argcnt <= 0)
+	    rt_error("not enough arguments passed to %s(\"%s\")",
+		     who, format);
 
-      if (argcnt <= 0)
-	 rt_error("not enough arguments passed to %s(\"%s\")",
-		  who, format) ;
+	l_flag = h_flag = 0;
 
-      l_flag = h_flag = 0 ;
-
-      if (*q == 'l')  { q++ ; l_flag = 1 ; }
-      else if (*q == 'h')  { q++ ; h_flag = 1 ; }
-      switch (*q++)
-      {
-	 case 's':
+	if (*q == 'l') {
+	    q++;
+	    l_flag = 1;
+	} else if (*q == 'h') {
+	    q++;
+	    h_flag = 1;
+	}
+	switch (*q++) {
+	case 's':
 	    if (l_flag + h_flag)
-	       bad_conversion(num_conversion, who, format) ;
-	    if (cp->type < C_STRING)  cast1_to_s(cp) ;
-	    pf_type = PF_S ;
-	    break ;
+		bad_conversion(num_conversion, who, format);
+	    if (cp->type < C_STRING)
+		cast1_to_s(cp);
+	    pf_type = PF_S;
+	    break;
 
-	 case 'c':
+	case 'c':
 	    if (l_flag + h_flag)
-	       bad_conversion(num_conversion, who, format) ;
+		bad_conversion(num_conversion, who, format);
 
-	    switch (cp->type)
-	    {
-	       case C_NOINIT:
-		  Ival = 0 ;
-		  break ;
+	    switch (cp->type) {
+	    case C_NOINIT:
+		Ival = 0;
+		break;
 
-	       case C_STRNUM:
-	       case C_DOUBLE:
-		  Ival =  d_to_I(cp->dval) ;
-		  break ;
+	    case C_STRNUM:
+	    case C_DOUBLE:
+		Ival = d_to_I(cp->dval);
+		break;
 
-	       case C_STRING:
-		  Ival = string(cp)->str[0] ;
-		  break ;
+	    case C_STRING:
+		Ival = string(cp)->str[0];
+		break;
 
-	       case C_MBSTRN:
-		  check_strnum(cp) ;
-		  Ival = cp->type == C_STRING ?
-		     string(cp)->str[0] : d_to_I(cp->dval) ;
-		  break ;
+	    case C_MBSTRN:
+		check_strnum(cp);
+		Ival = cp->type == C_STRING ?
+		    string(cp)->str[0] : d_to_I(cp->dval);
+		break;
 
-	       default:
-		  bozo("printf %c") ;
+	    default:
+		bozo("printf %c");
 	    }
 
-	    pf_type = PF_C ;
-	    break ;
+	    pf_type = PF_C;
+	    break;
 
-	 case 'd':
-	 case 'i':
-	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
-	    Ival = d_to_I(cp->dval) ;
-	    pf_type = PF_D ;
-	    break ;
+	case 'd':
+	case 'i':
+	    if (cp->type != C_DOUBLE)
+		cast1_to_d(cp);
+	    Ival = d_to_I(cp->dval);
+	    pf_type = PF_D;
+	    break;
 
-	 case 'o':
-	 case 'x':
-	 case 'X':
-	 case 'u':
-	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
-	    Uval = d_to_U(cp->dval) ;
-	    pf_type = PF_U ;
-	    break ;
+	case 'o':
+	case 'x':
+	case 'X':
+	case 'u':
+	    if (cp->type != C_DOUBLE)
+		cast1_to_d(cp);
+	    Uval = d_to_U(cp->dval);
+	    pf_type = PF_U;
+	    break;
 
-	 case 'e':
-	 case 'g':
-	 case 'f':
-	 case 'E':
-	 case 'G':
+	case 'e':
+	case 'g':
+	case 'f':
+	case 'E':
+	case 'G':
 	    if (h_flag + l_flag)
-	       bad_conversion(num_conversion, who, format) ;
-	    if (cp->type != C_DOUBLE)  cast1_to_d(cp) ;
-	    pf_type = PF_F ;
-	    break ;
+		bad_conversion(num_conversion, who, format);
+	    if (cp->type != C_DOUBLE)
+		cast1_to_d(cp);
+	    pf_type = PF_F;
+	    break;
 
-	 default:
-	    bad_conversion(num_conversion, who, format) ;
-      }
+	default:
+	    bad_conversion(num_conversion, who, format);
+	}
 
-      save = *q ;
-      *q = 0 ;
+	save = *q;
+	*q = 0;
 
 #ifdef	SHORT_INTS
-      if (pf_type == PF_D)
-      {
-	 /* need to splice in long modifier */
-	 strcpy(xbuff, p) ;
+	if (pf_type == PF_D) {
+	    /* need to splice in long modifier */
+	    strcpy(xbuff, p);
 
-	 if (l_flag) /* do nothing */ ;
-	 else
-	 {
-	    int k = q - p ;
+	    if (l_flag) /* do nothing */ ;
+	    else {
+		int k = q - p;
 
-	    if (h_flag)
-	    {
-	       Ival = (short) Ival ;
-	       /* replace the 'h' with 'l' (really!) */
-	       xbuff[k - 2] = 'l' ;
-	       if (xbuff[k - 1] != 'd' && xbuff[k - 1] != 'i')
-		  Ival &= 0xffff ;
+		if (h_flag) {
+		    Ival = (short) Ival;
+		    /* replace the 'h' with 'l' (really!) */
+		    xbuff[k - 2] = 'l';
+		    if (xbuff[k - 1] != 'd' && xbuff[k - 1] != 'i')
+			Ival &= 0xffff;
+		} else {
+		    /* the usual case */
+		    xbuff[k] = xbuff[k - 1];
+		    xbuff[k - 1] = 'l';
+		    xbuff[k + 1] = 0;
+		}
 	    }
-	    else
-	    {
-	       /* the usual case */
-	       xbuff[k] = xbuff[k - 1] ;
-	       xbuff[k - 1] = 'l' ;
-	       xbuff[k + 1] = 0 ;
-	    }
-	 }
-      }
+	}
 #endif
 
-      /* ready to call printf() */
-      switch (AST(ast_cnt, pf_type))
-      {
-	 case AST(0, PF_C):
-	    (*printer) ((PTR) target, p, (int) Ival) ;
-	    break ;
+	/* ready to call printf() */
+	switch (AST(ast_cnt, pf_type)) {
+	case AST(0, PF_C):
+	    (*printer) ((PTR) target, p, (int) Ival);
+	    break;
 
-	 case AST(1, PF_C):
-	    (*printer) ((PTR) target, p, ast[0], (int) Ival) ;
-	    break ;
+	case AST(1, PF_C):
+	    (*printer) ((PTR) target, p, ast[0], (int) Ival);
+	    break;
 
-	 case AST(2, PF_C):
-	    (*printer) ((PTR) target, p, ast[0], ast[1], (int) Ival) ;
-	    break ;
+	case AST(2, PF_C):
+	    (*printer) ((PTR) target, p, ast[0], ast[1], (int) Ival);
+	    break;
 
-	 case AST(0, PF_S):
-	    (*printer) ((PTR) target, p, string(cp)->str) ;
-	    break ;
+	case AST(0, PF_S):
+	    (*printer) ((PTR) target, p, string(cp)->str);
+	    break;
 
-	 case AST(1, PF_S):
-	    (*printer) ((PTR) target, p, ast[0], string(cp)->str) ;
-	    break ;
+	case AST(1, PF_S):
+	    (*printer) ((PTR) target, p, ast[0], string(cp)->str);
+	    break;
 
-	 case AST(2, PF_S):
-	    (*printer) ((PTR) target, p, ast[0], ast[1], string(cp)->str) ;
-	    break ;
+	case AST(2, PF_S):
+	    (*printer) ((PTR) target, p, ast[0], ast[1], string(cp)->str);
+	    break;
 
 #ifdef	SHORT_INTS
 #define FMT	xbuff		/* format in xbuff */
 #else
 #define FMT	p		/* p -> format */
 #endif
-	 case AST(0, PF_D):
-	    (*printer) ((PTR) target, FMT, Ival) ;
-	    break ;
+	case AST(0, PF_D):
+	    (*printer) ((PTR) target, FMT, Ival);
+	    break;
 
-	 case AST(1, PF_D):
-	    (*printer) ((PTR) target, FMT, ast[0], Ival) ;
-	    break ;
+	case AST(1, PF_D):
+	    (*printer) ((PTR) target, FMT, ast[0], Ival);
+	    break;
 
-	 case AST(2, PF_D):
-	    (*printer) ((PTR) target, FMT, ast[0], ast[1], Ival) ;
-	    break ;
+	case AST(2, PF_D):
+	    (*printer) ((PTR) target, FMT, ast[0], ast[1], Ival);
+	    break;
 
-	 case AST(0, PF_U):
-	    (*printer) ((PTR) target, FMT, Uval) ;
-	    break ;
+	case AST(0, PF_U):
+	    (*printer) ((PTR) target, FMT, Uval);
+	    break;
 
-	 case AST(1, PF_U):
-	    (*printer) ((PTR) target, FMT, ast[0], Uval) ;
-	    break ;
+	case AST(1, PF_U):
+	    (*printer) ((PTR) target, FMT, ast[0], Uval);
+	    break;
 
-	 case AST(2, PF_U):
-	    (*printer) ((PTR) target, FMT, ast[0], ast[1], Uval) ;
-	    break ;
+	case AST(2, PF_U):
+	    (*printer) ((PTR) target, FMT, ast[0], ast[1], Uval);
+	    break;
 
 #undef	FMT
 
-	 case AST(0, PF_F):
-	    (*printer) ((PTR) target, p, cp->dval) ;
-	    break ;
+	case AST(0, PF_F):
+	    (*printer) ((PTR) target, p, cp->dval);
+	    break;
 
-	 case AST(1, PF_F):
-	    (*printer) ((PTR) target, p, ast[0], cp->dval) ;
-	    break ;
+	case AST(1, PF_F):
+	    (*printer) ((PTR) target, p, ast[0], cp->dval);
+	    break;
 
-	 case AST(2, PF_F):
-	    (*printer) ((PTR) target, p, ast[0], ast[1], cp->dval) ;
-	    break ;
-      }
-      if (fp == (FILE *) 0)
-	 while (*target)  target++ ;
-      *q = save ; argcnt-- ; cp++ ;
-   }
+	case AST(2, PF_F):
+	    (*printer) ((PTR) target, p, ast[0], ast[1], cp->dval);
+	    break;
+	}
+	if (fp == (FILE *) 0)
+	    while (*target)
+		target++;
+	*q = save;
+	argcnt--;
+	cp++;
+    }
 }
 
 CELL *
-bi_printf(sp)
-   register CELL *sp ;
+bi_printf(CELL * sp)
 {
-   register int k ;
-   register CELL *p ;
-   FILE *fp ;
+    register int k;
+    register CELL *p;
+    FILE *fp;
 
-   k = sp->type ;
-   if (k < 0)
-   {
-      /* k has redirection */
-      if ((--sp)->type < C_STRING)  cast1_to_s(sp) ;
-      fp = (FILE *) file_find(string(sp), k) ;
-      free_STRING(string(sp)) ;
-      k = (--sp)->type ;
-      /* k is now number of args including format */
-   }
-   else	 fp = stdout ;
+    k = sp->type;
+    if (k < 0) {
+	/* k has redirection */
+	if ((--sp)->type < C_STRING)
+	    cast1_to_s(sp);
+	fp = (FILE *) file_find(string(sp), k);
+	free_STRING(string(sp));
+	k = (--sp)->type;
+	/* k is now number of args including format */
+    } else
+	fp = stdout;
 
-   sp -= k ;			 /* sp points at the format string */
-   k-- ;
+    sp -= k;			/* sp points at the format string */
+    k--;
 
-   if (sp->type < C_STRING)  cast1_to_s(sp) ;
-   do_printf(fp, string(sp)->str, k, sp + 1);
-   free_STRING(string(sp)) ;
+    if (sp->type < C_STRING)
+	cast1_to_s(sp);
+    do_printf(fp, string(sp)->str, k, sp + 1);
+    free_STRING(string(sp));
 
-   /* cleanup arguments on eval stack */
-   for (p = sp + 1; k; k--, p++)  cell_destroy(p) ;
-   return --sp ;
+    /* cleanup arguments on eval stack */
+    for (p = sp + 1; k; k--, p++)
+	cell_destroy(p);
+    return --sp;
 }
 
 CELL *
-bi_sprintf(sp)
-   CELL *sp ;
+bi_sprintf(CELL * sp)
 {
-   CELL *p ;
-   int argcnt = sp->type ;
-   STRING *sval ;
+    CELL *p;
+    int argcnt = sp->type;
+    STRING *sval;
 
-   sp -= argcnt ;		 /* sp points at the format string */
-   argcnt-- ;
+    sp -= argcnt;		/* sp points at the format string */
+    argcnt--;
 
-   if (sp->type != C_STRING)  cast1_to_s(sp) ;
-   sval = do_printf((FILE *) 0, string(sp)->str, argcnt, sp + 1) ;
-   free_STRING(string(sp)) ;
-   sp->ptr = (PTR) sval ;
+    if (sp->type != C_STRING)
+	cast1_to_s(sp);
+    sval = do_printf((FILE *) 0, string(sp)->str, argcnt, sp + 1);
+    free_STRING(string(sp));
+    sp->ptr = (PTR) sval;
 
-   /* cleanup */
-   for (p = sp + 1; argcnt; argcnt--, p++)  cell_destroy(p) ;
+    /* cleanup */
+    for (p = sp + 1; argcnt; argcnt--, p++)
+	cell_destroy(p);
 
-   return sp ;
+    return sp;
 }
-
 
 static void
-write_error()
+write_error(void)
 {
-   errmsg(errno, "write failure") ;
-   mawk_exit(2) ;
+    errmsg(errno, "write failure");
+    mawk_exit(2);
 }
