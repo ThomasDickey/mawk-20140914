@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.16 2009/07/14 22:24:42 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.17 2009/07/23 00:50:08 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -277,20 +277,20 @@ AC_TRY_COMPILE(
 void *foo() ;] ,
 [cp = (char*)(void*)(int*)foo() ;],void_star=yes,void_star=no)
 AC_MSG_RESULT($void_star)
-test "$void_star" = no && CF_MAWK_DEFINE2(NO_VOID_STAR,1)
+test "$void_star" = no && AC_DEFINE_UNQUOTED(NO_VOID_STAR,1)
 AC_MSG_CHECKING(compiler groks prototypes)
 AC_TRY_COMPILE(,[int x(char*);],protos=yes,protos=no)
 AC_MSG_RESULT([$protos])
-test "$protos" = no && CF_MAWK_DEFINE2(NO_PROTOS,1)
+test "$protos" = no && AC_DEFINE_UNQUOTED(NO_PROTOS,1)
 AC_C_CONST
-test "$ac_cv_c_const" = no && CF_MAWK_DEFINE2(const)])dnl
+test "$ac_cv_c_const" = no && AC_DEFINE_UNQUOTED(const)])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_FUNC version: 3 updated: 2008/09/09 20:32:43
 dnl ------------------
 AC_DEFUN([CF_MAWK_CHECK_FUNC],[
     AC_CHECK_FUNC($1,,[
         CF_UPPER(cf_check_func,NO_$1)
-        CF_MAWK_DEFINE($cf_check_func)])
+        AC_DEFINE($cf_check_func)])
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_FUNCS version: 3 updated: 2008/09/09 20:32:43
@@ -307,7 +307,7 @@ dnl --------------------
 AC_DEFUN([CF_MAWK_CHECK_HEADER],[
     AC_CHECK_HEADER($1,,[
         CF_UPPER(cf_check_header,NO_$1)
-        CF_MAWK_DEFINE($cf_check_header)])
+        AC_DEFINE($cf_check_header)])
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_HEADERS version: 3 updated: 2008/09/09 20:32:43
@@ -336,7 +336,7 @@ AC_DEFUN([CF_MAWK_CHECK_SIZE_T],[
 #include <$1>],
 [size_t *n ;
 ], [size_t_defed=1;
-CF_MAWK_DEFINE2($2,1)
+AC_DEFINE_UNQUOTED($2,1)
 echo getting size_t from '<$1>'])
 [fi;fi]])dnl
 dnl ---------------------------------------------------------------------------
@@ -360,17 +360,6 @@ AC_DEFUN([CF_MAWK_CONFIG_H_TRAILER],
 #define HAVE_REAL_PIPES 1
 #endif /* CONFIG_H */
 EOF])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_DEFINE version: 2 updated: 2008/09/09 20:32:43
-dnl --------------
-dnl  I can't get AC_DEFINE_NOQUOTE to work so give up
-AC_DEFUN([CF_MAWK_DEFINE],[AC_DEFINE($1)
-echo  X $1 'ifelse($2,,1,$2)' >> defines.out])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_DEFINE2 version: 1 updated: 2008/09/09 19:18:22
-dnl ---------------
-AC_DEFUN([CF_MAWK_DEFINE2],
-[echo  X '$1' '$2' >> defines.out])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_FIND_MAX_INT version: 1 updated: 2008/09/09 19:18:22
 dnl --------------------
@@ -398,7 +387,8 @@ if test "$maxint_set" != 1 ; then
 AC_TRY_RUN(CF_MAWK_MAX__INT_PROGRAM,:,[CF_MAWK_CHECK_LIMITS_MSG])
 fi
 cat maxint.out >> defines.out ; rm -f maxint.out
-fi ;])dnl
+fi
+])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_FIND_SIZE_T version: 1 updated: 2008/09/09 19:18:22
 dnl -------------------
@@ -413,11 +403,11 @@ AC_DEFUN([CF_MAWK_FPE_SIGINFO],
 [AC_CHECK_FUNC(sigaction, sigaction=1)
 AC_CHECK_HEADER(siginfo.h,siginfo_h=1)
 if test "$sigaction" = 1 && test "$siginfo_h" = 1 ; then
-   CF_MAWK_DEFINE(SV_SIGINFO)
+   AC_DEFINE(MAWK_SV_SIGINFO)
 else
    AC_CHECK_FUNC(sigvec,sigvec=1)
    if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then :
-   else CF_MAWK_DEFINE(NOINFO_SIGFPE)
+   else AC_DEFINE(NOINFO_SIGFPE)
    fi
 fi])
 dnl ---------------------------------------------------------------------------
@@ -463,19 +453,6 @@ int main()
     exit(0) ;
     return 0 ;
  }]])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_OUTPUT_CONFIG_H version: 1 updated: 2008/09/09 19:18:22
-dnl -----------------------
-dnl Build config.h
-AC_DEFUN([CF_MAWK_OUTPUT_CONFIG_H],
-[# output config.h
-rm -f config.h
-(
-CF_MAWK_CONFIG_H_HEADER
-[sed 's/^X/#define/' defines.out]
-CF_MAWK_CONFIG_H_TRAILER
-) | tee config.h
-rm defines.out])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_PROG_GCC version: 1 updated: 2008/09/09 19:18:22
 dnl ----------------
@@ -531,7 +508,7 @@ fi
 case $status in
    0)  ;;  # good news do nothing
    3)      # reasonably good news]
-CF_MAWK_DEFINE(FPE_TRAPS_ON)
+AC_DEFINE(FPE_TRAPS_ON)
 CF_MAWK_FPE_SIGINFO ;;
 
    1|2|4)   # bad news have to turn off traps
@@ -539,9 +516,9 @@ CF_MAWK_FPE_SIGINFO ;;
 AC_CHECK_HEADER(ieeefp.h, ieeefp_h=1)
 AC_CHECK_FUNC(fpsetmask, fpsetmask=1)
 [if test "$ieeefp_h" = 1 && test "$fpsetmask" = 1 ; then]
-CF_MAWK_DEFINE(FPE_TRAPS_ON)
-CF_MAWK_DEFINE(USE_IEEEFP_H)
-CF_MAWK_DEFINE2([TURN_ON_FPE_TRAPS()],
+AC_DEFINE(FPE_TRAPS_ON)
+AC_DEFINE(USE_IEEEFP_H)
+AC_DEFINE_UNQUOTED([TURN_ON_FPE_TRAPS()],
 [fpsetmask(fpgetmask()|FP_X_DZ|FP_X_OFL)])
 CF_MAWK_FPE_SIGINFO 
 # look for strtod overflow bug
@@ -554,12 +531,12 @@ then
    AC_MSG_RESULT([no bug])
 else
    AC_MSG_RESULT([buggy -- will use work around])
-   CF_MAWK_DEFINE2([HAVE_STRTOD_OVF_BUG],1)
+   AC_DEFINE_UNQUOTED([HAVE_STRTOD_OVF_BUG],1)
 fi
 
 else
    [if test $status != 4 ; then]
-      CF_MAWK_DEFINE(FPE_TRAPS_ON)
+      AC_DEFINE(FPE_TRAPS_ON)
       CF_MAWK_FPE_SIGINFO 
     fi
 
