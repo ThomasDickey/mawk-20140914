@@ -1,6 +1,13 @@
--- $MawkId: CHANGES,v 1.31 2009/07/21 09:21:57 tom Exp $
+-- $MawkId: CHANGES,v 1.32 2009/07/23 00:45:55 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+2009072?
+	rename #define'd SV_SIGINFO to MAWK_SV_SIGINFO to avoid predefined
+	name on Mac OS X (report on comp.lang.awk).
+
+	revise configure script to use conventional scheme for generating
+	config.h
 
 20090721
 	port to cygwin, modifying test-script to work with executable-suffix
