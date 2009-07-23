@@ -1,10 +1,16 @@
 /*
- * $MawkId: config_h.in,v 1.4 2009/07/23 09:30:50 tom Exp $
+ * $MawkId: config_h.in,v 1.5 2009/07/23 21:07:19 tom Exp $
  * vile:cmode
  * template for config.h
  */
 
 #undef FPE_TRAPS_ON
+#undef GCC_NORETURN
+#undef GCC_PRINTF
+#undef GCC_PRINTFLIKE
+#undef GCC_SCANF
+#undef GCC_SCANFLIKE
+#undef GCC_UNUSED
 #undef HAVE_REAL_PIPES
 #undef HAVE_STRTOD_OVF_BUG
 #undef MAWK_SV_SIGINFO
