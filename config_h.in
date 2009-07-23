@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.1 2009/07/23 00:55:08 tom Exp $
+ * $MawkId: config_h.in,v 1.2 2009/07/23 00:59:40 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -8,8 +8,24 @@
 #undef HAVE_STRTOD_OVF_BUG
 #undef MAWK_SV_SIGINFO
 #undef NOINFO_SIGFPE
+#undef NO_ERRNO_H
+#undef NO_FCNTL_H
+#undef NO_FMOD
+#undef NO_MATHERR
+#undef NO_MATH_H
+#undef NO_MEMCPY
 #undef NO_PROTOS
+#undef NO_STDARG_H
+#undef NO_STDLIB_H
+#undef NO_STRCHR
+#undef NO_STRERROR
+#undef NO_STRING_H
+#undef NO_STRTOD
+#undef NO_TIME_H
+#undef NO_VFPRINTF
 #undef NO_VOID_STAR
+#undef SIZE_T_STDDEF_H
+#undef SIZE_T_TYPES_H
 #undef SYSTEM_NAME
 #undef TURN_ON_FPE_TRAPS()
 #undef USE_IEEEFP_H
