@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.17 2009/07/23 00:50:08 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.18 2009/07/23 09:00:55 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -327,18 +327,29 @@ Please send bug report to CF_MAWK_MAINTAINER.)])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_SIZE_T version: 1 updated: 2008/09/09 19:18:22
 dnl --------------------
+dnl Check if size_t is found in the given header file, unless we have already
+dnl found it.
+dnl $1 = header to check
+dnl $2 = symbol to define if size_t is found there.
 dnl Find size_t.
 AC_DEFUN([CF_MAWK_CHECK_SIZE_T],[
-  [if test "$size_t_defed" != 1 ; then]
-   AC_CHECK_HEADER($1,size_t_header=ok)
-   [if test "$size_t_header" = ok ; then]
-   AC_TRY_COMPILE([
-#include <$1>],
-[size_t *n ;
-], [size_t_defed=1;
-AC_DEFINE_UNQUOTED($2,1)
-echo getting size_t from '<$1>'])
-[fi;fi]])dnl
+if test "x$cf_mawk_check_size_t" != xyes ; then
+
+AC_CACHE_VAL(cf_cv_size_t_$2,[
+	AC_CHECK_HEADER($1,cf_mawk_check_size=ok)
+	if test "x$cf_mawk_check_size" = xok ; then
+		AC_CACHE_CHECK(if size_t is declared in $1,cf_cv_size_t_$2,[
+			AC_TRY_COMPILE([#include <$1>],[size_t *n],
+				[cf_cv_size_t_$2=yes],
+				[cf_cv_size_t_$2=no])])
+	fi
+])
+	if test "x$cf_cv_size_t_$2" = xyes ; then
+		AC_DEFINE_UNQUOTED($2,1)
+		cf_mawk_check_size_t=yes
+	fi
+fi
+])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CONFIG_H_HEADER version: 1 updated: 2008/09/09 19:18:22
 dnl -----------------------
