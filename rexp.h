@@ -1,4 +1,3 @@
-
 /********************************************
 rexp.h
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: rexp.h,v @
+/*
+ * $MawkId: rexp.h,v 1.3 2009/07/23 00:31:15 tom Exp $
+ * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
  *
@@ -44,7 +45,7 @@ the GNU General Public License, version 2, 1991.
  * Revision 1.1  91/06/03  07:05:41  brennan
  * Initial revision
  * 
-*/
+ */
 
 #ifndef  REXP_H
 #define  REXP_H
@@ -53,9 +54,8 @@ the GNU General Public License, version 2, 1991.
 #include <stdio.h>
 #include  <setjmp.h>
 
-PTR  PROTO( RE_malloc, (unsigned) ) ;
-PTR  PROTO( RE_realloc, (void *,unsigned) ) ;
-
+PTR PROTO(RE_malloc, (unsigned));
+PTR PROTO(RE_realloc, (void *, unsigned));
 
 /*  finite machine  state types  */
 
@@ -75,40 +75,38 @@ PTR  PROTO( RE_realloc, (void *,unsigned) ) ;
 #define  END_OFF   0
 #define  END_ON    (2*U_ON)
 
+typedef unsigned char BV[32];	/* bit vector */
 
-typedef  unsigned char BV[32] ;  /* bit vector */
-
-typedef  struct
-{ char type ;
-  unsigned char  len ;  /* used for M_STR  */
-  union
-   { 
-     char *str  ;  /* string */
-     BV   *bvp ;   /*  class  */
-     int   jump ;
-   }  data ;
-}     STATE  ;
+typedef struct {
+    char type;
+    unsigned char len;		/* used for M_STR  */
+    union {
+	char *str;		/* string */
+	BV *bvp;		/*  class  */
+	int jump;
+    } data;
+} STATE;
 
 #define  STATESZ  (sizeof(STATE))
 
-typedef  struct
-{ STATE  *start, *stop ; }   MACHINE ;
-
+typedef struct {
+    STATE *start, *stop;
+} MACHINE;
 
 /*  tokens   */
-#define  T_OR   1       /* | */
-#define  T_CAT  2       
-#define  T_STAR 3       /* * */
-#define  T_PLUS 4       /* + */
-#define  T_Q    5       /* ? */
-#define  T_LP   6       /* ( */
-#define  T_RP   7       /* ) */
-#define  T_START 8      /* ^ */
-#define  T_END  9       /* $ */
-#define  T_ANY  10      /* . */
-#define  T_CLASS 11     /* starts with [ */
-#define  T_SLASH 12     /*  \  */
-#define  T_CHAR  13     /* all the rest */
+#define  T_OR     1		/* | */
+#define  T_CAT    2
+#define  T_STAR   3		/* * */
+#define  T_PLUS   4		/* + */
+#define  T_Q      5		/* ? */
+#define  T_LP     6		/* ( */
+#define  T_RP     7		/* ) */
+#define  T_START  8		/* ^ */
+#define  T_END    9		/* $ */
+#define  T_ANY   10		/* . */
+#define  T_CLASS 11		/* starts with [ */
+#define  T_SLASH 12		/*  \  */
+#define  T_CHAR  13		/* all the rest */
 #define  T_STR   14
 #define  T_U     15
 
@@ -130,34 +128,37 @@ typedef  struct
 
 /* struct for the run time stack */
 typedef struct {
-STATE *m ;   /*   save the machine ptr */
-int    u ;   /*   save the u_flag */
-char  *s ;   /*   save the active string ptr */
-char  *ss ;  /*   save the match start -- only used by REmatch */
-} RT_STATE ;   /* run time state */
+    STATE *m;			/* save the machine ptr */
+    int u;			/* save the u_flag */
+    char *s;			/* save the active string ptr */
+    char *ss;			/* save the match start -- only used by REmatch */
+} RT_STATE;			/* run time state */
 
 /*  error  trap   */
-extern int REerrno ;
-void   PROTO(RE_error_trap, (int) ) ;
+extern int REerrno;
+void PROTO(RE_error_trap, (int));
 
+#ifndef GCC_NORETURN
+#define GCC_NORETURN		/* nothing */
+#endif
 
-MACHINE   PROTO( RE_u, (void) ) ;
-MACHINE   PROTO( RE_start, (void) ) ;
-MACHINE   PROTO( RE_end, (void) ) ;
-MACHINE   PROTO( RE_any, (void) ) ;
-MACHINE   PROTO( RE_str, (char *, unsigned) ) ;
-MACHINE   PROTO( RE_class, (BV *) ) ;
-void      PROTO( RE_cat, (MACHINE *, MACHINE *) ) ;
-void      PROTO( RE_or, (MACHINE *, MACHINE *) ) ;
-void      PROTO( RE_close, (MACHINE *) ) ;
-void      PROTO( RE_poscl, (MACHINE *) ) ;
-void      PROTO( RE_01, (MACHINE *) ) ;
-void      PROTO( RE_panic, (char *) ) __attribute__((noreturn)) ;
-char     *PROTO( str_str, (char *, char *, unsigned) ) ;
+MACHINE RE_u(void);
+MACHINE RE_start(void);
+MACHINE RE_end(void);
+MACHINE RE_any(void);
+MACHINE RE_str(char *, unsigned);
+MACHINE RE_class(BV *);
+void RE_cat(MACHINE *, MACHINE *);
+void RE_or(MACHINE *, MACHINE *);
+void RE_close(MACHINE *);
+void RE_poscl(MACHINE *);
+void RE_01(MACHINE *);
+void RE_panic(char *) GCC_NORETURN;
+char *str_str(char *, char *, unsigned);
 
-void      PROTO( RE_lex_init , (char *) ) ;
-int       PROTO( RE_lex , (MACHINE *) ) ;
-void      PROTO( RE_run_stack_init, (void) ) ;
-RT_STATE *PROTO( RE_new_run_stack, (void) ) ;
+void RE_lex_init(char *);
+int RE_lex(MACHINE *);
+void RE_run_stack_init(void);
+RT_STATE *RE_new_run_stack(void);
 
-#endif   /* REXP_H  */
+#endif /* REXP_H  */
