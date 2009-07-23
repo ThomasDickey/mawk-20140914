@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.5 2009/07/12 15:54:41 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.6 2009/07/23 23:17:47 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -45,8 +45,6 @@ the GNU General Public License, version 2, 1991.
 #include "scan.h"
 #include "regexp.h"
 #include "repl.h"
-
-static CELL *PROTO(REPL_compile, (STRING *));
 
 typedef struct re_node {
     STRING *sval;

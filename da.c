@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.3 2009/07/13 00:15:57 tom Exp $
+ * $MawkId: da.c,v 1.4 2009/07/23 23:18:43 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -55,7 +55,7 @@ the GNU General Public License, version 2, 1991.
 #include  "repl.h"
 #include  "field.h"
 
-static char *PROTO(find_bi_name, (PF_CP));
+static char *find_bi_name(PF_CP);
 /* *INDENT-OFF* */
 static struct sc
 {
