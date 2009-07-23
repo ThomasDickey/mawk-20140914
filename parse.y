@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.5 2009/07/12 10:47:49 tom Exp $
+ * $MawkId: parse.y,v 1.6 2009/07/23 22:50:31 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -93,15 +93,15 @@ the GNU General Public License, version 2, 1991.
 #define  YYMAXDEPTH	200
 
 
-extern void  PROTO( eat_nl, (void) ) ;
-static void  PROTO( resize_fblock, (FBLOCK *) ) ;
-static void  PROTO( switch_code_to_main, (void)) ;
-static void  PROTO( code_array, (SYMTAB *) ) ;
-static void  PROTO( code_call_id, (CA_REC *, SYMTAB *) ) ;
-static void  PROTO( field_A2I, (void)) ;
-static void  PROTO( check_var, (SYMTAB *) ) ;
-static void  PROTO( check_array, (SYMTAB *) ) ;
-static void  PROTO( RE_as_arg, (void)) ;
+extern void eat_nl (void) ;
+static void resize_fblock (FBLOCK *) ;
+static void switch_code_to_main (void) ;
+static void code_array (SYMTAB *) ;
+static void code_call_id (CA_REC *, SYMTAB *) ;
+static void field_A2I (void) ;
+static void check_var (SYMTAB *) ;
+static void check_array (SYMTAB *) ;
+static void RE_as_arg (void) ;
 
 static int scope ;
 static FBLOCK *active_funct ;
