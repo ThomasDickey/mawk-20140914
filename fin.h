@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.h,v 1.4 2009/07/12 10:50:03 tom Exp $
+ * $MawkId: fin.h,v 1.5 2009/07/23 23:19:35 tom Exp $
  * @Log: fin.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:13  mike
  * move source to cvs
@@ -30,31 +30,30 @@ the GNU General Public License, version 2, 1991.
 /* structure to control input files */
 
 typedef struct {
-int  fd ;
-FILE *fp ;   /* NULL unless interactive */
-char *buff ;
-char *buffp ;
-unsigned nbuffs ; /* sizeof *buff in BUFFSZs */
-int  flags ;
-}  FIN ;
+    int fd;
+    FILE *fp;			/* NULL unless interactive */
+    char *buff;
+    char *buffp;
+    unsigned nbuffs;		/* sizeof *buff in BUFFSZs */
+    int flags;
+} FIN;
 
-#define  MAIN_FLAG    1   /* part of main input stream if on */
+#define  MAIN_FLAG    1		/* part of main input stream if on */
 #define  EOF_FLAG     2
-#define  START_FLAG   4   /* used when RS == "" */
+#define  START_FLAG   4		/* used when RS == "" */
 
-FIN *  PROTO (FINdopen, (int, int) );
-FIN *  PROTO (FINopen, (char *, int) );
-void   PROTO (FINclose, (FIN *) ) ;
-void   PROTO (FINsemi_close, (FIN *)) ;
-char*  PROTO (FINgets, (FIN *, unsigned *) ) ;
-unsigned PROTO ( fillbuff, (int, char *, unsigned) ) ;
+FIN *FINdopen(int, int);
+FIN *FINopen(char *, int);
+void FINclose(FIN *);
+void FINsemi_close(FIN *);
+char *FINgets(FIN *, unsigned *);
+unsigned fillbuff(int, char *, unsigned);
 
-
-extern  FIN  *main_fin ;  /* for the main input stream */
-void   PROTO( open_main, (void) ) ;
+extern FIN *main_fin;		/* for the main input stream */
+void open_main(void);
 
 #ifdef MSDOS
-void  PROTO(setmode, (int,int)) ;
+void setmode(int, int);
 #endif
 
-#endif  /* FIN_H */
+#endif /* FIN_H */
