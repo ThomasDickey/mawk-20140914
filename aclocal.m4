@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.21 2009/07/23 10:13:30 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.22 2009/07/23 10:15:34 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -481,7 +481,7 @@ AC_DEFUN([CF_MAWK_PROG_YACC],
 [AC_CHECK_PROGS(YACC, byacc bison yacc)
 test "$YACC" = bison && YACC='bison -y'])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 3 updated: 2009/07/23 05:15:39
+dnl CF_MAWK_RUN_FPE_TESTS version: 4 updated: 2009/07/23 06:15:09
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
