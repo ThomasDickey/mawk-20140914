@@ -1,0 +1,16 @@
+/*
+ * $MawkId: config_h.in,v 1.1 2009/07/23 00:55:08 tom Exp $
+ * vile:cmode
+ * template for config.h
+ */
+
+#undef FPE_TRAPS_ON
+#undef HAVE_STRTOD_OVF_BUG
+#undef MAWK_SV_SIGINFO
+#undef NOINFO_SIGFPE
+#undef NO_PROTOS
+#undef NO_VOID_STAR
+#undef SYSTEM_NAME
+#undef TURN_ON_FPE_TRAPS()
+#undef USE_IEEEFP_H
+#undef const
