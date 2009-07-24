@@ -1,4 +1,4 @@
-% $MawkId: array.w,v 1.4 2009/07/12 17:39:32 tom Exp $
+% $MawkId: array.w,v 1.5 2009/07/24 00:57:22 tom Exp $
 % @Log: array.w,v @
 % Revision 1.4  1996/09/18 00:37:25  mike
 % 1) Fix stupid bozo in A[expr], expr is numeric and not integer.
@@ -24,6 +24,10 @@
 <<array.h notice>>
 #ifndef ARRAY_H
 #define ARRAY_H 1
+
+#include "nstd.h"
+#include "types.h"
+
 <<array typedefs and [[#defines]]>>
 <<interface prototypes>>
 #endif /* ARRAY_H */
