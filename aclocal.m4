@@ -1,10 +1,162 @@
-dnl $MawkId: aclocal.m4,v 1.23 2009/07/23 21:09:20 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.24 2009/07/24 01:05:00 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
 dnl renamed for consistency by Thomas E Dickey.
 dnl 
 dnl ---------------------------------------------------------------------------
+dnl ---------------------------------------------------------------------------
+dnl CF_ADD_CFLAGS version: 8 updated: 2009/01/06 19:33:30
+dnl -------------
+dnl Copy non-preprocessor flags to $CFLAGS, preprocessor flags to $CPPFLAGS
+dnl The second parameter if given makes this macro verbose.
+dnl
+dnl Put any preprocessor definitions that use quoted strings in $EXTRA_CPPFLAGS,
+dnl to simplify use of $CPPFLAGS in compiler checks, etc., that are easily
+dnl confused by the quotes (which require backslashes to keep them usable).
+AC_DEFUN([CF_ADD_CFLAGS],
+[
+cf_fix_cppflags=no
+cf_new_cflags=
+cf_new_cppflags=
+cf_new_extra_cppflags=
+
+for cf_add_cflags in $1
+do
+case $cf_fix_cppflags in
+no)
+	case $cf_add_cflags in #(vi
+	-undef|-nostdinc*|-I*|-D*|-U*|-E|-P|-C) #(vi
+		case $cf_add_cflags in
+		-D*)
+			cf_tst_cflags=`echo ${cf_add_cflags} |sed -e 's/^-D[[^=]]*='\''\"[[^"]]*//'`
+
+			test "${cf_add_cflags}" != "${cf_tst_cflags}" \
+			&& test -z "${cf_tst_cflags}" \
+			&& cf_fix_cppflags=yes
+
+			if test $cf_fix_cppflags = yes ; then
+				cf_new_extra_cppflags="$cf_new_extra_cppflags $cf_add_cflags"
+				continue
+			elif test "${cf_tst_cflags}" = "\"'" ; then
+				cf_new_extra_cppflags="$cf_new_extra_cppflags $cf_add_cflags"
+				continue
+			fi
+			;;
+		esac
+		case "$CPPFLAGS" in
+		*$cf_add_cflags) #(vi
+			;;
+		*) #(vi
+			cf_new_cppflags="$cf_new_cppflags $cf_add_cflags"
+			;;
+		esac
+		;;
+	*)
+		cf_new_cflags="$cf_new_cflags $cf_add_cflags"
+		;;
+	esac
+	;;
+yes)
+	cf_new_extra_cppflags="$cf_new_extra_cppflags $cf_add_cflags"
+
+	cf_tst_cflags=`echo ${cf_add_cflags} |sed -e 's/^[[^"]]*"'\''//'`
+
+	test "${cf_add_cflags}" != "${cf_tst_cflags}" \
+	&& test -z "${cf_tst_cflags}" \
+	&& cf_fix_cppflags=no
+	;;
+esac
+done
+
+if test -n "$cf_new_cflags" ; then
+	ifelse($2,,,[CF_VERBOSE(add to \$CFLAGS $cf_new_cflags)])
+	CFLAGS="$CFLAGS $cf_new_cflags"
+fi
+
+if test -n "$cf_new_cppflags" ; then
+	ifelse($2,,,[CF_VERBOSE(add to \$CPPFLAGS $cf_new_cppflags)])
+	CPPFLAGS="$CPPFLAGS $cf_new_cppflags"
+fi
+
+if test -n "$cf_new_extra_cppflags" ; then
+	ifelse($2,,,[CF_VERBOSE(add to \$EXTRA_CPPFLAGS $cf_new_extra_cppflags)])
+	EXTRA_CPPFLAGS="$cf_new_extra_cppflags $EXTRA_CPPFLAGS"
+fi
+
+AC_SUBST(EXTRA_CPPFLAGS)
+
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_ANSI_CC_CHECK version: 9 updated: 2001/12/30 17:53:34
+dnl ----------------
+dnl This is adapted from the macros 'fp_PROG_CC_STDC' and 'fp_C_PROTOTYPES'
+dnl in the sharutils 4.2 distribution.
+AC_DEFUN([CF_ANSI_CC_CHECK],
+[
+AC_CACHE_CHECK(for ${CC-cc} option to accept ANSI C, cf_cv_ansi_cc,[
+cf_cv_ansi_cc=no
+cf_save_CFLAGS="$CFLAGS"
+cf_save_CPPFLAGS="$CPPFLAGS"
+# Don't try gcc -ansi; that turns off useful extensions and
+# breaks some systems' header files.
+# AIX			-qlanglvl=ansi
+# Ultrix and OSF/1	-std1
+# HP-UX			-Aa -D_HPUX_SOURCE
+# SVR4			-Xc
+# UnixWare 1.2		(cannot use -Xc, since ANSI/POSIX clashes)
+for cf_arg in "-DCC_HAS_PROTOS" \
+	"" \
+	-qlanglvl=ansi \
+	-std1 \
+	-Ae \
+	"-Aa -D_HPUX_SOURCE" \
+	-Xc
+do
+	CF_ADD_CFLAGS($cf_arg)
+	AC_TRY_COMPILE(
+[
+#ifndef CC_HAS_PROTOS
+#if !defined(__STDC__) || (__STDC__ != 1)
+choke me
+#endif
+#endif
+],[
+	int test (int i, double x);
+	struct s1 {int (*f) (int a);};
+	struct s2 {int (*f) (double a);};],
+	[cf_cv_ansi_cc="$cf_arg"; break])
+done
+CFLAGS="$cf_save_CFLAGS"
+CPPFLAGS="$cf_save_CPPFLAGS"
+])
+
+if test "$cf_cv_ansi_cc" != "no"; then
+if test ".$cf_cv_ansi_cc" != ".-DCC_HAS_PROTOS"; then
+	CF_ADD_CFLAGS($cf_cv_ansi_cc)
+else
+	AC_DEFINE(CC_HAS_PROTOS)
+fi
+fi
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_ANSI_CC_REQD version: 4 updated: 2008/03/23 14:48:54
+dnl ---------------
+dnl For programs that must use an ANSI compiler, obtain compiler options that
+dnl will make it recognize prototypes.  We'll do preprocessor checks in other
+dnl macros, since tools such as unproto can fake prototypes, but only part of
+dnl the preprocessor.
+AC_DEFUN([CF_ANSI_CC_REQD],
+[AC_REQUIRE([CF_ANSI_CC_CHECK])
+if test "$cf_cv_ansi_cc" = "no"; then
+	AC_MSG_ERROR(
+[Your compiler does not appear to recognize prototypes.
+You have the following choices:
+	a. adjust your compiler options
+	b. get an up-to-date compiler
+	c. use a wrapper such as unproto])
+fi
+])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_ARG_DISABLE version: 3 updated: 1999/03/30 17:24:31
 dnl --------------
@@ -370,24 +522,6 @@ cf_save_CFLAGS="$cf_save_CFLAGS -we147 -no-gcc"
 	esac
 fi
 ])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CC_FEATURES version: 2 updated: 2009/07/23 05:15:39
-dnl -------------------
-dnl Check compiler.
-AC_DEFUN([CF_MAWK_CC_FEATURES],
-[AC_MSG_CHECKING(compiler supports void*)
-AC_TRY_COMPILE(
-[char *cp ;
-void *foo() ;] ,
-[cp = (char*)(void*)(int*)foo() ;],void_star=yes,void_star=no)
-AC_MSG_RESULT($void_star)
-test "$void_star" = no && AC_DEFINE_UNQUOTED(NO_VOID_STAR,1)
-AC_MSG_CHECKING(compiler groks prototypes)
-AC_TRY_COMPILE(,[int x(char*);],protos=yes,protos=no)
-AC_MSG_RESULT([$protos])
-test "$protos" = no && AC_DEFINE_UNQUOTED(NO_PROTOS,1)
-AC_C_CONST
-test "$ac_cv_c_const" = no && AC_DEFINE_UNQUOTED(const)])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_FUNC version: 4 updated: 2009/07/23 05:15:39
 dnl ------------------

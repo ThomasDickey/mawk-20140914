@@ -8,7 +8,7 @@
 */
 
 /*
- * $MawkId: nstd.h,v 1.5 2009/07/23 23:12:08 tom Exp $
+ * $MawkId: nstd.h,v 1.6 2009/07/24 01:03:16 tom Exp $
  * @Log: nstd.h,v @
  * Revision 1.6  1995/06/18  19:42:22  mike
  * Remove some redundant declarations and add some prototypes
@@ -37,11 +37,7 @@
 
 /* types */
 
-#ifdef  NO_VOID_STAR
-typedef char *PTR;
-#else
 typedef void *PTR;
-#endif
 
 #ifdef   SIZE_T_STDDEF_H
 #include <stddef.h>
