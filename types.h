@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: types.h,v 1.3 2009/07/24 00:49:09 tom Exp $
+ * $MawkId: types.h,v 1.4 2009/07/24 22:27:33 tom Exp $
  * @Log: types.h,v @
  * Revision 1.3  1993/07/15  23:56:18  mike
  * general cleanup
@@ -68,6 +68,8 @@ the GNU General Public License, version 2, 1991.
 #define  DOUBLE_AND_MBSTRN  ((1<<C_DOUBLE)+(1<<C_MBSTRN))
 #define  STRING_AND_MBSTRN  ((1<<C_STRING)+(1<<C_MBSTRN))
 #define  STRNUM_AND_MBSTRN  ((1<<C_STRNUM)+(1<<C_MBSTRN))
+
+typedef unsigned char UChar;
 
 typedef struct {
     unsigned len;
