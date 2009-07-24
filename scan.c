@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.6 2009/07/12 20:10:02 tom Exp $
+ * $MawkId: scan.c,v 1.7 2009/07/24 22:20:14 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -77,13 +77,13 @@ the GNU General Public License, version 2, 1991.
 #include  "files.h"
 
 /* static functions */
-static void scan_fillbuff (void);
-static void scan_open (void);
-static int slow_next (void);
-static void eat_comment (void);
-static double collect_decimal (int, int *);
-static int collect_string (void);
-static int collect_RE (void);
+static void scan_fillbuff(void);
+static void scan_open(void);
+static int slow_next(void);
+static void eat_comment(void);
+static double collect_decimal(int, int *);
+static int collect_string(void);
+static int collect_RE(void);
 
 /*-----------------------------
   program file management
@@ -217,8 +217,9 @@ slow_next(void)
 	    ZFREE(q);
 	    scan_open();
 	    token_lineno = lineno = 1;
-	} else
-	    break /* real eof */ ;
+	} else {
+	    break;		/* real eof */
+	}
     }
 
     return *buffp++;		/* note can un_next() , eof which is zero */
@@ -229,7 +230,9 @@ eat_comment(void)
 {
     register int c;
 
-    while ((c = next()) != '\n' && scan_code[c]) ;
+    while ((c = next()) != '\n' && scan_code[c]) {
+	;			/* empty */
+    }
     un_next();
 }
 
@@ -246,7 +249,9 @@ eat_semi_colon(void)
 {
     register int c;
 
-    while (scan_code[c = next()] == SC_SPACE) ;
+    while (scan_code[c = next()] == SC_SPACE) {
+	;			/* empty */
+    }
     if (c != ';')
 	un_next();
 }
@@ -274,7 +279,9 @@ eat_nl(void)			/* eat all space including newlines */
 	    {
 		unsigned c;
 
-		while (scan_code[c = next()] == SC_SPACE) ;
+		while (scan_code[c = next()] == SC_SPACE) {
+		    ;		/* empty */
+		}
 		if (c == '\n')
 		    token_lineno = ++lineno;
 		else if (c == 0) {
@@ -324,7 +331,9 @@ yylex(void)
 	ct_ret(NL);
 
     case SC_ESCAPE:
-	while (scan_code[c = next()] == SC_SPACE) ;
+	while (scan_code[c = next()] == SC_SPACE) {
+	    ;			/* empty */
+	};
 	if (c == '\n') {
 	    token_lineno = ++lineno;
 	    goto reswitch;
@@ -579,7 +588,9 @@ yylex(void)
 	    double d;
 	    int flag;
 
-	    while (scan_code[c = next()] == SC_SPACE) ;
+	    while (scan_code[c = next()] == SC_SPACE) {
+		;		/* empty */
+	    };
 	    if (scan_code[c] != SC_DIGIT &&
 		scan_code[c] != SC_DOT) {
 		un_next();
@@ -616,7 +627,9 @@ yylex(void)
 
 	    while (
 		      (c = scan_code[*p++ = next()]) == SC_IDCHAR ||
-		      c == SC_DIGIT) ;
+		      c == SC_DIGIT) {
+		;		/* empty */
+	    };
 
 	    un_next();
 	    *--p = 0;
@@ -685,7 +698,9 @@ yylex(void)
 
 		/* check for length alone, this is an ugly
 		   hack */
-		while (scan_code[c = next()] == SC_SPACE) ;
+		while (scan_code[c = next()] == SC_SPACE) {
+		    ;		/* empty */
+		};
 		un_next();
 
 		current_token = c == '(' ? BUILTIN : LENGTH;
@@ -729,14 +744,18 @@ collect_decimal(int c, int *flag)
 	    return 0.0;
 	}
     } else {
-	while (scan_code[*p++ = next()] == SC_DIGIT) ;
+	while (scan_code[*p++ = next()] == SC_DIGIT) {
+	    ;			/* empty */
+	};
 	if (p[-1] != '.') {
 	    un_next();
 	    p--;
 	}
     }
     /* get rest of digits after decimal point */
-    while (scan_code[*p++ = next()] == SC_DIGIT) ;
+    while (scan_code[*p++ = next()] == SC_DIGIT) {
+	;			/* empty */
+    };
 
     /* check for exponent */
     if (p[-1] != 'e' && p[-1] != 'E') {
@@ -750,7 +769,9 @@ collect_decimal(int c, int *flag)
 	    return 0.0;
 	} else {		/* get the rest of the exponent */
 	    p++;
-	    while (scan_code[*p++ = next()] == SC_DIGIT) ;
+	    while (scan_code[*p++ = next()] == SC_DIGIT) {
+		;		/* empty */
+	    };
 	    un_next();
 	    *--p = 0;
 	}
@@ -854,7 +875,7 @@ escape_test[ET_END + 1] =
   {'\\', '\\'},
   {'\"', '\"'},
   {0, 0}
-} ;
+};
 /* *INDENT-ON* */
 /* process the escape characters in a string, in place . */ char *
 rm_escape(char *s)
