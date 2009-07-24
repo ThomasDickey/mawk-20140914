@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.8 2009/07/12 23:48:24 tom Exp $
+ * $MawkId: bi_funct.c,v 1.9 2009/07/24 22:37:41 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -234,7 +234,7 @@ bi_substr(CELL * sp)
     /* don't use < C_STRING shortcut */
     sval = string(sp);
 
-    if ((len = sval->len) == 0)	/* substr on null string */
+    if ((len = (int) sval->len) == 0)	/* substr on null string */
     {
 	if (n_args == 3) {
 	    cell_destroy(sp + 2);
@@ -266,8 +266,8 @@ bi_substr(CELL * sp)
 	sp->ptr = (PTR) & null_str;
 	null_str.ref_cnt++;
     } else {			/* got something */
-	sp->ptr = (PTR) new_STRING0(n);
-	memcpy(string(sp)->str, sval->str + i, n);
+	sp->ptr = (PTR) new_STRING0((unsigned) n);
+	memcpy(string(sp)->str, sval->str + i, (unsigned) n);
     }
 
     free_STRING(sval);
@@ -838,7 +838,7 @@ bi_sub(CELL * sp)
     front = string(&sc)->str;
 
     if ((middle = REmatch(front, sp->ptr, &middle_len))) {
-	front_len = middle - front;
+	front_len = (unsigned) (middle - front);
 	back = middle + middle_len;
 	back_len = string(&sc)->len - front_len - middle_len;
 
@@ -927,7 +927,7 @@ gsub(PTR re, CELL * repl, char *target, int flag)
 	repl_cnt++;
 
 	front = target;
-	front_len = middle - target;
+	front_len = (unsigned) (middle - target);
 
 	if (*middle == 0)	/* matched back of target */
 	{
