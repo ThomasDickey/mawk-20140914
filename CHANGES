@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.32 2009/07/23 00:45:55 tom Exp $
+-- $MawkId: CHANGES,v 1.33 2009/07/24 01:07:00 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 2009072?
+	require standard C compiler; converted to ANSI C.
+
 	rename #define'd SV_SIGINFO to MAWK_SV_SIGINFO to avoid predefined
 	name on Mac OS X (report on comp.lang.awk).
 
