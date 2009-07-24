@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.6 2009/07/24 21:41:25 tom Exp $
+ * $MawkId: rexp3.c,v 1.7 2009/07/24 23:05:00 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -94,7 +94,7 @@ REmatch(char *str, PTR machine, unsigned *lenp)
   refill:
     if (stackp == RE_run_stack_empty) {
 	if (cb_ss)
-	    *lenp = cb_e - cb_ss;
+	    *lenp = (unsigned) (cb_e - cb_ss);
 	return cb_ss;
     }
     ss = stackp->ss;

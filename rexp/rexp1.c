@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.3 2009/07/24 21:23:07 tom Exp $
+ * $MawkId: rexp1.c,v 1.4 2009/07/24 23:06:48 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
@@ -42,7 +42,7 @@ the GNU General Public License, version 2, 1991.
 /* initialize a two state machine */
 static void
 new_TWO(
-	   int type,
+	   SType type,
 	   MACHINE * mp)	/* init mp-> */
 {
     mp->start = (STATE *) RE_malloc(2 * STATESZ);
@@ -106,7 +106,7 @@ RE_str(char *str, unsigned len)
     MACHINE x;
 
     new_TWO(M_STR, &x);
-    x.start->s_len = len;
+    x.start->s_len = (SLen) len;
     x.start->s_data.str = str;
     return x;
 }
@@ -117,8 +117,8 @@ RE_cat(MACHINE * mp, MACHINE * np)
 {
     unsigned sz1, sz2, sz;
 
-    sz1 = mp->stop - mp->start;
-    sz2 = np->stop - np->start + 1;
+    sz1 = (unsigned) (mp->stop - mp->start);
+    sz2 = (unsigned) (np->stop - np->start + 1);
     sz = sz1 + sz2;
 
     mp->start = (STATE *) RE_realloc(mp->start, sz * STATESZ);
@@ -135,8 +135,8 @@ RE_or(MACHINE * mp, MACHINE * np)
     register STATE *p;
     unsigned szm, szn;
 
-    szm = mp->stop - mp->start + 1;
-    szn = np->stop - np->start + 1;
+    szm = (unsigned) (mp->stop - mp->start + 1);
+    szn = (unsigned) (np->stop - np->start + 1);
 
     p = (STATE *) RE_malloc((szm + szn + 1) * STATESZ);
     memcpy(p + 1, mp->start, szm * STATESZ);
@@ -144,11 +144,11 @@ RE_or(MACHINE * mp, MACHINE * np)
     mp->start = p;
     (mp->stop = p + szm + szn)->s_type = M_ACCEPT;
     p->s_type = M_2JA;
-    p->s_data.jump = szm + 1;
+    p->s_data.jump = (int) (szm + 1);
     memcpy(p + szm + 1, np->start, szn * STATESZ);
     free(np->start);
     (p += szm)->s_type = M_1J;
-    p->s_data.jump = szn;
+    p->s_data.jump = (int) szn;
 }
 
 /*  UNARY  OPERATIONS	  */
@@ -161,16 +161,16 @@ RE_close(MACHINE * mp)
     register STATE *p;
     unsigned sz;
 
-    sz = mp->stop - mp->start + 1;
+    sz = (unsigned) (mp->stop - mp->start + 1);
     p = (STATE *) RE_malloc((sz + 2) * STATESZ);
     memcpy(p + 1, mp->start, sz * STATESZ);
     free(mp->start);
     mp->start = p;
     mp->stop = p + (sz + 1);
     p->s_type = M_2JA;
-    p->s_data.jump = sz + 1;
+    p->s_data.jump = (int) (sz + 1);
     (p += sz)->s_type = M_2JB;
-    p->s_data.jump = -(sz - 1);
+    p->s_data.jump = -((int) sz - 1);
     (p + 1)->s_type = M_ACCEPT;
 }
 
@@ -199,7 +199,7 @@ RE_01(MACHINE * mp)
     unsigned sz;
     register STATE *p;
 
-    sz = mp->stop - mp->start + 1;
+    sz = (unsigned) (mp->stop - mp->start + 1);
     p = (STATE *) RE_malloc((sz + 1) * STATESZ);
     memcpy(p + 1, mp->start, sz * STATESZ);
     free(mp->start);
