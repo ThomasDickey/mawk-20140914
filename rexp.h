@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.6 2009/07/24 22:10:00 tom Exp $
+ * $MawkId: rexp.h,v 1.7 2009/07/24 23:10:28 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -51,6 +51,7 @@ the GNU General Public License, version 2, 1991.
 #define  REXP_H
 
 #include "nstd.h"
+#include "types.h"
 #include <stdio.h>
 #include  <setjmp.h>
 
@@ -75,11 +76,13 @@ PTR RE_realloc(void *, unsigned);
 #define  END_OFF   0
 #define  END_ON    (2*U_ON)
 
-typedef unsigned char BV[32];	/* bit vector */
+typedef UChar BV[32];		/* bit vector */
+typedef char SType;
+typedef UChar SLen;
 
 typedef struct {
-    char s_type;
-    unsigned char s_len;	/* used for M_STR  */
+    SType s_type;
+    SLen s_len;			/* used for M_STR  */
     union {
 	char *str;		/* string */
 	BV *bvp;		/*  class  */
@@ -124,7 +127,7 @@ typedef struct {
 
 #define  MEMORY_FAILURE      5
 
-#define  ison(b,x)  ((b)[((unsigned char)(x))>>3] & (1<<((x)&7)))
+#define  ison(b,x)  ((b)[((UChar)(x)) >> 3] & (1 << ((x) & 7)))
 
 /* struct for the run time stack */
 typedef struct {
