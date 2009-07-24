@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.2 2009/07/24 01:09:31 tom Exp $
+ * $MawkId: rexp1.c,v 1.3 2009/07/24 21:23:07 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
@@ -47,8 +47,8 @@ new_TWO(
 {
     mp->start = (STATE *) RE_malloc(2 * STATESZ);
     mp->stop = mp->start + 1;
-    mp->start->type = type;
-    mp->stop->type = M_ACCEPT;
+    mp->start->s_type = type;
+    mp->stop->s_type = M_ACCEPT;
 }
 
 /*  build a machine that recognizes any	 */
@@ -87,7 +87,7 @@ RE_class(BV * bvp)
     MACHINE x;
 
     new_TWO(M_CLASS, &x);
-    x.start->data.bvp = bvp;
+    x.start->s_data.bvp = bvp;
     return x;
 }
 
@@ -106,8 +106,8 @@ RE_str(char *str, unsigned len)
     MACHINE x;
 
     new_TWO(M_STR, &x);
-    x.start->len = len;
-    x.start->data.str = str;
+    x.start->s_len = len;
+    x.start->s_data.str = str;
     return x;
 }
 
@@ -142,13 +142,13 @@ RE_or(MACHINE * mp, MACHINE * np)
     memcpy(p + 1, mp->start, szm * STATESZ);
     free(mp->start);
     mp->start = p;
-    (mp->stop = p + szm + szn)->type = M_ACCEPT;
-    p->type = M_2JA;
-    p->data.jump = szm + 1;
+    (mp->stop = p + szm + szn)->s_type = M_ACCEPT;
+    p->s_type = M_2JA;
+    p->s_data.jump = szm + 1;
     memcpy(p + szm + 1, np->start, szn * STATESZ);
     free(np->start);
-    (p += szm)->type = M_1J;
-    p->data.jump = szn;
+    (p += szm)->s_type = M_1J;
+    p->s_data.jump = szn;
 }
 
 /*  UNARY  OPERATIONS	  */
@@ -167,11 +167,11 @@ RE_close(MACHINE * mp)
     free(mp->start);
     mp->start = p;
     mp->stop = p + (sz + 1);
-    p->type = M_2JA;
-    p->data.jump = sz + 1;
-    (p += sz)->type = M_2JB;
-    p->data.jump = -(sz - 1);
-    (p + 1)->type = M_ACCEPT;
+    p->s_type = M_2JA;
+    p->s_data.jump = sz + 1;
+    (p += sz)->s_type = M_2JB;
+    p->s_data.jump = -(sz - 1);
+    (p + 1)->s_type = M_ACCEPT;
 }
 
 /*  replace m  by  m+  (positive closure)   */
@@ -186,9 +186,9 @@ RE_poscl(MACHINE * mp)
     mp->start = p = (STATE *) RE_realloc(mp->start, (sz + 1) * STATESZ);
     mp->stop = p + sz;
     p += --sz;
-    p->type = M_2JB;
-    p->data.jump = -sz;
-    (p + 1)->type = M_ACCEPT;
+    p->s_type = M_2JB;
+    p->s_data.jump = -sz;
+    (p + 1)->s_type = M_ACCEPT;
 }
 
 /* replace  m  by  m? (zero or one)  */
@@ -205,8 +205,8 @@ RE_01(MACHINE * mp)
     free(mp->start);
     mp->start = p;
     mp->stop = p + sz;
-    p->type = M_2JB;
-    p->data.jump = sz;
+    p->s_type = M_2JB;
+    p->s_data.jump = sz;
 }
 
 /*===================================

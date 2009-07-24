@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.5 2009/07/12 18:49:54 tom Exp $
+ * $MawkId: rexp.c,v 1.6 2009/07/24 21:23:07 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -105,7 +105,7 @@ REcompile(char *re)
 
     if (*re == 0) {
 	STATE *p = (STATE *) RE_malloc(sizeof(STATE));
-	p->type = M_ACCEPT;
+	p->s_type = M_ACCEPT;
 	return (PTR) p;
     }
 

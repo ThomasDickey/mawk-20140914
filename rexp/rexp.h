@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.4 2009/07/23 23:01:32 tom Exp $
+ * $MawkId: rexp.h,v 1.5 2009/07/24 21:21:33 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -78,13 +78,13 @@ PTR RE_realloc (void *, unsigned);
 typedef unsigned char BV[32];	/* bit vector */
 
 typedef struct {
-    char type;
-    unsigned char len;		/* used for M_STR  */
+    char s_type;
+    unsigned char s_len;	/* used for M_STR  */
     union {
 	char *str;		/* string */
 	BV *bvp;		/*  class  */
 	int jump;
-    } data;
+    } s_data;
 } STATE;
 
 #define  STATESZ  (sizeof(STATE))
