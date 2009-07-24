@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.7 2009/07/24 22:20:14 tom Exp $
+ * $MawkId: scan.c,v 1.8 2009/07/24 22:33:19 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -92,8 +92,8 @@ static int collect_RE(void);
 char *pfile_name;
 STRING *program_string;
 PFILE *pfile_list;
-static unsigned char *buffer;
-static unsigned char *buffp;
+static UChar *buffer;
+static UChar *buffp;
  /* unsigned so it works with 8 bit chars */
 static int program_fd;
 static int eof_flag;
@@ -107,11 +107,11 @@ scan_init(char *cmdline_program)
 	strcpy(program_string->str, cmdline_program);
 	/* simulate file termination */
 	program_string->str[program_string->len - 1] = '\n';
-	buffp = (unsigned char *) program_string->str;
+	buffp = (UChar *) program_string->str;
 	eof_flag = 1;
     } else {			/* program from file[s] */
 	scan_open();
-	buffp = buffer = (unsigned char *) zmalloc(BUFFSZ + 1);
+	buffp = buffer = (UChar *) zmalloc(BUFFSZ + 1);
 	scan_fillbuff();
     }
 
@@ -153,8 +153,9 @@ scan_cleanup(void)
 
     /* redefine SPACE as [ \t\n] */
 
-    scan_code['\n'] = posix_space_flag && rs_shadow.type != SEP_MLR
-	? SC_UNEXPECTED : SC_SPACE;
+    scan_code['\n'] = (char) ((posix_space_flag && rs_shadow.type != SEP_MLR)
+			      ? SC_UNEXPECTED
+			      : SC_SPACE);
     scan_code['\f'] = SC_UNEXPECTED;	/*value doesn't matter */
     scan_code['\013'] = SC_UNEXPECTED;	/* \v not space */
     scan_code['\r'] = SC_UNEXPECTED;
@@ -279,7 +280,7 @@ eat_nl(void)			/* eat all space including newlines */
 	    {
 		unsigned c;
 
-		while (scan_code[c = next()] == SC_SPACE) {
+		while (scan_code[c = (unsigned) next()] == SC_SPACE) {
 		    ;		/* empty */
 		}
 		if (c == '\n')
@@ -619,15 +620,14 @@ yylex(void)
 
     case SC_IDCHAR:		/* collect an identifier */
 	{
-	    unsigned char *p =
-	    (unsigned char *) string_buff + 1;
+	    UChar *p =
+	    (UChar *) string_buff + 1;
 	    SYMTAB *stp;
 
-	    string_buff[0] = c;
+	    string_buff[0] = (char) c;
 
-	    while (
-		      (c = scan_code[*p++ = next()]) == SC_IDCHAR ||
-		      c == SC_DIGIT) {
+	    while ((c = scan_code[*p++ = (UChar) next()]) == SC_IDCHAR ||
+		   c == SC_DIGIT) {
 		;		/* empty */
 	    };
 
@@ -730,21 +730,21 @@ yylex(void)
 static double
 collect_decimal(int c, int *flag)
 {
-    register unsigned char *p = (unsigned char *) string_buff + 1;
-    unsigned char *endp;
+    register UChar *p = (UChar *) string_buff + 1;
+    UChar *endp;
     double d;
 
     *flag = 0;
-    string_buff[0] = c;
+    string_buff[0] = (char) c;
 
     if (c == '.') {
-	if (scan_code[*p++ = next()] != SC_DIGIT) {
+	if (scan_code[*p++ = (UChar) next()] != SC_DIGIT) {
 	    *flag = UNEXPECTED;
 	    yylval.ival = '.';
 	    return 0.0;
 	}
     } else {
-	while (scan_code[*p++ = next()] == SC_DIGIT) {
+	while (scan_code[*p++ = (UChar) next()] == SC_DIGIT) {
 	    ;			/* empty */
 	};
 	if (p[-1] != '.') {
@@ -753,7 +753,7 @@ collect_decimal(int c, int *flag)
 	}
     }
     /* get rest of digits after decimal point */
-    while (scan_code[*p++ = next()] == SC_DIGIT) {
+    while (scan_code[*p++ = (UChar) next()] == SC_DIGIT) {
 	;			/* empty */
     };
 
@@ -762,14 +762,14 @@ collect_decimal(int c, int *flag)
 	un_next();
 	*--p = 0;
     } else {			/* get the exponent */
-	if (scan_code[*p = next()] != SC_DIGIT &&
+	if (scan_code[*p = (UChar) next()] != SC_DIGIT &&
 	    *p != '-' && *p != '+') {
 	    *++p = 0;
 	    *flag = BAD_DECIMAL;
 	    return 0.0;
 	} else {		/* get the rest of the exponent */
 	    p++;
-	    while (scan_code[*p++ = next()] == SC_DIGIT) {
+	    while (scan_code[*p++ = (UChar) next()] == SC_DIGIT) {
 		;		/* empty */
 	    };
 	    un_next();
@@ -821,14 +821,14 @@ octal(char **start_p)
     register char *p = *start_p;
     register unsigned x;
 
-    x = *p++ - '0';
+    x = (unsigned) (*p++ - '0');
     if (isoctal(*p)) {
-	x = (x << 3) + *p++ - '0';
+	x = (x << 3) + (unsigned) (*p++ - '0');
 	if (isoctal(*p))
-	    x = (x << 3) + *p++ - '0';
+	    x = (x << 3) + (unsigned) (*p++ - '0');
     }
     *start_p = p;
-    return x & 0xff;
+    return (int) (x & 0xff);
 }
 
 /* process one or two hex digits
@@ -837,24 +837,24 @@ octal(char **start_p)
 static int
 hex(char **start_p)
 {
-    register unsigned char *p = (unsigned char *) *start_p;
+    register UChar *p = (UChar *) * start_p;
     register unsigned x;
     unsigned t;
 
     if (scan_code[*p] == SC_DIGIT)
-	x = *p++ - '0';
+	x = (unsigned) (*p++ - '0');
     else
-	x = hex_value(*p++);
+	x = (unsigned) hex_value(*p++);
 
     if (scan_code[*p] == SC_DIGIT)
 	x = (x << 4) + *p++ - '0';
-    else if ('A' <= *p && *p <= 'f' && (t = hex_value(*p))) {
+    else if ('A' <= *p && *p <= 'f' && (t = (unsigned) hex_value(*p))) {
 	x = (x << 4) + t;
 	p++;
     }
 
     *start_p = (char *) p;
-    return x;
+    return (int) x;
 }
 
 #define	 ET_END	    9
@@ -899,11 +899,11 @@ rm_escape(char *s)
 		*q++ = escape_test[i].out;
 	    } else if (isoctal(*p)) {
 		t = p;
-		*q++ = octal(&t);
+		*q++ = (char) octal(&t);
 		p = t;
-	    } else if (*p == 'x' && ishex(*(unsigned char *) (p + 1))) {
+	    } else if (*p == 'x' && ishex(*(UChar *) (p + 1))) {
 		t = p + 1;
-		*q++ = hex(&t);
+		*q++ = (char) hex(&t);
 		p = t;
 	    } else if (*p == 0)	/* can only happen with command line assign */
 		*q++ = '\\';
@@ -922,12 +922,12 @@ rm_escape(char *s)
 static int
 collect_string(void)
 {
-    register unsigned char *p = (unsigned char *) string_buff;
+    register UChar *p = (UChar *) string_buff;
     int c;
     int e_flag = 0;		/* on if have an escape char */
 
     while (1)
-	switch (scan_code[*p++ = next()]) {
+	switch (scan_code[*p++ = (UChar) next()]) {
 	case SC_DQUOTE:	/* done */
 	    *--p = 0;
 	    goto out;
@@ -949,7 +949,7 @@ collect_string(void)
 	    } else if (c == 0)
 		un_next();
 	    else {
-		*p++ = c;
+		*p++ = (UChar) c;
 		e_flag = 1;
 	    }
 
@@ -983,7 +983,7 @@ collect_RE(void)
 			     string_buff);
 	    mawk_exit(2);
 	}
-	switch (scan_code[(unsigned char) (*p++ = next())]) {
+	switch (scan_code[(UChar) (*p++ = (char) next())]) {
 	case SC_POW:
 	    if (p == first + 1) {
 		first = p;
@@ -1043,7 +1043,7 @@ collect_RE(void)
 		break;
 
 	    default:
-		*p++ = c;
+		*p++ = (char) c;
 		break;
 	    }
 	    break;
