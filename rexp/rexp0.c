@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.5 2009/07/24 22:06:50 tom Exp $
+ * $MawkId: rexp0.c,v 1.6 2009/07/24 23:12:18 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -89,7 +89,7 @@ char RE_char2token['|' + 1] =
 };
 
 #define	 char2token(x) \
-( (unsigned char)(x) > '|' ? T_CHAR : RE_char2token[x] )
+( (UChar)(x) > '|' ? T_CHAR : RE_char2token[x] )
 
 #define NOT_STARTED    (-1)
 
@@ -111,7 +111,7 @@ RE_lex(MACHINE * mp)
 {
     register int c;
 
-    switch (c = char2token((unsigned char) (*lp))) {
+    switch (c = char2token((UChar) (*lp))) {
     case T_PLUS:
     case T_STAR:
 	if (prev == T_START)
@@ -250,13 +250,13 @@ do_str(
 
     p = *pp;
     s = str = RE_malloc(re_len);
-    *s++ = c;
+    *s++ = (char) c;
     len = 1;
 
     while (1) {
 	char *save;
 
-	switch (char2token((unsigned char) (*p))) {
+	switch (char2token((UChar) (*p))) {
 	case T_CHAR:
 	    pt = p;
 	    *s++ = *p++;
@@ -265,7 +265,7 @@ do_str(
 	case T_SLASH:
 	    pt = p;
 	    save = p + 1;	/* keep p in a register */
-	    *s++ = escape(&save);
+	    *s++ = (char) escape(&save);
 	    p = save;
 	    break;
 
@@ -396,7 +396,7 @@ do_class(char **start, MACHINE * mp)
 		char *mark = ++p;
 
 		if (*p != '\\')
-		    c = *(unsigned char *) p++;
+		    c = *(UChar *) p++;
 		else {
 		    t = p + 1;
 		    c = escape(&t);
@@ -415,7 +415,7 @@ do_class(char **start, MACHINE * mp)
 	    break;
 
 	default:
-	    prevc = *(unsigned char *) p++;
+	    prevc = *(UChar *) p++;
 	    on(*bvp, prevc);
 	    break;
 	}
@@ -458,7 +458,7 @@ store_bvp(
 	    t = 0;
 	    bv_base = (BV **) RE_malloc(BV_GROWTH * sizeof(BV *));
 	} else {
-	    t = bv_next - bv_base;
+	    t = (unsigned) (bv_next - bv_base);
 	    bv_base = (BV **) RE_realloc(bv_base,
 					 (t + BV_GROWTH) * sizeof(BV *));
 	}
@@ -511,11 +511,10 @@ ctohex(int c)
 }
 
 #define	 ET_END	    7
-
+/* *INDENT-OFF* */
 static struct {
     char in, out;
 }
-/* *INDENT-OFF* */
 escape_test[ET_END + 1] =
 {
    {'n', '\n'},
@@ -529,11 +528,11 @@ escape_test[ET_END + 1] =
 } ;
 /* *INDENT-ON* */
 
-/*-----------------
-  return the char
-  and move the pointer forward
-  on entry *s -> at the character after the slash
- *-------------------*/ static int
+/*
+ * Return the char and move the pointer forward.
+ * On entry *s -> at the character after the slash.
+ */
+static int
 escape(char **start_p)
 {
     register char *p = *start_p;
@@ -552,36 +551,36 @@ escape(char **start_p)
     }
 
     if (isoctal(*p)) {
-	x = *p++ - '0';
+	x = (unsigned) (*p++ - '0');
 	if (isoctal(*p)) {
-	    x = (x << 3) + *p++ - '0';
+	    x = (x << 3) + (unsigned) (*p++ - '0');
 	    if (isoctal(*p))
-		x = (x << 3) + *p++ - '0';
+		x = (x << 3) + (unsigned) (*p++ - '0');
 	}
 	*start_p = p;
-	return x & 0xff;
+	return (int) (x & 0xff);
     }
 
     if (*p == 0)
 	return '\\';
 
     if (*p++ == 'x') {
-	if ((x = ctohex(*p)) == NOT_HEX) {
+	if ((x = (unsigned) ctohex(*p)) == NOT_HEX) {
 	    *start_p = p;
 	    return 'x';
 	}
 
 	/* look for another hex digit */
-	if ((xx = ctohex(*++p)) != NOT_HEX) {
+	if ((xx = (unsigned) ctohex(*++p)) != NOT_HEX) {
 	    x = (x << 4) + xx;
 	    p++;
 	}
 
 	*start_p = p;
-	return x;
+	return (int) x;
     }
 
     /* anything else \c -> c */
     *start_p = p;
-    return *(unsigned char *) (p - 1);
+    return *(UChar *) (p - 1);
 }
