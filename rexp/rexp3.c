@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.5 2009/07/12 18:58:23 tom Exp $
+ * $MawkId: rexp3.c,v 1.6 2009/07/24 21:41:25 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -80,9 +80,9 @@ REmatch(char *str, PTR machine, unsigned *lenp)
     *lenp = 0;
 
     /* check for the easy case */
-    if ((m + 1)->type == M_ACCEPT && m->type == M_STR) {
-	if ((ts = str_str(s, m->data.str, m->len)))
-	    *lenp = m->len;
+    if ((m + 1)->s_type == M_ACCEPT && m->s_type == M_STR) {
+	if ((ts = str_str(s, m->s_data.str, m->s_len)))
+	    *lenp = m->s_len;
 	return ts;
     }
 
@@ -113,9 +113,9 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 
   reswitch:
 
-    switch (m->type + u_flag) {
+    switch (m->s_type + u_flag) {
     case M_STR + U_OFF + END_OFF:
-	if (strncmp(s, m->data.str, m->len))
+	if (strncmp(s, m->s_data.str, m->s_len))
 	    goto refill;
 	if (!ss) {
 	    if (cb_ss && s > cb_ss)
@@ -123,12 +123,12 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	    else
 		ss = s;
 	}
-	s += m->len;
+	s += m->s_len;
 	m++;
 	goto reswitch;
 
     case M_STR + U_OFF + END_ON:
-	if (strcmp(s, m->data.str))
+	if (strcmp(s, m->s_data.str))
 	    goto refill;
 	if (!ss) {
 	    if (cb_ss && s > cb_ss)
@@ -136,12 +136,12 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	    else
 		ss = s;
 	}
-	s += m->len;
+	s += m->s_len;
 	m++;
 	goto reswitch;
 
     case M_STR + U_ON + END_OFF:
-	if (!(s = str_str(s, m->data.str, m->len)))
+	if (!(s = str_str(s, m->s_data.str, m->s_len)))
 	    goto refill;
 	push(m, s + 1, ss, U_ON);
 	if (!ss) {
@@ -150,7 +150,7 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	    else
 		ss = s;
 	}
-	s += m->len;
+	s += m->s_len;
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
@@ -158,8 +158,8 @@ REmatch(char *str, PTR machine, unsigned *lenp)
     case M_STR + U_ON + END_ON:
 	if (!str_end)
 	    str_end = s + strlen(s);
-	t = (str_end - s) - m->len;
-	if (t < 0 || memcmp(ts = s + t, m->data.str, m->len))
+	t = (str_end - s) - m->s_len;
+	if (t < 0 || memcmp(ts = s + t, m->s_data.str, m->s_len))
 	    goto refill;
 	if (!ss) {
 	    if (cb_ss && ts > cb_ss)
@@ -173,7 +173,7 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_OFF:
-	if (!ison(*m->data.bvp, s[0]))
+	if (!ison(*m->s_data.bvp, s[0]))
 	    goto refill;
 	if (!ss) {
 	    if (cb_ss && s > cb_ss)
@@ -186,7 +186,7 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_ON:
-	if (s[1] || !ison(*m->data.bvp, s[0]))
+	if (s[1] || !ison(*m->s_data.bvp, s[0]))
 	    goto refill;
 	if (!ss) {
 	    if (cb_ss && s > cb_ss)
@@ -199,7 +199,7 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	goto reswitch;
 
     case M_CLASS + U_ON + END_OFF:
-	while (!ison(*m->data.bvp, s[0])) {
+	while (!ison(*m->s_data.bvp, s[0])) {
 	    if (s[0] == 0)
 		goto refill;
 	    else
@@ -220,7 +220,7 @@ REmatch(char *str, PTR machine, unsigned *lenp)
     case M_CLASS + U_ON + END_ON:
 	if (!str_end)
 	    str_end = s + strlen(s);
-	if (s[0] == 0 || !ison(*m->data.bvp, str_end[-1]))
+	if (s[0] == 0 || !ison(*m->s_data.bvp, str_end[-1]))
 	    goto refill;
 	if (!ss) {
 	    if (cb_ss && str_end - 1 > cb_ss)
@@ -344,17 +344,17 @@ REmatch(char *str, PTR machine, unsigned *lenp)
 	goto reswitch;
 
       CASE_UANY(M_1J):
-	m += m->data.jump;
+	m += m->s_data.jump;
 	goto reswitch;
 
       CASE_UANY(M_2JA):	/* take the non jump branch */
-	push(m + m->data.jump, s, ss, u_flag);
+	push(m + m->s_data.jump, s, ss, u_flag);
 	m++;
 	goto reswitch;
 
       CASE_UANY(M_2JB):	/* take the jump branch */
 	push(m + 1, s, ss, u_flag);
-	m += m->data.jump;
+	m += m->s_data.jump;
 	goto reswitch;
 
     case M_ACCEPT + U_OFF:

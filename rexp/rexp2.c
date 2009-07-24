@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.5 2009/07/12 18:59:06 tom Exp $
+ * $MawkId: rexp2.c,v 1.6 2009/07/24 21:42:14 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -163,8 +163,8 @@ REtest(
     STATE *tm;
 
     /* handle the easy case quickly */
-    if ((m + 1)->type == M_ACCEPT && m->type == M_STR)
-	return str_str(s, m->data.str, m->len) != (char *) 0;
+    if ((m + 1)->s_type == M_ACCEPT && m->s_type == M_STR)
+	return str_str(s, m->s_data.str, m->s_len) != (char *) 0;
     else {
 	u_flag = U_ON;
 	str_end = (char *) 0;
@@ -181,26 +181,26 @@ REtest(
 
   reswitch:
 
-    switch (m->type + u_flag) {
+    switch (m->s_type + u_flag) {
     case M_STR + U_OFF + END_OFF:
-	if (strncmp(s, m->data.str, m->len))
+	if (strncmp(s, m->s_data.str, m->s_len))
 	    goto refill;
-	s += m->len;
+	s += m->s_len;
 	m++;
 	goto reswitch;
 
     case M_STR + U_OFF + END_ON:
-	if (strcmp(s, m->data.str))
+	if (strcmp(s, m->s_data.str))
 	    goto refill;
-	s += m->len;
+	s += m->s_len;
 	m++;
 	goto reswitch;
 
     case M_STR + U_ON + END_OFF:
-	if (!(s = str_str(s, m->data.str, m->len)))
+	if (!(s = str_str(s, m->s_data.str, m->s_len)))
 	    goto refill;
 	push(m, s + 1, U_ON);
-	s += m->len;
+	s += m->s_len;
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
@@ -208,8 +208,8 @@ REtest(
     case M_STR + U_ON + END_ON:
 	if (!str_end)
 	    str_end = s + strlen(s);
-	t = (str_end - s) - m->len;
-	if (t < 0 || memcmp(s + t, m->data.str, m->len))
+	t = (str_end - s) - m->s_len;
+	if (t < 0 || memcmp(s + t, m->s_data.str, m->s_len))
 	    goto refill;
 	s = str_end;
 	m++;
@@ -217,21 +217,21 @@ REtest(
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_OFF:
-	if (!ison(*m->data.bvp, s[0]))
+	if (!ison(*m->s_data.bvp, s[0]))
 	    goto refill;
 	s++;
 	m++;
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_ON:
-	if (s[1] || !ison(*m->data.bvp, s[0]))
+	if (s[1] || !ison(*m->s_data.bvp, s[0]))
 	    goto refill;
 	s++;
 	m++;
 	goto reswitch;
 
     case M_CLASS + U_ON + END_OFF:
-	while (!ison(*m->data.bvp, s[0])) {
+	while (!ison(*m->s_data.bvp, s[0])) {
 	    if (s[0] == 0)
 		goto refill;
 	    else
@@ -246,7 +246,7 @@ REtest(
     case M_CLASS + U_ON + END_ON:
 	if (!str_end)
 	    str_end = s + strlen(s);
-	if (s[0] == 0 || !ison(*m->data.bvp, str_end[-1]))
+	if (s[0] == 0 || !ison(*m->s_data.bvp, str_end[-1]))
 	    goto refill;
 	s = str_end;
 	m++;
@@ -320,12 +320,12 @@ REtest(
 	goto reswitch;
 
       CASE_UANY(M_1J):
-	m += m->data.jump;
+	m += m->s_data.jump;
 	goto reswitch;
 
       CASE_UANY(M_2JA):	/* take the non jump branch */
 	/* don't stack an ACCEPT */
-	if ((tm = m + m->data.jump)->type == M_ACCEPT)
+	if ((tm = m + m->s_data.jump)->s_type == M_ACCEPT)
 	    return 1;
 	push(tm, s, u_flag);
 	m++;
@@ -333,10 +333,10 @@ REtest(
 
       CASE_UANY(M_2JB):	/* take the jump branch */
 	/* don't stack an ACCEPT */
-	if ((tm = m + 1)->type == M_ACCEPT)
+	if ((tm = m + 1)->s_type == M_ACCEPT)
 	    return 1;
 	push(tm, s, u_flag);
-	m += m->data.jump;
+	m += m->s_data.jump;
 	goto reswitch;
 
       CASE_UANY(M_ACCEPT):
