@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexpdb.c,v 1.2 2009/07/12 18:37:55 tom Exp $
+ * $MawkId: rexpdb.c,v 1.3 2009/07/24 22:05:20 tom Exp $
  * @Log: rexpdb.c,v @
  * Revision 1.2  1993/07/23  13:21:51  mike
  * cleanup rexp code
@@ -49,33 +49,47 @@ REmprint(PTR m, FILE *f)
 {
     STATE *p = (STATE *) m;
     char *end_on_string;
+    int n;
 
     while (1) {
-	if (p->type >= END_ON) {
-	    p->type -= END_ON;
+	if (p->s_type >= END_ON) {
+	    p->s_type -= END_ON;
 	    end_on_string = "$";
 	} else
 	    end_on_string = "";
 
-	if (p->type < 0 || p->type >= END_ON) {
+	if (p->s_type < 0 || p->s_type >= END_ON) {
 	    fprintf(f, "unknown STATE type\n");
 	    return;
 	}
 
-	fprintf(f, "%-10s", xlat[(unsigned char) (p->type)]);
-	switch (p->type) {
+	fprintf(f, "%-10s", xlat[(unsigned char) (p->s_type)]);
+	switch (p->s_type) {
 	case M_STR:
-	    fprintf(f, "%s", p->data.str);
+	    for (n = 0; n < p->s_len; ++n) {
+		unsigned char ch = p->s_data.str[n];
+		switch (ch) {
+		case '\\':
+		    fprintf(f, "\\\\");
+		    break;
+		default:
+		    if (ch > 32 && ch < 127)
+			fprintf(f, "%c", ch);
+		    else
+			fprintf(f, "\\%03o", ch);
+		    break;
+		}
+	    }
 	    break;
 
 	case M_1J:
 	case M_2JA:
 	case M_2JB:
-	    fprintf(f, "%d", p->data.jump);
+	    fprintf(f, "%d", p->s_data.jump);
 	    break;
 	case M_CLASS:
 	    {
-		unsigned char *q = (unsigned char *) p->data.bvp;
+		unsigned char *q = (unsigned char *) p->s_data.bvp;
 		unsigned char *r = q + sizeof(BV);
 		while (q < r)
 		    fprintf(f, "%x ", *q++);
@@ -84,8 +98,8 @@ REmprint(PTR m, FILE *f)
 	}
 	fprintf(f, "%s\n", end_on_string);
 	if (end_on_string[0])
-	    p->type += END_ON;
-	if (p->type == M_ACCEPT)
+	    p->s_type += END_ON;
+	if (p->s_type == M_ACCEPT)
 	    return;
 	p++;
     }
