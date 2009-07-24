@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.h,v 1.3 2009/07/23 22:02:50 tom Exp $
+ * $MawkId: memory.h,v 1.4 2009/07/24 00:52:37 tom Exp $
  * @Log: memory.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:17  mike
  * move source to cvs
@@ -28,6 +28,7 @@ the GNU General Public License, version 2, 1991.
 #ifndef  MEMORY_H
 #define  MEMORY_H
 
+#include "types.h"
 #include "zmalloc.h"
 
 STRING *new_STRING(char *);

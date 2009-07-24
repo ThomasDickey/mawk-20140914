@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.h,v 1.5 2009/07/24 00:01:20 tom Exp $
+ * $MawkId: files.h,v 1.6 2009/07/24 00:54:48 tom Exp $
  * @Log: files.h,v @
  * Revision 1.3  1996/01/14  17:14:11  mike
  * flush_all_output()
@@ -32,6 +32,9 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef   MAWK_FILES_H
 #define   MAWK_FILES_H
+
+#include "nstd.h"
+#include "types.h"
 
 /* IO redirection types */
 #define  F_IN           (-5)

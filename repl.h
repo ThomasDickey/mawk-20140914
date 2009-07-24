@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: repl.h,v 1.2 2009/07/23 23:46:05 tom Exp $
+ * $MawkId: repl.h,v 1.3 2009/07/24 00:54:03 tom Exp $
  * @Log: repl.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs
@@ -24,6 +24,8 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef  REPL_H
 #define  REPL_H
+
+#include "types.h"
 
 PTR re_compile(STRING *);
 char *re_uncompile(PTR);

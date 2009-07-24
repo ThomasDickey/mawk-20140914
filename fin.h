@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.h,v 1.5 2009/07/23 23:19:35 tom Exp $
+ * $MawkId: fin.h,v 1.6 2009/07/24 00:55:07 tom Exp $
  * @Log: fin.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:13  mike
  * move source to cvs
@@ -27,6 +27,9 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef  FIN_H
 #define  FIN_H
+
+#include <stdio.h>
+
 /* structure to control input files */
 
 typedef struct {

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_vars.h,v 1.4 2009/07/23 23:35:31 tom Exp $
+ * $MawkId: bi_vars.h,v 1.5 2009/07/24 00:52:17 tom Exp $
  * @Log: bi_vars.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:09  mike
  * move source to cvs
@@ -27,6 +27,8 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef  BI_VARS_H
 #define  BI_VARS_H  1
+
+#include "types.h"
 
 /* builtin variables NF, RS, FS, OFMT are stored
    internally in field[], so side effects of assignment can

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: jmp.h,v 1.2 2009/07/23 23:58:39 tom Exp $
+ * $MawkId: jmp.h,v 1.3 2009/07/24 00:55:59 tom Exp $
  * @Log: jmp.h,v @
  * Revision 1.2  1995/04/21  14:20:19  mike
  * move_level variable to fix bug in arglist patching of moved code.
@@ -28,6 +28,9 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef   MAWK_JMP_H
 #define   MAWK_JMP_H
+
+#include "types.h"
+#include "symtype.h"
 
 void BC_new(void);
 void BC_insert(int, INST *);

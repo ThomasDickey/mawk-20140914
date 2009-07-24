@@ -22,6 +22,10 @@ It's easiest to read or modify this file by working with array.w.
 
 #ifndef ARRAY_H
 #define ARRAY_H 1
+
+#include "nstd.h"
+#include "types.h"
+
 typedef struct array {
    PTR ptr ;  /* What this points to depends on the type */
    unsigned size ; /* number of elts in the table */

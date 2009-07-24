@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: types.h,v 1.2 2009/07/23 23:57:50 tom Exp $
+ * $MawkId: types.h,v 1.3 2009/07/24 00:49:09 tom Exp $
  * @Log: types.h,v @
  * Revision 1.3  1993/07/15  23:56:18  mike
  * general cleanup
@@ -28,6 +28,7 @@ the GNU General Public License, version 2, 1991.
 #ifndef  MAWK_TYPES_H
 #define  MAWK_TYPES_H
 
+#include  "nstd.h"
 #include  "sizes.h"
 
 /*  CELL  types  */
