@@ -1,4 +1,3 @@
-
 /********************************************
 rexp1.c
 copyright 1991, Michael D. Brennan
@@ -10,7 +9,9 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
 ********************************************/
 
-/*@Log: rexp1.c,v @
+/*
+ * $MawkId: rexp1.c,v 1.2 2009/07/24 01:09:31 tom Exp $
+ * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
  *
@@ -32,132 +33,122 @@ the GNU General Public License, version 2, 1991.
  * Revision 3.1	 91/06/07  10:33:22  brennan
  * VERSION 0.995
  *
-*/
+ */
 
 /*  re machine	operations  */
 
 #include  "rexp.h"
 
-static void PROTO(new_TWO, (int, MACHINE *)) ;
-
-
-
 /* initialize a two state machine */
 static void
-new_TWO(type, mp)
-   int type ;
-   MACHINE *mp ;		 /* init mp-> */
+new_TWO(
+	   int type,
+	   MACHINE * mp)	/* init mp-> */
 {
-   mp->start = (STATE *) RE_malloc(2 * STATESZ) ;
-   mp->stop = mp->start + 1 ;
-   mp->start->type = type ;
-   mp->stop->type = M_ACCEPT ;
+    mp->start = (STATE *) RE_malloc(2 * STATESZ);
+    mp->stop = mp->start + 1;
+    mp->start->type = type;
+    mp->stop->type = M_ACCEPT;
 }
 
 /*  build a machine that recognizes any	 */
 MACHINE
-RE_any()
+RE_any(void)
 {
-   MACHINE x ;
+    MACHINE x;
 
-   new_TWO(M_ANY, &x) ;
-   return x ;
+    new_TWO(M_ANY, &x);
+    return x;
 }
 
 /*  build a machine that recognizes the start of string	 */
 MACHINE
-RE_start()
+RE_start(void)
 {
-   MACHINE x ;
+    MACHINE x;
 
-   new_TWO(M_START, &x) ;
-   return x ;
+    new_TWO(M_START, &x);
+    return x;
 }
 
 MACHINE
-RE_end()
+RE_end(void)
 {
-   MACHINE x ;
+    MACHINE x;
 
-   new_TWO(M_END, &x) ;
-   return x ;
+    new_TWO(M_END, &x);
+    return x;
 }
 
 /*  build a machine that recognizes a class  */
 MACHINE
-RE_class(bvp)
-   BV *bvp ;
+RE_class(BV * bvp)
 {
-   MACHINE x ;
+    MACHINE x;
 
-   new_TWO(M_CLASS, &x) ;
-   x.start->data.bvp = bvp ;
-   return x ;
+    new_TWO(M_CLASS, &x);
+    x.start->data.bvp = bvp;
+    return x;
 }
 
 MACHINE
-RE_u()
+RE_u(void)
 {
-   MACHINE x ;
+    MACHINE x;
 
-   new_TWO(M_U, &x) ;
-   return x ;
+    new_TWO(M_U, &x);
+    return x;
 }
 
 MACHINE
-RE_str(str, len)
-   char *str ;
-   unsigned len ;
+RE_str(char *str, unsigned len)
 {
-   MACHINE x ;
+    MACHINE x;
 
-   new_TWO(M_STR, &x) ;
-   x.start->len = len ;
-   x.start->data.str = str ;
-   return x ;
+    new_TWO(M_STR, &x);
+    x.start->len = len;
+    x.start->data.str = str;
+    return x;
 }
-
 
 /*  replace m and n by a machine that recognizes  mn   */
 void
-RE_cat(mp, np)
-   MACHINE *mp, *np ;
+RE_cat(MACHINE * mp, MACHINE * np)
 {
-   unsigned sz1, sz2, sz ;
+    unsigned sz1, sz2, sz;
 
-   sz1 = mp->stop - mp->start ;
-   sz2 = np->stop - np->start + 1 ;
-   sz = sz1 + sz2 ;
+    sz1 = mp->stop - mp->start;
+    sz2 = np->stop - np->start + 1;
+    sz = sz1 + sz2;
 
-   mp->start = (STATE *) RE_realloc(mp->start, sz * STATESZ) ;
-   mp->stop = mp->start + (sz - 1) ;
-   memcpy(mp->start + sz1, np->start, sz2 * STATESZ) ;
-   free(np->start) ;
+    mp->start = (STATE *) RE_realloc(mp->start, sz * STATESZ);
+    mp->stop = mp->start + (sz - 1);
+    memcpy(mp->start + sz1, np->start, sz2 * STATESZ);
+    free(np->start);
 }
 
- /*  replace m by a machine that recognizes m|n	 */
+ /*  replace m by a machine that recognizes m|n  */
 
 void
-RE_or(mp, np)
-   MACHINE *mp, *np ;
+RE_or(MACHINE * mp, MACHINE * np)
 {
-   register STATE *p ;
-   unsigned szm, szn ;
+    register STATE *p;
+    unsigned szm, szn;
 
-   szm = mp->stop - mp->start + 1 ;
-   szn = np->stop - np->start + 1 ;
+    szm = mp->stop - mp->start + 1;
+    szn = np->stop - np->start + 1;
 
-   p = (STATE *) RE_malloc((szm + szn + 1) * STATESZ) ;
-   memcpy(p + 1, mp->start, szm * STATESZ) ;
-   free(mp->start) ;
-   mp->start = p ;
-   (mp->stop = p + szm + szn)->type = M_ACCEPT ;
-   p->type = M_2JA ;
-   p->data.jump = szm + 1 ;
-   memcpy(p + szm + 1, np->start, szn * STATESZ) ;
-   free(np->start) ;
-   (p += szm)->type = M_1J ;
-   p->data.jump = szn ;
+    p = (STATE *) RE_malloc((szm + szn + 1) * STATESZ);
+    memcpy(p + 1, mp->start, szm * STATESZ);
+    free(mp->start);
+    mp->start = p;
+    (mp->stop = p + szm + szn)->type = M_ACCEPT;
+    p->type = M_2JA;
+    p->data.jump = szm + 1;
+    memcpy(p + szm + 1, np->start, szn * STATESZ);
+    free(np->start);
+    (p += szm)->type = M_1J;
+    p->data.jump = szn;
 }
 
 /*  UNARY  OPERATIONS	  */
@@ -165,82 +156,77 @@ RE_or(mp, np)
 /*  replace m by m*   */
 
 void
-RE_close(mp)
-   MACHINE *mp ;
+RE_close(MACHINE * mp)
 {
-   register STATE *p ;
-   unsigned sz ;
+    register STATE *p;
+    unsigned sz;
 
-   sz = mp->stop - mp->start + 1 ;
-   p = (STATE *) RE_malloc((sz + 2) * STATESZ) ;
-   memcpy(p + 1, mp->start, sz * STATESZ) ;
-   free(mp->start) ;
-   mp->start = p ;
-   mp->stop = p + (sz + 1) ;
-   p->type = M_2JA ;
-   p->data.jump = sz + 1 ;
-   (p += sz)->type = M_2JB ;
-   p->data.jump = -(sz - 1) ;
-   (p + 1)->type = M_ACCEPT ;
+    sz = mp->stop - mp->start + 1;
+    p = (STATE *) RE_malloc((sz + 2) * STATESZ);
+    memcpy(p + 1, mp->start, sz * STATESZ);
+    free(mp->start);
+    mp->start = p;
+    mp->stop = p + (sz + 1);
+    p->type = M_2JA;
+    p->data.jump = sz + 1;
+    (p += sz)->type = M_2JB;
+    p->data.jump = -(sz - 1);
+    (p + 1)->type = M_ACCEPT;
 }
 
 /*  replace m  by  m+  (positive closure)   */
 
 void
-RE_poscl(mp)
-   MACHINE *mp ;
+RE_poscl(MACHINE * mp)
 {
-   register STATE *p ;
-   unsigned sz ;
+    register STATE *p;
+    unsigned sz;
 
-   sz = mp->stop - mp->start + 1 ;
-   mp->start = p = (STATE *) RE_realloc(mp->start, (sz + 1) * STATESZ) ;
-   mp->stop = p + sz ;
-   p += --sz ;
-   p->type = M_2JB ;
-   p->data.jump = -sz ;
-   (p + 1)->type = M_ACCEPT ;
+    sz = mp->stop - mp->start + 1;
+    mp->start = p = (STATE *) RE_realloc(mp->start, (sz + 1) * STATESZ);
+    mp->stop = p + sz;
+    p += --sz;
+    p->type = M_2JB;
+    p->data.jump = -sz;
+    (p + 1)->type = M_ACCEPT;
 }
 
 /* replace  m  by  m? (zero or one)  */
 
 void
-RE_01(mp)
-   MACHINE *mp ;
+RE_01(MACHINE * mp)
 {
-   unsigned sz ;
-   register STATE *p ;
+    unsigned sz;
+    register STATE *p;
 
-   sz = mp->stop - mp->start + 1 ;
-   p = (STATE *) RE_malloc((sz + 1) * STATESZ) ;
-   memcpy(p + 1, mp->start, sz * STATESZ) ;
-   free(mp->start) ;
-   mp->start = p ;
-   mp->stop = p + sz ;
-   p->type = M_2JB ;
-   p->data.jump = sz ;
+    sz = mp->stop - mp->start + 1;
+    p = (STATE *) RE_malloc((sz + 1) * STATESZ);
+    memcpy(p + 1, mp->start, sz * STATESZ);
+    free(mp->start);
+    mp->start = p;
+    mp->stop = p + sz;
+    p->type = M_2JB;
+    p->data.jump = sz;
 }
 
 /*===================================
 MEMORY	ALLOCATION
  *==============================*/
 
-
 PTR
-RE_malloc(sz)
-   unsigned sz ;
+RE_malloc(unsigned sz)
 {
-   register PTR p ;
+    register PTR p;
 
-   if (!(p = malloc(sz)))  RE_error_trap(MEMORY_FAILURE) ;
-   return p ;
+    if (!(p = malloc(sz)))
+	RE_error_trap(MEMORY_FAILURE);
+    return p;
 }
 
 PTR
-RE_realloc(p, sz)
-   register PTR p ;
-   unsigned sz ;
+RE_realloc(PTR p, unsigned sz)
 {
-   if (!(p = realloc(p, sz)))  RE_error_trap(MEMORY_FAILURE) ;
-   return p ;
+    if (!(p = realloc(p, sz)))
+	RE_error_trap(MEMORY_FAILURE);
+    return p;
 }
