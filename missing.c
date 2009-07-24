@@ -1,109 +1,101 @@
-
 /* missing.c */
 
-/*@Log: missing.c,v @
+/*
+ * $MawkId: missing.c,v 1.2 2009/07/24 00:39:00 tom Exp $
+ * @Log: missing.c,v @
  * Revision 1.2  1995/06/03  09:31:11  mike
  * handle strchr(s,0) correctly
  *
- **/
+ */
 
 #include "nstd.h"
-
+#include "scan.h"
 
 #ifdef	NO_STRCHR
+#undef strchr
 char *
-strchr(s, c)
-   char *s ;
-   int c ;
+strchr(const char *s, int c)
 {
-   if( c == 0 ) return s + strlen(s) ;
+    if (c == 0)
+	return (char *) (s + strlen(s));
 
-   while (*s)
-   {
-      if (*s == c)  return s ;
-      s++ ;
-   }
-   return (char *) 0 ;
+    while (*s) {
+	if (*s == c)
+	    return (char *) s;
+	s++;
+    }
+    return (char *) 0;
 }
 
 char *
-strrchr(s, c)
-   char *s ;
-   int c ;
+strrchr(const char *s, int c)
 {
-   char *ret = (char *) 0 ;
+    char *ret = (char *) 0;
 
-   if ( c == 0 ) return s + strlen(s) ;
+    if (c == 0)
+	return s + strlen(s);
 
-   while (*s)
-   {
-      if (*s == c)  ret = s ;
-      s++ ;
-   }
-   return ret ;
+    while (*s) {
+	if (*s == c)
+	    ret = s;
+	s++;
+    }
+    return ret;
 }
 #endif /* NO_STRCHR */
 
 #ifdef	 NO_STRERROR
-extern int sys_nerr ;
-extern char *sys_errlist[] ;
+extern int sys_nerr;
+extern char *sys_errlist[];
 char *
-strerror(n)
-   int n ;
+strerror(int n)
 {
-   return n > 0 & n < sys_nerr ? sys_errlist[n] : "" ;
+    return n > 0 & n < sys_nerr ? sys_errlist[n] : "";
 }
 #endif
 
-
 #ifdef	NO_MEMCPY
 PTR
-memcpy(t, s, n)
-   PTR t, s ;
-   size_t n ;
+memcpy(void *t, const void *s, size_t n)
 {
-   char *tt = t ;
-   char *ss = s ;
+    char *tt = t;
+    const char *ss = (const char *) s;
 
-   while (n > 0)
-   {
-      n-- ;
-      *tt++ = *ss++ ;
-   }
-   return t ;
+    while (n > 0) {
+	n--;
+	*tt++ = *ss++;
+    }
+    return t;
 }
 
 int
-memcmp(t, s, n)
-   PTR t, s ;
-   size_t n ;
+memcmp(const void *t, const void *s, size_t n)
 {
-   char *tt = t ;
-   char *ss = s ;
+    char *tt = t;
+    char *ss = s;
 
-   while (n > 0)
-   {
-      if (*tt < *ss)  return -1 ;
-      if (*tt > *ss)  return 1 ;
-      tt++ ; ss++ ; n-- ;
-   }
-   return 0 ;
+    while (n > 0) {
+	if (*tt < *ss)
+	    return -1;
+	if (*tt > *ss)
+	    return 1;
+	tt++;
+	ss++;
+	n--;
+    }
+    return 0;
 }
 
 PTR
-memset(t, c, n)
-   PTR t ;
-   int c ;
-   size_t n ;
+memset(void *t, int c, size_t n)
 {
-   char *tt = (char *) t ;
+    char *tt = (char *) t;
 
-   while (n > 0)
-   {
-      n-- ;
-      *tt++ = c ;
-   }
-   return t ;
+    while (n > 0) {
+	n--;
+	*tt++ = c;
+    }
+    return t;
 }
 #endif /* NO_MEMCPY */
 
@@ -115,77 +107,83 @@ memset(t, c, n)
 */
 
 double
-strtod(s, endptr)
-   const char *s ;
-   char **endptr ;
+strtod(const char *s, char **endptr)
 {
-   register unsigned char *p ;
-   int flag ;
-   double atof();
+    register unsigned char *p;
+    int flag;
+    double atof();
 
-   if (endptr)
-   {
-      p = (unsigned char *) s ;
+    if (endptr) {
+	p = (unsigned char *) s;
 
-      flag = 0 ;
-      while (*p == ' ' || *p == '\t')  p++ ;
-      if (*p == '-' || *p == '+')  p++ ;
-      while ( scan_code[*p] == SC_DIGIT ) { flag++ ; p++ ; }
-      if (*p == '.')
-      {
-	 p++ ;
-	 while ( scan_code[*p] == SC_DIGIT ) { flag++ ; p++ ; }
-      }
-      /* done with number part */
-      if (flag == 0)
-      {				/* no number part */
-	 *endptr = s ; return 0.0 ; 
-      }
-      else  *endptr = (char *) p ;
+	flag = 0;
+	while (*p == ' ' || *p == '\t')
+	    p++;
+	if (*p == '-' || *p == '+')
+	    p++;
+	while (scan_code[*p] == SC_DIGIT) {
+	    flag++;
+	    p++;
+	}
+	if (*p == '.') {
+	    p++;
+	    while (scan_code[*p] == SC_DIGIT) {
+		flag++;
+		p++;
+	    }
+	}
+	/* done with number part */
+	if (flag == 0) {	/* no number part */
+	    *endptr = s;
+	    return 0.0;
+	} else
+	    *endptr = (char *) p;
 
-      /* now look for exponent */
-      if (*p == 'e' || *p == 'E')
-      {
-	 flag = 0 ;
-	 p++ ;
-	 if (*p == '-' || *p == '+')  p++ ;
-	 while ( scan_code[*p] == SC_DIGIT ) { flag++ ; p++ ; }
-	 if (flag)  *endptr = (char *) p ;
-      }
-   }
-   return atof(s) ;
+	/* now look for exponent */
+	if (*p == 'e' || *p == 'E') {
+	    flag = 0;
+	    p++;
+	    if (*p == '-' || *p == '+')
+		p++;
+	    while (scan_code[*p] == SC_DIGIT) {
+		flag++;
+		p++;
+	    }
+	    if (flag)
+		*endptr = (char *) p;
+	}
+    }
+    return atof(s);
 }
 #endif /* no strtod() */
 
 #ifdef	 NO_FMOD
 
-#ifdef SW_FP_CHECK	/* this is V7 and XNX23A specific */
+#ifdef SW_FP_CHECK		/* this is V7 and XNX23A specific */
 
 double
-fmod(x, y)
-   double x, y;
+fmod(double x, double y)
 {
-   double modf();
-   double dtmp, ipart;
+    double modf();
+    double dtmp, ipart;
 
-   clrerr() ;
-   dtmp = x / y ;
-   fpcheck() ;
-   modf(dtmp, &ipart) ;
-   return x - ipart * y ;
+    clrerr();
+    dtmp = x / y;
+    fpcheck();
+    modf(dtmp, &ipart);
+    return x - ipart * y;
 }
 
 #else
 
 double
-fmod(x, y)
-   double x, y;
+fmod(double x, double y)
 {
-   double modf();
-   double ipart;
+    double modf();
+    double ipart;
 
-   modf(x / y, &ipart) ;
-   return x - ipart * y ;
+    modf(x / y, &ipart);
+    return x - ipart * y;
 }
 
 #endif
