@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.6 2009/07/25 00:14:29 tom Exp $
+ * $MawkId: execute.c,v 1.7 2009/07/25 11:09:29 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -502,7 +502,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK		/* specific to V7 and XNX23A */
 	    clrerr();
 #endif
-	    cp->dval += sp--->dval;
+	    cp->dval += (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -519,7 +519,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK
 	    clrerr();
 #endif
-	    cp->dval -= sp--->dval;
+	    cp->dval -= (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -536,7 +536,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK
 	    clrerr();
 #endif
-	    cp->dval *= sp--->dval;
+	    cp->dval *= (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -558,7 +558,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK
 	    clrerr();
 #endif
-	    cp->dval /= sp--->dval;
+	    cp->dval /= (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -577,7 +577,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    CHECK_DIVZERO(sp->dval);
 #endif
 
-	    cp->dval = fmod(cp->dval, sp--->dval);
+	    cp->dval = fmod(cp->dval, (sp--)->dval);
 	    sp->type = C_DOUBLE;
 	    sp->dval = cp->dval;
 	    break;
@@ -588,7 +588,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    cp = (CELL *) (sp - 1)->ptr;
 	    if (cp->type != C_DOUBLE)
 		cast1_to_d(cp);
-	    cp->dval = pow(cp->dval, sp--->dval);
+	    cp->dval = pow(cp->dval, (sp--)->dval);
 	    sp->type = C_DOUBLE;
 	    sp->dval = cp->dval;
 	    break;
@@ -603,7 +603,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK
 	    clrerr();
 #endif
-	    tc.dval += sp--->dval;
+	    tc.dval += (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -620,7 +620,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK
 	    clrerr();
 #endif
-	    tc.dval -= sp--->dval;
+	    tc.dval -= (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -637,7 +637,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK
 	    clrerr();
 #endif
-	    tc.dval *= sp--->dval;
+	    tc.dval *= (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -659,7 +659,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef SW_FP_CHECK
 	    clrerr();
 #endif
-	    tc.dval /= sp--->dval;
+	    tc.dval /= (sp--)->dval;
 #ifdef SW_FP_CHECK
 	    fpcheck();
 #endif
@@ -678,7 +678,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    CHECK_DIVZERO(sp->dval);
 #endif
 
-	    tc.dval = fmod(tc.dval, sp--->dval);
+	    tc.dval = fmod(tc.dval, (sp--)->dval);
 	    sp->type = C_DOUBLE;
 	    sp->dval = tc.dval;
 	    field_assign(cp, &tc);
@@ -689,7 +689,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		cast1_to_d(sp);
 	    cp = (CELL *) (sp - 1)->ptr;
 	    cast1_to_d(cellcpy(&tc, cp));
-	    tc.dval = pow(tc.dval, sp--->dval);
+	    tc.dval = pow(tc.dval, (sp--)->dval);
 	    sp->type = C_DOUBLE;
 	    sp->dval = tc.dval;
 	    field_assign(cp, &tc);
