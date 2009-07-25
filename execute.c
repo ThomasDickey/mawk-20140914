@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.5 2009/07/23 23:50:47 tom Exp $
+ * $MawkId: execute.c,v 1.6 2009/07/25 00:14:29 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -1032,8 +1032,11 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    inc_sp();
 	    if (field->type >= C_STRING) {
 		sp->type = C_DOUBLE;
-		sp->dval = REtest(string(field)->str, cdp++->ptr)
-		    ? 1.0 : 0.0;
+		sp->dval = (REtest(string(field)->str,
+				   string(field)->len,
+				   cdp++->ptr)
+			    ? 1.0
+			    : 0.0);
 
 		break /* the case */ ;
 	    } else {
@@ -1045,7 +1048,9 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    /* does expr at sp[0] match RE at cdp */
 	    if (sp->type < C_STRING)
 		cast1_to_s(sp);
-	    t = REtest(string(sp)->str, cdp++->ptr);
+	    t = REtest(string(sp)->str,
+		       string(sp)->len,
+		       cdp++->ptr);
 	    free_STRING(string(sp));
 	    sp->type = C_DOUBLE;
 	    sp->dval = t ? 1.0 : 0.0;
@@ -1057,7 +1062,9 @@ execute(INST * cdp,		/* code ptr, start execution here */
 
 	    if ((--sp)->type < C_STRING)
 		cast1_to_s(sp);
-	    t = REtest(string(sp)->str, (sp + 1)->ptr);
+	    t = REtest(string(sp)->str,
+		       string(sp)->len,
+		       (sp + 1)->ptr);
 
 	    free_STRING(string(sp));
 	    sp->type = C_DOUBLE;
