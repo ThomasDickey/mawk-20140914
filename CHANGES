@@ -1,11 +1,11 @@
--- $MawkId: CHANGES,v 1.35 2009/07/25 00:41:37 tom Exp $
+-- $MawkId: CHANGES,v 1.36 2009/07/25 11:45:32 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-2009072?
+20090725
 	modify internal functions for gsub() to handle a case from makewhatis
-	script which substitutes embedded zero bytes to a different value
-	(report by Gabor Z Papp).
+	script from man 1.6f which substitutes embedded zero bytes to a
+	different value (report by Gabor Z Papp).
 
 	change default for configure --with-builtin-regex to prefer the
 	builtin regular expressions.  They are incomplete, but POSIX regular
