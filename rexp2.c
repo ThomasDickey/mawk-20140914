@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.7 2009/07/25 11:37:04 tom Exp $
+ * $MawkId: rexp2.c,v 1.8 2009/07/25 12:44:46 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -341,54 +341,5 @@ REtest(char *str,		/* string to test */
 	RE_panic("unexpected case in REtest");
     }
 }
-
-#ifdef	MAWK
-
-#else /* mawk provides its own str_str */
-
-char *
-str_str(
-	   char *target,
-	   unsigned len,
-	   char *key,
-	   unsigned klen)
-{
-    int c = key[0];
-
-    switch (klen) {
-    case 0:
-	return (char *) 0;
-
-    case 1:
-	return strchr(target, c);
-
-    case 2:
-	{
-	    int c1 = key[1];
-
-	    while (target = strchr(target, c)) {
-		if (target[1] == c1)
-		    return target;
-		else
-		    target++;
-	    }
-	    break;
-	}
-
-    default:
-	klen--;
-	key++;
-	while (target = strchr(target, c)) {
-	    if (memcmp(target + 1, key, klen) == 0)
-		return target;
-	    else
-		target++;
-	}
-	break;
-    }
-    return (char *) 0;
-}
-
-#endif /* MAWK */
 
 #undef push
