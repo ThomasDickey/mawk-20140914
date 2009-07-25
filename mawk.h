@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.8 2009/07/23 21:16:13 tom Exp $
+ * $MawkId: mawk.h,v 1.9 2009/07/25 00:18:20 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -153,7 +153,7 @@ void rt_overflow(char *, unsigned);
 void rt_error(char *,...);
 void mawk_exit(int) GCC_NORETURN;
 void da(INST *, FILE *);
-char *str_str(char *, char *, unsigned);
+char *str_str(char *, unsigned, char *, unsigned);
 char *rm_escape(char *);
 char *re_pos_match(char *, PTR, unsigned *);
 int binmode(void);
