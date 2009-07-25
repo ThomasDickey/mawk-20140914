@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.33 2009/07/24 01:07:00 tom Exp $
+-- $MawkId: CHANGES,v 1.34 2009/07/25 00:07:13 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 2009072?
+	change default for configure --with-builtin-regex to prefer the
+	builtin regular expressions.  They are incomplete, but POSIX regular
+	expressions cannot match nulls embedded in strings.
+
 	require standard C compiler; converted to ANSI C.
 
 	rename #define'd SV_SIGINFO to MAWK_SV_SIGINFO to avoid predefined
