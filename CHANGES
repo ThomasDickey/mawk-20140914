@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.36 2009/07/25 11:45:32 tom Exp $
+-- $MawkId: CHANGES,v 1.37 2009/07/25 12:39:12 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090725
+	move regular-expression files into main directory to simplify building
+	using configure --srcdir and VPATH.
+
 	modify internal functions for gsub() to handle a case from makewhatis
 	script from man 1.6f which substitutes embedded zero bytes to a
 	different value (report by Gabor Z Papp).
