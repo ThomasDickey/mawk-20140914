@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.12 2009/07/14 22:11:19 tom Exp $
+# $MawkId: Makefile.in,v 1.13 2009/07/25 12:43:50 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -43,13 +43,9 @@ PROG  = mawk$x
 
 OBJS = parse$o scan$o memory$o main$o hash$o execute$o code$o \
   da$o error$o init$o bi_vars$o cast$o print$o bi_funct$o \
-  kw$o jmp$o array$o field$o  split$o re_cmpl$o zmalloc$o \
-  fin$o files$o  scancode$o matherr$o  fcall$o version$o \
+  kw$o jmp$o array$o field$o split$o re_cmpl$o regexp$o zmalloc$o \
+  fin$o files$o scancode$o matherr$o fcall$o version$o \
   missing$o
-
-REXP_O = rexp/regexp$o
-REXP_C = rexp/regexp.c
-
 
 .SUFFIXES: .c .i $o
 
@@ -64,10 +60,8 @@ all :	$(PROG)
 
 check :  mawk_test fpe_test
 
-REXP_DONE = rexp/.done
-
-$(PROG) : $(OBJS)  $(REXP_DONE)
-	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(REXP_O) $(MATHLIB)
+$(PROG) : $(OBJS)
+	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(MATHLIB)
 
 TESTPATH= PATH=`pwd`:`cd $(srcdir);pwd`/test:/bin:/usr/bin; export PATH
 
@@ -76,10 +70,6 @@ mawk_test :  $(PROG)  # test that we have a sane mawk
 
 fpe_test :  $(PROG) # test FPEs are handled OK
 	sh -c '$(TESTPATH); cd $(srcdir)/test ; fpe_test'
-
-$(REXP_DONE) : $(REXP_C)
-	cd rexp ;\
-	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS) -DMAWK -I.."
 
 parse.c  : parse.y
 	@echo  expect 4 shift/reduce conflicts
@@ -113,7 +103,7 @@ uninstall :
 	rm -f $(MAWKMAN)
 
 clean :
-	rm -f *$o rexp/*$o $(REXP_DONE) test/$(PROG) *core* test/*core* tags $(PROG)
+	rm -f *$o rexp/*$o test/$(PROG) *core* test/*core* tags $(PROG)
 
 distclean :  clean
 	rm -f config.h Makefile \
@@ -159,3 +149,4 @@ scan.o : config.h field.h code.h mawk.h init.h parse.h symtype.h nstd.h memory.h
 split.o : config.h field.h bi_vars.h mawk.h parse.h regexp.h symtype.h nstd.h memory.h scan.h bi_funct.h array.h zmalloc.h types.h sizes.h
 version.o : config.h mawk.h patchlev.h nstd.h types.h sizes.h
 zmalloc.o : config.h mawk.h nstd.h zmalloc.h types.h sizes.h
+regexp.o : regexp.c regexp_system.c rexp0.c rexp1.c rexp2.c rexp3.c rexp4.c rexp.c rexpdb.c rexp.h
