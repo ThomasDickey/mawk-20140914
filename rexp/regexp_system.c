@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.3 2009/07/12 18:26:40 tom Exp $
+ * $MawkId: regexp_system.c,v 1.4 2009/07/25 00:31:53 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -141,8 +141,13 @@ REcompile(char *regexp)
     return re;
 }
 
+/*
+ * Test the regular expression in 'q' against the string 'str'.
+ * The 'len' parameter is ignored since POSIX regular expressions assume 'str'
+ * is a null-terminated string.
+ */
 int
-REtest(char *str, PTR q)
+REtest(char *str, unsigned len GCC_UNUSED, PTR q)
 {
     mawk_re_t *re = (mawk_re_t *) q;
     /* fprintf (stderr, "REtest:  \"%s\" ~ /%s/", str, re -> regexp); */
