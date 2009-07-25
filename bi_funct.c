@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.9 2009/07/24 22:37:41 tom Exp $
+ * $MawkId: bi_funct.c,v 1.10 2009/07/25 12:13:18 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -158,7 +158,7 @@ bi_length(CELL * sp)
 }
 
 char *
-str_str(char *target, char *key, unsigned key_len)
+str_str(char *target, unsigned target_len, char *key, unsigned key_len)
 {
     register int k = key[0];
 
@@ -170,11 +170,11 @@ str_str(char *target, char *key, unsigned key_len)
     case 2:
 	{
 	    int k1 = key[1];
-	    while ((target = strchr(target, k)))
+	    while ((target = strchr(target, k))) {
 		if (target[1] == k1)
 		    return target;
-		else
-		    target++;
+		target++;
+	    }
 	    /*failed */
 	    return (char *) 0;
 	}
@@ -202,12 +202,16 @@ bi_index(CELL * sp)
     if (TEST2(sp) != TWO_STRINGS)
 	cast2_to_s(sp);
 
-    if ((len = string(sp + 1)->len))
-	idx = (p = str_str(string(sp)->str, string(sp + 1)->str, len))
-	    ? p - string(sp)->str + 1 : 0;
-
-    else			/* index of the empty string */
+    if ((len = string(sp + 1)->len)) {
+	idx = ((p = str_str(string(sp)->str,
+			    string(sp)->len,
+			    string(sp + 1)->str,
+			    len))
+	       ? p - string(sp)->str + 1
+	       : 0);
+    } else {			/* index of the empty string */
 	idx = 1;
+    }
 
     free_STRING(string(sp));
     free_STRING(string(sp + 1));
@@ -295,7 +299,7 @@ bi_match(CELL * sp)
     RSTART->type = C_DOUBLE;
     RLENGTH->type = C_DOUBLE;
 
-    p = REmatch(string(sp)->str, (sp + 1)->ptr, &length);
+    p = REmatch(string(sp)->str, string(sp)->len, (sp + 1)->ptr, &length);
 
     if (p) {
 	sp->dval = (double) (p - string(sp)->str + 1);
@@ -837,7 +841,7 @@ bi_sub(CELL * sp)
 	cast1_to_s(&sc);
     front = string(&sc)->str;
 
-    if ((middle = REmatch(front, sp->ptr, &middle_len))) {
+    if ((middle = REmatch(front, string(&sc)->len, sp->ptr, &middle_len))) {
 	front_len = (unsigned) (middle - front);
 	back = middle + middle_len;
 	back_len = string(&sc)->len - front_len - middle_len;
@@ -891,7 +895,7 @@ static unsigned repl_cnt;	/* number of global replacements */
 */
 
 static STRING *
-gsub(PTR re, CELL * repl, char *target, int flag)
+gsub(PTR re, CELL * repl, char *target, unsigned target_len, int flag)
 {
     char *front = 0, *middle;
     STRING *back;
@@ -899,15 +903,15 @@ gsub(PTR re, CELL * repl, char *target, int flag)
     STRING *ret_val;
     CELL xrepl;			/* a copy of repl so we can change repl */
 
-    if (!(middle = REmatch(target, re, &middle_len)))
+    if (!(middle = REmatch(target, target_len, re, &middle_len)))
 	return new_STRING(target);	/* no match */
 
     cellcpy(&xrepl, repl);
 
-    if (!flag && middle_len == 0 && middle == target) {		/* match at front that's not allowed */
+    if (!flag && middle_len == 0 && middle == target) {
+	/* match at front that's not allowed */
 
-	if (*target == 0)	/* target is empty string */
-	{
+	if (*target == 0) {	/* target is empty string */
 	    repl_destroy(&xrepl);
 	    null_str.ref_cnt++;
 	    return &null_str;
@@ -917,11 +921,12 @@ gsub(PTR re, CELL * repl, char *target, int flag)
 	    front_len = 0;
 	    /* make new repl with target[0] */
 	    repl_destroy(repl);
+	    --target_len;
 	    xbuff[0] = *target++;
 	    xbuff[1] = 0;
 	    repl->type = C_REPL;
 	    repl->ptr = (PTR) new_STRING(xbuff);
-	    back = gsub(re, &xrepl, target, 1);
+	    back = gsub(re, &xrepl, target, target_len, 1);
 	}
     } else {			/* a match that counts */
 	repl_cnt++;
@@ -929,12 +934,16 @@ gsub(PTR re, CELL * repl, char *target, int flag)
 	front = target;
 	front_len = (unsigned) (middle - target);
 
-	if (*middle == 0)	/* matched back of target */
-	{
+	if (front_len == target_len) {	/* matched back of target */
 	    back = &null_str;
 	    null_str.ref_cnt++;
-	} else
-	    back = gsub(re, &xrepl, middle + middle_len, 0);
+	} else {
+	    back = gsub(re,
+			&xrepl,
+			middle + middle_len,
+			target_len - (front_len + middle_len),
+			0);
+	}
 
 	/* patch the &'s if needed */
 	if (repl->type == C_REPLV) {
@@ -990,7 +999,7 @@ bi_gsub(CELL * sp)
 	cast1_to_s(&sc);
 
     repl_cnt = 0;
-    tc.ptr = (PTR) gsub(sp->ptr, sp + 1, string(&sc)->str, 1);
+    tc.ptr = (PTR) gsub(sp->ptr, sp + 1, string(&sc)->str, string(&sc)->len, 1);
 
     if (repl_cnt) {
 	tc.type = C_STRING;
