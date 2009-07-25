@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.13 2009/07/25 12:43:50 tom Exp $
+# $MawkId: Makefile.in,v 1.14 2009/07/25 12:49:35 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -103,7 +103,7 @@ uninstall :
 	rm -f $(MAWKMAN)
 
 clean :
-	rm -f *$o rexp/*$o test/$(PROG) *core* test/*core* tags $(PROG)
+	rm -f *$o test/$(PROG) *core* test/*core* tags $(PROG)
 
 distclean :  clean
 	rm -f config.h Makefile \
