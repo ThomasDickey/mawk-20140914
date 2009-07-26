@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: sizes.h,v 1.4 2009/07/23 23:34:59 tom Exp $
+ * $MawkId: sizes.h,v 1.5 2009/07/26 19:11:23 tom Exp $
  * @Log: sizes.h,v @
  * Revision 1.8  1995/10/14  22:09:51  mike
  * getting MAX__INT from values.h didn't really work since the value was
@@ -53,26 +53,35 @@ the GNU General Public License, version 2, 1991.
 #ifndef  SIZES_H
 #define  SIZES_H
 
-#ifndef  MAX__INT
+#include "config.h"
+
+#ifndef MAX__INT
 #include <limits.h>
-#define  MAX__UINT UINT_MAX
 #define  MAX__INT  INT_MAX
 #define  MAX__LONG LONG_MAX
+#define  MAX__UINT UINT_MAX
 #endif /* MAX__INT */
 
 #if  MAX__INT <= 0x7fff
 #define  SHORT_INTS
 #define  INT_FMT "%ld"
-typedef unsigned long UInt;
 typedef long Int;
-#define  Max_UInt MAX__ULONG
 #define  Max_Int MAX__LONG
 #else
 #define  INT_FMT "%d"
-typedef unsigned UInt;
 typedef int Int;
-#define  Max_UInt  MAX__UINT
 #define  Max_Int  MAX__INT
+#endif
+
+#if  MAX__UINT <= 0xffff
+#define  SHORT_UINTS
+#define  UINT_FMT "%lu"
+typedef unsigned long UInt;
+#define  Max_UInt MAX__ULONG
+#else
+#define  UINT_FMT "%u"
+typedef unsigned UInt;
+#define  Max_UInt  MAX__UINT
 #endif
 
 #define EVAL_STACK_SIZE  256	/* initial size , can grow */
