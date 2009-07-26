@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.14 2009/07/25 12:49:35 tom Exp $
+# $MawkId: Makefile.in,v 1.15 2009/07/26 16:24:30 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -103,12 +103,12 @@ uninstall :
 	rm -f $(MAWKMAN)
 
 clean :
-	rm -f *$o test/$(PROG) *core* test/*core* tags $(PROG)
+	rm -f *$o test/$(PROG) *core* test/*core* $(PROG)
 
 distclean :  clean
 	rm -f config.h Makefile \
 	    config.status config.log config.cache
-	rm -f defines.out maxint.out fpe_check
+	rm -f defines.out maxint.out fpe_check tags 
 
 tags :
 	ctags *.[ch] */*.[ch]
