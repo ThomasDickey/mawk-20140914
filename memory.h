@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.h,v 1.4 2009/07/24 00:52:37 tom Exp $
+ * $MawkId: memory.h,v 1.5 2009/07/26 14:10:46 tom Exp $
  * @Log: memory.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:17  mike
  * move source to cvs
@@ -25,14 +25,15 @@ the GNU General Public License, version 2, 1991.
 
 /*  memory.h  */
 
-#ifndef  MEMORY_H
-#define  MEMORY_H
+#ifndef  MAWK_MEMORY_H
+#define  MAWK_MEMORY_H
 
 #include "types.h"
 #include "zmalloc.h"
 
 STRING *new_STRING(char *);
 STRING *new_STRING0(unsigned);
+STRING *new_STRING1(const char *, unsigned);
 
 #ifdef   DEBUG
 void DB_free_STRING(STRING *);
@@ -48,4 +49,4 @@ void DB_free_STRING(STRING *);
 	    } while (0)
 #endif
 
-#endif /* MEMORY_H */
+#endif /* MAWK_MEMORY_H */
