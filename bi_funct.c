@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.10 2009/07/25 12:13:18 tom Exp $
+ * $MawkId: bi_funct.c,v 1.11 2009/07/26 12:33:42 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -258,12 +258,17 @@ bi_substr(CELL * sp)
     }
     i = d_to_i(sp[1].dval) - 1;	/* i now indexes into string */
 
+    /*
+     * Workaround in case someone's written a script that does substr(0,last-1)
+     * by transforming it into substr(1,last).
+     */
     if (i < 0) {
-	n += i;
+	n -= i + 1;
 	i = 0;
     }
-    if (n > len - i)
+    if (n > len - i) {
 	n = len - i;
+    }
 
     if (n <= 0)			/* the null string */
     {
