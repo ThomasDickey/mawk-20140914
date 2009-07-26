@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.5 2009/07/12 16:29:00 tom Exp $
+ * $MawkId: field.c,v 1.6 2009/07/26 15:58:07 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -143,6 +143,17 @@ set_rs_shadow(void)
 	free_STRING(sval);
 	break;
 
+    case C_STRING:
+	/*
+	 * Check for special case where we retained the cell as a string,
+	 * bypassing regular-expression compiling.
+	 */
+	if (string(&c)->len == 1) {
+	    rs_shadow.type = SEP_CHAR;
+	    rs_shadow.c = string(&c)->str[0];
+	    break;
+	}
+	/* FALLTHRU */
     default:
 	bozo("bad cell in set_rs_shadow");
     }
