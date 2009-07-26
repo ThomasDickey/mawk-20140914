@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.8 2009/07/24 22:33:19 tom Exp $
+ * $MawkId: scan.c,v 1.9 2009/07/26 14:20:54 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -878,7 +878,7 @@ escape_test[ET_END + 1] =
 };
 /* *INDENT-ON* */
 /* process the escape characters in a string, in place . */ char *
-rm_escape(char *s)
+rm_escape(char *s, unsigned *lenp)
 {
     register char *p, *q;
     char *t;
@@ -916,6 +916,8 @@ rm_escape(char *s)
     }
 
     *q = 0;
+    if (lenp != 0)
+	*lenp = (q - s);
     return s;
 }
 
@@ -925,6 +927,7 @@ collect_string(void)
     register UChar *p = (UChar *) string_buff;
     int c;
     int e_flag = 0;		/* on if have an escape char */
+    unsigned len_buff;
 
     while (1)
 	switch (scan_code[*p++ = (UChar) next()]) {
@@ -960,9 +963,11 @@ collect_string(void)
 	}
 
   out:
-    yylval.ptr = (PTR) new_STRING(e_flag
-				  ? rm_escape(string_buff)
-				  : string_buff);
+    if (e_flag)
+	rm_escape(string_buff, &len_buff);
+    else
+	len_buff = (char *) p - string_buff;
+    yylval.ptr = (PTR) new_STRING1(string_buff, len_buff);
     return STRING_;
 }
 
