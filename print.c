@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.6 2009/07/23 22:59:39 tom Exp $
+ * $MawkId: print.c,v 1.7 2009/07/26 16:28:24 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -83,7 +83,7 @@ char *sprintf_limit = string_buff + SPRINTF_SZ;
 static void
 print_cell(CELL * p, FILE *fp)
 {
-    int len;
+    unsigned len;
 
     switch (p->type) {
     case C_NOINIT:
@@ -264,10 +264,10 @@ do_printf(
 		    {
 			/* hope this works */
 			rt_overflow("sprintf buffer",
-				    sprintf_limit - sprintf_buff);
+				    (unsigned) (sprintf_limit - sprintf_buff));
 		    } else {	/* really done */
 			STRING *retval;
-			int len = target - sprintf_buff;
+			unsigned len = (unsigned) (target - sprintf_buff);
 
 			retval = new_STRING0(len);
 			memcpy(retval->str, sprintf_buff, len);
@@ -542,7 +542,7 @@ bi_printf(CELL * sp)
 
     if (sp->type < C_STRING)
 	cast1_to_s(sp);
-    do_printf(fp, string(sp)->str, k, sp + 1);
+    do_printf(fp, string(sp)->str, (unsigned) k, sp + 1);
     free_STRING(string(sp));
 
     /* cleanup arguments on eval stack */

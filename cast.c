@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.6 2009/07/26 16:02:09 tom Exp $
+ * $MawkId: cast.c,v 1.7 2009/07/26 16:23:02 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -323,12 +323,12 @@ cast_for_split(CELL * cp)
 	     * character.  That is used in a special case in set_rs_shadow().
 	     */
 	    char temp[2];
-	    temp[0] = c;
+	    temp[0] = (char) c;
 	    free_STRING(string(cp));
 	    cp->ptr = (PTR) new_STRING1(temp, 1);
 	    return;
 	} else if (strchr(meta, c)) {
-	    xbuff[1] = c;
+	    xbuff[1] = (char) c;
 	    free_STRING(string(cp));
 	    cp->ptr = (PTR) new_STRING(xbuff);
 	}

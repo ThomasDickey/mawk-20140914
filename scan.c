@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.9 2009/07/26 14:20:54 tom Exp $
+ * $MawkId: scan.c,v 1.10 2009/07/26 16:23:34 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -917,7 +917,7 @@ rm_escape(char *s, unsigned *lenp)
 
     *q = 0;
     if (lenp != 0)
-	*lenp = (q - s);
+	*lenp = (unsigned) (q - s);
     return s;
 }
 
@@ -966,7 +966,7 @@ collect_string(void)
     if (e_flag)
 	rm_escape(string_buff, &len_buff);
     else
-	len_buff = (char *) p - string_buff;
+	len_buff = (unsigned) ((char *) p - string_buff);
     yylval.ptr = (PTR) new_STRING1(string_buff, len_buff);
     return STRING_;
 }
