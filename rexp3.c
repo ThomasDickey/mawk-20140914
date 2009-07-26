@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.9 2009/07/26 18:03:30 tom Exp $
+ * $MawkId: rexp3.c,v 1.10 2009/07/26 18:16:46 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -82,6 +82,7 @@ REmatch(char *str,		/* string to test */
     /* state of current best match stored here */
     char *cb_ss;		/* the start */
     char *cb_e = 0;		/* the end , pts at first char not matched */
+    STATE *m_best = 0;
 
     *lenp = 0;
 
@@ -398,7 +399,9 @@ REmatch(char *str,		/* string to test */
 	    /* we have a new current best */
 	    cb_ss = ss;
 	    cb_e = s;
-	} else if (cb_ss == ss && s == cb_e) {
+	    m_best = m;
+	} else if (cb_ss == ss && s == cb_e && m_best == m) {
+	    /* infinite loop - give up */
 	    return NULL;
 	}
 	goto refill;
@@ -414,6 +417,10 @@ REmatch(char *str,		/* string to test */
 	    /* we have a new current best */
 	    cb_ss = ss;
 	    cb_e = s;
+	    m_best = m;
+	} else if (cb_ss == ss && s == cb_e && m_best == m) {
+	    /* infinite loop - give up */
+	    return NULL;
 	}
 	goto refill;
 
