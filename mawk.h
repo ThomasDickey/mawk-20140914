@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.10 2009/07/26 14:09:29 tom Exp $
+ * $MawkId: mawk.h,v 1.11 2009/07/26 14:40:19 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -170,6 +170,7 @@ void compile_error(char *,...);
 
 void execute(INST *, CELL *, CELL *);
 char *find_kw_str(int);
+void da_string(FILE *fp, const char *, unsigned);
 
 #ifdef HAVE_STRTOD_OVF_BUG
 double strtod_with_ovf_bug(const char *, char **);
