@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.5 2009/07/12 16:03:56 tom Exp $
+ * $MawkId: cast.c,v 1.6 2009/07/26 16:02:09 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -314,6 +314,18 @@ cast_for_split(CELL * cp)
 	if ((c = string(cp)->str[0]) == ' ') {
 	    free_STRING(string(cp));
 	    cp->type = C_SPACE;
+	    return;
+	} else if (c == 0) {
+	    /*
+	     * A null is not a meta character, but strchr will match it anyway.
+	     * For now, there's no reason to compile a null as a regular
+	     * expression - just return a string containing the single
+	     * character.  That is used in a special case in set_rs_shadow().
+	     */
+	    char temp[2];
+	    temp[0] = c;
+	    free_STRING(string(cp));
+	    cp->ptr = (PTR) new_STRING1(temp, 1);
 	    return;
 	} else if (strchr(meta, c)) {
 	    xbuff[1] = c;
