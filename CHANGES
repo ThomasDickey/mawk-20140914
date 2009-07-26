@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.39 2009/07/26 16:05:42 tom Exp $
+-- $MawkId: CHANGES,v 1.40 2009/07/26 18:12:39 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090726
+	add a check for infinite loop in REmatch(), to work with gawk's noloop1
+	testcase.
+
 	modify logic to allow setting RS to an explicit null character, e.g.,
 		RS="\0"
 	(Ubuntu #400409). 
