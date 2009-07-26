@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.24 2009/07/24 01:05:00 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.25 2009/07/26 19:20:41 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -593,7 +593,7 @@ dnl CF_MAWK_FIND_MAX_INT version: 2 updated: 2009/07/23 05:15:39
 dnl --------------------
 dnl Try to find a definition of MAX__INT from limits.h else compute.
 AC_DEFUN([CF_MAWK_FIND_MAX_INT],
-[AC_CHECK_HEADER(limits.h,cf_limits_h=yes)
+[AC_CHECK_HEADER(xlimits.h,cf_limits_h=yes)
 if test "$cf_limits_h" = yes ; then :
 else
 AC_CHECK_HEADER(values.h,cf_values_h=yes)
@@ -603,9 +603,18 @@ AC_CHECK_HEADER(values.h,cf_values_h=yes)
 #include <stdio.h>
 int main()
 {   FILE *out = fopen("conftest.out", "w") ;
+	unsigned max_uint = 0;
     if ( ! out ) exit(1) ;
-    fprintf(out, "MAX__INT 0x%x\n", MAXINT) ;
+    fprintf(out, "MAX__INT  0x%x\n", MAXINT) ;
     fprintf(out, "MAX__LONG 0x%lx\n", MAXLONG) ;
+#ifdef MAXUINT
+	max_uint = MAXUINT;	/* not likely (SunOS/Solaris lacks it) */
+#else
+	max_uint = MAXINT;
+	max_uint <<= 1;
+	max_uint |= 1;  
+#endif
+    fprintf(out, "MAX__UINT 0x%lx\n", max_uint) ;
     exit(0) ; return(0) ;
 }
 ], cf_maxint_set=yes,[CF_MAWK_CHECK_LIMITS_MSG])
@@ -673,14 +682,20 @@ dnl C program to compute MAX__INT and MAX__LONG if looking at headers fails
 AC_DEFUN([CF_MAWK_MAX__INT_PROGRAM],
 [[#include <stdio.h>
 int main()
-{ int y ; long yy ;
+{ int y ; unsigned yu; long yy ;
   FILE *out ;
 
     if ( !(out = fopen("conftest.out","w")) ) exit(1) ;
     /* find max int and max long */
     y = 0x1000 ;
-    while ( y > 0 ) y *= 2 ;
-    fprintf(out,"MAX__INT 0x%x\n", y-1) ;
+    while ( y > 0 ) { yu = y; y *= 2 ; }
+    fprintf(out,"MAX__INT  0x%x\n", y-1) ;
+
+	yu = yu - 1;
+	yu <<= 1;
+	yu |= 1;
+    fprintf(out,"MAX__UINT 0x%x\n", y-1) ;
+
     yy = 0x1000 ;
     while ( yy > 0 ) yy *= 2 ;
     fprintf(out,"MAX__LONG 0x%lx\n", yy-1) ;
@@ -840,4 +855,27 @@ dnl Use AC_VERBOSE w/o the warnings
 AC_DEFUN([CF_VERBOSE],
 [test -n "$verbose" && echo "	$1" 1>&AC_FD_MSG
 CF_MSG_LOG([$1])
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_WITH_WARNINGS version: 5 updated: 2004/07/23 14:40:34
+dnl ----------------
+dnl Combine the checks for gcc features into a configure-script option
+dnl
+dnl Parameters:
+dnl	$1 - see CF_GCC_WARNINGS
+AC_DEFUN([CF_WITH_WARNINGS],
+[
+if ( test "$GCC" = yes || test "$GXX" = yes )
+then
+AC_MSG_CHECKING(if you want to check for gcc warnings)
+AC_ARG_WITH(warnings,
+	[  --with-warnings         test: turn on gcc warnings],
+	[cf_opt_with_warnings=$withval],
+	[cf_opt_with_warnings=no])
+AC_MSG_RESULT($cf_opt_with_warnings)
+if test "$cf_opt_with_warnings" != no ; then
+	CF_GCC_ATTRIBUTES
+	CF_GCC_WARNINGS([$1])
+fi
+fi
 ])dnl
