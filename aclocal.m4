@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.25 2009/07/26 19:20:41 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.26 2009/07/26 21:26:15 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -257,6 +257,25 @@ AC_SUBST(ECHO_LD)
 AC_SUBST(RULE_CC)
 AC_SUBST(SHOW_CC)
 AC_SUBST(ECHO_CC)
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_ENABLE_WARNINGS version: 3 updated: 2003/05/24 14:24:29
+dnl ------------------
+dnl Configure-option to enable gcc warnings
+AC_DEFUN([CF_ENABLE_WARNINGS],[
+if ( test "$GCC" = yes || test "$GXX" = yes )
+then
+AC_MSG_CHECKING(if you want to turn on gcc warnings)
+CF_ARG_ENABLE(warnings,
+	[  --enable-warnings       test: turn on gcc compiler warnings],
+	[with_warnings=yes],
+	[with_warnings=no])
+AC_MSG_RESULT($with_warnings)
+if test "$with_warnings" = "yes"
+then
+	CF_GCC_WARNINGS
+fi
+fi
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_GCC_ATTRIBUTES version: 12 updated: 2009/07/23 17:08:33
@@ -589,7 +608,7 @@ AC_CACHE_VAL(cf_cv_size_t_$2,[
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FIND_MAX_INT version: 2 updated: 2009/07/23 05:15:39
+dnl CF_MAWK_FIND_MAX_INT version: 3 updated: 2009/07/26 17:23:40
 dnl --------------------
 dnl Try to find a definition of MAX__INT from limits.h else compute.
 AC_DEFUN([CF_MAWK_FIND_MAX_INT],
@@ -676,7 +695,7 @@ fi])dnl
 fi
 AC_SUBST(MATHLIB)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_MAX__INT_PROGRAM version: 2 updated: 2009/07/23 05:15:39
+dnl CF_MAWK_MAX__INT_PROGRAM version: 3 updated: 2009/07/26 17:23:40
 dnl ------------------------
 dnl C program to compute MAX__INT and MAX__LONG if looking at headers fails
 AC_DEFUN([CF_MAWK_MAX__INT_PROGRAM],
@@ -855,27 +874,4 @@ dnl Use AC_VERBOSE w/o the warnings
 AC_DEFUN([CF_VERBOSE],
 [test -n "$verbose" && echo "	$1" 1>&AC_FD_MSG
 CF_MSG_LOG([$1])
-])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_WITH_WARNINGS version: 5 updated: 2004/07/23 14:40:34
-dnl ----------------
-dnl Combine the checks for gcc features into a configure-script option
-dnl
-dnl Parameters:
-dnl	$1 - see CF_GCC_WARNINGS
-AC_DEFUN([CF_WITH_WARNINGS],
-[
-if ( test "$GCC" = yes || test "$GXX" = yes )
-then
-AC_MSG_CHECKING(if you want to check for gcc warnings)
-AC_ARG_WITH(warnings,
-	[  --with-warnings         test: turn on gcc warnings],
-	[cf_opt_with_warnings=$withval],
-	[cf_opt_with_warnings=no])
-AC_MSG_RESULT($cf_opt_with_warnings)
-if test "$cf_opt_with_warnings" != no ; then
-	CF_GCC_ATTRIBUTES
-	CF_GCC_WARNINGS([$1])
-fi
-fi
 ])dnl
