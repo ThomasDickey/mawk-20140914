@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.8 2009/07/25 11:43:24 tom Exp $
+ * $MawkId: rexp3.c,v 1.9 2009/07/26 18:03:30 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -107,8 +107,9 @@ REmatch(char *str,		/* string to test */
     s = (stackp--)->s;
     if (cb_ss) {		/* does new state start too late ? */
 	if (ss) {
-	    if (cb_ss < ss)
+	    if (cb_ss < ss) {
 		goto refill;
+	    }
 	} else if (cb_ss < s) {
 	    goto refill;
 	}
@@ -121,21 +122,24 @@ REmatch(char *str,		/* string to test */
 
     switch (m->s_type + u_flag) {
     case M_STR + U_OFF + END_OFF:
-	if (strncmp(s, m->s_data.str, m->s_len))
+	if (strncmp(s, m->s_data.str, m->s_len)) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	s += m->s_len;
 	m++;
 	goto reswitch;
 
     case M_STR + U_OFF + END_ON:
-	if (strcmp(s, m->s_data.str))
+	if (strcmp(s, m->s_data.str)) {
 	    goto refill;
+	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
 		goto refill;
@@ -148,10 +152,12 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_STR + U_ON + END_OFF:
-	if (!(s = str_str(s, str_len, m->s_data.str, m->s_len)))
+	if (!(s = str_str(s, str_len, m->s_data.str, m->s_len))) {
 	    goto refill;
-	if (s >= str + strlen(str))
+	}
+	if (s >= str + strlen(str)) {
 	    goto refill;
+	}
 	push(m, s + 1, ss, U_ON);
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
@@ -167,13 +173,15 @@ REmatch(char *str,		/* string to test */
 
     case M_STR + U_ON + END_ON:
 	t = (str_end - s) - m->s_len;
-	if (t < 0 || memcmp(ts = s + t, m->s_data.str, m->s_len))
+	if (t < 0 || memcmp(ts = s + t, m->s_data.str, m->s_len)) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && ts > cb_ss)
+	    if (cb_ss && ts > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = ts;
+	    }
 	}
 	s = str_end;
 	m++;
@@ -181,26 +189,30 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_OFF:
-	if (!ison(*m->s_data.bvp, s[0]))
+	if (!ison(*m->s_data.bvp, s[0])) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	s++;
 	m++;
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_ON:
-	if (s[1] || !ison(*m->s_data.bvp, s[0]))
+	if (s[1] || !ison(*m->s_data.bvp, s[0])) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	s++;
 	m++;
@@ -208,31 +220,35 @@ REmatch(char *str,		/* string to test */
 
     case M_CLASS + U_ON + END_OFF:
 	while (!ison(*m->s_data.bvp, s[0])) {
-	    if (s[0] == 0)
+	    if (s[0] == 0) {
 		goto refill;
-	    else
+	    } else {
 		s++;
+	    }
 	}
 	s++;
 	push(m, s, ss, U_ON);
 	if (!ss) {
-	    if (cb_ss && s - 1 > cb_ss)
+	    if (cb_ss && s - 1 > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s - 1;
+	    }
 	}
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
 
     case M_CLASS + U_ON + END_ON:
-	if (s[0] == 0 || !ison(*m->s_data.bvp, str_end[-1]))
+	if (s[0] == 0 || !ison(*m->s_data.bvp, str_end[-1])) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && str_end - 1 > cb_ss)
+	    if (cb_ss && str_end - 1 > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = str_end - 1;
+	    }
 	}
 	s = str_end;
 	m++;
@@ -240,54 +256,62 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_OFF + END_OFF:
-	if (s[0] == 0)
+	if (s[0] == 0) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	s++;
 	m++;
 	goto reswitch;
 
     case M_ANY + U_OFF + END_ON:
-	if (s[0] == 0 || s[1] != 0)
+	if (s[0] == 0 || s[1] != 0) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	s++;
 	m++;
 	goto reswitch;
 
     case M_ANY + U_ON + END_OFF:
-	if (s[0] == 0)
+	if (s[0] == 0) {
 	    goto refill;
+	}
 	s++;
 	push(m, s, ss, U_ON);
 	if (!ss) {
-	    if (cb_ss && s - 1 > cb_ss)
+	    if (cb_ss && s - 1 > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s - 1;
+	    }
 	}
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
 
     case M_ANY + U_ON + END_ON:
-	if (s[0] == 0)
+	if (s[0] == 0) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && str_end - 1 > cb_ss)
+	    if (cb_ss && str_end - 1 > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = str_end - 1;
+	    }
 	}
 	s = str_end;
 	m++;
@@ -296,8 +320,9 @@ REmatch(char *str,		/* string to test */
 
     case M_START + U_OFF + END_OFF:
     case M_START + U_ON + END_OFF:
-	if (s != str)
+	if (s != str) {
 	    goto refill;
+	}
 	ss = s;
 	m++;
 	u_flag = U_OFF;
@@ -305,21 +330,24 @@ REmatch(char *str,		/* string to test */
 
     case M_START + U_OFF + END_ON:
     case M_START + U_ON + END_ON:
-	if (s != str || s[0] != 0)
+	if (s != str || s[0] != 0) {
 	    goto refill;
+	}
 	ss = s;
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
 
     case M_END + U_OFF:
-	if (s[0] != 0)
+	if (s[0] != 0) {
 	    goto refill;
+	}
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	m++;
 	goto reswitch;
@@ -327,10 +355,11 @@ REmatch(char *str,		/* string to test */
     case M_END + U_ON:
 	s = str_end;
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	m++;
 	u_flag = U_OFF;
@@ -338,10 +367,11 @@ REmatch(char *str,		/* string to test */
 
       CASE_UANY(M_U):
 	if (!ss) {
-	    if (cb_ss && s > cb_ss)
+	    if (cb_ss && s > cb_ss) {
 		goto refill;
-	    else
+	    } else {
 		ss = s;
+	    }
 	}
 	u_flag = U_ON;
 	m++;
@@ -368,6 +398,8 @@ REmatch(char *str,		/* string to test */
 	    /* we have a new current best */
 	    cb_ss = ss;
 	    cb_e = s;
+	} else if (cb_ss == ss && s == cb_e) {
+	    return NULL;
 	}
 	goto refill;
 
