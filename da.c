@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.4 2009/07/23 23:18:43 tom Exp $
+ * $MawkId: da.c,v 1.5 2009/07/26 14:40:01 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -131,6 +131,32 @@ static char *jfmt = "%s%s%03d\n";
 static char *tab2 = "\t\t";
 
 void
+da_string(FILE *fp, const char *str, unsigned len)
+{
+    unsigned n;
+
+    fputc('"', fp);
+    for (n = 0; n < len; ++n) {
+	UChar ch = (UChar) str[n];
+	switch (ch) {
+	case '\\':
+	    fprintf(fp, "\\\\");
+	    break;
+	case '"':
+	    fprintf(fp, "\"");
+	    break;
+	default:
+	    if (ch > 32 && ch < 127)
+		fprintf(fp, "%c", ch);
+	    else
+		fprintf(fp, "\\%03o", ch);
+	    break;
+	}
+    }
+    fputc('"', fp);
+}
+
+void
 da(INST * start, FILE *fp)
 {
     CELL *cp;
@@ -179,7 +205,9 @@ da(INST * start, FILE *fp)
 	case _PUSHS:
 	    {
 		STRING *sval = (STRING *) p++->ptr;
-		fprintf(fp, "pushs\t\"%s\"\n", sval->str);
+		fprintf(fp, "pushs\t");
+		da_string(fp, sval->str, sval->len);
+		fprintf(fp, "\n");
 		break;
 	    }
 
