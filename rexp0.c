@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.6 2009/07/24 23:12:18 tom Exp $
+ * $MawkId: rexp0.c,v 1.7 2009/07/26 18:37:53 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -72,21 +72,29 @@ static int do_class(char **, MACHINE *);
 static int escape(char **);
 static BV *store_bvp(BV *);
 
-#ifndef	 EG
 /* make next array visible */
+/* *INDENT-OFF* */
 static
-#endif
 char RE_char2token['|' + 1] =
 {
-    0, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-    13, 13, 13, 13, 9, 13, 13, 13, 6, 7, 3, 4, 13, 13, 10, 13,
-    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 5,
-    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 11, 12, 13, 8, 13,
-    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 1
+    0,      T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*07*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*0f*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*17*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*1f*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_END,  T_CHAR, T_CHAR, T_CHAR,	/*27*/
+    T_LP,   T_RP,   T_STAR, T_PLUS, T_CHAR, T_CHAR, T_ANY,  T_CHAR,	/*2f*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*37*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_Q,	/*3f*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*47*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*4f*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*57*/
+    T_CHAR, T_CHAR, T_CHAR, T_CLASS,T_SLASH,T_CHAR, T_START,T_CHAR,	/*5f*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*67*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*6f*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*77*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_OR
 };
+/* *INDENT-ON* */
 
 #define	 char2token(x) \
 ( (UChar)(x) > '|' ? T_CHAR : RE_char2token[x] )
