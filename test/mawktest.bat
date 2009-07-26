@@ -22,6 +22,10 @@ echo testing input and field splitting
 %CMP% temp$$ wc-awk.out
 if errorlevel 1 goto :done
 
+..\mawk -f null-rs.awk null-rs.dat > temp$$
+%CMP% temp$$ null-rs.out
+if errorlevel 1 goto :done
+
 rem ####################################
 
 echo testing regular expression matching
