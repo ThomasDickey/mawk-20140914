@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.40 2009/07/26 18:12:39 tom Exp $
+-- $MawkId: CHANGES,v 1.41 2009/07/26 21:11:27 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090726
+	improve configure checks for MAX__UINT.
+
 	add a check for infinite loop in REmatch(), to work with gawk's noloop1
 	testcase.
 
