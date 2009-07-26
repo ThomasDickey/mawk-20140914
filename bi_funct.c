@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.12 2009/07/26 17:52:04 tom Exp $
+ * $MawkId: bi_funct.c,v 1.13 2009/07/26 21:00:30 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -162,6 +162,7 @@ str_str(char *target, unsigned target_len, char *key, unsigned key_len)
 {
     register int k = key[0];
     int k1;
+    char *prior;
 
     switch (key_len) {
     case 0:
@@ -172,22 +173,23 @@ str_str(char *target, unsigned target_len, char *key, unsigned key_len)
 	break;
     case 2:
 	k1 = key[1];
-	while (target_len != 0 && (target = memchr(target, k, target_len))) {
+	prior = target;
+	while (target_len >= key_len && (target = memchr(target, k, target_len))) {
+	    target_len = target_len - (target - prior) - 1;
+	    prior = ++target;
 	    if (target[1] == k1) {
 		return target;
 	    }
-	    target++;
-	    target_len--;
 	}
 	break;
     default:
 	key_len--;
-	while (target_len != 0 && (target = memchr(target, k, target_len))) {
-	    if (memcmp(target + 1, key + 1, key_len) == 0) {
-		return target;
-	    } else {
-		target++;
-		target_len--;
+	prior = target;
+	while (target_len > key_len && (target = memchr(target, k, target_len))) {
+	    target_len = target_len - (target - prior) - 1;
+	    prior = ++target;
+	    if (memcmp(target, key + 1, key_len) == 0) {
+		return target - 1;
 	    }
 	}
 	break;
