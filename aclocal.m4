@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.27 2009/07/26 21:27:47 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.28 2009/07/26 21:53:44 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -265,7 +265,7 @@ AC_SUBST(SHOW_CC)
 AC_SUBST(ECHO_CC)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_ENABLE_WARNINGS version: 3 updated: 2003/05/24 14:24:29
+dnl CF_ENABLE_WARNINGS version: 4 updated: 2009/07/26 17:53:03
 dnl ------------------
 dnl Configure-option to enable gcc warnings
 AC_DEFUN([CF_ENABLE_WARNINGS],[
@@ -279,6 +279,7 @@ CF_ARG_ENABLE(warnings,
 AC_MSG_RESULT($with_warnings)
 if test "$with_warnings" = "yes"
 then
+	CF_GCC_ATTRIBUTES
 	CF_GCC_WARNINGS
 fi
 fi
@@ -614,11 +615,11 @@ AC_CACHE_VAL(cf_cv_size_t_$2,[
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FIND_MAX_INT version: 3 updated: 2009/07/26 17:23:40
+dnl CF_MAWK_FIND_MAX_INT version: 4 updated: 2009/07/26 17:53:03
 dnl --------------------
 dnl Try to find a definition of MAX__INT from limits.h else compute.
 AC_DEFUN([CF_MAWK_FIND_MAX_INT],
-[AC_CHECK_HEADER(xlimits.h,cf_limits_h=yes)
+[AC_CHECK_HEADER(limits.h,cf_limits_h=yes)
 if test "$cf_limits_h" = yes ; then :
 else
 AC_CHECK_HEADER(values.h,cf_values_h=yes)
