@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.7 2009/07/12 14:51:01 tom Exp $
+ * $MawkId: init.c,v 1.8 2009/07/26 14:28:27 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -156,6 +156,7 @@ process_cmdline(int argc, char **argv)
     char *optArg;
     PFILE dummy;		/* starts linked list of filenames */
     PFILE *tail = &dummy;
+    unsigned length;
 
     for (i = 1; i < argc && argv[i][0] == '-'; i = nextarg) {
 	if (argv[i][1] == 0)	/* -  alone */
@@ -237,10 +238,10 @@ process_cmdline(int argc, char **argv)
 
 	case 'F':
 
-	    rm_escape(optArg);	/* recognize escape sequences */
+	    rm_escape(optArg, &length);		/* recognize escape sequences */
 	    cell_destroy(FS);
 	    FS->type = C_STRING;
-	    FS->ptr = (PTR) new_STRING(optArg);
+	    FS->ptr = (PTR) new_STRING1(optArg, length);
 	    cast_for_split(cellcpy(&fs_shadow, FS));
 	    break;
 
