@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.8 2009/07/25 11:59:25 tom Exp $
+ * $MawkId: fin.c,v 1.9 2009/07/26 14:25:53 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -517,6 +517,7 @@ is_cmdline_assign(char *s)
     unsigned len;
     CELL cell;			/* used if command line assign to pseudo field */
     CELL *fp = (CELL *) 0;	/* ditto */
+    unsigned length;
 
     if (scan_code[*(unsigned char *) s] != SC_IDCHAR)
 	return 0;
@@ -560,8 +561,8 @@ is_cmdline_assign(char *s)
     *p++ = '=';
     len = strlen(p) + 1;
     /* posix says escape sequences are on from command line */
-    p = rm_escape(strcpy((char *) zmalloc(len), p));
-    cp->ptr = (PTR) new_STRING(p);
+    p = rm_escape(strcpy((char *) zmalloc(len), p), &length);
+    cp->ptr = (PTR) new_STRING1(p, length);
     zfree(p, len);
     check_strnum(cp);		/* sets cp->type */
     if (fp)			/* move it from cell to pfield[] */
