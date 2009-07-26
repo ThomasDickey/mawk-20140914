@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.14 2009/07/26 21:49:52 tom Exp $
+ * $MawkId: bi_funct.c,v 1.15 2009/07/26 23:45:50 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -163,13 +163,15 @@ str_str(char *target, unsigned target_len, char *key, unsigned key_len)
     register int k = key[0];
     int k1;
     char *prior;
+    char *result = 0;
 
     switch (key_len) {
     case 0:
 	break;
     case 1:
-	if (target_len != 0)
-	    return memchr(target, k, target_len);
+	if (target_len != 0) {
+	    result = memchr(target, k, target_len);
+	}
 	break;
     case 2:
 	k1 = key[1];
@@ -177,8 +179,9 @@ str_str(char *target, unsigned target_len, char *key, unsigned key_len)
 	while (target_len >= key_len && (target = memchr(target, k, target_len))) {
 	    target_len = target_len - (unsigned) (target - prior) - 1;
 	    prior = ++target;
-	    if (target[1] == k1) {
-		return target;
+	    if (target[0] == k1) {
+		result = target - 1;
+		break;
 	    }
 	}
 	break;
@@ -189,13 +192,13 @@ str_str(char *target, unsigned target_len, char *key, unsigned key_len)
 	    target_len = target_len - (unsigned) (target - prior) - 1;
 	    prior = ++target;
 	    if (memcmp(target, key + 1, key_len) == 0) {
-		return target - 1;
+		result = target - 1;
+		break;
 	    }
 	}
 	break;
     }
-    /* not found */
-    return (char *) 0;
+    return result;
 }
 
 CELL *
