@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.26 2009/07/26 21:26:15 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.27 2009/07/26 21:27:47 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -163,6 +163,12 @@ dnl --------------
 dnl Allow user to disable a normally-on option.
 AC_DEFUN([CF_ARG_DISABLE],
 [CF_ARG_OPTION($1,[$2],[$3],[$4],yes)])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_ARG_ENABLE version: 3 updated: 1999/03/30 17:24:31
+dnl -------------
+dnl Allow user to enable a normally-off option.
+AC_DEFUN([CF_ARG_ENABLE],
+[CF_ARG_OPTION($1,[$2],[$3],[$4],no)])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_ARG_OPTION version: 3 updated: 1997/10/18 14:42:41
 dnl -------------
