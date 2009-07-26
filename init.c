@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.8 2009/07/26 14:28:27 tom Exp $
+ * $MawkId: init.c,v 1.9 2009/07/26 17:50:38 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -133,7 +133,7 @@ int dump_code_flag;		/* if on dump internal code */
 short posix_space_flag;
 
 #ifdef	 DEBUG
-int dump_RE;			/* if on dump compiled REs  */
+int dump_RE = 1;		/* if on dump compiled REs  */
 #endif
 
 static void
