@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.5 2009/07/23 21:07:19 tom Exp $
+ * $MawkId: config_h.in,v 1.6 2009/07/26 21:07:41 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -16,6 +16,7 @@
 #undef MAWK_SV_SIGINFO
 #undef MAX__INT
 #undef MAX__LONG
+#undef MAX__UINT
 #undef NOINFO_SIGFPE
 #undef NO_ERRNO_H
 #undef NO_FCNTL_H
