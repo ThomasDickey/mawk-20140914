@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.5 2009/07/12 21:17:32 tom Exp $
+# $MawkId: mawktest,v 1.6 2009/07/26 16:18:47 tom Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -24,6 +24,7 @@ echo
 echo testing input and field splitting
 
 LC_ALL=C mawk -f wc.awk $dat | cmp -s - wc-awk.out || exit
+LC_ALL=C mawk -f null-rs.awk null-rs.dat | cmp -s - null-rs.out || exit
 
 echo input and field splitting OK
 #####################################
