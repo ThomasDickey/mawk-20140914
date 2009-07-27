@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.43 2009/07/27 17:11:04 tom Exp $
+-- $MawkId: CHANGES,v 1.44 2009/07/27 20:45:33 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 2009072?
+	add check for implicit concatenation mistaken for exponent; fixes
+	gawk's hex testcase.
+
 	add character-classes to built-in regular expressions.
 
 	add 8-bit locale support
