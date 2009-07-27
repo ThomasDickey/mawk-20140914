@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.10 2009/07/23 09:27:07 tom Exp $
+ * $MawkId: matherr.c,v 1.11 2009/07/27 15:14:07 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -154,6 +154,8 @@ fpe_init(void)
 
 /* If we are not trapping math errors, we will shutup the library calls
 */
+
+struct exception;
 
 int
 matherr(struct exception *e)

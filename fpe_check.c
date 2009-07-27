@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.4 2009/07/14 21:53:34 tom Exp $
+ * $MawkId: fpe_check.c,v 1.5 2009/07/27 15:13:02 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -41,7 +41,7 @@ _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
 #endif
 
 static void
-message(char *s)
+message(const char *s)
 {
     printf("\t%s\n", s);
 }
