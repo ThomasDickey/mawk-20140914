@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.6 2009/07/27 21:50:52 tom Exp $
+ * $MawkId: split.c,v 1.7 2009/07/27 22:38:32 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -82,7 +82,7 @@ space_split(char *s, unsigned slen)
 {
     char *back = s + slen;
     int i = 0;
-    int len;
+    unsigned len;
     char *q;
     STRING *sval;
     int lcnt = MAX_SPLIT / 3;
@@ -101,7 +101,7 @@ space_split(char *s, unsigned slen)
 	/* mark the front with q */
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING0(len = s - q);
+	sval = split_buff[i++] = new_STRING0(len = (unsigned) (s - q));
 	memcpy(sval->str, q, len);
 
 	EAT_SPACE();
@@ -109,7 +109,7 @@ space_split(char *s, unsigned slen)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING0(len = s - q);
+	sval = split_buff[i++] = new_STRING0(len = (unsigned) (s - q));
 	memcpy(sval->str, q, len);
 
 	EAT_SPACE();
@@ -117,7 +117,7 @@ space_split(char *s, unsigned slen)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING0(len = s - q);
+	sval = split_buff[i++] = new_STRING0(len = (unsigned) (s - q));
 	memcpy(sval->str, q, len);
 
     }
@@ -145,7 +145,7 @@ space_ov_split(char *s, char *back)
 	EAT_NON_SPACE();
 
 	tail = tail->link = ZMALLOC(SPLIT_OV);
-	tail->sval = new_STRING0(len = s - q);
+	tail->sval = new_STRING0(len = (unsigned) (s - q));
 	memcpy(tail->sval->str, q, len);
 	cnt++;
     }
@@ -188,19 +188,19 @@ re_split(char *s, PTR re)
     while (lcnt--) {
 	if (!(t = re_pos_match(s, re, &mlen)))
 	    goto done;
-	sval = split_buff[i++] = new_STRING0(len = t - s);
+	sval = split_buff[i++] = new_STRING0(len = (unsigned) (t - s));
 	memcpy(sval->str, s, len);
 	s = t + mlen;
 
 	if (!(t = re_pos_match(s, re, &mlen)))
 	    goto done;
-	sval = split_buff[i++] = new_STRING0(len = t - s);
+	sval = split_buff[i++] = new_STRING0(len = (unsigned) (t - s));
 	memcpy(sval->str, s, len);
 	s = t + mlen;
 
 	if (!(t = re_pos_match(s, re, &mlen)))
 	    goto done;
-	sval = split_buff[i++] = new_STRING0(len = t - s);
+	sval = split_buff[i++] = new_STRING0(len = (unsigned) (t - s));
 	memcpy(sval->str, s, len);
 	s = t + mlen;
     }
@@ -228,7 +228,7 @@ re_ov_split(char *s, PTR re)
 
     while ((t = re_pos_match(s, re, &mlen))) {
 	tail = tail->link = ZMALLOC(SPLIT_OV);
-	tail->sval = new_STRING0(len = t - s);
+	tail->sval = new_STRING0(len = (unsigned) (t - s));
 	memcpy(tail->sval->str, s, len);
 	s = t + mlen;
 	cnt++;
