@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.7 2009/07/26 18:37:53 tom Exp $
+ * $MawkId: rexp0.c,v 1.8 2009/07/27 12:37:03 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -66,6 +66,8 @@ the GNU General Public License, version 2, 1991.
 
 #include  "rexp.h"
 
+#include <ctype.h>
+
 /* static functions */
 static int do_str(int, char **, MACHINE *);
 static int do_class(char **, MACHINE *);
@@ -74,7 +76,7 @@ static BV *store_bvp(BV *);
 
 /* make next array visible */
 /* *INDENT-OFF* */
-static
+static const
 char RE_char2token['|' + 1] =
 {
     0,      T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*07*/
@@ -301,7 +303,7 @@ do_str(
   BUILD A CHARACTER CLASS
  *---------------------------*/
 
-#define	 on( b, x)  ((b)[(x)>>3] |= ( 1 << ((x)&7) ))
+#define	 on( b, x)  ((b)[(x)>>3] |= (UChar) ( 1 << ((x)&7) ))
 
 static void
 block_on(BV b, int x, int y)
@@ -313,13 +315,13 @@ block_on(BV b, int x, int y)
     int r_hi = y & 7;
 
     if (lo == hi) {
-	b[lo] |= (1 << (r_hi + 1)) - (1 << r_lo);
+	b[lo] |= (UChar) ((1 << (r_hi + 1)) - (1 << r_lo));
     } else {
 	int i;
 	for (i = lo + 1; i < hi; i++)
 	    b[i] = 0xff;
-	b[lo] |= (0xff << r_lo);
-	b[hi] |= ~(0xff << (r_hi + 1));
+	b[lo] |= (UChar) (0xff << r_lo);
+	b[hi] |= (UChar) (~(0xff << (r_hi + 1)));
     }
 }
 
@@ -431,7 +433,7 @@ do_class(char **start, MACHINE * mp)
 
     if (comp_flag) {
 	for (p = (char *) bvp; p < (char *) bvp + sizeof(BV); p++) {
-	    *p = ~*p;
+	    *p = (char) (~*p);
 	}
     }
 
@@ -511,9 +513,9 @@ ctohex(int c)
 {
     int t;
 
-    if (c >= '0' && c <= '9')
+    if (isdigit((UChar) c))
 	return c - '0';
-    if (c >= 'A' && c <= 'f' && (t = hex_val[c - 'A']))
+    if (isxdigit((UChar) c) && (t = hex_val[c - 'A']))
 	return t;
     return NOT_HEX;
 }

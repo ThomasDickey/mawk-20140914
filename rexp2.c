@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.8 2009/07/25 12:44:46 tom Exp $
+ * $MawkId: rexp2.c,v 1.9 2009/07/27 12:40:38 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -91,8 +91,8 @@ RE_run_stack_init(void)
 RT_STATE *
 RE_new_run_stack(void)
 {
-    int oldsize = RE_run_stack_limit - RE_run_stack_base;
-    int newsize = oldsize + STACKGROWTH;
+    unsigned oldsize = (unsigned) (RE_run_stack_limit - RE_run_stack_base);
+    unsigned newsize = oldsize + STACKGROWTH;
 
 #ifdef	LMDOS			/* large model DOS */
     /* have to worry about overflow on multiplication (ugh) */
@@ -198,7 +198,7 @@ REtest(char *str,		/* string to test */
 	goto reswitch;
 
     case M_STR + U_ON + END_OFF:
-	if (!(s = str_str(s, str_end - s, m->s_data.str, m->s_len)))
+	if (!(s = str_str(s, (unsigned) (str_end - s), m->s_data.str, m->s_len)))
 	    goto refill;
 	push(m, s + 1, U_ON);
 	s += m->s_len;
