@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.6 2009/07/27 15:32:04 tom Exp $
+ * $MawkId: da.c,v 1.7 2009/07/27 16:21:15 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -146,7 +146,7 @@ da_string(FILE *fp, const char *str, unsigned len)
 	    fprintf(fp, "\"");
 	    break;
 	default:
-	    if (ch > 32 && ch < 127)
+	    if (ch >= 32 && ch < 127)
 		fprintf(fp, "%c", ch);
 	    else
 		fprintf(fp, "\\%03o", ch);
