@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.9 2009/07/27 12:40:38 tom Exp $
+ * $MawkId: rexp2.c,v 1.10 2009/07/27 15:44:18 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -157,7 +157,7 @@ REtest(char *str,		/* string to test */
        PTR machine)		/* compiled regular-expression */
 {
     register STATE *m = (STATE *) machine;
-    register char *s = str;
+    char *s = str;
     register RT_STATE *stackp;
     int u_flag;
     char *str_end = str + len;

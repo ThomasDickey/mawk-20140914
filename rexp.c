@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.7 2009/07/27 13:35:28 tom Exp $
+ * $MawkId: rexp.c,v 1.8 2009/07/27 15:37:24 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -50,7 +50,7 @@ the GNU General Public License, version 2, 1991.
 
 /*  DATA   */
 int REerrno;
-char *REerrlist[] =
+const char *REerrlist[] =
 {(char *) 0,
  /* 1  */ "missing '('",
  /* 2  */ "missing ')'",
@@ -217,14 +217,14 @@ REcompile(char *re)
 
 /* getting here means a logic flaw or unforeseen case */
 void
-RE_panic(char *s)
+RE_panic(const char *s)
 {
     fprintf(stderr, "REcompile() - panic:  %s\n", s);
     exit(100);
 }
 
 /* getting regexp error message */
-char *
+const char *
 REerror(void)
 {
     return REerrlist[REerrno];

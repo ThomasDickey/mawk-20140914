@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.5 2009/07/25 12:18:09 tom Exp $
+ * $MawkId: regexp_system.c,v 1.6 2009/07/27 15:47:57 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -193,7 +193,7 @@ REmprint(void *m, FILE *f)
 
 static char error_buffer[2048];
 
-char *
+const char *
 REerror(void)
 {
     size_t len;

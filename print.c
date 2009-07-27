@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.7 2009/07/26 16:28:24 tom Exp $
+ * $MawkId: print.c,v 1.8 2009/07/27 15:32:48 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -195,7 +195,7 @@ typedef int (*PRINTER) (PTR, const char *,...);
 /*-------------------------------------------------------*/
 
 static void
-bad_conversion(int cnt, char *who, char *format)
+bad_conversion(int cnt, const char *who, const char *format)
 {
     rt_error("improper conversion(number %d) in %s(\"%s\")",
 	     cnt, who, format);
@@ -224,7 +224,7 @@ do_printf(
     UInt Uval = 0;
     Int Ival = 0;
     int num_conversion = 0;	/* for error messages */
-    char *who;			/*ditto */
+    const char *who;		/*ditto */
     int pf_type = 0;		/* conversion type */
     PRINTER printer;		/* pts at fprintf() or sprintf() */
 

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.7 2009/07/12 15:39:08 tom Exp $
+ * $MawkId: error.c,v 1.8 2009/07/27 15:26:36 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -62,7 +62,7 @@ unsigned rt_nr, rt_fnr;
 /* *INDENT-OFF* */
 static struct token_str {
     short token;
-    char *str;
+    const char *str;
 } token_str[] = {
     { EOF,                "end of file" },
     { NL,                 "end of line" },
@@ -124,9 +124,9 @@ static int missing_rbrace[] =
 {EOF, BEGIN, END, 0};
 
 static void
-missing(int c, char *n, int ln)
+missing(int c, const char *n, int ln)
 {
-    char *s0, *s1;
+    const char *s0, *s1;
 
     if (pfile_name) {
 	s0 = pfile_name;
@@ -143,27 +143,26 @@ missing(int c, char *n, int ln)
    off our back.
 */
 void
-yyerror(char *s)
+yyerror(char *s GCC_UNUSED)
 {
+    const char *ss = 0;
     struct token_str *p;
     int *ip;
 
-    s = (char *) 0;
-
     for (p = token_str; p->token; p++)
 	if (current_token == p->token) {
-	    s = p->str;
+	    ss = p->str;
 	    break;
 	}
 
-    if (!s)			/* search the keywords */
-	s = find_kw_str(current_token);
+    if (!ss)			/* search the keywords */
+	ss = find_kw_str(current_token);
 
-    if (s) {
+    if (ss) {
 	if (paren_cnt)
 	    for (ip = missing_rparen; *ip; ip++)
 		if (*ip == current_token) {
-		    missing(')', s, token_lineno);
+		    missing(')', ss, token_lineno);
 		    paren_cnt = 0;
 		    goto done;
 		}
@@ -171,12 +170,12 @@ yyerror(char *s)
 	if (brace_cnt)
 	    for (ip = missing_rbrace; *ip; ip++)
 		if (*ip == current_token) {
-		    missing('}', s, token_lineno);
+		    missing('}', ss, token_lineno);
 		    brace_cnt = 0;
 		    goto done;
 		}
 
-	compile_error("syntax error at or near %s", s);
+	compile_error("syntax error at or near %s", ss);
 
     } else			/* special cases */
 	switch (current_token) {
@@ -211,7 +210,7 @@ yyerror(char *s)
    messages if errnum > 0 */
 
 void
-errmsg(int errnum, char *format,...)
+errmsg(int errnum, const char *format,...)
 {
     va_list args;
 
@@ -228,10 +227,10 @@ errmsg(int errnum, char *format,...)
 }
 
 void
-compile_error(char *format,...)
+compile_error(const char *format,...)
 {
     va_list args;
-    char *s0, *s1;
+    const char *s0, *s1;
 
     /* with multiple program files put program name in
        error message */
@@ -252,7 +251,7 @@ compile_error(char *format,...)
 }
 
 void
-rt_error(char *format,...)
+rt_error(const char *format,...)
 {
     va_list args;
 
@@ -266,14 +265,14 @@ rt_error(char *format,...)
 }
 
 void
-bozo(char *s)
+bozo(const char *s)
 {
     errmsg(0, "bozo: %s", s);
     mawk_exit(3);
 }
 
 void
-overflow(char *s, unsigned size)
+overflow(const char *s, unsigned size)
 {
     errmsg(0, "program limit exceeded: %s size=%u", s, size);
     mawk_exit(2);
@@ -293,7 +292,7 @@ rt_where(void)
 
 /* run time */
 void
-rt_overflow(char *s, unsigned size)
+rt_overflow(const char *s, unsigned size)
 {
     errmsg(0, "program limit exceeded: %s size=%u", s, size);
     rt_where();
@@ -312,10 +311,10 @@ unexpected_char(void)
 	fprintf(stderr, "unexpected character 0x%02x\n", c);
 }
 
-static char *
+static const char *
 type_to_str(int type)
 {
-    char *retval;
+    const char *retval;
 
     switch (type) {
     case ST_VAR:

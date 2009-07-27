@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.h,v 1.6 2009/07/24 00:54:48 tom Exp $
+ * $MawkId: files.h,v 1.7 2009/07/27 15:35:11 tom Exp $
  * @Log: files.h,v @
  * Revision 1.3  1996/01/14  17:14:11  mike
  * flush_all_output()
@@ -44,7 +44,7 @@ the GNU General Public License, version 2, 1991.
 #define  F_TRUNC        (-1)
 #define  IS_OUTPUT(type)  ((type)>=PIPE_OUT)
 
-extern char *shell;		/* for pipes and system() */
+extern const char *shell;	/* for pipes and system() */
 
 PTR file_find(STRING *, int);
 int file_close(STRING *);

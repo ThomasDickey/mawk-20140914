@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.3 2009/07/23 23:11:05 tom Exp $
+ * $MawkId: hash.c,v 1.4 2009/07/27 15:46:04 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -33,12 +33,12 @@ the GNU General Public License, version 2, 1991.
 #include "symtype.h"
 
 unsigned
-hash(char *s)
+hash(const char *s)
 {
     register unsigned h = 0;
 
     while (*s)
-	h += h + *s++;
+	h += h + (UChar) * s++;
     return h;
 }
 
@@ -47,7 +47,7 @@ typedef struct hash {
     SYMTAB symtab;
 } HASHNODE;
 
-static HASHNODE *delete(char *);
+static HASHNODE *delete(const char *);
 
 static HASHNODE *hash_table[HASH_PRIME];
 
@@ -58,7 +58,7 @@ Caller knows the symbol is not there
 */
 
 SYMTAB *
-insert(char *s)
+insert(const char *s)
 {
     register HASHNODE *p = ZMALLOC(HASHNODE);
     register unsigned h;
@@ -73,7 +73,7 @@ insert(char *s)
    if not there insert it,  s must be dup'ed  */
 
 SYMTAB *
-find(char *s)
+find(const char *s)
 {
     register HASHNODE *p;
     HASHNODE *q;
@@ -114,7 +114,7 @@ find(char *s)
 static unsigned last_hash;
 
 static HASHNODE *
-delete(char *s)
+delete(const char *s)
 {
     register HASHNODE *p;
     HASHNODE *q = (HASHNODE *) 0;
@@ -149,7 +149,7 @@ static HASHNODE *save_list;
 /* store a global id on the save list,
    return a ptr to the local symtab  */
 SYMTAB *
-save_id(char *s)
+save_id(const char *s)
 {
     HASHNODE *p, *q;
     unsigned h;
@@ -191,7 +191,7 @@ restore_ids(void)
    disassembler.  This is slow -- so what
 */
 
-char *
+const char *
 reverse_find(int type, PTR ptr)
 {
     CELL *cp = 0;

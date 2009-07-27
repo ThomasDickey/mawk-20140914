@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: kw.c,v 1.3 2009/07/23 23:34:12 tom Exp $
+ * $MawkId: kw.c,v 1.4 2009/07/27 15:33:28 tom Exp $
  * @Log: kw.c,v @
  * Revision 1.2  1993/07/17  13:22:59  mike
  * indent and general code cleanup
@@ -32,7 +32,7 @@ the GNU General Public License, version 2, 1991.
 /* *INDENT-OFF* */
 static struct kw
 {
-    char *text;
+    const char *text;
     short kw;
 }
 keywords[] =
@@ -78,7 +78,7 @@ kw_init(void)
 }
 
 /* find a keyword to emit an error message */
-char *
+const char *
 find_kw_str(int kw_token)
 {
     struct kw *p;

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.16 2009/07/27 12:14:33 tom Exp $
+ * $MawkId: bi_funct.c,v 1.17 2009/07/27 15:41:39 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -208,7 +208,7 @@ bi_index(CELL * sp)
 {
     register int idx;
     unsigned len;
-    char *p;
+    const char *p;
 
     sp--;
     if (TEST2(sp) != TWO_STRINGS)

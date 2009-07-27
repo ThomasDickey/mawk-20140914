@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.9 2009/07/26 14:25:53 tom Exp $
+ * $MawkId: fin.c,v 1.10 2009/07/27 15:41:52 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -191,7 +191,8 @@ FINclose(FIN * fin)
 char *
 FINgets(FIN * fin, unsigned *len_p)
 {
-    register char *p, *q;
+    char *p;
+    char *q;
     unsigned match_len;
     unsigned r;
 

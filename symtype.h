@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.3 2009/07/24 00:35:47 tom Exp $
+ * $MawkId: symtype.h,v 1.4 2009/07/27 15:31:35 tom Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme
@@ -56,7 +56,7 @@ the GNU General Public License, version 2, 1991.
 
 /* struct to hold info about builtins */
 typedef struct {
-    char *name;
+    const char *name;
     PF_CP fp;			/* ptr to function that does the builtin */
     unsigned char min_args, max_args;
 /* info for parser to check correct number of arguments */
@@ -94,7 +94,7 @@ typedef struct {
   ------------------------*/
 
 typedef struct fblock {
-    char *name;
+    const char *name;
     INST *code;
     unsigned short nargs;
     char *typev;		/* array of size nargs holding types */
@@ -124,7 +124,7 @@ void fdump(void);
 #define  is_local(stp)   ((stp)->type>=ST_LOCAL_NONE)
 
 typedef struct {
-    char *name;
+    const char *name;
     char type;
     unsigned char offset;	/* offset in stack frame for local vars */
     union {
@@ -177,11 +177,11 @@ void check_fcall(FBLOCK *, int, int, FBLOCK *, CA_REC *, unsigned);
 void relocate_resolve_list(int, int, FBLOCK *, int, unsigned, int);
 
 /* hash.c */
-unsigned hash(char *);
-SYMTAB *insert(char *);
-SYMTAB *find(char *);
-char *reverse_find(int, PTR);
-SYMTAB *save_id(char *);
+unsigned hash(const char *);
+SYMTAB *insert(const char *);
+SYMTAB *find(const char *);
+const char *reverse_find(int, PTR);
+SYMTAB *save_id(const char *);
 void restore_ids(void);
 
 /* error.c */

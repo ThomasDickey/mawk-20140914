@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.10 2009/07/26 18:16:46 tom Exp $
+ * $MawkId: rexp3.c,v 1.11 2009/07/27 15:45:06 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -72,7 +72,7 @@ REmatch(char *str,		/* string to test */
 	unsigned *lenp)		/* where to return matched-length */
 {
     register STATE *m = (STATE *) machine;
-    register char *s = str;
+    char *s = str;
     char *ss;
     register RT_STATE *stackp;
     int u_flag, t;

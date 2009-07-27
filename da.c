@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.5 2009/07/26 14:40:01 tom Exp $
+ * $MawkId: da.c,v 1.6 2009/07/27 15:32:04 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -55,12 +55,12 @@ the GNU General Public License, version 2, 1991.
 #include  "repl.h"
 #include  "field.h"
 
-static char *find_bi_name(PF_CP);
+static const char *find_bi_name(PF_CP);
 /* *INDENT-OFF* */
 static struct sc
 {
    char op ; 
-   char *name ;
+   const char *name ;
 } simple_code[] =
 
 {
@@ -126,9 +126,9 @@ static struct sc
 } ;
 /* *INDENT-ON* */
 
-static char *jfmt = "%s%s%03d\n";
+static const char *jfmt = "%s%s%03d\n";
    /* format to print jumps */
-static char *tab2 = "\t\t";
+static const char *tab2 = "\t\t";
 
 void
 da_string(FILE *fp, const char *str, unsigned len)
@@ -161,7 +161,7 @@ da(INST * start, FILE *fp)
 {
     CELL *cp;
     register INST *p = start;
-    char *name;
+    const char *name;
 
     while (p->op != _HALT) {
 	/* print the relative code address (label) */
@@ -386,7 +386,7 @@ da(INST * start, FILE *fp)
 static struct
 {
    PF_CP action ;
-   char *name ;
+   const char *name ;
 }
 special_cases[] =
 {
@@ -399,7 +399,7 @@ special_cases[] =
 } ;
 /* *INDENT-ON* */
 
-static char *
+static const char *
 find_bi_name(PF_CP p)
 {
     BI_REC *q;

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.11 2009/07/26 14:40:19 tom Exp $
+ * $MawkId: mawk.h,v 1.12 2009/07/27 15:41:15 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -148,9 +148,9 @@ int test(CELL *);		/* test for null non-null */
 CELL *cellcpy(CELL *, CELL *);
 CELL *repl_cpy(CELL *, CELL *);
 void DB_cell_destroy(CELL *);
-void overflow(char *, unsigned);
-void rt_overflow(char *, unsigned);
-void rt_error(char *,...);
+void overflow(const char *, unsigned);
+void rt_overflow(const char *, unsigned);
+void rt_error(const char *,...);
 void mawk_exit(int) GCC_NORETURN;
 void da(INST *, FILE *);
 char *str_str(char *, unsigned, char *, unsigned);
@@ -164,12 +164,12 @@ int yyparse(void);
 void yyerror(char *);
 void scan_cleanup(void);
 
-void bozo(char *) GCC_NORETURN;
-void errmsg(int, char *,...);
-void compile_error(char *,...);
+void bozo(const char *) GCC_NORETURN;
+void errmsg(int, const char *,...);
+void compile_error(const char *,...);
 
 void execute(INST *, CELL *, CELL *);
-char *find_kw_str(int);
+const char *find_kw_str(int);
 void da_string(FILE *fp, const char *, unsigned);
 
 #ifdef HAVE_STRTOD_OVF_BUG

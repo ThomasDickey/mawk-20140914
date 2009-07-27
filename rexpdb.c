@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexpdb.c,v 1.5 2009/07/26 14:41:13 tom Exp $
+ * $MawkId: rexpdb.c,v 1.6 2009/07/27 15:39:39 tom Exp $
  * @Log: rexpdb.c,v @
  * Revision 1.2  1993/07/23  13:21:51  mike
  * cleanup rexp code
@@ -31,7 +31,7 @@ the GNU General Public License, version 2, 1991.
 
 /*  print a machine for debugging  */
 
-static char *xlat[] =
+static const char *xlat[] =
 {
     "M_STR",
     "M_CLASS",
@@ -48,7 +48,7 @@ void
 REmprint(PTR m, FILE *f)
 {
     STATE *p = (STATE *) m;
-    char *end_on_string;
+    const char *end_on_string;
 
     while (1) {
 	if (p->s_type >= END_ON) {

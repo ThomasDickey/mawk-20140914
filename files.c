@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.7 2009/07/12 17:47:51 tom Exp $
+ * $MawkId: files.c,v 1.8 2009/07/27 15:46:04 tom Exp $
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -103,7 +103,7 @@ static FILE_NODE *file_list;
 
 extern int isatty(int);
 
-static FILE *tfopen(char *, char *);
+static FILE *tfopen(const char *, const char *);
 static void efflush(FILE *);
 static void close_error(FILE_NODE * p);
 
@@ -114,7 +114,7 @@ file_find(STRING * sval, int type)
     register FILE_NODE *p = file_list;
     FILE_NODE *q = (FILE_NODE *) 0;
     char *name = sval->str;
-    char *ostr;
+    const char *ostr;
 
     while (1) {
 	if (!p) {
@@ -182,8 +182,7 @@ file_find(STRING * sval, int type)
 	if (strcmp(name, p->name->str) == 0 &&
 	    (p->type == type ||
 	/* no distinction between F_APPEND and F_TRUNC here */
-	     (p->type >= F_APPEND && type >= F_APPEND)))
-	 {
+	     (p->type >= F_APPEND && type >= F_APPEND))) {
 	    /* found */
 	    if (!q)		/*at front of list */
 		return p->ptr;
@@ -404,7 +403,7 @@ close_fake_pipes(void)
 #endif /* ! HAVE_REAL_PIPES */
 
 /* hardwire to /bin/sh for portability of programs */
-char *shell = "/bin/sh";
+const char *shell = "/bin/sh";
 
 #ifdef  HAVE_REAL_PIPES
 
@@ -567,7 +566,7 @@ set_stderr(void)		/* and stdout */
 
 /* fopen() but no buffering to ttys */
 static FILE *
-tfopen(char *name, char *mode)
+tfopen(const char *name, const char *mode)
 {
     FILE *retval = fopen(name, mode);
 
