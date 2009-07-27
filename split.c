@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.5 2009/07/25 12:02:25 tom Exp $
+ * $MawkId: split.c,v 1.6 2009/07/27 21:50:52 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -62,6 +62,7 @@ the GNU General Public License, version 2, 1991.
 #include "memory.h"
 #include "scan.h"
 #include "regexp.h"
+#include "repl.h"
 #include "field.h"
 
 SPLIT_OV *split_ov_list;
@@ -162,7 +163,7 @@ space_ov_split(char *s, char *back)
 char *
 re_pos_match(char *s, PTR re, unsigned *lenp)
 {
-    while ((s = REmatch(s, strlen(s), re, lenp))) {
+    while ((s = REmatch(s, strlen(s), cast_to_re(re), lenp))) {
 	if (*lenp) {
 	    return s;
 	} else if (*s == 0) {
