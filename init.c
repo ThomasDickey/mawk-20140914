@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.9 2009/07/26 17:50:38 tom Exp $
+ * $MawkId: init.c,v 1.10 2009/07/27 12:12:14 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -69,6 +69,8 @@ the GNU General Public License, version 2, 1991.
 #include "bi_vars.h"
 #include "field.h"
 #include <stdlib.h>
+
+#include <ctype.h>
 
 #ifdef MSDOS
 #include <fcntl.h>
@@ -186,8 +188,8 @@ process_cmdline(int argc, char **argv)
 	switch (argv[i][1]) {
 	case 'W':
 
-	    if (optArg[0] >= 'a' && optArg[0] <= 'z')
-		optArg[0] += 'A' - 'a';
+	    if (isalpha(optArg[0]))
+		optArg[0] = (char) toupper((UChar) optArg[0]);
 	    if (optArg[0] == 'V')
 		print_version();
 	    else if (optArg[0] == 'D') {
@@ -197,7 +199,7 @@ process_cmdline(int argc, char **argv)
 		int x = p ? atoi(p + 1) : 0;
 
 		if (x > (int) SPRINTF_SZ) {
-		    sprintf_buff = (char *) zmalloc(x);
+		    sprintf_buff = (char *) zmalloc((unsigned) x);
 		    sprintf_limit = sprintf_buff + x;
 		}
 	    }
@@ -341,9 +343,8 @@ load_environ(ARRAY ENV)
     c.type = C_STRING;
 
     while (*p) {
-	if ((s = strchr(*p, '=')))	/* shouldn't fail */
-	{
-	    int len = s - *p;
+	if ((s = strchr(*p, '='))) {	/* shouldn't fail */
+	    unsigned len = (unsigned) (s - *p);
 	    c.ptr = (PTR) new_STRING0(len);
 	    memcpy(string(&c)->str, *p, len);
 	    s++;
