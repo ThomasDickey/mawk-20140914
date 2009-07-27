@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.8 2009/07/27 12:37:03 tom Exp $
+ * $MawkId: rexp0.c,v 1.9 2009/07/27 15:01:16 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -67,6 +67,11 @@ the GNU General Public License, version 2, 1991.
 #include  "rexp.h"
 
 #include <ctype.h>
+
+typedef struct {
+    int first;
+    int last;
+} CCLASS;
 
 /* static functions */
 static int do_str(int, char **, MACHINE *);
@@ -303,7 +308,7 @@ do_str(
   BUILD A CHARACTER CLASS
  *---------------------------*/
 
-#define	 on( b, x)  ((b)[(x)>>3] |= (UChar) ( 1 << ((x)&7) ))
+#define	 char_on( b, x)  ((b)[(x)>>3] |= (UChar) ( 1 << ((x)&7) ))
 
 static void
 block_on(BV b, int x, int y)
@@ -325,6 +330,160 @@ block_on(BV b, int x, int y)
     }
 }
 
+#define CCLASS_DATA(name) { CCLASS_##name, #name, sizeof(#name), 0 }
+
+typedef enum {
+    CCLASS_NONE = 0,
+    CCLASS_alnum,
+    CCLASS_alpha,
+    CCLASS_blank,
+    CCLASS_cntrl,
+    CCLASS_digit,
+    CCLASS_graph,
+    CCLASS_lower,
+    CCLASS_print,
+    CCLASS_punct,
+    CCLASS_space,
+    CCLASS_upper,
+    CCLASS_xdigit
+} CCLASS_ENUM;
+
+#ifndef isblank
+#define isblank(c) ((c) == ' ' || (c) == '\t')
+#endif
+
+static CCLASS *
+lookup_cclass(char **start)
+{
+    static struct {
+	CCLASS_ENUM code;
+	const char *name;
+	unsigned size;
+	CCLASS *data;
+    } cclass_table[] = {
+	CCLASS_DATA(alnum),
+	    CCLASS_DATA(alpha),
+	    CCLASS_DATA(blank),
+	    CCLASS_DATA(cntrl),
+	    CCLASS_DATA(digit),
+	    CCLASS_DATA(graph),
+	    CCLASS_DATA(lower),
+	    CCLASS_DATA(print),
+	    CCLASS_DATA(punct),
+	    CCLASS_DATA(space),
+	    CCLASS_DATA(upper),
+	    CCLASS_DATA(xdigit),
+    };
+    CCLASS *result = 0;
+    CCLASS_ENUM code = CCLASS_NONE;
+    const char *name;
+    char *colon;
+    unsigned size;
+    unsigned item;
+
+    name = (*start += 2);	/* point past "[:" */
+    colon = strchr(*start, ':');
+    if (colon == 0 || colon[1] != ']')
+	return 0;		/* perhaps this is a literal "[:" */
+
+    size = (unsigned) (colon - *start);		/* length of name */
+    *start = colon + 2;
+
+    for (item = 0; item < sizeof(cclass_table) / sizeof(cclass_table[0]); ++item) {
+	if (size == cclass_table[item].size
+	    && !strncmp(name, cclass_table[item].name, size)) {
+	    code = cclass_table[item].code;
+	    break;
+	}
+    }
+
+    if (code == CCLASS_NONE)
+	RE_error_trap(-E3);
+
+    if ((result = cclass_table[item].data) == 0) {
+	int ch = 0;
+	unsigned have = 4;
+	unsigned used = 0;
+	CCLASS *data = malloc(sizeof(CCLASS) * have);
+	int in_class;
+	int first = -2;
+	int last = -2;
+
+	for (ch = 0; ch < 256; ++ch) {
+	    switch (code) {
+	    case CCLASS_NONE:
+		in_class = 0;
+		break;
+	    case CCLASS_alnum:
+		in_class = isalnum(ch);
+		break;
+	    case CCLASS_alpha:
+		in_class = isalpha(ch);
+		break;
+	    case CCLASS_blank:
+		in_class = isblank(ch);
+		break;
+	    case CCLASS_cntrl:
+		in_class = iscntrl(ch);
+		break;
+	    case CCLASS_digit:
+		in_class = isdigit(ch);
+		break;
+	    case CCLASS_graph:
+		in_class = isgraph(ch);
+		break;
+	    case CCLASS_lower:
+		in_class = islower(ch);
+		break;
+	    case CCLASS_print:
+		in_class = isprint(ch);
+		break;
+	    case CCLASS_punct:
+		in_class = ispunct(ch);
+		break;
+	    case CCLASS_space:
+		in_class = isspace(ch);
+		break;
+	    case CCLASS_upper:
+		in_class = isupper(ch);
+		break;
+	    case CCLASS_xdigit:
+		in_class = isxdigit(ch);
+		break;
+	    }
+	    if (in_class) {
+		if (first >= 0) {
+		    last = ch;
+		} else {
+		    first = last = ch;
+		}
+	    } else if (first >= 0) {
+		if (used + 2 >= have) {
+		    have *= 2;
+		    data = realloc(data, sizeof(CCLASS) * have);
+		}
+		data[used].first = first;
+		data[used].last = last;
+		++used;
+		first = last = -2;
+	    }
+	}
+	if (first >= 0) {
+	    if (used + 2 >= have) {
+		have *= 2;
+		data = realloc(data, sizeof(CCLASS) * have);
+	    }
+	    data[used].first = first;
+	    data[used].last = last;
+	    ++used;
+	}
+	data[used].first = -1;
+	cclass_table[item].data = data;
+	result = data;
+    }
+    return result;
+}
+
 /* build a BV for a character class.
    *start points at the '['
    on exit:   *start points at the character after ']'
@@ -334,14 +493,14 @@ block_on(BV b, int x, int y)
 static int
 do_class(char **start, MACHINE * mp)
 {
-    register char *p;
-    register BV *bvp;
+    char *p, *q;
+    BV *bvp;
     int prevc;
-    char *q, *t;
-    int cnt;
     int comp_flag;
+    int level;
+    CCLASS *cclass;
 
-    p = t = (*start) + 1;
+    p = (*start) + 1;
 
     /* []...]  puts ] in a class
        [^]..]  negates a class with ]
@@ -351,27 +510,26 @@ do_class(char **start, MACHINE * mp)
     else if (*p == '^' && *(p + 1) == ']')
 	p += 2;
 
-    while (1)			/* find the back of the class */
-    {
-	if (!(q = strchr(p, ']'))) {
+    for (level = 0, q = p; (level != 0) || (*q != ']'); ++q) {
+	if (*q == '[') {
+	    if (q[1] != ':' || ++level > 1)
+		RE_error_trap(-E3);
+	} else if (*q == ']') {
+	    if (level > 0) {
+		if (q[-1] != ':')
+		    RE_error_trap(-E3);
+		--level;
+	    }
+	} else if (*q == '\\') {
+	    ++q;
+	} else if (*q == '\0') {
 	    /* no closing bracket */
 	    RE_error_trap(-E3);
 	}
-	p = q - 1;
-	cnt = 0;
-	while (*p == '\\') {
-	    cnt++;
-	    p--;
-	}
-	if ((cnt & 1) == 0) {
-	    /* even number of \ */
-	    break;
-	}
-	p = q + 1;
     }
 
     /*  q  now  pts at the back of the class   */
-    p = t;
+    p = *start + 1;
     *start = q + 1;
 
     bvp = (BV *) RE_malloc(sizeof(BV));
@@ -389,17 +547,28 @@ do_class(char **start, MACHINE * mp)
 	switch (*p) {
 	case '\\':
 
-	    t = p + 1;
-	    prevc = escape(&t);
-	    on(*bvp, prevc);
-	    p = t;
+	    ++p;
+	    prevc = escape(&p);
+	    char_on(*bvp, prevc);
+	    break;
+
+	case '[':
+	    if (p[1] == ':' && (cclass = lookup_cclass(&p)) != 0) {
+		while (cclass->first >= 0) {
+		    block_on(*bvp, cclass->first, cclass->last);
+		    ++cclass;
+		}
+	    } else {
+		prevc = *p++;
+		char_on(*bvp, prevc);
+	    }
 	    break;
 
 	case '-':
 
 	    if (prevc == -1 || p + 1 == q) {
 		prevc = '-';
-		on(*bvp, '-');
+		char_on(*bvp, '-');
 		p++;
 	    } else {
 		int c;
@@ -408,9 +577,8 @@ do_class(char **start, MACHINE * mp)
 		if (*p != '\\')
 		    c = *(UChar *) p++;
 		else {
-		    t = p + 1;
-		    c = escape(&t);
-		    p = t;
+		    ++p;
+		    c = escape(&p);
 		}
 
 		if (prevc <= c) {
@@ -419,14 +587,14 @@ do_class(char **start, MACHINE * mp)
 		} else {	/* back up */
 		    p = mark;
 		    prevc = '-';
-		    on(*bvp, '-');
+		    char_on(*bvp, '-');
 		}
 	    }
 	    break;
 
 	default:
 	    prevc = *(UChar *) p++;
-	    on(*bvp, prevc);
+	    char_on(*bvp, prevc);
 	    break;
 	}
     }
