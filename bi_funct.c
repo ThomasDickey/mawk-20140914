@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.15 2009/07/26 23:45:50 tom Exp $
+ * $MawkId: bi_funct.c,v 1.16 2009/07/27 12:14:33 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -73,6 +73,8 @@ the GNU General Public License, version 2, 1991.
 #include "field.h"
 #include "regexp.h"
 #include "repl.h"
+
+#include <ctype.h>
 #include <math.h>
 #include <unistd.h>
 
@@ -347,8 +349,7 @@ bi_toupper(CELL * sp)
     p = old->str;
     while (*p) {
 	*q = *p++;
-	if (*q >= 'a' && *q <= 'z')
-	    *q += 'A' - 'a';
+	*q = (char) toupper((UChar) * q);
 	q++;
     }
     free_STRING(old);
@@ -370,8 +371,7 @@ bi_tolower(CELL * sp)
     p = old->str;
     while (*p) {
 	*q = *p++;
-	if (*q >= 'A' && *q <= 'Z')
-	    *q += 'a' - 'A';
+	*q = (char) tolower((UChar) * q);
 	q++;
     }
     free_STRING(old);
@@ -691,7 +691,7 @@ bi_system(CELL * sp)
 	_exit(127);
 
     default:			/* wait for the child */
-	ret_val = wait_for(pid);
+	ret_val = (unsigned) wait_for(pid);
 	break;
     }
 
