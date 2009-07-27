@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.7 2009/07/27 22:20:05 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.8 2009/07/27 22:34:35 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -141,7 +141,7 @@ re_uncompile(PTR m)
 static CELL *
 REPL_compile(STRING * sval)
 {
-    int i = 0;
+    VCount count = 0;
     register char *p = sval->str;
     register char *q;
     char *xbuff;
@@ -167,10 +167,10 @@ REPL_compile(STRING * sval)
 	    /* if empty we don't need to make a node */
 	    if (q != xbuff) {
 		*q = 0;
-		split_buff[i++] = new_STRING(xbuff);
+		split_buff[count++] = new_STRING(xbuff);
 	    }
 	    /* and a null node for the '&'  */
-	    split_buff[i++] = (STRING *) 0;
+	    split_buff[count++] = (STRING *) 0;
 	    /*  reset  */
 	    p++;
 	    q = xbuff;
@@ -185,27 +185,27 @@ REPL_compile(STRING * sval)
 
   done:
     /* if we have one empty string it will get made now */
-    if (q > xbuff || i == 0)
-	split_buff[i++] = new_STRING(xbuff);
+    if (q > xbuff || count == 0)
+	split_buff[count++] = new_STRING(xbuff);
 
     /* This will never happen */
-    if (i > MAX_SPLIT)
+    if (count > MAX_SPLIT)
 	overflow("replacement pieces", MAX_SPLIT);
 
     cp = ZMALLOC(CELL);
-    if (i == 1 && split_buff[0]) {
+    if (count == 1 && split_buff[0]) {
 	cp->type = C_REPL;
 	cp->ptr = (PTR) split_buff[0];
     } else {
 	STRING **sp = (STRING **)
-	(cp->ptr = zmalloc(sizeof(STRING *) * i));
-	int j = 0;
+	(cp->ptr = zmalloc(sizeof(STRING *) * count));
+	VCount j = 0;
 
-	while (j < i)
+	while (j < count)
 	    *sp++ = split_buff[j++];
 
 	cp->type = C_REPLV;
-	cp->vcnt = i;
+	cp->vcnt = count;
     }
     zfree(xbuff, sval->len + 1);
     return cp;
@@ -217,7 +217,7 @@ void
 repl_destroy(CELL * cp)
 {
     register STRING **p;
-    unsigned cnt;
+    VCount cnt;
 
     if (cp->type == C_REPL)
 	free_STRING(string(cp));
@@ -239,7 +239,7 @@ CELL *
 replv_cpy(CELL * target, CELL * source)
 {
     STRING **t, **s;
-    unsigned cnt;
+    VCount cnt;
 
     target->type = C_REPLV;
     cnt = target->vcnt = source->vcnt;
