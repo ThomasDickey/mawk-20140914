@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.9 2009/07/27 15:01:16 tom Exp $
+ * $MawkId: rexp0.c,v 1.10 2009/07/27 16:18:46 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -330,7 +330,7 @@ block_on(BV b, int x, int y)
     }
 }
 
-#define CCLASS_DATA(name) { CCLASS_##name, #name, sizeof(#name), 0 }
+#define CCLASS_DATA(name) { CCLASS_##name, #name, sizeof(#name) - 1, 0 }
 
 typedef enum {
     CCLASS_NONE = 0,
@@ -382,7 +382,7 @@ lookup_cclass(char **start)
     unsigned item;
 
     name = (*start += 2);	/* point past "[:" */
-    colon = strchr(*start, ':');
+    colon = strchr(name, ':');
     if (colon == 0 || colon[1] != ']')
 	return 0;		/* perhaps this is a literal "[:" */
 
