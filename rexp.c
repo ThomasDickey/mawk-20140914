@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.6 2009/07/24 21:23:07 tom Exp $
+ * $MawkId: rexp.c,v 1.7 2009/07/27 13:35:28 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -80,8 +80,7 @@ static  short  table[8][8]  =  {
 static jmp_buf err_buf;		/*  used to trap on error */
 
 void
-RE_error_trap(x)
-     int x;
+RE_error_trap(int x)
 {
     REerrno = x;
     longjmp(err_buf, 1);
