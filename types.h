@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: types.h,v 1.4 2009/07/24 22:27:33 tom Exp $
+ * $MawkId: types.h,v 1.5 2009/07/27 22:34:09 tom Exp $
  * @Log: types.h,v @
  * Revision 1.3  1993/07/15  23:56:18  mike
  * general cleanup
@@ -81,9 +81,11 @@ typedef struct {
    string */
 #define  STRING_OH   (sizeof(STRING)-1)
 
+typedef unsigned short VCount;
+
 typedef struct cell {
     short type;
-    short vcnt;			/* only used if type == C_REPLV   */
+    VCount vcnt;		/* only used if type == C_REPLV   */
     PTR ptr;
     double dval;
 } CELL;
