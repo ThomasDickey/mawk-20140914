@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: repl.h,v 1.3 2009/07/24 00:54:03 tom Exp $
+ * $MawkId: repl.h,v 1.4 2009/07/27 21:47:40 tom Exp $
  * @Log: repl.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs
@@ -26,6 +26,18 @@ the GNU General Public License, version 2, 1991.
 #define  REPL_H
 
 #include "types.h"
+
+typedef struct re_data {
+    int anchored;	/* use to limit recursion in gsub */
+    PTR compiled;
+} RE_DATA;
+
+/*
+ * re_compile returns a RE_DATA*, but mawk handles it as a PTR thereafter.
+ */
+#define isAnchored(ptr) (((RE_DATA *)(ptr))->anchored)
+#define cast_to_re(ptr) (((RE_DATA *)(ptr))->compiled)
+#define refRE_DATA(re)  ((PTR) &(re))
 
 PTR re_compile(STRING *);
 char *re_uncompile(PTR);
