@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.17 2009/07/27 15:41:39 tom Exp $
+ * $MawkId: bi_funct.c,v 1.18 2009/07/27 22:19:33 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -316,7 +316,7 @@ bi_match(CELL * sp)
     RSTART->type = C_DOUBLE;
     RLENGTH->type = C_DOUBLE;
 
-    p = REmatch(string(sp)->str, string(sp)->len, (sp + 1)->ptr, &length);
+    p = REmatch(string(sp)->str, string(sp)->len, cast_to_re((sp + 1)->ptr), &length);
 
     if (p) {
 	sp->dval = (double) (p - string(sp)->str + 1);
@@ -856,7 +856,7 @@ bi_sub(CELL * sp)
 	cast1_to_s(&sc);
     front = string(&sc)->str;
 
-    if ((middle = REmatch(front, string(&sc)->len, sp->ptr, &middle_len))) {
+    if ((middle = REmatch(front, string(&sc)->len, cast_to_re(sp->ptr), &middle_len))) {
 	front_len = (unsigned) (middle - front);
 	back = middle + middle_len;
 	back_len = string(&sc)->len - front_len - middle_len;
@@ -918,7 +918,7 @@ gsub(PTR re, CELL * repl, char *target, unsigned target_len, int flag)
     STRING *ret_val;
     CELL xrepl;			/* a copy of repl so we can change repl */
 
-    if (!(middle = REmatch(target, target_len, re, &middle_len)))
+    if (!(middle = REmatch(target, target_len, cast_to_re(re), &middle_len)))
 	return new_STRING(target);	/* no match */
 
     cellcpy(&xrepl, repl);
@@ -930,6 +930,9 @@ gsub(PTR re, CELL * repl, char *target, unsigned target_len, int flag)
 	    repl_destroy(&xrepl);
 	    null_str.ref_cnt++;
 	    return &null_str;
+	} else if (1 && isAnchored(re)) {
+	    repl_destroy(&xrepl);
+	    return new_STRING1(target, target_len);
 	} else {
 	    char xbuff[2];
 

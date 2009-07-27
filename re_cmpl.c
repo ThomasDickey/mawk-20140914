@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.6 2009/07/23 23:17:47 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.7 2009/07/27 22:20:05 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -48,7 +48,7 @@ the GNU General Public License, version 2, 1991.
 
 typedef struct re_node {
     STRING *sval;
-    PTR re;
+    RE_DATA re;
     struct re_node *link;
 } RE_NODE;
 
@@ -92,7 +92,8 @@ re_compile(STRING * sval)
     p->sval = sval;
 
     sval->ref_cnt++;
-    if (!(p->re = REcompile(s))) {
+    p->re.anchored = (*s == '^');
+    if (!(p->re.compiled = REcompile(s))) {
 	if (mawk_state == EXECUTION)
 	    rt_error(efmt, REerror(), s);
 	else {			/* compiling */
@@ -110,9 +111,9 @@ re_compile(STRING * sval)
 
 #ifdef DEBUG
     if (dump_RE)
-	REmprint(p->re, stderr);
+	REmprint(refRE_DATA(p->re), stderr);
 #endif
-    return p->re;
+    return refRE_DATA(p->re);
 }
 
 /* this is only used by da() */
@@ -123,7 +124,7 @@ re_uncompile(PTR m)
     register RE_NODE *p;
 
     for (p = re_list; p; p = p->link)
-	if (p->re == m)
+	if (p->re.compiled == cast_to_re(m))
 	    return p->sval->str;
 #ifdef DEBUG
     bozo("non compiled machine");
