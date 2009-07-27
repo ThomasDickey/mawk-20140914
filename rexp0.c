@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.10 2009/07/27 16:18:46 tom Exp $
+ * $MawkId: rexp0.c,v 1.11 2009/07/27 23:31:27 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -405,7 +405,7 @@ lookup_cclass(char **start)
 	unsigned have = 4;
 	unsigned used = 0;
 	CCLASS *data = malloc(sizeof(CCLASS) * have);
-	int in_class;
+	int in_class = 0;
 	int first = -2;
 	int last = -2;
 
