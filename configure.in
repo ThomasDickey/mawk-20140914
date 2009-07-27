@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.21 2009/07/26 21:25:05 tom Exp $
+dnl $MawkId: configure.in,v 1.22 2009/07/27 10:28:29 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -60,6 +60,7 @@ AC_MSG_RESULT($with_builtin_regex)
 CF_MAWK_PROG_YACC
 CF_ANSI_CC_REQD
 CF_MAWK_FIND_SIZE_T
+CF_LOCALE
 AC_DEFINE(HAVE_REAL_PIPES)
 CF_MAWK_CHECK_HEADERS(fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h)
 CF_MAWK_CHECK_FUNCS(memcpy strchr strerror vfprintf strtod fmod matherr)
