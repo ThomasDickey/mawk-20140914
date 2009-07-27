@@ -1,0 +1,11 @@
+-- $MawkId: TODO,v 1.1 2009/07/27 17:03:07 tom Exp $
+mawk was implemented to conform with POSIX 1003.2-1992
+
+According to
+
+	http://www.opengroup.org/austin/papers/posix_faq.html
+
+that was merged into POSIX-1003.1, and the latest relevant text of that is
+documented here:
+
+	http://www.opengroup.org/onlinepubs/009695399/utilities/awk.html
