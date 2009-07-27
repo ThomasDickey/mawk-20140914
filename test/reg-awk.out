@@ -90,3 +90,49 @@ reg4.3<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+26..12:   each array is of size A_HASH_PRIME.
+reg5.1<<A_HASH_PRIME>>
+26..12:   each array is of size A_HASH_PRIME.
+reg5.2<<A_HASH_PRIME>>
+11..7:   On the D_ANODE list, we use real deletion and move to the
+reg5.1<<D_ANODE>>
+11..7:   On the D_ANODE list, we use real deletion and move to the
+reg5.2<<D_ANODE>>
+32..5:     (1) d1 != d2, but sprintf(A_FMT,d1) == sprintf(A_FMT,d1)
+reg5.1<<A_FMT>>
+32..5:     (1) d1 != d2, but sprintf(A_FMT,d1) == sprintf(A_FMT,d1)
+reg5.2<<A_FMT>>
+42..12:#define  _dhash(d)    (((int)(d)&0x7fff)%A_HASH_PRIME)
+reg5.1<<A_HASH_PRIME>>
+42..12:#define  _dhash(d)    (((int)(d)&0x7fff)%A_HASH_PRIME)
+reg5.2<<A_HASH_PRIME>>
+34..6:#define  _dhash(d)    (((int)(d)&0x7fff)%A_HASH_PRIME)
+reg5.3<<0x7fff>>
+27..12:   unsigned h = hash(s) % A_HASH_PRIME ;
+reg5.1<<A_HASH_PRIME>>
+27..12:   unsigned h = hash(s) % A_HASH_PRIME ;
+reg5.2<<A_HASH_PRIME>>
+22..8:       p->cp->type = C_NOINIT ;
+reg5.1<<C_NOINIT>>
+22..8:       p->cp->type = C_NOINIT ;
+reg5.2<<C_NOINIT>>
+11..7:/* on the D_ANODE list, when we find a node we move it
+reg5.1<<D_ANODE>>
+11..7:/* on the D_ANODE list, when we find a node we move it
+reg5.2<<D_ANODE>>
+8..7:static D_ANODE  *find_by_dval(A, d, cflag)
+reg5.1<<D_ANODE>>
+8..7:static D_ANODE  *find_by_dval(A, d, cflag)
+reg5.2<<D_ANODE>>
+12..7:  register D_ANODE *p = A[h].dlink ;
+reg5.1<<D_ANODE>>
+12..7:  register D_ANODE *p = A[h].dlink ;
+reg5.2<<D_ANODE>>
+3..7:  D_ANODE *q = 0 ; /* trails p for move to front */
+reg5.1<<D_ANODE>>
+3..7:  D_ANODE *q = 0 ; /* trails p for move to front */
+reg5.2<<D_ANODE>>
+28..7:           zfree(p, sizeof(D_ANODE)) ;
+reg5.1<<D_ANODE>>
+28..7:           zfree(p, sizeof(D_ANODE)) ;
+reg5.2<<D_ANODE>>
