@@ -32,6 +32,9 @@ echo testing regular expression matching
 ..\mawk -f reg0.awk %dat% > temp$$
 ..\mawk -f reg1.awk %dat% >> temp$$
 ..\mawk -f reg2.awk %dat% >> temp$$
+..\mawk -f reg3.awk %dat% >> temp$$
+..\mawk -f reg4.awk %dat% >> temp$$
+..\mawk -f reg5.awk %dat% >> temp$$
 %CMP% temp$$ reg-awk.out
 if errorlevel 1 goto :done
 
