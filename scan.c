@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.10 2009/07/26 16:23:34 tom Exp $
+ * $MawkId: scan.c,v 1.11 2009/07/27 20:39:41 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -764,9 +764,16 @@ collect_decimal(int c, int *flag)
     } else {			/* get the exponent */
 	if (scan_code[*p = (UChar) next()] != SC_DIGIT &&
 	    *p != '-' && *p != '+') {
-	    *++p = 0;
-	    *flag = BAD_DECIMAL;
-	    return 0.0;
+	    /* if we can, undo and try again */
+	    if (buffp - buffer >= 2) {
+		un_next();	/* undo the last character */
+		un_next();	/* undo the 'e' */
+		*--p = 0;
+	    } else {
+		*++p = 0;
+		*flag = BAD_DECIMAL;
+		return 0.0;
+	    }
 	} else {		/* get the rest of the exponent */
 	    p++;
 	    while (scan_code[*p++ = (UChar) next()] == SC_DIGIT) {
@@ -790,8 +797,16 @@ collect_decimal(int c, int *flag)
 #endif
 
     if (endp < p) {
-	*flag = BAD_DECIMAL;
-	return 0.0;
+	/* if we can, undo and try again */
+	if ((p - endp) < (buffp - buffer)) {
+	    while (endp < p) {
+		un_next();
+		++endp;
+	    }
+	} else {
+	    *flag = BAD_DECIMAL;
+	    return 0.0;
+	}
     }
     return d;
 }
