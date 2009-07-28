@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.8 2009/07/27 15:26:36 tom Exp $
+ * $MawkId: error.c,v 1.9 2009/07/28 23:23:22 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -314,7 +314,7 @@ unexpected_char(void)
 static const char *
 type_to_str(int type)
 {
-    const char *retval;
+    const char *retval = 0;
 
     switch (type) {
     case ST_VAR:

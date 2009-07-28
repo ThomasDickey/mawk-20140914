@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.18 2009/07/27 22:19:33 tom Exp $
+ * $MawkId: bi_funct.c,v 1.19 2009/07/28 23:23:47 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -732,8 +732,9 @@ bi_system(CELL * sp)
 CELL *
 bi_getline(CELL * sp)
 {
-    CELL tc, *cp;
-    char *p;
+    CELL tc;
+    CELL *cp = 0;
+    char *p = 0;
     unsigned len;
     FIN *fin_p;
 

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.10 2009/07/27 15:41:52 tom Exp $
+ * $MawkId: fin.c,v 1.11 2009/07/28 23:25:09 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -192,14 +192,13 @@ char *
 FINgets(FIN * fin, unsigned *len_p)
 {
     char *p;
-    char *q;
+    char *q = 0;
     unsigned match_len;
     unsigned r;
 
   restart:
 
-    if (!(p = fin->buffp)[0])	/* need a refill */
-    {
+    if (!(p = fin->buffp)[0]) {	/* need a refill */
 	if (fin->flags & EOF_FLAG) {
 	    if (fin->flags & MAIN_FLAG) {
 		fin = next_main(0);

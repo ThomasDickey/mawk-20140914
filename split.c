@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.7 2009/07/27 22:38:32 tom Exp $
+ * $MawkId: split.c,v 1.8 2009/07/28 23:24:51 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -289,7 +289,7 @@ null_ov_split(char *s)
 CELL *
 bi_split(CELL * sp)
 {
-    int cnt;			/* the number of pieces */
+    int cnt = 0;		/* the number of pieces */
 
     if (sp->type < C_RE)
 	cast_for_split(sp);
@@ -298,9 +298,9 @@ bi_split(CELL * sp)
     if (sp->type < C_STRING)
 	cast1_to_s(sp);
 
-    if (string(sp)->len == 0)	/* nothing to split */
+    if (string(sp)->len == 0) {	/* nothing to split */
 	cnt = 0;
-    else
+    } else {
 	switch ((sp + 2)->type) {
 	case C_RE:
 	    cnt = re_split(string(sp)->str, (sp + 2)->ptr);
@@ -317,6 +317,7 @@ bi_split(CELL * sp)
 	default:
 	    bozo("bad splitting cell in bi_split");
 	}
+    }
 
     free_STRING(string(sp));
     sp->type = C_DOUBLE;
