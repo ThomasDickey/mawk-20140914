@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.8 2009/07/27 21:49:26 tom Exp $
+ * $MawkId: execute.c,v 1.9 2009/08/01 15:07:17 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -166,8 +166,10 @@ clear_aloop_stack(ALOOP_STATE * top)
 	    free_STRING(*top->ptr);
 	    top->ptr++;
 	}
-	if (top->base < top->limit)
-	    zfree(top->base, (top->limit - top->base) * sizeof(STRING *));
+	if (top->base < top->limit) {
+	    zfree(top->base,
+		  (unsigned) (top->limit - top->base) * sizeof(STRING *));
+	}
 	q = top;
 	top = q->link;
 	ZFREE(q);
@@ -457,8 +459,11 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		    free_STRING(*ap->ptr);
 		    ap->ptr++;
 		}
-		if (ap->base < ap->limit)
-		    zfree(ap->base, (ap->limit - ap->base) * sizeof(STRING *));
+		if (ap->base < ap->limit) {
+		    zfree(ap->base,
+			  (unsigned) ((ap->limit - ap->base)
+				      * sizeof(STRING *)));
+		}
 		ZFREE(ap);
 	    }
 	    break;
@@ -1337,7 +1342,7 @@ test(CELL * cp)
     case C_DOUBLE:
 	return cp->dval != 0.0;
     case C_STRING:
-	return string(cp)->len;
+	return (string(cp)->len != 0);
     case C_MBSTRN:
 	check_strnum(cp);
 	goto reswitch;
