@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.9 2009/08/01 15:07:17 tom Exp $
+ * $MawkId: execute.c,v 1.10 2009/08/01 15:21:41 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -461,8 +461,8 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		}
 		if (ap->base < ap->limit) {
 		    zfree(ap->base,
-			  (unsigned) ((ap->limit - ap->base)
-				      * sizeof(STRING *)));
+			  ((unsigned) (ap->limit - ap->base)
+			   * sizeof(STRING *)));
 		}
 		ZFREE(ap);
 	    }
