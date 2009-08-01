@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.12 2009/08/01 14:37:22 tom Exp $
+ * $MawkId: print.c,v 1.13 2009/08/01 14:56:18 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -340,7 +340,7 @@ static char *
 SprintfFill(char *buffer, int ch, int fill)
 {
     SprintfOverflow(buffer, fill);
-    memset(buffer, ch, fill);
+    memset(buffer, ch, (unsigned) fill);
     return buffer + fill;
 }
 
@@ -348,7 +348,7 @@ static char *
 SprintfBlock(char *buffer, char *source, int length)
 {
     SprintfOverflow(buffer, length);
-    memcpy(buffer, source, length);
+    memcpy(buffer, source, (unsigned) length);
     return buffer + length;
 }
 
@@ -365,7 +365,7 @@ puts_sfmt(PTR target,
 	  int flags)
 {
     char *src_str = string(source)->str;
-    int src_len = single ? 1 : string(source)->len;
+    int src_len = single ? 1 : (int) string(source)->len;
 
     if (width < 0) {
 	width = -width;
@@ -401,7 +401,7 @@ puts_sfmt(PTR target,
 		--width;
 	    }
 	}
-	fwrite(src_str, sizeof(char), src_len, fp);
+	fwrite(src_str, sizeof(char), (unsigned) src_len, fp);
 	while (src_len < width) {
 	    fputc(' ', fp);
 	    --width;
@@ -819,7 +819,7 @@ bi_sprintf(CELL * sp)
 
     if (sp->type != C_STRING)
 	cast1_to_s(sp);
-    sval = do_printf((FILE *) 0, string(sp)->str, argcnt, sp + 1);
+    sval = do_printf((FILE *) 0, string(sp)->str, (unsigned) argcnt, sp + 1);
     free_STRING(string(sp));
     sp->ptr = (PTR) sval;
 
