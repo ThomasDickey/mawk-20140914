@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.13 2009/08/01 14:56:18 tom Exp $
+ * $MawkId: print.c,v 1.14 2009/08/01 16:04:43 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -359,12 +359,12 @@ static PTR
 puts_sfmt(PTR target,
 	  FILE *fp,
 	  CELL * source,
-	  int single,
+	  STRING * single,
 	  int width,
 	  int prec,
 	  int flags)
 {
-    char *src_str = string(source)->str;
+    char *src_str = single ? single->str : string(source)->str;
     int src_len = single ? 1 : (int) string(source)->len;
 
     if (width < 0) {
@@ -474,6 +474,7 @@ do_printf(
     const char *who;		/*ditto */
     int pf_type = 0;		/* conversion type */
     PRINTER printer;		/* pts at fprintf() or sprintf() */
+    STRING single;
 
 #ifdef	 SHORT_INTS
     char xbuff[256];		/* splice in l qualifier here */
@@ -609,13 +610,16 @@ do_printf(
 
 	    case C_MBSTRN:
 		check_strnum(cp);
-		Ival = cp->type == C_STRING ?
-		    string(cp)->str[0] : d_to_I(cp->dval);
+		Ival = ((cp->type == C_STRING)
+			? string(cp)->str[0]
+			: d_to_I(cp->dval));
 		break;
 
 	    default:
 		bozo("printf %c");
 	    }
+	    single.len = 1;
+	    single.str[0] = Ival;
 
 	    pf_type = PF_C;
 	    break;
@@ -682,43 +686,30 @@ do_printf(
 	}
 #endif
 
+#define PUTS_C_ARGS target, fp, 0,  &single, sfmt_width, sfmt_prec, sfmt_flags
+#define PUTS_S_ARGS target, fp, cp, 0,       sfmt_width, sfmt_prec, sfmt_flags
+
 	/* ready to call printf() */
 	s_format = 0;
 	switch (AST(ast_cnt, pf_type)) {
 	case AST(0, PF_C):
-	    s_format = 1;
-	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, 1, sfmt_width, sfmt_prec, sfmt_flags);
-	    break;
-
+	    /* FALLTHRU */
 	case AST(1, PF_C):
-	    s_format = 1;
-	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, 1, sfmt_width, sfmt_prec, sfmt_flags);
-	    break;
-
+	    /* FALLTHRU */
 	case AST(2, PF_C):
 	    s_format = 1;
 	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, 1, sfmt_width, sfmt_prec, sfmt_flags);
+	    target = puts_sfmt(PUTS_C_ARGS);
 	    break;
 
 	case AST(0, PF_S):
-	    s_format = 1;
-	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, 0, sfmt_width, sfmt_prec, sfmt_flags);
-	    break;
-
+	    /* FALLTHRU */
 	case AST(1, PF_S):
-	    s_format = 1;
-	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, 0, sfmt_width, sfmt_prec, sfmt_flags);
-	    break;
-
+	    /* FALLTHRU */
 	case AST(2, PF_S):
 	    s_format = 1;
 	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, 0, sfmt_width, sfmt_prec, sfmt_flags);
+	    target = puts_sfmt(PUTS_S_ARGS);
 	    break;
 
 #ifdef	SHORT_INTS
