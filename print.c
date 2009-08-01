@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.10 2009/08/01 12:24:46 tom Exp $
+ * $MawkId: print.c,v 1.11 2009/08/01 14:32:22 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -298,6 +298,8 @@ make_sfmt(const char *format,
 		success = 0;
 	    }
 	    break;
+	case 'c':
+	    /* FALLTHRU */
 	case 's':
 	    if (digits) {
 		if (parts) {
@@ -354,10 +356,16 @@ SprintfBlock(char *buffer, char *source, int length)
  * Write the s-format text.
  */
 static PTR
-puts_sfmt(PTR target, FILE *fp, CELL * source, int width, int prec, int flags)
+puts_sfmt(PTR target,
+	  FILE *fp,
+	  CELL * source,
+	  int single,
+	  int width,
+	  int prec,
+	  int flags)
 {
     char *src_str = string(source)->str;
-    int src_len = string(source)->len;
+    int src_len = single ? 1 : string(source)->len;
 
     if (width < 0) {
 	width = -width;
@@ -418,8 +426,10 @@ puts_sfmt(PTR target, FILE *fp, CELL * source, int width, int prec, int flags)
 	    }
 	}
 	if ((flags & sfmtZERO) && !(flags & sfmtMINUS)) {
-	    buffer = SprintfFill(buffer, '0', width - src_len);
-	    width = src_len;
+	    if (src_len < width) {
+		buffer = SprintfFill(buffer, '0', width - src_len);
+		width = src_len;
+	    }
 	}
 	if (!(flags & sfmtMINUS)) {
 	    if (src_len < width) {
@@ -676,33 +686,39 @@ do_printf(
 	s_format = 0;
 	switch (AST(ast_cnt, pf_type)) {
 	case AST(0, PF_C):
-	    (*printer) ((PTR) target, p, (int) Ival);
+	    s_format = 1;
+	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
+	    target = puts_sfmt(target, fp, cp, 1, sfmt_width, sfmt_prec, sfmt_flags);
 	    break;
 
 	case AST(1, PF_C):
-	    (*printer) ((PTR) target, p, ast[0], (int) Ival);
+	    s_format = 1;
+	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
+	    target = puts_sfmt(target, fp, cp, 1, sfmt_width, sfmt_prec, sfmt_flags);
 	    break;
 
 	case AST(2, PF_C):
-	    (*printer) ((PTR) target, p, ast[0], ast[1], (int) Ival);
+	    s_format = 1;
+	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
+	    target = puts_sfmt(target, fp, cp, 1, sfmt_width, sfmt_prec, sfmt_flags);
 	    break;
 
 	case AST(0, PF_S):
 	    s_format = 1;
 	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, sfmt_width, sfmt_prec, sfmt_flags);
+	    target = puts_sfmt(target, fp, cp, 0, sfmt_width, sfmt_prec, sfmt_flags);
 	    break;
 
 	case AST(1, PF_S):
 	    s_format = 1;
 	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, sfmt_width, sfmt_prec, sfmt_flags);
+	    target = puts_sfmt(target, fp, cp, 0, sfmt_width, sfmt_prec, sfmt_flags);
 	    break;
 
 	case AST(2, PF_S):
 	    s_format = 1;
 	    make_sfmt(p, ast, &sfmt_width, &sfmt_prec, &sfmt_flags);
-	    target = puts_sfmt(target, fp, cp, sfmt_width, sfmt_prec, sfmt_flags);
+	    target = puts_sfmt(target, fp, cp, 0, sfmt_width, sfmt_prec, sfmt_flags);
 	    break;
 
 #ifdef	SHORT_INTS
