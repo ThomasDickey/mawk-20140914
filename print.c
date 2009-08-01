@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.11 2009/08/01 14:32:22 tom Exp $
+ * $MawkId: print.c,v 1.12 2009/08/01 14:37:22 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -204,7 +204,7 @@ bad_conversion(int cnt, const char *who, const char *format)
 typedef enum {
     sfmtSPACE = 1,
     sfmtMINUS = 2,
-    sfmtZERO = 4,
+    sfmtZEROS = 4,
     sfmtWIDTH = 8,
     sfmtPREC = 16
 } enumSFMT;
@@ -243,7 +243,7 @@ make_sfmt(const char *format,
 	    *flags |= sfmtMINUS;
 	    break;
 	case '0':
-	    *flags |= sfmtZERO;
+	    *flags |= sfmtZEROS;
 	    break;
 	case '+':
 	    /* FALLTHRU */
@@ -389,7 +389,7 @@ puts_sfmt(PTR target,
 		width = src_len;
 	    }
 	}
-	if ((flags & sfmtZERO) && !(flags & sfmtMINUS)) {
+	if ((flags & sfmtZEROS) && !(flags & sfmtMINUS)) {
 	    while (src_len < width) {
 		fputc('0', fp);
 		--width;
@@ -425,7 +425,7 @@ puts_sfmt(PTR target,
 		width = src_len;
 	    }
 	}
-	if ((flags & sfmtZERO) && !(flags & sfmtMINUS)) {
+	if ((flags & sfmtZEROS) && !(flags & sfmtMINUS)) {
 	    if (src_len < width) {
 		buffer = SprintfFill(buffer, '0', width - src_len);
 		width = src_len;
