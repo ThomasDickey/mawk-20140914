@@ -1,10 +1,12 @@
--- $MawkId: CHANGES,v 1.48 2009/08/01 15:25:03 tom Exp $
+-- $MawkId: CHANGES,v 1.49 2009/08/20 21:07:19 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20090801
-	modify "%s" and "%c" formatting in printf/sprintf commands to allow
-	zero-padding as done by nawk (Debian #339799).
+200908??
+	modify "%s" and "%c" formatting in printf/sprintf commands to ensure
+	that "%02s" does not do zero-padding, for standards conformance
+	(discussion with Aharon Robbins, Mike Brennan, prompted by Debian
+	#339799).
 
 20090728
 	add fallback definitions for GCC_NORETURN and GCC_UNUSED to build with
