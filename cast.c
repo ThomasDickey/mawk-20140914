@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.7 2009/07/26 16:23:02 tom Exp $
+ * $MawkId: cast.c,v 1.8 2009/08/20 23:00:13 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -422,8 +422,8 @@ d_to_I(double d)
 
 /* convert a double to UInt (this is not as simple as a
    cast because the results are undefined if it won't fit).
-   Truncate large values to +Max_Int or -Max_Int
-   Send nans to -Max_Int
+   Truncate large values to Max_UInt or 0
+   Send nans to 0
 */
 
 UInt
@@ -431,7 +431,7 @@ d_to_U(double d)
 {
     if (d >= Max_UInt)
 	return Max_UInt;
-    if (d > -Max_UInt)
+    if (d > 0)
 	return (UInt) d;
-    return -Max_UInt;
+    return 0;
 }
