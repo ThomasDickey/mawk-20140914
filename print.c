@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.16 2009/08/20 21:09:37 tom Exp $
+ * $MawkId: print.c,v 1.17 2009/08/20 21:13:07 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -599,7 +599,7 @@ do_printf(
 		bozo("printf %c");
 	    }
 	    single.len = 1;
-	    single.str[0] = Ival;
+	    single.str[0] = (char) Ival;
 
 	    pf_type = PF_C;
 	    break;
