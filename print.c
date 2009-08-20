@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.15 2009/08/01 16:16:24 tom Exp $
+ * $MawkId: print.c,v 1.16 2009/08/20 21:09:37 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -385,12 +385,6 @@ puts_sfmt(PTR target,
 	if (!(flags & sfmtWIDTH)) {
 	    width = src_len;
 	}
-	if ((flags & sfmtZEROS) && !(flags & sfmtMINUS)) {
-	    while (src_len < width) {
-		fputc('0', fp);
-		--width;
-	    }
-	}
 	if (!(flags & sfmtMINUS)) {
 	    while (src_len < width) {
 		fputc(' ', fp);
@@ -416,12 +410,6 @@ puts_sfmt(PTR target,
 	}
 	if (!(flags & sfmtWIDTH)) {
 	    width = src_len;
-	}
-	if ((flags & sfmtZEROS) && !(flags & sfmtMINUS)) {
-	    if (src_len < width) {
-		buffer = SprintfFill(buffer, '0', width - src_len);
-		width = src_len;
-	    }
 	}
 	if (!(flags & sfmtMINUS)) {
 	    if (src_len < width) {
