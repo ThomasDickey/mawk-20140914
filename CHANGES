@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.49 2009/08/20 21:07:19 tom Exp $
+-- $MawkId: CHANGES,v 1.50 2009/08/20 23:03:58 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 200908??
+	correct lower-limit for d_to_U() function, which broke conversion of
+	zero in "%x" format, added in fix for Debian #303825 (report by Masami
+	Hiramatsu).
+
 	modify "%s" and "%c" formatting in printf/sprintf commands to ensure
 	that "%02s" does not do zero-padding, for standards conformance
 	(discussion with Aharon Robbins, Mike Brennan, prompted by Debian
