@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.10 2009/07/27 12:12:14 tom Exp $
+ * $MawkId: init.c,v 1.11 2009/08/21 00:53:52 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -188,7 +188,7 @@ process_cmdline(int argc, char **argv)
 	switch (argv[i][1]) {
 	case 'W':
 
-	    if (isalpha(optArg[0]))
+	    if (isalpha((UChar) optArg[0]))
 		optArg[0] = (char) toupper((UChar) optArg[0]);
 	    if (optArg[0] == 'V')
 		print_version();
