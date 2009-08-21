@@ -1,4 +1,4 @@
-% $MawkId: array.w,v 1.5 2009/07/24 00:57:22 tom Exp $
+% $MawkId: array.w,v 1.6 2009/08/21 00:12:00 tom Exp $
 % @Log: array.w,v @
 % Revision 1.4  1996/09/18 00:37:25  mike
 % 1) Fix stupid bozo in A[expr], expr is numeric and not integer.
@@ -80,7 +80,7 @@ return identical [[CELL]] pointers although the look up methods will
 be different.  In this case, the [[size]] field is the number of hash nodes
 in the table.  When insertion of a new element would cause [[size]] to
 exceed [[limit]], the table grows by doubling the number of hash chains.
-The invariant, 
+The invariant,
 $({\it hmask}+1){\it max\_ave\_list\_length}={\it limit}$, is always true.
 {\it Max\_ave\_list\_length} is a tunable constant.
 
@@ -157,13 +157,13 @@ $A[\expr]$ from the array $A$.  [[cp]] points at the [[CELL]] holding
 \expr\/.
 
 \hi [[void array_load(ARRAY A, int cnt)]] builds a split array.  The
-values $A[1..{\it cnt}]$ are copied from the array 
+values $A[1..{\it cnt}]$ are copied from the array
 ${\it split\_buff}[0..{\it cnt}-1]$.
 
 \hi [[void array_clear(ARRAY A)]] removes all elements of $A$.  The
 type of $A$ is then [[AY_NULL]].
 
-\hi [[STRING** array_loop_vector(ARRAY A, unsigned *sizep)]] 
+\hi [[STRING** array_loop_vector(ARRAY A, unsigned *sizep)]]
 returns a pointer
 to a linear vector that holds all the strings that are indices of $A$.
 The size of the the vector is returned indirectly in [[*sizep]].
@@ -172,7 +172,7 @@ If [[A->size==0]], a \Null{} pointer is returned.
 \hi [[CELL* array_cat(CELL *sp, int cnt)]] concatenates the elements
 of ${\it sp}[1-cnt..0]$, with each element separated by [[SUBSEP]], to
 compute an array index.  For example, on a reference to $A[i,j]$,
-[[array_cat]] computes $i\circ{\it SUBSEP}\circ j$ where 
+[[array_cat]] computes $i\circ{\it SUBSEP}\circ j$ where
 $\circ$ denotes concatenation.
 
 
@@ -185,7 +185,7 @@ STRING** array_loop_vector(ARRAY, unsigned*);
 CELL* array_cat(CELL*, int);
 
 @ Array Find
-Any reference to $A[\expr]$ creates a call to 
+Any reference to $A[\expr]$ creates a call to
 [[array_find(A,cp,CREATE)]] where [[cp]] points at the cell holding
 \expr\/.  The test, $\expr \hbox{ in } A$, creates a call to
 [[array_find(A,cp,NO_CREATE)]].
@@ -212,7 +212,7 @@ CELL* array_find(
    int create_flag)
 {
    ANODE *ap ;
-   if (A->size == 0 && !create_flag) 
+   if (A->size == 0 && !create_flag)
       /* eliminating this trivial case early avoids unnecessary conversions later */
       return (CELL*) 0 ;
    switch (cp->type) {
@@ -233,7 +233,7 @@ CELL* array_find(
 To test whether [[cp->dval]] is integer, we convert to the nearest
 integer by rounding towards zero (done by [[do_to_I]]) and then cast
 back to double.  If we get the same number we started with, then
-[[cp->dval]] is integer valued.  
+[[cp->dval]] is integer valued.
 
 <<if the [[*cp]] is an integer, find by integer value else find by string value>>=
 {
@@ -241,7 +241,7 @@ back to double.  If we get the same number we started with, then
    Int ival = d_to_I(d) ;
    if ((double)ival == d) {
       if (A->type == AY_SPLIT) {
-         if (ival >= 1 && ival <= (int) A->size) 
+         if (ival >= 1 && ival <= (int) A->size)
             return (CELL*)A->ptr+(ival-1) ;
          if (!create_flag) return (CELL*) 0 ;
          convert_split_array_to_table(A) ;
@@ -280,7 +280,7 @@ static ANODE* find_by_ival(
 	  <<search by string value if needed and create if needed>>
 	  break ;
       }
-      else if (p->ival == ival) { 
+      else if (p->ival == ival) {
 	 /* found it, now move to the front */
 	 if (!q) /* already at the front */
 	    return p ;
@@ -299,7 +299,7 @@ static ANODE* find_by_ival(
 @
 When a search by integer value fails, we have to check by string
 value to correctly
-handle the case insertion by [[A["123"]]] and later search as 
+handle the case insertion by [[A["123"]]] and later search as
 [[A[123]]].  This string search is necessary if and only if the
 [[AY_STR]] bit is set.  An important point is that all [[ANODEs]] get
 created with a valid [[sval]] if [[AY_STR]] is set, because then creation
@@ -435,7 +435,7 @@ call to [[array_delete(ARRAY A, CELL *cp)]].  Depending on the
 type of [[*cp]], the call is routed to [[find_by_sval]] or [[find_by_ival]].
 Each of these functions leaves its return value on the front of an
 slist or ilist, respectively, and then it is deleted from the front of
-the list.  The case where $A[\expr]$ is on two lists, e.g., 
+the list.  The case where $A[\expr]$ is on two lists, e.g.,
 [[A[12]]] and [[A["12"]]] is checked by examining the [[sval]] and
 [[ival]] fields of the returned [[ANODE*]].
 
@@ -445,7 +445,7 @@ void array_delete(
    CELL *cp)
 {
    ANODE *ap ;
-   if (A->size == 0) return ; 
+   if (A->size == 0) return ;
    switch(cp->type) {
       case C_DOUBLE :
 	 {
@@ -530,7 +530,7 @@ When the size of a hash table drops below a certain value, it might
 be profitable to shrink the hash table.  Currently we don't do this,
 because our guess is that it would be a waste of time for most
 [[AWK]] applications.  However, we do convert an array to [[AY_NULL]]
-when the size goes to zero which would resize a large hash table 
+when the size goes to zero which would resize a large hash table
 that had been completely cleared by successive deletions.
 
 <<decrement [[A->size]]>>=
@@ -542,7 +542,7 @@ A simple operation is to create an array with the [[AWK]]
 primitive [[split]].  The code that performs [[split]] puts the
 pieces in the global buffer [[split_buff]].  The call
 [[array_load(A, cnt)]] moves the [[cnt]] elements from [[split_buff]] to
-[[A]].  This is the only way an array of type [[AY_SPLIT]] is 
+[[A]].  This is the only way an array of type [[AY_SPLIT]] is
 created.
 
 <<interface functions>>=
@@ -564,7 +564,7 @@ void array_load(
 
 @
 When [[cnt > MAX_SPLIT]], [[split_buff]] was not big enough to hold
-everything so the overflow went on the [[split_ov_list]].  
+everything so the overflow went on the [[split_ov_list]].
 The elements from [[MAX_SPLIT+1]] to [[cnt]] get loaded into
 [[cells[MAX_SPLIT..cnt-1]]] from this list.
 
@@ -573,7 +573,7 @@ if (cnt > MAX_SPLIT) {
    SPLIT_OV *p = split_ov_list ;
    SPLIT_OV *q ;
    split_ov_list = (SPLIT_OV*) 0 ;
-   i = MAX_SPLIT ;  
+   i = MAX_SPLIT ;
    while( p ) {
       cells[i].type = C_MBSTRN ;
       cells[i].ptr = (PTR) p->sval ;
@@ -604,7 +604,7 @@ else
 
 @ Array Clear
 The function [[array_clear(ARRAY A)]] converts [[A]] to type [[AY_NULL]]
-and frees all storage used by [[A]] except for the [[struct array]] 
+and frees all storage used by [[A]] except for the [[struct array]]
 itself.  This function gets called in two contexts:
 (1)~when an array local to a user function goes out of scope and
 (2)~execution of the [[AWK]] statement, [[delete A]].
@@ -670,7 +670,7 @@ lists that we are willing to tolerate before enlarging the table.
 When [[A->size]] exceeds [[A->limit]],
 the hash table grows in size by doubling the number of lists.
 [[A->limit]] is then reset to [[MAX_AVE_LIST_LENGTH]] times
-[[A->hmask+1]]. 
+[[A->hmask+1]].
 
 <<local constants, defs and prototypes>>=
 #define STARTING_HMASK    63  /* 2^6-1, must have form 2^n-1 */
@@ -739,7 +739,7 @@ while(A->size > A->limit) {
 The whole point of making the table size a power of two is to
 facilitate resizing the table.  If the table size is $2^n$ and
 $h$ is the hash key, then $h\bmod 2^n$ is the hash chain index
-which can be calculated with bit-wise and, 
+which can be calculated with bit-wise and,
 {\mathchardef~="2026 $h ~ (2^n-1)$}.
 When the table size doubles, the new bit-mask has one more bit
 turned on.  Elements of an old hash chain whose hash value have this bit
@@ -778,14 +778,14 @@ if (A->type & AY_STR) {
    ANODE *q ; /* trails p for deletion */
    ANODE *tail ; /* builds new list from the back */
    ANODE dummy0, dummy1 ;
-   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++) 
+   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++)
       <<walk one old string list, creating one new string list>>
 }
 
 @
 As we walk an old string list with pointer [[p]], the expression
 [[p->hval & new_hmask]] takes one of two values.  If it is equal
-to [[p->hval & old_hmask]] (which equals [[i]]), 
+to [[p->hval & old_hmask]] (which equals [[i]]),
 then the node stays otherwise it gets moved
 to a new string list at [[j]].  The new string list preserves order so that
 the positions of the move-to-the-front heuristic are preserved.
@@ -823,7 +823,7 @@ if (A->type & AY_INT) {
    ANODE *q ; /* trails p for deletion */
    ANODE *tail ; /* builds new list from the back */
    ANODE dummy0, dummy1 ;
-   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++) 
+   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++)
       <<walk one old integer list, creating one new integer list>>
 }
 
@@ -850,7 +850,7 @@ Our mechanism for dealing with execution of the statement,
 \medskip
 \centerline{[[for(i in A) {]] {\it statements} [[}]]}
 \medskip
-\noindent 
+\noindent
 is simple. We allocate a vector of [[STRING*]] of size,
 [[A->size]].  Each element of the vector is a string key for~[[A]].
 Note that if the [[AY_STR]] bit of [[A]] is not set, then [[A]]
@@ -875,6 +875,16 @@ of the string vector.  The rest of the implementation
 is in the file [[execute.c]].
 
 <<interface functions>>=
+static int string_compare(
+   const void *l,
+   const void *r)
+{
+   STRING*const * a = (STRING *const *) l;
+   STRING*const * b = (STRING *const *) r;
+
+   return strcmp((*a)->str, (*b)->str);
+}
+
 STRING** array_loop_vector(
    ARRAY A,
    unsigned *sizep)
@@ -885,6 +895,8 @@ STRING** array_loop_vector(
       if (!(A->type & AY_STR)) add_string_associations(A) ;
       ret = (STRING**) zmalloc(A->size*sizeof(STRING*)) ;
       <<for each [[ANODE]] in [[A]], put one string in [[ret]]>>
+      if (getenv("WHINY_USERS") != NULL)	/* gawk compability */
+	qsort(ret, A->size, sizeof(STRING*), string_compare);
       return ret ;
    }
    else return (STRING**) 0 ;
@@ -914,7 +926,7 @@ Since a hash value is turned into a table index via bit-wise and with
 \hbox{[[A->hmask]]}, it is important that the hash function does a good job
 of scrambling the low-order bits of the returned hash value.
 Empirical tests indicate the following function does an adequate job.
-Note that for strings with length greater than 10, we only hash on 
+Note that for strings with length greater than 10, we only hash on
 the first five characters, the last five character and the length.
 
 <<local functions>>=
@@ -953,13 +965,13 @@ concatenation of the three
 elements [[i]], [[SUBSEP]] and [[j]].  This is performed by the
 function [[array_cat]].  On entry, [[sp]] points at the top of a
 stack of [[CELLs]].
-[[Cnt]] cells are popped off the stack and concatenated together 
+[[Cnt]] cells are popped off the stack and concatenated together
 separated by [[SUBSEP]] and the result is pushed back on the stack.
 On entry, the first multi-index is in [[sp[1-cnt]]] and the last is
 in [[sp[0]]].  The return value is the new stack top.
 (The stack is the run-time evaluation stack.
 This operation really has nothing to do with array structure, so
-logically this code belongs in [[execute.c]], but remains here for 
+logically this code belongs in [[execute.c]], but remains here for
 historical reasons.)
 
 
@@ -984,11 +996,11 @@ CELL *array_cat(
 
 @
 We make a copy of [[SUBSEP]] which we can cast to string in the
-unlikely event the user has assigned a number to [[SUBSEP]].  
+unlikely event the user has assigned a number to [[SUBSEP]].
 
 <<subsep parts>>=
 unsigned subsep_len ; /* string length of subsep_str */
-char *subsep_str ;   
+char *subsep_str ;
 
 <<get subsep and compute parts>>=
 cellcpy(&subsep, SUBSEP) ;
@@ -1004,7 +1016,7 @@ between [[sp]] and [[top]].
 top = sp ; sp -= (cnt-1) ;
 
 @
-The [[total_len]] is the sum of the lengths of the [[cnt]] 
+The [[total_len]] is the sum of the lengths of the [[cnt]]
 strings and the [[cnt-1]] copies of [[subsep]].
 
 <<cast cells to string and compute [[total_len]]>>=
@@ -1034,11 +1046,11 @@ just need to free the strings and set the contents of [[sp]].
 for(p = sp; p <= top ; p++) free_STRING(string(p)) ;
 free_STRING(string(&subsep)) ;
 /* set contents of sp , sp->type > C_STRING is possible so reset */
-sp->type = C_STRING ; 
+sp->type = C_STRING ;
 sp->ptr = (PTR) sval ;
 return sp ;
 
-@ Loose Ends 
+@ Loose Ends
 Here are some things we want to make sure end up in the [[.c]] and
 [[.h]] files.
 The compiler needs prototypes for the local functions, and we will
@@ -1057,7 +1069,7 @@ static unsigned ahash(STRING*);
 
 <<array.c notice>>=
 /*
-array.c 
+array.c
 <<mawk blurb>>
 */
 
@@ -1076,7 +1088,7 @@ available from CTAN(ftp.shsu.edu).
 It's easiest to read or modify this file by working with array.w.
 <<array.h notice>>=
 /*
-array.h 
+array.h
 <<mawk blurb>>
 */
 
