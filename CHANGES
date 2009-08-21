@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.50 2009/08/20 23:03:58 tom Exp $
+-- $MawkId: CHANGES,v 1.51 2009/08/21 00:18:30 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-200908??
+20090820
+	add WHINY_USERS sorted-array feature, for compatibility with gawk
+	(patch by Aharon Robbins).
+
 	correct lower-limit for d_to_U() function, which broke conversion of
 	zero in "%x" format, added in fix for Debian #303825 (report by Masami
 	Hiramatsu).
