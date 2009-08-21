@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.51 2009/08/21 00:18:30 tom Exp $
+-- $MawkId: CHANGES,v 1.52 2009/08/21 00:37:08 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090820
+	minor portability/standards fixes for examples/hical
+
 	add WHINY_USERS sorted-array feature, for compatibility with gawk
 	(patch by Aharon Robbins).
 
