@@ -1,5 +1,5 @@
 /*
-array.h 
+array.h
 copyright 1991-96, Michael D. Brennan
 
 This is a source file for mawk, an implementation of

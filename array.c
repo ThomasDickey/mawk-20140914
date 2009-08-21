@@ -1,5 +1,5 @@
 /*
-array.c 
+array.c
 copyright 1991-96, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -59,7 +59,7 @@ CELL* array_find(
    int create_flag)
 {
    ANODE *ap ;
-   if (A->size == 0 && !create_flag) 
+   if (A->size == 0 && !create_flag)
       /* eliminating this trivial case early avoids unnecessary conversions later */
       return (CELL*) 0 ;
    switch (cp->type) {
@@ -69,7 +69,7 @@ CELL* array_find(
             Int ival = d_to_I(d) ;
             if ((double)ival == d) {
                if (A->type == AY_SPLIT) {
-                  if (ival >= 1 && ival <= (int) A->size) 
+                  if (ival >= 1 && ival <= (int) A->size)
                      return (CELL*)A->ptr+(ival-1) ;
                   if (!create_flag) return (CELL*) 0 ;
                   convert_split_array_to_table(A) ;
@@ -104,7 +104,7 @@ void array_delete(
    CELL *cp)
 {
    ANODE *ap ;
-   if (A->size == 0) return ; 
+   if (A->size == 0) return ;
    switch(cp->type) {
       case C_DOUBLE :
          {
@@ -202,7 +202,7 @@ void array_load(
       SPLIT_OV *p = split_ov_list ;
       SPLIT_OV *q ;
       split_ov_list = (SPLIT_OV*) 0 ;
-      i = MAX_SPLIT ;  
+      i = MAX_SPLIT ;
       while( p ) {
          cells[i].type = C_MBSTRN ;
          cells[i].ptr = (PTR) p->sval ;
@@ -257,6 +257,16 @@ void array_clear(ARRAY A)
 
 
 
+static int string_compare(
+   const void *l,
+   const void *r)
+{
+   STRING*const * a = (STRING *const *) l;
+   STRING*const * b = (STRING *const *) r;
+
+   return strcmp((*a)->str, (*b)->str);
+}
+
 STRING** array_loop_vector(
    ARRAY A,
    unsigned *sizep)
@@ -279,6 +289,8 @@ STRING** array_loop_vector(
          }
       }
 
+      if (getenv("WHINY_USERS") != NULL)        /* gawk compability */
+        qsort(ret, A->size, sizeof(STRING*), string_compare);
       return ret ;
    }
    else return (STRING**) 0 ;
@@ -291,7 +303,7 @@ CELL *array_cat(
    CELL *p ;  /* walks the eval stack */
    CELL subsep ;  /* local copy of SUBSEP */
    unsigned subsep_len ; /* string length of subsep_str */
-   char *subsep_str ;   
+   char *subsep_str ;
 
    unsigned total_len ;  /* length of cat'ed expression */
    CELL *top ;   /* value of sp at entry */
@@ -324,7 +336,7 @@ CELL *array_cat(
    for(p = sp; p <= top ; p++) free_STRING(string(p)) ;
    free_STRING(string(&subsep)) ;
    /* set contents of sp , sp->type > C_STRING is possible so reset */
-   sp->type = C_STRING ; 
+   sp->type = C_STRING ;
    sp->ptr = (PTR) sval ;
    return sp ;
 
@@ -368,7 +380,7 @@ static ANODE* find_by_ival(
 
           break ;
       }
-      else if (p->ival == ival) { 
+      else if (p->ival == ival) {
          /* found it, now move to the front */
          if (!q) /* already at the front */
             return p ;
@@ -524,7 +536,7 @@ static void double_the_hash_table(ARRAY A)
       ANODE *q ; /* trails p for deletion */
       ANODE *tail ; /* builds new list from the back */
       ANODE dummy0, dummy1 ;
-      for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++) 
+      for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++)
          {
             q = &dummy0 ;
             q->slink = p = table[i].slink ;
@@ -551,7 +563,7 @@ static void double_the_hash_table(ARRAY A)
       ANODE *q ; /* trails p for deletion */
       ANODE *tail ; /* builds new list from the back */
       ANODE dummy0, dummy1 ;
-      for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++) 
+      for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++)
          {
             q = &dummy0 ;
             q->ilink = p = table[i].ilink ;
