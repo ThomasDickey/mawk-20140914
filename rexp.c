@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.8 2009/07/27 15:37:24 tom Exp $
+ * $MawkId: rexp.c,v 1.9 2009/09/13 18:42:10 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -87,7 +87,7 @@ RE_error_trap(int x)
 }
 
 PTR
-REcompile(char *re)
+REcompile(char *re, size_t len)
 {
     MACHINE m_stack[STACKSZ];
     struct op {
@@ -100,7 +100,7 @@ REcompile(char *re)
 
     /* do this first because it also checks if we have a
        run time stack */
-    RE_lex_init(re);
+    RE_lex_init(re, len);
 
     if (*re == 0) {
 	STATE *p = (STATE *) RE_malloc(sizeof(STATE));
