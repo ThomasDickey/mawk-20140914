@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.12 2009/09/13 17:48:25 tom Exp $
+ * $MawkId: rexp0.c,v 1.13 2009/09/13 22:38:22 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -605,9 +605,6 @@ do_class(char **start, MACHINE * mp)
 	    *p = (char) (~*p);
 	}
     }
-
-    /* make sure zero is off */
-    (*bvp)[0] &= ~1;
 
     *mp = RE_class(store_bvp(bvp));
     return T_CLASS;
