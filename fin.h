@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.h,v 1.6 2009/07/24 00:55:07 tom Exp $
+ * $MawkId: fin.h,v 1.7 2009/09/13 21:02:12 tom Exp $
  * @Log: fin.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:13  mike
  * move source to cvs
@@ -33,10 +33,11 @@ the GNU General Public License, version 2, 1991.
 /* structure to control input files */
 
 typedef struct {
-    int fd;
+    int fd;			/* file-descriptor */
     FILE *fp;			/* NULL unless interactive */
-    char *buff;
-    char *buffp;
+    char *buff;			/* base of data read from file */
+    char *buffp;		/* current position to read-next */
+    char *limit;		/* points past the data in *buff */
     unsigned nbuffs;		/* sizeof *buff in BUFFSZs */
     int flags;
 } FIN;
