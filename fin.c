@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.12 2009/09/13 18:00:23 tom Exp $
+ * $MawkId: fin.c,v 1.13 2009/09/13 21:40:12 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -191,14 +191,14 @@ FINclose(FIN * fin)
 char *
 FINgets(FIN * fin, unsigned *len_p)
 {
-    char *p;
+    char *p = 0;
     char *q = 0;
     unsigned match_len;
     unsigned r;
 
   restart:
 
-    if (!(p = fin->buffp)[0]) {	/* need a refill */
+    if (fin->buffp >= fin->limit) {	/* need a refill */
 	if (fin->flags & EOF_FLAG) {
 	    if (fin->flags & MAIN_FLAG) {
 		fin = next_main(0);
@@ -215,6 +215,7 @@ FINgets(FIN * fin, unsigned *len_p)
 		fin->flags |= EOF_FLAG;
 		fin->buff[0] = 0;
 		fin->buffp = fin->buff;
+		fin->limit = fin->buff;
 		goto restart;	/* might be main_fin */
 	    } else {		/* return this line */
 		/* find eol */
@@ -225,6 +226,7 @@ FINgets(FIN * fin, unsigned *len_p)
 		*p = 0;
 		*len_p = p - fin->buff;
 		fin->buffp = p;
+		fin->limit = fin->buff + strlen(fin->buff);
 		return fin->buff;
 	    }
 	} else {
@@ -238,6 +240,7 @@ FINgets(FIN * fin, unsigned *len_p)
 		fin->flags |= EOF_FLAG;
 	    }
 
+	    fin->limit = fin->buff + r;
 	    p = fin->buffp = fin->buff;
 
 	    if (fin->flags & START_FLAG) {
@@ -247,7 +250,7 @@ FINgets(FIN * fin, unsigned *len_p)
 		    while (*p == '\n')
 			p++;
 		    fin->buffp = p;
-		    if (*p == 0)
+		    if (p >= fin->limit)
 			goto restart;
 		}
 	    }
@@ -258,20 +261,20 @@ FINgets(FIN * fin, unsigned *len_p)
 
     switch (rs_shadow.type) {
     case SEP_CHAR:
-	q = strchr(p, rs_shadow.c);
+	q = memchr(p, rs_shadow.c, fin->limit - p);
 	match_len = 1;
 	break;
 
     case SEP_STR:
 	q = str_str(p,
-		    strlen(p),	/* FIXME: does not allow embedded nulls */
+		    fin->limit - p,
 		    ((STRING *) rs_shadow.ptr)->str,
 		    match_len = ((STRING *) rs_shadow.ptr)->len);
 	break;
 
     case SEP_MLR:
     case SEP_RE:
-	q = re_pos_match(p, strlen(p), rs_shadow.ptr, &match_len);
+	q = re_pos_match(p, fin->limit - p, rs_shadow.ptr, &match_len);
 	/* if the match is at the end, there might still be
 	   more to match in the file */
 	if (q && q[match_len] == 0 && !(fin->flags & EOF_FLAG))
@@ -292,7 +295,7 @@ FINgets(FIN * fin, unsigned *len_p)
 
     if (fin->flags & EOF_FLAG) {
 	/* last line without a record terminator */
-	*len_p = r = strlen(p);
+	*len_p = r = (fin->limit - p);
 	fin->buffp = p + r;
 
 	if (rs_shadow.type == SEP_MLR && fin->buffp[-1] == '\n'
@@ -310,7 +313,7 @@ FINgets(FIN * fin, unsigned *len_p)
 	/* move a partial line to front of buffer and try again */
 	unsigned rr;
 
-	p = (char *) memcpy(fin->buff, p, r = strlen(p));
+	p = (char *) memcpy(fin->buff, p, r = (fin->limit - p));
 	q = p + r;
 	rr = fin->nbuffs * BUFFSZ - r;
 
@@ -499,7 +502,7 @@ next_main(int open_flag)	/* called by open_main() if on */
 	/* this is how we mark EOF on main_fin  */
 	static char dead_buff = 0;
 	static FIN dead_main =
-	{0, (FILE *) 0, &dead_buff, &dead_buff,
+	{0, (FILE *) 0, &dead_buff, &dead_buff, &dead_buff,
 	 1, EOF_FLAG};
 
 	return main_fin = &dead_main;
