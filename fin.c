@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.11 2009/07/28 23:25:09 tom Exp $
+ * $MawkId: fin.c,v 1.12 2009/09/13 18:00:23 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -271,7 +271,7 @@ FINgets(FIN * fin, unsigned *len_p)
 
     case SEP_MLR:
     case SEP_RE:
-	q = re_pos_match(p, rs_shadow.ptr, &match_len);
+	q = re_pos_match(p, strlen(p), rs_shadow.ptr, &match_len);
 	/* if the match is at the end, there might still be
 	   more to match in the file */
 	if (q && q[match_len] == 0 && !(fin->flags & EOF_FLAG))
