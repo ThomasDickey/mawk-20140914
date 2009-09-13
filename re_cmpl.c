@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.8 2009/07/27 22:34:35 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.9 2009/09/13 18:43:54 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -71,16 +71,17 @@ re_compile(STRING * sval)
     s = sval->str;
     p = re_list;
     q = (RE_NODE *) 0;
+
     while (p) {
-	if (strcmp(s, p->sval->str) == 0)	/* found */
-	{
+	if (sval->len == p->sval->len
+	    && memcmp(s, p->sval->str, sval->len) == 0) {
+	    /* found */
 	    if (!q)		/* already at front */
 		goto _return;
 	    else {		/* delete from list for move to front */
 		q->link = p->link;
 		goto found;
 	    }
-
 	} else {
 	    q = p;
 	    p = p->link;
@@ -93,7 +94,7 @@ re_compile(STRING * sval)
 
     sval->ref_cnt++;
     p->re.anchored = (*s == '^');
-    if (!(p->re.compiled = REcompile(s))) {
+    if (!(p->re.compiled = REcompile(s, sval->len))) {
 	if (mawk_state == EXECUTION)
 	    rt_error(efmt, REerror(), s);
 	else {			/* compiling */
@@ -103,7 +104,7 @@ re_compile(STRING * sval)
     }
 
   found:
-/* insert p at the front of the list */
+    /* insert p at the front of the list */
     p->link = re_list;
     re_list = p;
 
