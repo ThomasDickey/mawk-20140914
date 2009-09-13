@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.11 2009/07/27 15:45:06 tom Exp $
+ * $MawkId: rexp3.c,v 1.12 2009/09/13 22:40:22 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -74,6 +74,7 @@ REmatch(char *str,		/* string to test */
     register STATE *m = (STATE *) machine;
     char *s = str;
     char *ss;
+    char *limit = str + str_len;
     register RT_STATE *stackp;
     int u_flag, t;
     char *str_end = s + str_len;
@@ -221,7 +222,7 @@ REmatch(char *str,		/* string to test */
 
     case M_CLASS + U_ON + END_OFF:
 	while (!ison(*m->s_data.bvp, s[0])) {
-	    if (s[0] == 0) {
+	    if (s >= limit) {
 		goto refill;
 	    } else {
 		s++;
@@ -241,7 +242,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_ON + END_ON:
-	if (s[0] == 0 || !ison(*m->s_data.bvp, str_end[-1])) {
+	if ((s >= limit) || !ison(*m->s_data.bvp, str_end[-1])) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -257,7 +258,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_OFF + END_OFF:
-	if (s[0] == 0) {
+	if (s >= limit) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -272,7 +273,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_OFF + END_ON:
-	if (s[0] == 0 || s[1] != 0) {
+	if ((s >= limit) || ((s + 1) < limit)) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -287,7 +288,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_ON + END_OFF:
-	if (s[0] == 0) {
+	if (s >= limit) {
 	    goto refill;
 	}
 	s++;
@@ -304,7 +305,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_ON + END_ON:
-	if (s[0] == 0) {
+	if (s >= limit) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -331,7 +332,7 @@ REmatch(char *str,		/* string to test */
 
     case M_START + U_OFF + END_ON:
     case M_START + U_ON + END_ON:
-	if (s != str || s[0] != 0) {
+	if (s != str || (s < limit)) {
 	    goto refill;
 	}
 	ss = s;
@@ -340,7 +341,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_END + U_OFF:
-	if (s[0] != 0) {
+	if (s < limit) {
 	    goto refill;
 	}
 	if (!ss) {
