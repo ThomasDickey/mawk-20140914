@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.11 2009/07/27 23:31:27 tom Exp $
+ * $MawkId: rexp0.c,v 1.12 2009/09/13 17:48:25 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -110,13 +110,14 @@ char RE_char2token['|' + 1] =
 
 static int prev;
 static char *lp;		/*  ptr to reg exp string  */
+static char *re_str;		/*  base of 'lp' */
 static unsigned re_len;
 
 void
-RE_lex_init(char *re)
+RE_lex_init(char *re, size_t len)
 {
-    lp = re;
-    re_len = strlen(re) + 1;
+    re_str = lp = re;
+    re_len = len + 1;
     prev = NOT_STARTED;
     RE_run_stack_init();
 }
@@ -522,7 +523,7 @@ do_class(char **start, MACHINE * mp)
 	    }
 	} else if (*q == '\\') {
 	    ++q;
-	} else if (*q == '\0') {
+	} else if (*q == '\0' && q == (re_str + re_len - 1)) {
 	    /* no closing bracket */
 	    RE_error_trap(-E3);
 	}
