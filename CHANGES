@@ -1,6 +1,9 @@
--- $MawkId: CHANGES,v 1.52 2009/08/21 00:37:08 tom Exp $
+-- $MawkId: CHANGES,v 1.53 2009/09/13 17:04:52 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+200909??
+	update config.guess and config.sub
 
 20090820
 	minor portability/standards fixes for examples/hical
