@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fcall.c,v 1.4 2009/07/12 15:51:08 tom Exp $
+ * $MawkId: fcall.c,v 1.5 2009/09/13 16:43:54 tom Exp $
  * @Log: fcall.c,v @
  * Revision 1.7  1995/08/27  15:46:47  mike
  * change some errmsgs to compile_errors
@@ -148,7 +148,7 @@ call_arg_check(FBLOCK * callee,
 	    exit_list = q;
 	} else {		/* type known */
 	    if (callee->typev[q->arg_num] == ST_LOCAL_NONE)
-		callee->typev[q->arg_num] = q->type;
+		callee->typev[q->arg_num] = (char) q->type;
 	    else if (q->type != callee->typev[q->arg_num])
 		compile_error("type error in arg(%d) in call to %s",
 			      q->arg_num + 1, callee->name);
