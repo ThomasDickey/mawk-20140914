@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.9 2009/07/27 15:44:41 tom Exp $
+ * $MawkId: rexp.h,v 1.10 2009/09/13 17:45:41 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -159,7 +159,7 @@ void RE_01(MACHINE *);
 void RE_panic(const char *) GCC_NORETURN;
 char *str_str(char *, unsigned, char *, unsigned);
 
-void RE_lex_init(char *);
+void RE_lex_init(char *, size_t);
 int RE_lex(MACHINE *);
 void RE_run_stack_init(void);
 RT_STATE *RE_new_run_stack(void);
