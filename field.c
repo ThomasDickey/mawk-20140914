@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.8 2009/09/13 18:41:11 tom Exp $
+ * $MawkId: field.c,v 1.9 2009/09/13 18:49:39 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -433,7 +433,7 @@ build_field0(void)
 	tail = (STRING *) c.ptr;
 	cnt = nf - 1;
 
-	len = cnt * ofs->len + tail->len;
+	len = ((unsigned) cnt) * ofs->len + tail->len;
 
 	fbp = fbank;
 	cp_limit = field + FBANK_SZ;
