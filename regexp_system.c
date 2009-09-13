@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.7 2009/09/13 17:26:20 tom Exp $
+ * $MawkId: regexp_system.c,v 1.8 2009/09/13 19:56:19 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -162,16 +162,18 @@ REtest(char *str, unsigned str_len GCC_UNUSED, PTR q)
     }
 }
 
+#define MAX_MATCHES 100
+
 char *
 REmatch(char *str, unsigned str_len GCC_UNUSED, PTR q, unsigned *lenp)
 {
     mawk_re_t *re = (mawk_re_t *) q;
-    regmatch_t match[100];
+    regmatch_t match[MAX_MATCHES];
     /* fprintf (stderr, "REmatch:  \"%s\" ~ /%s/", str, re -> regexp); */
 
     last_used_regexp = re;
 
-    if (!regexec(&re->re, str, 100, match, 0)) {
+    if (!regexec(&re->re, str, MAX_MATCHES, match, 0)) {
 	*lenp = match[0].rm_eo - match[0].rm_so;
 	/* fprintf (stderr, "=%i/%i\n", match [0].rm_so, *lenp); */
 	return str + match[0].rm_so;
