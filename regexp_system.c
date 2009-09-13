@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.6 2009/07/27 15:47:57 tom Exp $
+ * $MawkId: regexp_system.c,v 1.7 2009/09/13 17:26:20 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -111,10 +111,9 @@ prepare_regexp(char *regexp)
 }
 
 void *
-REcompile(char *regexp)
+REcompile(char *regexp, size_t len)
 {
     mawk_re_t *re = (mawk_re_t *) malloc(sizeof(mawk_re_t));
-    size_t len = strlen(regexp);
     char *new_regexp = (char *) malloc(len + 3);
 
     if (!re || !new_regexp)
