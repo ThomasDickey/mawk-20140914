@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.7 2009/07/27 15:32:28 tom Exp $
+ * $MawkId: field.c,v 1.8 2009/09/13 18:41:11 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -246,7 +246,7 @@ split_field0(void)
 	    break;
 
 	default:
-	    nf = re_split(string(cp)->str, fs_shadow.ptr);
+	    nf = re_split(string(cp), fs_shadow.ptr);
 	    break;
 	}
 
