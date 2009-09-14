@@ -1,8 +1,8 @@
--- $MawkId: CHANGES,v 1.55 2009/09/13 22:50:54 tom Exp $
+-- $MawkId: CHANGES,v 1.56 2009/09/14 09:32:45 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20090913
+20090914
 	modify built-in regular expression functions to accept embedded nulls.
 
 	modify input reader FINgets() to accept embedded nulls in data read
