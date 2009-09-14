@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.13 2009/09/13 21:40:12 tom Exp $
+ * $MawkId: fin.c,v 1.14 2009/09/14 00:38:02 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -104,6 +104,7 @@ FINdopen(int fd, int main_flag)
     fin->fd = fd;
     fin->flags = main_flag ? (MAIN_FLAG | START_FLAG) : START_FLAG;
     fin->buffp = fin->buff = (char *) zmalloc(BUFFSZ + 1);
+    fin->limit = fin->buffp;
     fin->nbuffs = 1;
     fin->buff[0] = 0;
 
@@ -191,14 +192,14 @@ FINclose(FIN * fin)
 char *
 FINgets(FIN * fin, unsigned *len_p)
 {
-    char *p = 0;
+    char *p;
     char *q = 0;
     unsigned match_len;
     unsigned r;
 
   restart:
 
-    if (fin->buffp >= fin->limit) {	/* need a refill */
+    if ((p = fin->buffp) >= fin->limit) {	/* need a refill */
 	if (fin->flags & EOF_FLAG) {
 	    if (fin->flags & MAIN_FLAG) {
 		fin = next_main(0);
@@ -215,7 +216,7 @@ FINgets(FIN * fin, unsigned *len_p)
 		fin->flags |= EOF_FLAG;
 		fin->buff[0] = 0;
 		fin->buffp = fin->buff;
-		fin->limit = fin->buff;
+		fin->limit = fin->buffp;
 		goto restart;	/* might be main_fin */
 	    } else {		/* return this line */
 		/* find eol */
@@ -226,7 +227,7 @@ FINgets(FIN * fin, unsigned *len_p)
 		*p = 0;
 		*len_p = p - fin->buff;
 		fin->buffp = p;
-		fin->limit = fin->buff + strlen(fin->buff);
+		fin->limit = fin->buffp + strlen(fin->buffp);
 		return fin->buff;
 	    }
 	} else {
@@ -235,6 +236,7 @@ FINgets(FIN * fin, unsigned *len_p)
 	    if (r == 0) {
 		fin->flags |= EOF_FLAG;
 		fin->buffp = fin->buff;
+		fin->limit = fin->buffp;
 		goto restart;	/* might be main */
 	    } else if (r < fin->nbuffs * BUFFSZ) {
 		fin->flags |= EOF_FLAG;
