@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.14 2009/09/14 00:38:02 tom Exp $
+ * $MawkId: fin.c,v 1.15 2009/09/14 09:11:15 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -225,7 +225,7 @@ FINgets(FIN * fin, unsigned *len_p)
 		    p++;
 
 		*p = 0;
-		*len_p = p - fin->buff;
+		*len_p = (unsigned) (p - fin->buff);
 		fin->buffp = p;
 		fin->limit = fin->buffp + strlen(fin->buffp);
 		return fin->buff;
@@ -263,20 +263,20 @@ FINgets(FIN * fin, unsigned *len_p)
 
     switch (rs_shadow.type) {
     case SEP_CHAR:
-	q = memchr(p, rs_shadow.c, fin->limit - p);
+	q = memchr(p, rs_shadow.c, (size_t) (fin->limit - p));
 	match_len = 1;
 	break;
 
     case SEP_STR:
 	q = str_str(p,
-		    fin->limit - p,
+		    (unsigned) (fin->limit - p),
 		    ((STRING *) rs_shadow.ptr)->str,
 		    match_len = ((STRING *) rs_shadow.ptr)->len);
 	break;
 
     case SEP_MLR:
     case SEP_RE:
-	q = re_pos_match(p, fin->limit - p, rs_shadow.ptr, &match_len);
+	q = re_pos_match(p, (unsigned) (fin->limit - p), rs_shadow.ptr, &match_len);
 	/* if the match is at the end, there might still be
 	   more to match in the file */
 	if (q && q[match_len] == 0 && !(fin->flags & EOF_FLAG))
@@ -290,14 +290,14 @@ FINgets(FIN * fin, unsigned *len_p)
     if (q) {
 	/* the easy and normal case */
 	*q = 0;
-	*len_p = q - p;
+	*len_p = (unsigned) (q - p);
 	fin->buffp = q + match_len;
 	return p;
     }
 
     if (fin->flags & EOF_FLAG) {
 	/* last line without a record terminator */
-	*len_p = r = (fin->limit - p);
+	*len_p = r = (unsigned) (fin->limit - p);
 	fin->buffp = p + r;
 
 	if (rs_shadow.type == SEP_MLR && fin->buffp[-1] == '\n'
@@ -315,7 +315,7 @@ FINgets(FIN * fin, unsigned *len_p)
 	/* move a partial line to front of buffer and try again */
 	unsigned rr;
 
-	p = (char *) memcpy(fin->buff, p, r = (fin->limit - p));
+	p = (char *) memcpy(fin->buff, p, r = (unsigned) (fin->limit - p));
 	q = p + r;
 	rr = fin->nbuffs * BUFFSZ - r;
 
