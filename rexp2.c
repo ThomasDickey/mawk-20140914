@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.10 2009/07/27 15:44:18 tom Exp $
+ * $MawkId: rexp2.c,v 1.11 2009/09/14 09:02:53 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -216,25 +216,28 @@ REtest(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_OFF:
-	if (!ison(*m->s_data.bvp, s[0]))
+	if (s >= str_end || !ison(*m->s_data.bvp, s[0]))
 	    goto refill;
 	s++;
 	m++;
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_ON:
-	if (s[1] || !ison(*m->s_data.bvp, s[0]))
+	if (s >= str_end)
+	    goto refill;
+	if ((s + 1) < str_end || !ison(*m->s_data.bvp, s[0]))
 	    goto refill;
 	s++;
 	m++;
 	goto reswitch;
 
     case M_CLASS + U_ON + END_OFF:
-	while (!ison(*m->s_data.bvp, s[0])) {
-	    if (s[0] == 0)
+	for (;;) {
+	    if (s >= str_end)
 		goto refill;
-	    else
-		s++;
+	    else if (ison(*m->s_data.bvp, s[0]))
+		break;
+	    s++;
 	}
 	s++;
 	push(m, s, U_ON);
@@ -243,7 +246,7 @@ REtest(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_ON + END_ON:
-	if (s[0] == 0 || !ison(*m->s_data.bvp, str_end[-1]))
+	if (s >= str_end || !ison(*m->s_data.bvp, str_end[-1]))
 	    goto refill;
 	s = str_end;
 	m++;
@@ -251,21 +254,21 @@ REtest(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_OFF + END_OFF:
-	if (s[0] == 0)
+	if (s >= str_end)
 	    goto refill;
 	s++;
 	m++;
 	goto reswitch;
 
     case M_ANY + U_OFF + END_ON:
-	if (s[0] == 0 || s[1] != 0)
+	if (s >= str_end || (s + 1) < str_end)
 	    goto refill;
 	s++;
 	m++;
 	goto reswitch;
 
     case M_ANY + U_ON + END_OFF:
-	if (s[0] == 0)
+	if (s >= str_end)
 	    goto refill;
 	s++;
 	push(m, s, U_ON);
@@ -274,7 +277,7 @@ REtest(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_ON + END_ON:
-	if (s[0] == 0)
+	if (s >= str_end)
 	    goto refill;
 	s = str_end;
 	m++;
@@ -291,14 +294,14 @@ REtest(char *str,		/* string to test */
 
     case M_START + U_OFF + END_ON:
     case M_START + U_ON + END_ON:
-	if (s != str || s[0] != 0)
+	if (s != str || s < str_end)
 	    goto refill;
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
 
     case M_END + U_OFF:
-	if (s[0] != 0)
+	if (s < str_end)
 	    goto refill;
 	m++;
 	goto reswitch;
