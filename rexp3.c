@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.12 2009/09/13 22:40:22 tom Exp $
+ * $MawkId: rexp3.c,v 1.13 2009/09/14 09:04:12 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -74,7 +74,6 @@ REmatch(char *str,		/* string to test */
     register STATE *m = (STATE *) machine;
     char *s = str;
     char *ss;
-    char *limit = str + str_len;
     register RT_STATE *stackp;
     int u_flag, t;
     char *str_end = s + str_len;
@@ -191,6 +190,8 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_OFF:
+	if (s >= str_end)
+	    goto refill;
 	if (!ison(*m->s_data.bvp, s[0])) {
 	    goto refill;
 	}
@@ -206,6 +207,8 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_OFF + END_ON:
+	if (s >= str_end)
+	    goto refill;
 	if (s[1] || !ison(*m->s_data.bvp, s[0])) {
 	    goto refill;
 	}
@@ -221,8 +224,10 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_ON + END_OFF:
+	if (s >= str_end)
+	    goto refill;
 	while (!ison(*m->s_data.bvp, s[0])) {
-	    if (s >= limit) {
+	    if (s >= str_end) {
 		goto refill;
 	    } else {
 		s++;
@@ -242,7 +247,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_CLASS + U_ON + END_ON:
-	if ((s >= limit) || !ison(*m->s_data.bvp, str_end[-1])) {
+	if ((s >= str_end) || !ison(*m->s_data.bvp, str_end[-1])) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -258,7 +263,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_OFF + END_OFF:
-	if (s >= limit) {
+	if (s >= str_end) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -273,7 +278,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_OFF + END_ON:
-	if ((s >= limit) || ((s + 1) < limit)) {
+	if ((s >= str_end) || ((s + 1) < str_end)) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -288,7 +293,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_ON + END_OFF:
-	if (s >= limit) {
+	if (s >= str_end) {
 	    goto refill;
 	}
 	s++;
@@ -305,7 +310,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_ANY + U_ON + END_ON:
-	if (s >= limit) {
+	if (s >= str_end) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -332,7 +337,7 @@ REmatch(char *str,		/* string to test */
 
     case M_START + U_OFF + END_ON:
     case M_START + U_ON + END_ON:
-	if (s != str || (s < limit)) {
+	if (s != str || (s < str_end)) {
 	    goto refill;
 	}
 	ss = s;
@@ -341,7 +346,7 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
     case M_END + U_OFF:
-	if (s < limit) {
+	if (s < str_end) {
 	    goto refill;
 	}
 	if (!ss) {
