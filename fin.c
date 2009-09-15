@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.18 2009/09/15 23:05:02 tom Exp $
+ * $MawkId: fin.c,v 1.19 2009/09/15 23:15:41 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -315,7 +315,7 @@ FINgets(FIN * fin, unsigned *len_p)
     } else {
 	/* move a partial line to front of buffer and try again */
 	unsigned rr;
-	unsigned amount = (fin->limit - p);
+	unsigned amount = (unsigned) (fin->limit - p);
 
 	p = (char *) memcpy(fin->buff, p, r = (unsigned) (fin->limit - p));
 	q = p + r;
@@ -334,7 +334,7 @@ enlarge_fin_buffer(FIN * fin)
 {
     unsigned r;
     unsigned oldsize = fin->nbuffs * BUFFSZ + 1;
-    unsigned limit = (fin->limit - fin->buff);
+    unsigned limit = (unsigned) (fin->limit - fin->buff);
 
 #ifdef  MSDOS
     /* I'm not sure this can really happen:
@@ -378,7 +378,7 @@ fillbuff(int fd, char *target, unsigned size)
 
 	default:
 	    target += r;
-	    size -= r;
+	    size -= (unsigned) r;
 	    break;
 	}
 
