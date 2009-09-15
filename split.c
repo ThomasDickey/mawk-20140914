@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.11 2009/09/13 19:47:26 tom Exp $
+ * $MawkId: split.c,v 1.12 2009/09/15 00:32:11 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -236,7 +236,9 @@ re_split(STRING * s_param, PTR re)
     return i + re_ov_split(s, slen, re);
 
   done:
-    split_buff[i++] = new_STRING1(s, slen);
+    if ((int) slen >= 0) {
+	split_buff[i++] = new_STRING1(s, slen);
+    }
     return i;
 }
 
