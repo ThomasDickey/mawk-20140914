@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_vars.c,v 1.5 2009/07/27 15:24:25 tom Exp $
+ * $MawkId: bi_vars.c,v 1.6 2009/09/15 23:28:15 tom Exp $
  * @Log: bi_vars.c,v @
  * Revision 1.1.1.1  1993/07/03  18:58:09  mike
  * move source to cvs
@@ -63,7 +63,7 @@ bi_vars_init(void)
 
     for (i = 0; i < NUM_BI_VAR; i++) {
 	s = insert(bi_var_names[i]);
-	s->type = i <= 1 ? ST_NR : ST_VAR;
+	s->type = (char) ((i <= 1) ? ST_NR : ST_VAR);
 	s->stval.cp = bi_vars + i;
 	/* bi_vars[i].type = 0 which is C_NOINIT */
     }
