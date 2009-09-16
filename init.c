@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.11 2009/08/21 00:53:52 tom Exp $
+ * $MawkId: init.c,v 1.12 2009/09/16 22:32:17 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -168,6 +168,30 @@ process_cmdline(int argc, char **argv)
 	    break;		/* the for loop */
 	}
 	/* safe to look at argv[i][2] */
+
+	/*
+	 * Check for "long" options and decide how to handle them.
+	 */
+	if (strlen(argv[i]) > 2 && !strncmp(argv[i], "--", 2)) {
+	    char *env = getenv("MAWK_LONG_OPTIONS");
+	    if (env != 0) {
+		switch (*env) {
+		default:
+		case 'e':	/* error */
+		    bad_option(argv[i]);
+		    break;
+		case 'w':	/* warn */
+		    errmsg(0, "ignored option: %s", argv[i]);
+		    break;
+		case 'i':	/* ignore */
+		    break;
+		}
+	    } else {
+		bad_option(argv[i]);
+	    }
+	    nextarg = i + 1;
+	    continue;
+	}
 
 	if (argv[i][2] == 0) {
 	    if (i == argc - 1 && argv[i][1] != '-') {
