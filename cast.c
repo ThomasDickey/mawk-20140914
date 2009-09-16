@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.8 2009/08/20 23:00:13 tom Exp $
+ * $MawkId: cast.c,v 1.9 2009/09/16 09:29:51 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -316,6 +316,12 @@ cast_for_split(CELL * cp)
 	    cp->type = C_SPACE;
 	    return;
 	} else if (c == 0) {
+#ifdef LOCAL_REGEXP
+	    char temp[1];
+	    temp[0] = (char) c;
+	    free_STRING(string(cp));
+	    cp->ptr = (PTR) new_STRING1(temp, 1);
+#else
 	    /*
 	     * A null is not a meta character, but strchr will match it anyway.
 	     * For now, there's no reason to compile a null as a regular
@@ -327,6 +333,7 @@ cast_for_split(CELL * cp)
 	    free_STRING(string(cp));
 	    cp->ptr = (PTR) new_STRING1(temp, 1);
 	    return;
+#endif
 	} else if (strchr(meta, c)) {
 	    xbuff[1] = (char) c;
 	    free_STRING(string(cp));
