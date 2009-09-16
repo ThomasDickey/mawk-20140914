@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.56 2009/09/14 09:32:45 tom Exp $
+-- $MawkId: CHANGES,v 1.57 2009/09/16 22:33:09 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20090914
+20090916
+	add MAWK_LONG_OPTIONS feature to allow mawk to ignore long options
+	which are not implemented.
+
 	modify built-in regular expression functions to accept embedded nulls.
 
 	modify input reader FINgets() to accept embedded nulls in data read
