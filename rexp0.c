@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.13 2009/09/13 22:38:22 tom Exp $
+ * $MawkId: rexp0.c,v 1.14 2009/09/16 21:19:16 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -84,7 +84,7 @@ static BV *store_bvp(BV *);
 static const
 char RE_char2token['|' + 1] =
 {
-    0,      T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*07*/
+    T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*07*/
     T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*0f*/
     T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*17*/
     T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR, T_CHAR,	/*1f*/
@@ -126,6 +126,10 @@ int
 RE_lex(MACHINE * mp)
 {
     register int c;
+
+    if ((unsigned) (1 + lp - re_str) >= re_len) {
+	return 0;
+    }
 
     switch (c = char2token((UChar) (*lp))) {
     case T_PLUS:
@@ -269,7 +273,7 @@ do_str(
     *s++ = (char) c;
     len = 1;
 
-    while (1) {
+    while ((1 + p - re_str) < (int) re_len) {
 	char *save;
 
 	switch (char2token((UChar) (*p))) {
