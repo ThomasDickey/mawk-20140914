@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.15 2009/09/17 09:34:34 tom Exp $
+ * $MawkId: rexp0.c,v 1.16 2009/09/17 22:58:49 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -490,6 +490,38 @@ lookup_cclass(char **start)
     return result;
 }
 
+static CCLASS *
+get_cclass(char *start, char **next)
+{
+    CCLASS *result = 0;
+
+    if (start[0] == '['
+	&& start[1] == ':') {
+	result = lookup_cclass(&start);
+	if (next != 0) {
+	    *next = start;
+	}
+    }
+    return result;
+}
+
+/*
+ * Check if we're pointing to a left square-bracket.  If so, return nonzero
+ * if that is a literal one, not part of character class, etc.
+ *
+ * http://www.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap09.html#tag_09_03_05
+ */
+static int
+literal_leftsq(char *start)
+{
+    int result = 0;
+    if (start[0] == '[') {
+	if (get_cclass(start, 0) == 0)
+	    result = 1;
+    }
+    return result;
+}
+
 /* build a BV for a character class.
    *start points at the '['
    on exit:   *start points at the character after ']'
@@ -511,9 +543,9 @@ do_class(char **start, MACHINE * mp)
     /* []...]  puts ] in a class
        [^]..]  negates a class with ]
      */
-    if (p[0] == '[' || p[0] == ']')
+    if (literal_leftsq(p) || p[0] == ']')
 	p++;
-    else if (p[0] == '^' && ((p[1] == '[') || p[1] == ']'))
+    else if (p[0] == '^' && (literal_leftsq(p + 1) || p[1] == ']'))
 	p += 2;
 
     for (level = 0, q = p; (level != 0) || (*q != ']'); ++q) {
@@ -560,7 +592,7 @@ do_class(char **start, MACHINE * mp)
 	    break;
 
 	case '[':
-	    if (p[1] == ':' && (cclass = lookup_cclass(&p)) != 0) {
+	    if ((cclass = get_cclass(p, &p)) != 0) {
 		while (cclass->first >= 0) {
 		    block_on(*bvp, cclass->first, cclass->last);
 		    ++cclass;
