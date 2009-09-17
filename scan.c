@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.11 2009/07/27 20:39:41 tom Exp $
+ * $MawkId: scan.c,v 1.12 2009/09/17 09:35:28 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -1003,7 +1003,8 @@ collect_RE(void)
 			     string_buff);
 	    mawk_exit(2);
 	}
-	switch (scan_code[(UChar) (*p++ = (char) next())]) {
+	c = (UChar) (*p++ = (char) next());
+	switch (scan_code[c]) {
 	case SC_POW:
 	    if (p == first + 1) {
 		first = p;
@@ -1016,9 +1017,17 @@ collect_RE(void)
 	     * started, so we can make comparisons to handle things like
 	     * "[]xxxx]" and "[^]xxxx]".
 	     */
-	    if (!boxed)
+	    if (!boxed) {
 		first = p;
-	    ++boxed;
+		++boxed;
+	    } else if (p != first + 1) {
+		++boxed;
+	    } else {
+		if (next() == ':') {
+		    ++boxed;
+		}
+		un_next();
+	    }
 	    break;
 
 	case SC_RBOX:
