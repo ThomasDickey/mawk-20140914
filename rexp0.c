@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.14 2009/09/16 21:19:16 tom Exp $
+ * $MawkId: rexp0.c,v 1.15 2009/09/17 09:34:34 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -402,8 +402,9 @@ lookup_cclass(char **start)
 	}
     }
 
-    if (code == CCLASS_NONE)
+    if (code == CCLASS_NONE) {
 	RE_error_trap(-E3);
+    }
 
     if ((result = cclass_table[item].data) == 0) {
 	int ch = 0;
@@ -510,15 +511,16 @@ do_class(char **start, MACHINE * mp)
     /* []...]  puts ] in a class
        [^]..]  negates a class with ]
      */
-    if (*p == ']')
+    if (p[0] == '[' || p[0] == ']')
 	p++;
-    else if (*p == '^' && *(p + 1) == ']')
+    else if (p[0] == '^' && ((p[1] == '[') || p[1] == ']'))
 	p += 2;
 
     for (level = 0, q = p; (level != 0) || (*q != ']'); ++q) {
 	if (*q == '[') {
-	    if (q[1] != ':' || ++level > 1)
+	    if (q[1] != ':' || ++level > 1) {
 		RE_error_trap(-E3);
+	    }
 	} else if (*q == ']') {
 	    if (level > 0) {
 		if (q[-1] != ':')
