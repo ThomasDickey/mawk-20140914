@@ -4,82 +4,104 @@
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:    to >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:    Some care is needed so that things like >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<: static  unsigned  last_dhash ; >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:   ARRAY  A ; >>
 reg4.3<<:   STRING *sval ; >>
 reg4.3<<: {  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:    { >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:    } >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:    { >>
 reg4.3<<:        else >>
 reg4.3<<:        } >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:    } >>
 reg4.3<<:    return p ; >>
 reg4.3<<: } >>
+reg4.4<<: } >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:   ARRAY  A ; >>
 reg4.3<<:   double d ; >>
 reg4.3<<:   int cflag ; >>
 reg4.3<<: { >>
+reg4.4<<: { >>
 reg4.3<<:   ANODE *ap ; >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.3<<:            break ;  >>
 reg4.3<<:          } >>
 reg4.3<<:        } >>
@@ -87,9 +109,11 @@ reg4.3<<:        else >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 reg4.1<<:  >>
 reg4.2<<:  >>
 reg4.3<<:  >>
+reg4.4<<:  >>
 26..12:   each array is of size A_HASH_PRIME.
 reg5.1<<A_HASH_PRIME>>
 26..12:   each array is of size A_HASH_PRIME.
