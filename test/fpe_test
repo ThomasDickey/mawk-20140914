@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: fpe_test,v 1.3 2009/09/18 00:40:56 tom Exp $
+# $MawkId: fpe_test,v 1.4 2009/09/18 09:46:00 tom Exp $
 
 # tests if mawk has been compiled to correctly handle
 # floating point exceptions
@@ -70,7 +70,7 @@ echo return3 = $ret3
 [ $ret2 -gt 128 ] && { echo test2 failed ; exception=1 ; }
 [ $ret3 -gt 128 ] && { echo test3 failed ; exception=1 ; }
 
-[ "$exception" = 1 ] && { rm -f core $STDOUT ; exit 1 ; }
+[ "$exception" = 1 ] && { rm -f *core* $STDOUT ; exit 1 ; }
 
 
 same=0
