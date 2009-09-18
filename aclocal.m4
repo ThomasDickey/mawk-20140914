@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.30 2009/09/18 00:45:23 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.31 2009/09/18 08:50:46 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -751,37 +751,6 @@ int main()
     exit(0) ;
     return 0 ;
  }]])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_PROG_GCC version: 1 updated: 2008/09/09 19:18:22
-dnl ----------------
-dnl AC_PROG_CC with default -g to cflags
-AC_DEFUN([CF_MAWK_PROG_GCC],
-[AC_BEFORE([$0], [AC_PROG_CPP])dnl
-AC_CHECK_PROG(CC, gcc, gcc, cc)
-dnl
-AC_MSG_CHECKING(whether we are using GNU C)
-AC_CACHE_VAL(ac_cv_prog_gcc,
-[dnl The semicolon is to pacify NeXT's syntax-checking cpp.
-cat > conftest.c <<EOF
-#ifdef __GNUC__
-  yes;
-#endif
-EOF
-if ${CC-cc} -E conftest.c 2>&AC_FD_CC | egrep yes >/dev/null 2>&1; then
-  ac_cv_prog_gcc=yes
-else
-  ac_cv_prog_gcc=no
-fi])dnl
-AC_MSG_RESULT($ac_cv_prog_gcc)
-rm -f conftest*
-])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_PROG_YACC version: 1 updated: 2008/09/09 19:18:22
-dnl -----------------
-dnl Which yacc.
-AC_DEFUN([CF_MAWK_PROG_YACC],
-[AC_CHECK_PROGS(YACC, byacc bison yacc)
-test "$YACC" = bison && YACC='bison -y'])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_RUN_FPE_TESTS version: 5 updated: 2009/09/17 20:44:39
 dnl ---------------------

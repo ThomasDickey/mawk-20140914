@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.23 2009/09/18 00:35:06 tom Exp $
+dnl $MawkId: configure.in,v 1.24 2009/09/18 08:50:05 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -36,7 +36,7 @@ AC_INIT(mawk.h)
 AC_CONFIG_HEADER(config.h:config_h.in)
 CF_CHECK_CACHE
 
-CF_MAWK_PROG_GCC
+AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_CPP
 AC_PROG_INSTALL
@@ -58,7 +58,7 @@ if test "x${with_builtin_regex}" != xno; then
 fi
 AC_MSG_RESULT($with_builtin_regex)
 
-CF_MAWK_PROG_YACC
+AC_PROG_YACC
 CF_ANSI_CC_REQD
 CF_MAWK_FIND_SIZE_T
 CF_LOCALE
