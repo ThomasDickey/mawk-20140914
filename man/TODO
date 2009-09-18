@@ -1,4 +1,4 @@
--- $MawkId: TODO,v 1.5 2009/09/18 09:26:31 tom Exp $
+-- $MawkId: TODO,v 1.6 2009/09/18 09:27:06 tom Exp $
 mawk was implemented to conform with POSIX 1003.2-1992
 
 According to
@@ -59,7 +59,7 @@ EXTENDED DESCRIPTION
 
 	mawk can be built with an external regular-expression library.
 	However, POSIX regular expressions do not support matches of
-	NUL-bytes.
+	NUL-bytes.  mawk's internal regular expressions support NULs.
 
 >Expression Patterns
 	ok
