@@ -1,9 +1,14 @@
-# $MawkId: Makefile.in,v 1.16 2009/09/18 00:16:32 tom Exp $
+# $MawkId: Makefile.in,v 1.17 2009/09/18 00:36:40 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
 
 ####################################
+
+srcdir		= @srcdir@
+srcdir_sl	= @srcdir@/
+VPATH		= @srcdir@
+@SET_MAKE@
 
 x               = @EXEEXT@
 o               = .@OBJEXT@
@@ -19,7 +24,7 @@ mandir		= @mandir@/man$(manext)
 
 CC              = @CC@
 
-CPPFLAGS	= @CPPFLAGS@
+CPPFLAGS	= -I. -I$(srcdir) -DHAVE_CONFIG_H @CPPFLAGS@
 EXTRA_CFLAGS	= @EXTRA_CFLAGS@
 CFLAGS          = @CFLAGS@ $(EXTRA_CFLAGS)
 LDFLAGS         = @LDFLAGS@

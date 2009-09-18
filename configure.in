@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.22 2009/07/27 10:28:29 tom Exp $
+dnl $MawkId: configure.in,v 1.23 2009/09/18 00:35:06 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -37,6 +37,7 @@ AC_CONFIG_HEADER(config.h:config_h.in)
 CF_CHECK_CACHE
 
 CF_MAWK_PROG_GCC
+AC_PROG_MAKE_SET
 AC_PROG_CPP
 AC_PROG_INSTALL
 

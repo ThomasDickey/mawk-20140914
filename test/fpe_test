@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: fpe_test,v 1.2 2009/07/12 22:33:47 tom Exp $
+# $MawkId: fpe_test,v 1.3 2009/09/18 00:40:56 tom Exp $
 
 # tests if mawk has been compiled to correctly handle
 # floating point exceptions
@@ -15,6 +15,8 @@
 echo "testing floating point exception handling"
 
 PATH=.:$PATH
+
+STDOUT=${TMPDIR-/tmp}/mawktest$$
 
 test1='BEGIN{ print 4/0 }'
 
@@ -42,9 +44,9 @@ echo
 
 echo "testing domain error"
 echo mawk "$test3"
-mawk "$test3"  > temp$$
+mawk "$test3"  > $STDOUT
 ret3=$?
-cat temp$$
+cat $STDOUT
 echo
 
 
@@ -53,7 +55,7 @@ echo
 
 trap '
 echo compilation defines for floating point are incorrect
-rm -f temp$$
+rm -f $STDOUT
 exit 1'  0
 
 echo
@@ -68,7 +70,7 @@ echo return3 = $ret3
 [ $ret2 -gt 128 ] && { echo test2 failed ; exception=1 ; }
 [ $ret3 -gt 128 ] && { echo test3 failed ; exception=1 ; }
 
-[ "$exception" = 1 ] && { rm -f core temp$$ ; exit 1 ; }
+[ "$exception" = 1 ] && { rm -f core $STDOUT ; exit 1 ; }
 
 
 same=0
@@ -82,7 +84,7 @@ if [ $same = 1 ]
       then
 	echo results consistent: ignoring floating exceptions
 	# some versions of hpux print NAN as ?
-	if  egrep '[nN][aA][nN]|\?' temp$$  > /dev/null
+	if  egrep '[nN][aA][nN]|\?' $STDOUT  > /dev/null
 	   then :
 	   else
 	     echo "but the library is not IEEE754 compatible"
@@ -93,7 +95,7 @@ if [ $same = 1 ]
    fi
 
    trap  0
-   rm -f temp$$
+   rm -f $STDOUT
    exit 0
 
    else
