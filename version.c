@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.5 2009/07/12 13:08:03 tom Exp $
+ * $MawkId: version.c,v 1.6 2009/09/18 09:42:30 tom Exp $
  * @Log: version.c,v @
  * Revision 1.10  1996/07/28 21:47:07  mike
  * gnuish patch
@@ -46,27 +46,7 @@ the GNU General Public License, version 2, 1991.
 #define DOS_STRING	""
 #endif
 
-int print_compiler_id(void);
-int print_aux_limits(void);
-
-static char fmt[] = "%-14s%10lu\n" ;
-
-/* print VERSION and exit */
-void
-print_version(void)
-{
-
-   printf(VERSION_STRING, PATCH_STRING, DOS_STRING, DATE_STRING) ;
-   fflush(stdout) ;
-
-   print_compiler_id() ;
-   fprintf(stderr, "compiled limits:\n") ;
-   fprintf(stderr, fmt, "max NF", (long) MAX_FIELD) ;
-   fprintf(stderr, fmt, "sprintf buffer", (long) SPRINTF_SZ) ;
-   print_aux_limits() ;
-   exit(0) ;
-}
-
+static const char fmt[] = "%-14s%10lu\n";
 
 /*
   Extra info for MSDOS.	 This code contributed by
@@ -84,9 +64,9 @@ print_version(void)
 #endif
 
 #ifdef	BORL
-extern unsigned _stklen = 16 * 1024U ;
+extern unsigned _stklen = 16 * 1024U;
  /*  4K of stack is enough for a user function call
-       nesting depth of 75 so this is enough for 300 */
+    nesting depth of 75 so this is enough for 300 */
 #endif
 
 #ifdef _MSC_VER
@@ -97,51 +77,70 @@ extern unsigned _stklen = 16 * 1024U ;
 #include <dos.h>		/* _chkstack */
 #endif
 
-
-int
+static int
 print_compiler_id(void)
 {
 
 #ifdef	__TURBOC__
-   fprintf(stderr, "MsDOS Turbo C++ %d.%d\n",
-	   __TURBOC__ >> 8, __TURBOC__ & 0xff) ;
+    fprintf(stderr, "MsDOS Turbo C++ %d.%d\n",
+	    __TURBOC__ >> 8, __TURBOC__ & 0xff);
 #endif
 
 #ifdef __BORLANDC__
-   fprintf(stderr, "MS-DOS Borland C++ __BORLANDC__ %x\n",
-	   __BORLANDC__) ;
+    fprintf(stderr, "MS-DOS Borland C++ __BORLANDC__ %x\n",
+	    __BORLANDC__);
 #endif
 
 #ifdef _MSC_VER
-   fprintf(stderr, "Microsoft C/C++ _MSC_VER %u\n", _MSC_VER) ;
+    fprintf(stderr, "Microsoft C/C++ _MSC_VER %u\n", _MSC_VER);
 #endif
 
 #ifdef __ZTC__
-   fprintf(stderr, "MS-DOS Zortech C++ __ZTC__ %x\n", __ZTC__) ;
+    fprintf(stderr, "MS-DOS Zortech C++ __ZTC__ %x\n", __ZTC__);
 #endif
 
-   return 0 ;			 /*shut up */
+    return 0;			/*shut up */
 }
 
-
-int
+static int
 print_aux_limits(void)
 {
 #ifdef BORL
-   extern unsigned _stklen ;
-   fprintf(stderr, fmt, "stack size", (unsigned long) _stklen) ;
-   fprintf(stderr, fmt, "heap size", (unsigned long) coreleft()) ;
+    extern unsigned _stklen;
+    fprintf(stderr, fmt, "stack size", (unsigned long) _stklen);
+    fprintf(stderr, fmt, "heap size", (unsigned long) coreleft());
 #endif
 
 #ifdef _MSC_VER
-   fprintf(stderr, fmt, "stack size", (unsigned long) stackavail()) ;
+    fprintf(stderr, fmt, "stack size", (unsigned long) stackavail());
 #endif
 
 #ifdef __ZTC__
 /* large memory model only with ztc */
-   fprintf(stderr, fmt, "stack size??", (unsigned long) _chkstack()) ;
-   fprintf(stderr, fmt, "heap size", farcoreleft()) ;
+    fprintf(stderr, fmt, "stack size??", (unsigned long) _chkstack());
+    fprintf(stderr, fmt, "heap size", farcoreleft());
 #endif
 
-   return 0 ;
+    return 0;
+}
+
+/* print VERSION and exit */
+void
+print_version(void)
+{
+
+    printf(VERSION_STRING, PATCH_STRING, DOS_STRING, DATE_STRING);
+    fflush(stdout);
+
+#ifdef LOCAL_REGEXP
+    fprintf(stderr, "internal regex\n");
+#else
+    fprintf(stderr, "external regex\n");
+#endif
+    print_compiler_id();
+    fprintf(stderr, "compiled limits:\n");
+    fprintf(stderr, fmt, "max NF", (long) MAX_FIELD);
+    fprintf(stderr, fmt, "sprintf buffer", (long) SPRINTF_SZ);
+    print_aux_limits();
+    exit(0);
 }
