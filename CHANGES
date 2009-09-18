@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.60 2009/09/18 09:01:12 tom Exp $
+-- $MawkId: CHANGES,v 1.61 2009/09/18 09:43:41 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20090919
+	add "internal regex" or "external regex" string to version message to
+	allow scripting based on support for embedded nulls.
+
 	drop obsolete CF_MAWK_PROG_GCC and CF_MAWK_PROG_YACC macros from
 	configure script (report by Mike Frysinger).
 
