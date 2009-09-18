@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.15 2009/07/26 16:24:30 tom Exp $
+# $MawkId: Makefile.in,v 1.16 2009/09/18 00:16:32 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -66,10 +66,10 @@ $(PROG) : $(OBJS)
 TESTPATH= PATH=`pwd`:`cd $(srcdir);pwd`/test:/bin:/usr/bin; export PATH
 
 mawk_test :  $(PROG)  # test that we have a sane mawk
-	sh -c '$(TESTPATH); cd $(srcdir)/test ; mawktest'
+	sh -c '$(TESTPATH); cd $(srcdir)/test ; mawktest $(srcdir)'
 
 fpe_test :  $(PROG) # test FPEs are handled OK
-	sh -c '$(TESTPATH); cd $(srcdir)/test ; fpe_test'
+	sh -c '$(TESTPATH); cd $(srcdir)/test ; fpe_test $(srcdir)'
 
 parse.c  : parse.y
 	@echo  expect 4 shift/reduce conflicts
