@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.59 2009/09/18 00:42:28 tom Exp $
+-- $MawkId: CHANGES,v 1.60 2009/09/18 09:01:12 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20090918
+20090919
+	drop obsolete CF_MAWK_PROG_GCC and CF_MAWK_PROG_YACC macros from
+	configure script (report by Mike Frysinger).
+
 	fixes to allow build outside source-tree (report by Mike Frysinger).
 
 	correct logic in scan.c to handle expression "[[]" (report by Aleksey
