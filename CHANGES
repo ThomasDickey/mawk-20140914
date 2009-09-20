@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.61 2009/09/18 09:43:41 tom Exp $
+-- $MawkId: CHANGES,v 1.62 2009/09/20 22:07:36 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20090919
+20090920
+	improve hash function by using FNV-1 algorithm (patch/discussion by
+	Jim Mellander).
+
 	add "internal regex" or "external regex" string to version message to
 	allow scripting based on support for embedded nulls.
 
