@@ -1,5 +1,8 @@
 /*
 array.c
+
+@MawkId: array.w,v 1.7 2009/09/20 22:35:38 tom Exp @
+
 copyright 1991-96, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -43,6 +46,7 @@ typedef struct anode {
 #define STARTING_HMASK    63  /* 2^6-1, must have form 2^n-1 */
 #define MAX_AVE_LIST_LENGTH   12
 #define hmask_to_limit(x) (((x)+1)*MAX_AVE_LIST_LENGTH)
+#define ahash(sval) hash2((sval)->str, (sval)->len)
 
 static ANODE* find_by_ival(ARRAY, Int, int);
 static ANODE* find_by_sval(ARRAY, STRING*, int);
@@ -50,8 +54,6 @@ static void add_string_associations(ARRAY);
 static void make_empty_table(ARRAY, int);
 static void convert_split_array_to_table(ARRAY);
 static void double_the_hash_table(ARRAY);
-static unsigned ahash(STRING*);
-
 
 CELL* array_find(
    ARRAY A,
@@ -293,7 +295,7 @@ STRING** array_loop_vector(
         qsort(ret, A->size, sizeof(STRING*), string_compare);
       return ret ;
    }
-   else return (STRING**) 0 ;
+   return (STRING**) 0 ;
 }
 
 CELL *array_cat(
@@ -430,15 +432,17 @@ static ANODE* find_by_sval(
 
             break ;
          }
-         else return (ANODE*) 0 ;
+         return (ANODE*) 0 ;
       }
-      else if (p->hval == hval && strcmp(p->sval->str,str) == 0 ) {
-         /* found */
-         if (!q) /* already at the front */
-            return p ;
-         else { /* delete for move to the front */
-            q->slink = p->slink ;
-            break ;
+      else if (p->hval == hval) {
+         if (strcmp(p->sval->str,str) == 0 ) {
+            /* found */
+            if (!q) /* already at the front */
+               return p ;
+            else { /* delete for move to the front */
+               q->slink = p->slink ;
+               break ;
+            }
          }
       }
       q = p ; p = q->slink ;
@@ -588,32 +592,6 @@ static void double_the_hash_table(ARRAY A)
 }
 
 
-static unsigned ahash(STRING* sval)
-{
-   unsigned sum1 = sval->len ;
-   unsigned sum2 = sum1 ;
-   unsigned char *p , *q ;
-   if (sum1 <= 10) {
-      for(p=(unsigned char*)sval->str; *p ; p++) {
-         sum1 += sum1 + *p ;
-         sum2 += sum1 ;
-      }
-   }
-   else {
-      int cnt = 5 ;
-      p = (unsigned char*)sval->str ; /* p starts at the front */
-      q = (unsigned char*)sval->str + (sum1-1) ; /* q starts at the back */
-      while( cnt ) {
-         cnt-- ;
-         sum1 += sum1 + *p ;
-         sum2 += sum1 ;
-         sum1 += sum1 + *q ;
-         sum2 += sum1 ;
-         p++ ; q-- ;
-      }
-   }
-   return sum2 ;
-}
 
-
+#define ahash(sval) hash2((sval)->str, (sval)->len)
 
