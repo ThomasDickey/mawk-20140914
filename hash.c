@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.4 2009/07/27 15:46:04 tom Exp $
+ * $MawkId: hash.c,v 1.5 2009/09/20 22:14:09 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -32,13 +32,20 @@ the GNU General Public License, version 2, 1991.
 #include "memory.h"
 #include "symtype.h"
 
+/*                                                                              
+ * FNV-1 hash function
+ * http://www.isthe.com/chongo/tech/comp/fnv/index.html
+ */
 unsigned
 hash(const char *s)
 {
-    register unsigned h = 0;
+    /* FNV-1 */
+    register unsigned h = 2166136261U;
 
-    while (*s)
-	h += h + (UChar) * s++;
+    while (*s) {
+	h ^= (UChar) (*s++);
+	h *= 16777619U;
+    }
     return h;
 }
 
