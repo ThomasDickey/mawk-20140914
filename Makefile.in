@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.20 2009/09/18 22:08:41 tom Exp $
+# $MawkId: Makefile.in,v 1.21 2009/09/20 22:47:54 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -84,13 +84,15 @@ parse.c  : parse.y
 	   then rm y.tab.h ;\
 	   else mv y.tab.h parse.h ; fi
 
+NOIDENT = sed -e 's/[$$]MawkId\([^$$]*\)[$$]/@MawkId\1@/'
+
 array.c : array.w
 	-@rm -f $@
-	notangle -R'"array.c"' array.w | cpif array.c
+	notangle -R'"array.c"' array.w | $(NOIDENT) | cpif array.c
 
 array.h : array.w
 	-@rm -f $@
-	notangle -R'"array.h"' array.w | cpif array.h
+	notangle -R'"array.h"' array.w | $(NOIDENT) | cpif array.h
 
 scancode.c :  makescan.c  scan.h
 	@ECHO_LD@$(CC) -o makescan.exe  makescan.c
