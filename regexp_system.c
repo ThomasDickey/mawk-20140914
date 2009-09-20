@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.8 2009/09/13 19:56:19 tom Exp $
+ * $MawkId: regexp_system.c,v 1.9 2009/09/20 22:54:13 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -66,15 +66,15 @@ prepare_regexp(char *regexp)
 	    case '5':
 	    case '6':
 	    case '7':
-		*tail = ch - '0';
+		*tail = (char) (ch - '0');
 
 		ch = *regexp++;
 		if (ch >= '0' && ch <= '7') {
-		    *tail = ((unsigned char) *tail) * 8 + (ch - '0');
+		    *tail = (char) (((unsigned char) *tail) * 8 + (ch - '0'));
 
 		    ch = *regexp++;
 		    if (ch >= '0' && ch <= '7') {
-			*tail = ((unsigned char) *tail) * 8 + (ch - '0');
+			*tail = (char) (((unsigned char) *tail) * 8 + (ch - '0'));
 		    } else {
 			--regexp;
 		    }
