@@ -1,4 +1,4 @@
-% $MawkId: array.w,v 1.6 2009/08/21 00:12:00 tom Exp $
+% $MawkId: array.w,v 1.7 2009/09/20 22:35:38 tom Exp $
 % @Log: array.w,v @
 % Revision 1.4  1996/09/18 00:37:25  mike
 % 1) Fix stupid bozo in A[expr], expr is numeric and not integer.
@@ -42,6 +42,8 @@
 <<local constants, defs and prototypes>>
 <<interface functions>>
 <<local functions>>
+
+#define ahash(sval) hash2((sval)->str, (sval)->len)
 
 @ Array Structure
 The type [[ARRAY]] is a pointer to a [[struct array]].
@@ -358,15 +360,17 @@ static ANODE* find_by_sval(
 	    <<create a new anode for [[sval]]>>
 	    break ;
 	 }
-	 else return (ANODE*) 0 ;
+	 return (ANODE*) 0 ;
       }
-      else if (p->hval == hval && strcmp(p->sval->str,str) == 0 ) {
-	 /* found */
-	 if (!q) /* already at the front */
-	    return p ;
-	 else { /* delete for move to the front */
-	    q->slink = p->slink ;
-	    break ;
+      else if (p->hval == hval) {
+	 if (strcmp(p->sval->str,str) == 0 ) {
+	    /* found */
+	    if (!q) /* already at the front */
+	       return p ;
+	    else { /* delete for move to the front */
+	       q->slink = p->slink ;
+	       break ;
+	    }
 	 }
       }
       q = p ; p = q->slink ;
@@ -676,6 +680,7 @@ the hash table grows in size by doubling the number of lists.
 #define STARTING_HMASK    63  /* 2^6-1, must have form 2^n-1 */
 #define MAX_AVE_LIST_LENGTH   12
 #define hmask_to_limit(x) (((x)+1)*MAX_AVE_LIST_LENGTH)
+#define ahash(sval) hash2((sval)->str, (sval)->len)
 
 <<local functions>>=
 static void make_empty_table(
@@ -899,7 +904,7 @@ STRING** array_loop_vector(
 	qsort(ret, A->size, sizeof(STRING*), string_compare);
       return ret ;
    }
-   else return (STRING**) 0 ;
+   return (STRING**) 0 ;
 }
 
 @
@@ -920,43 +925,6 @@ return value is responsible for these new reference counts.
       }
    }
 }
-
-@ The Hash Function
-Since a hash value is turned into a table index via bit-wise and with
-\hbox{[[A->hmask]]}, it is important that the hash function does a good job
-of scrambling the low-order bits of the returned hash value.
-Empirical tests indicate the following function does an adequate job.
-Note that for strings with length greater than 10, we only hash on
-the first five characters, the last five character and the length.
-
-<<local functions>>=
-static unsigned ahash(STRING* sval)
-{
-   unsigned sum1 = sval->len ;
-   unsigned sum2 = sum1 ;
-   unsigned char *p , *q ;
-   if (sum1 <= 10) {
-      for(p=(unsigned char*)sval->str; *p ; p++) {
-	 sum1 += sum1 + *p ;
-	 sum2 += sum1 ;
-      }
-   }
-   else {
-      int cnt = 5 ;
-      p = (unsigned char*)sval->str ; /* p starts at the front */
-      q = (unsigned char*)sval->str + (sum1-1) ; /* q starts at the back */
-      while( cnt ) {
-	 cnt-- ;
-	 sum1 += sum1 + *p ;
-	 sum2 += sum1 ;
-	 sum1 += sum1 + *q ;
-	 sum2 += sum1 ;
-	 p++ ; q-- ;
-      }
-   }
-   return sum2 ;
-}
-
 
 @ Concatenating Array Indices
 In [[AWK]], an array expression [[A[i,j]]] is equivalent to the
@@ -1064,8 +1032,6 @@ static void add_string_associations(ARRAY);
 static void make_empty_table(ARRAY, int);
 static void convert_split_array_to_table(ARRAY);
 static void double_the_hash_table(ARRAY);
-static unsigned ahash(STRING*);
-
 
 <<array.c notice>>=
 /*
