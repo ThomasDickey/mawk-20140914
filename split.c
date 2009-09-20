@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.12 2009/09/15 00:32:11 tom Exp $
+ * $MawkId: split.c,v 1.13 2009/09/20 19:53:18 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -81,7 +81,6 @@ space_split(char *s, unsigned slen)
 {
     char *back = s + slen;
     int i = 0;
-    unsigned len;
     char *q;
     STRING *sval;
     int lcnt = MAX_SPLIT / 3;
@@ -100,24 +99,21 @@ space_split(char *s, unsigned slen)
 	/* mark the front with q */
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING0(len = (unsigned) (s - q));
-	memcpy(sval->str, q, len);
+	sval = split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
 
 	EAT_SPACE();
 	if (*s == 0)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING0(len = (unsigned) (s - q));
-	memcpy(sval->str, q, len);
+	sval = split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
 
 	EAT_SPACE();
 	if (*s == 0)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING0(len = (unsigned) (s - q));
-	memcpy(sval->str, q, len);
+	sval = split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
 
     }
     /* we've overflowed */
