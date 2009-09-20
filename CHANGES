@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.63 2009/09/20 23:26:16 tom Exp $
+-- $MawkId: CHANGES,v 1.64 2009/09/20 23:51:10 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -22,11 +22,15 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	add MAWK_LONG_OPTIONS feature to allow mawk to ignore long options
 	which are not implemented.
 
-	modify built-in regular expression functions to accept embedded nulls.
+	two changes for embedded nulls, allows FS to be either a null or
+	contain a character class with null, e.g., '\000' or '[ \000]':
 
-	modify input reader FINgets() to accept embedded nulls in data read
-	from files.  Data read from standard input is line-buffered, and is
-	still null-terminated.
+	+ modify built-in regular expression functions to accept embedded
+	  nulls.
+
+	+ modify input reader FINgets() to accept embedded nulls in data read
+	  from files.  Data read from standard input is line-buffered, and is
+	  still null-terminated.
 
 	update config.guess and config.sub
 
