@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.4 2009/07/27 15:31:35 tom Exp $
+ * $MawkId: symtype.h,v 1.5 2009/09/20 22:24:48 tom Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme
@@ -178,6 +178,7 @@ void relocate_resolve_list(int, int, FBLOCK *, int, unsigned, int);
 
 /* hash.c */
 unsigned hash(const char *);
+unsigned hash2(const char *, unsigned);
 SYMTAB *insert(const char *);
 SYMTAB *find(const char *);
 const char *reverse_find(int, PTR);
