@@ -1,4 +1,3 @@
-% $MawkId: array.w,v 1.7 2009/09/20 22:35:38 tom Exp $
 % @Log: array.w,v @
 % Revision 1.4  1996/09/18 00:37:25  mike
 % 1) Fix stupid bozo in A[expr], expr is numeric and not integer.
@@ -1067,6 +1066,9 @@ This file was generated with the command
 */
 
 <<mawk blurb>>=
+
+$MawkId: array.w,v 1.8 2009/09/20 22:44:15 tom Exp $
+
 copyright 1991-96, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
