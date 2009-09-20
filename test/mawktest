@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.9 2009/09/18 09:51:42 tom Exp $
+# $MawkId: mawktest,v 1.10 2009/09/20 23:58:56 tom Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -16,6 +16,7 @@ SRC=..
 fi
 
 dat=mawktest.dat
+nulldat=mawknull.dat
 
 STDOUT=${TMPDIR-/tmp}/mawktest$$
 
@@ -27,10 +28,6 @@ PATH=.:$PATH
 mawk -W version
 
 NULLS=`mawk -W version 2>&1 |fgrep 'internal regex' 2>/dev/null`
-if test -n "$NULLS" ; then
-	echo "** mawk supports matches with NUL bytes"
-fi
-
 #################################
 echo
 echo testing input and field splitting
@@ -50,6 +47,13 @@ LC_ALL=C mawk -f reg4.awk $dat >> $STDOUT
 LC_ALL=C mawk -f reg5.awk $dat >> $STDOUT
 
 cmp -s  reg-awk.out $STDOUT || exit
+
+if test -n "$NULLS" ; then
+	echo "** mawk supports matches with NUL bytes"
+	LC_ALL=C mawk -F '\000'    -f nulls0.awk $nulldat > $STDOUT
+	LC_ALL=C mawk -F '[\000 ]' -f nulls0.awk $nulldat >> $STDOUT
+	cmp -s  nulls.out $STDOUT || exit
+fi
 
 echo regular expression matching OK
 #######################################
