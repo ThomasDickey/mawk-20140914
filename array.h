@@ -1,5 +1,8 @@
 /*
 array.h
+
+@MawkId: array.w,v 1.7 2009/09/20 22:35:38 tom Exp @
+
 copyright 1991-96, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
