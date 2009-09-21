@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.11 2009/09/21 00:14:45 tom Exp $
+# $MawkId: mawktest,v 1.12 2009/09/21 00:16:34 tom Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -36,10 +36,10 @@ LC_ALL=C mawk -f wc.awk $dat | cmp -s - wc-awk.out || exit
 LC_ALL=C mawk -f null-rs.awk null-rs.dat | cmp -s - null-rs.out || exit
 
 if test -n "$NULLS" ; then
-	echo "** mawk supports matches with NUL bytes"
 	LC_ALL=C mawk -F '\000'    -f nulls0.awk $nulldat > $STDOUT
 	LC_ALL=C mawk -F '[\000 ]' -f nulls0.awk $nulldat >> $STDOUT
 	cmp -s  nulls.out $STDOUT || exit
+	echo "... mawk supports matches with NUL bytes"
 fi
 
 echo input and field splitting OK
