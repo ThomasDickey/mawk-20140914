@@ -1,6 +1,9 @@
--- $MawkId: CHANGES,v 1.64 2009/09/20 23:51:10 tom Exp $
+-- $MawkId: CHANGES,v 1.65 2009/12/13 17:42:56 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20091213
+	update config.guess and config.sub
 
 20090920
 	improve hash function by using FNV-1 algorithm (patch/discussion by
