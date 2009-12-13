@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.69 2009/12/13 19:14:58 tom Exp $
+-- $MawkId: CHANGES,v 1.70 2009/12/13 19:44:31 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -23,6 +23,16 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	  could be regenerated.
 
 	+ fix an unescaped "-" in man/mawk.1
+
+	+ remove an unneeded cast in bi_funct.c
+
+	+ fix an unused parameter warning in matherr.c
+
+	+ drop unused line_no parameter from compile_error() and its callers.
+
+	+ convert makescan.c to ANSI C, do further cleanup of that file.
+
+	+ split-out scancode.h from scan.h
 
 20090920
 	+ improve hash function by using FNV-1 algorithm (patch/analysis by
