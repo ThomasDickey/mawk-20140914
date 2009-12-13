@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.68 2009/12/13 19:08:57 tom Exp $
+-- $MawkId: CHANGES,v 1.69 2009/12/13 19:14:58 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091213
+	+ use "mkdir -p" rather than mkdirs.sh (suggested by Aleksey Cheusov).
+
 	+ reformatted this file, to simplify extraction of contributor names.
 
 	+ update config.guess and config.sub
