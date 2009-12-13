@@ -37,7 +37,7 @@ the GNU General Public License, version 2, 1991.
 char scan_code[256] ;
 
 void
-scan_init()
+scan_init(void)
 {
    register char *p ;
 
@@ -85,7 +85,7 @@ scan_init()
 }
 
 void
-scan_print()
+scan_print(void)
 {
    register char *p = scan_code ;
    register int c ;		 /* column */
@@ -109,9 +109,7 @@ scan_print()
 
 
 int
-main(argc, argv)
-   int argc ;
-   char **argv ;
+main(int argc, char **argv)
 {
    scan_init() ;
    scan_print() ;
