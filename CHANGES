@@ -1,185 +1,190 @@
--- $MawkId: CHANGES,v 1.65 2009/12/13 17:42:56 tom Exp $
+-- $MawkId: CHANGES,v 1.66 2009/12/13 18:42:26 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091213
-	update config.guess and config.sub
+	+ update config.guess and config.sub
 
 20090920
-	improve hash function by using FNV-1 algorithm (patch/discussion by
-	Jim Mellander).  This greatly improves speed for accessing arrays with
-	a large number of distinct keys; however the unsorted order in "for"
-	loops will differ.
+	+ improve hash function by using FNV-1 algorithm (patch/analysis by
+	  Jim Mellander).  This greatly improves speed for accessing arrays
+	  with a large number of distinct keys; however the unsorted order in
+	  "for" loops will differ.
 
-	add "internal regex" or "external regex" string to version message to
-	allow scripting based on support for embedded nulls.
+	+ add "internal regex" or "external regex" string to version message to
+	  allow scripting based on support for embedded nulls.
 
-	drop obsolete CF_MAWK_PROG_GCC and CF_MAWK_PROG_YACC macros from
-	configure script (report by Mike Frysinger).
+	+ drop obsolete CF_MAWK_PROG_GCC and CF_MAWK_PROG_YACC macros from
+	  configure script (report by Mike Frysinger).
 
-	fixes to allow build outside source-tree (report by Mike Frysinger).
+	+ fixes to allow build outside source-tree (report by Mike Frysinger).
 
-	correct logic in scan.c to handle expression "[[]" (report by Aleksey
-	Cheusov).
+	+ correct logic in scan.c to handle expression "[[]" (report by Aleksey
+	  Cheusov).
 
-	add MAWK_LONG_OPTIONS feature to allow mawk to ignore long options
-	which are not implemented.
+	+ add MAWK_LONG_OPTIONS feature to allow mawk to ignore long options
+	  which are not implemented.
 
-	two changes for embedded nulls, allows FS to be either a null or
-	contain a character class with null, e.g., '\000' or '[ \000]':
+	+ two changes for embedded nulls, allows FS to be either a null or
+	  contain a character class with null, e.g., '\000' or '[ \000]':
 
-	+ modify built-in regular expression functions to accept embedded
-	  nulls.
+	  + modify built-in regular expression functions to accept embedded
+	    nulls.
 
-	+ modify input reader FINgets() to accept embedded nulls in data read
-	  from files.  Data read from standard input is line-buffered, and is
-	  still null-terminated.
+	  + modify input reader FINgets() to accept embedded nulls in data read
+	    from files.  Data read from standard input is line-buffered, and is
+	    still null-terminated.
 
-	update config.guess and config.sub
+	+ update config.guess and config.sub
 
 20090820
-	minor portability/standards fixes for examples/hical
+	+ minor portability/standards fixes for examples/hical
 
-	add WHINY_USERS sorted-array feature, for compatibility with gawk
-	(patch by Aharon Robbins).
+	+ add WHINY_USERS sorted-array feature, for compatibility with gawk
+	  (patch by Aharon Robbins).
 
-	correct lower-limit for d_to_U() function, which broke conversion of
-	zero in "%x" format, added in fix for Debian #303825 (report by Masami
-	Hiramatsu).
+	+ correct lower-limit for d_to_U() function, which broke conversion of
+	  zero in "%x" format, added in fix for Debian #303825 (report by
+	  Masami Hiramatsu).
 
-	modify "%s" and "%c" formatting in printf/sprintf commands to ensure
-	that "%02s" does not do zero-padding, for standards conformance
-	(discussion with Aharon Robbins, Mike Brennan, prompted by Debian
-	#339799).
+	+ modify "%s" and "%c" formatting in printf/sprintf commands to ensure
+	  that "%02s" does not do zero-padding, for standards conformance
+	  (discussion with Aharon Robbins, Mike Brennan, prompted by Debian
+	  #339799).
 
 20090728
-	add fallback definitions for GCC_NORETURN and GCC_UNUSED to build with
-	non-gcc compilers (report by Jan Wells).
+	+ add fallback definitions for GCC_NORETURN and GCC_UNUSED to build
+	  with non-gcc compilers (report by Jan Wells).
 
 20090727
-	add check/fix to prevent gsub from recurring to modify on a substring
-	of the current line when the regular expression is anchored to the
-	beginning of the line; fixes gawk's anchgsub testcase.
+	+ add check/fix to prevent gsub from recurring to modify on a substring
+	  of the current line when the regular expression is anchored to the
+	  beginning of the line; fixes gawk's anchgsub testcase.
 
-	add check for implicit concatenation mistaken for exponent; fixes
-	gawk's hex testcase.
+	+ add check for implicit concatenation mistaken for exponent; fixes
+	  gawk's hex testcase.
 
-	add character-classes to built-in regular expressions.
+	+ add character-classes to built-in regular expressions.
 
-	add 8-bit locale support
+	+ add 8-bit locale support
 
 20090726
-	improve configure checks for MAX__UINT.
+	+ improve configure checks for MAX__UINT.
 
-	add a check for infinite loop in REmatch(), to work with gawk's noloop1
-	testcase.
+	+ add a check for infinite loop in REmatch(), to work with gawk's
+	  noloop1 testcase.
 
-	modify logic to allow setting RS to an explicit null character, e.g.,
+	+ modify logic to allow setting RS to an explicit null character, e.g.,
 		RS="\0"
-	(Ubuntu #400409). 
+	  (Ubuntu #400409). 
 
-	modify workaround for (incorrect) scripts which use a zero-parameter
-	for substr to ensure the overall length of the result stays the same.
-	For example, from makewhatis:
+	+ modify workaround for (incorrect) scripts which use a zero-parameter
+	  for substr to ensure the overall length of the result stays the same.
+	  For example, from makewhatis:
 		filename_no_gz = substr(filename, 0, RSTART - 1);
 
-	move regular-expression files into main directory to simplify building
-	using configure --srcdir and VPATH.
+	+ move regular-expression files into main directory to simplify
+	  building using configure --srcdir and VPATH.
 
-	modify internal functions for gsub() to handle a case from makewhatis
-	script from man 1.6f which substitutes embedded zero bytes to a
-	different value (report by Gabor Z Papp).
+	+ modify internal functions for gsub() to handle a case from makewhatis
+	  script from man 1.6f which substitutes embedded zero bytes to a
+	  different value (report by Gabor Z Papp).
 
-	change default for configure --with-builtin-regex to prefer the
-	builtin regular expressions.  They are incomplete, but POSIX regular
-	expressions cannot match nulls embedded in strings.
+	+ change default for configure --with-builtin-regex to prefer the
+	  builtin regular expressions.  They are incomplete, but POSIX regular
+	  expressions cannot match nulls embedded in strings.
 
-	require standard C compiler; converted to ANSI C.
+	+ require standard C compiler; converted to ANSI C.
 
-	rename #define'd SV_SIGINFO to MAWK_SV_SIGINFO to avoid predefined
-	name on Mac OS X (report on comp.lang.awk).
+	+ rename #define'd SV_SIGINFO to MAWK_SV_SIGINFO to avoid predefined
+	  name on Mac OS X (report on comp.lang.awk).
 
-	revise configure script to use conventional scheme for generating
-	config.h
+	+ revise configure script to use conventional scheme for generating
+	  config.h
 
 20090721
-	port to cygwin, modifying test-script to work with executable-suffix
-	and fp-exception code to allow const in declaration.
+	+ port to cygwin, modifying test-script to work with executable-suffix
+	  and fp-exception code to allow const in declaration.
 
 20090712
-	update patch-date.
+	+ bump patch-date.
 
-	fix Debian #127293 "mawk does not understand unescaped '/' in character
-	classes", noting that gawk 3.1.6 also has problems with this area.
+	+ fix Debian #127293 "mawk does not understand unescaped '/' in
+	  character classes", noting that gawk 3.1.6 also has problems with
+	  this area.
 
-	drop support for varargs; use stdarg only.
+	+ drop support for varargs; use stdarg only.
 
-	add tags rule to makefile.
+	+ add tags rule to makefile.
 
-	rename configure option "--with-local-regexp" to "--with-builtin-regex"
+	+ rename configure option "--with-local-regexp" to
+	  "--with-builtin-regex"
 
-	add build-fix from NetBSD port:  enable vax FP support when
-	defined(__vax__) as well as BSD43_VAX.  from ragge.
+	+ add build-fix from NetBSD port:  enable vax FP support when
+	  defined(__vax__) as well as BSD43_VAX.  from ragge.
 
-	add configure --disable-echo option
+	+ add configure --disable-echo option
 
-	identify updated files with "MawkId" keywords, retaining old log
-	comments for reference.  Ongoing changes are recorded here.
+	+ identify updated files with "MawkId" keywords, retaining old log
+	  comments for reference.  Ongoing changes are recorded here.
 
-	update maintainer email address.
+	+ change maintainer email address to my own.
 
 20090711
-	use conventional install/uninstall rules in makefile.
+	+ use conventional install/uninstall rules in makefile.
 
-	add install-sh script, mkdirs.sh, config.guess and config.sub
+	+ add install-sh script, mkdirs.sh, config.guess and config.sub
 
-	add $DESTDIR support to makefile
+	+ add $DESTDIR support to makefile
 
-	add uninstall make-target
+	+ add uninstall make-target
 
-	add configure --enable-warnings option (fixed some warnings...)
+	+ add configure --enable-warnings option (fixed some warnings...)
 
-	update configure script to autoconf 2.52 to permit cross-compiles.
+	+ change configure script to autoconf 2.52 to permit cross-compiles.
 
-	drop config.user file; replace with conventional autoconf --prefix, etc.
+	+ drop config.user file; replace with conventional autoconf --prefix,
+	  etc.
 
-	fill-in CA_REC.type in two places in parse.y which weren't initialized.
+	+ fill-in CA_REC.type in two places in parse.y which weren't
+	  initialized.
 
-	fix Debian #38353 (absent expression on last part of "for" statement
-	caused core-dump).
+	+ fix Debian #38353 (absent expression on last part of "for" statement
+	  caused core-dump).
 
-	fix Debian #303825 (printf %x clamps numbers to signed range rather
-	than unsigned range).
+	+ fix Debian #303825 (printf %x clamps numbers to signed range rather
+	  than unsigned range).
 
-	apply fix from Debian #355966 (null-pointer check in is_string_split())
+	+ apply fix from Debian #355966 (null-pointer check in
+	  is_string_split())
 
-	apply fix from Debian #391051 (limit-check in scan.c)
+	+ apply fix from Debian #391051 (limit-check in scan.c)
 
 20090709
-	add patch from Aleksey Cheusov for external regexp libraries
-	(originally comp.lang.awk June 15 2005, also cited in Debian #355442
-	March 6, 2006).
+	+ add support for external regexp libraries (patch by Aleksey Cheusov)
+	  (originally comp.lang.awk June 15 2005, also cited in Debian #355442
+	  March 6, 2006).
 
 20090705
-	fixes to build on BeOS (if LIBS is set to -lroot), and QNX (redefinition
-	of setmode).
+	+ fixes to build on BeOS (if LIBS is set to -lroot), and QNX
+	  (redefinition of setmode).
 
 20080909
-	fix gcc 4.3.1 -Wall warnings
+	+ fix gcc 4.3.1 -Wall warnings
 
-	transform mawk.ac.m4 to aclocal.m4, renaming macros to use "CF_" or
-	"CF_MAWK_" prefixes depending on their reusability.  Modified macros
-	to use quoting consistent with recent autoconf versions.
+	+ transform mawk.ac.m4 to aclocal.m4, renaming macros to use "CF_" or
+	  "CF_MAWK_" prefixes depending on their reusability.  Modified macros
+	  to use quoting consistent with recent autoconf versions.
 
-	regenerate configure with autoconf version 2.13.20030927
+	+ regenerate configure with autoconf version 2.13.20030927
 
-	regenerate parse.c with byacc - 1.9 20080827
+	+ regenerate parse.c with byacc - 1.9 20080827
 
-	ifdef'd prototypes in nstd.h which belong to stdlib.h, string.h to
-	use standard C by default.
+	+ ifdef'd prototypes in nstd.h which belong to stdlib.h, string.h to
+	  use standard C by default.
 
-	source-in Debian patches 01-08 (see below).  Changes for 20080909 fix
-	Debian #496980 as well.
+	+ source-in Debian patches 01-08 (see below).  Changes for 20080909 fix
+	  Debian #496980 as well.
 
 -------------------------------------------------------------------------------
 Debian patches:
