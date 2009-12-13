@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.21 2009/09/20 22:47:54 tom Exp $
+# $MawkId: Makefile.in,v 1.22 2009/12/13 18:01:54 Jonathan.Nieder Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -8,7 +8,6 @@ SHELL=/bin/sh
 srcdir		= @srcdir@
 srcdir_sl	= @srcdir@/
 VPATH		= @srcdir@
-@SET_MAKE@
 
 x               = @EXEEXT@
 o               = .@OBJEXT@
