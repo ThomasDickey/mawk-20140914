@@ -109,7 +109,7 @@ scan_print(void)
 
 
 int
-main(int argc, char **argv)
+main(void)
 {
    scan_init() ;
    scan_print() ;
