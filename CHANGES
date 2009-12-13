@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.70 2009/12/13 19:44:31 tom Exp $
+-- $MawkId: CHANGES,v 1.71 2009/12/13 21:20:11 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091213
+	+ add makedeps.sh script to aid in updating object dependencies in
+	  Makefile.in
+
 	+ use "mkdir -p" rather than mkdirs.sh (suggested by Aleksey Cheusov).
 
 	+ reformatted this file, to simplify extraction of contributor names.
