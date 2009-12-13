@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.67 2009/12/13 18:52:37 tom Exp $
+-- $MawkId: CHANGES,v 1.68 2009/12/13 19:08:57 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -6,6 +6,21 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	+ reformatted this file, to simplify extraction of contributor names.
 
 	+ update config.guess and config.sub
+
+	> patches by Jonathan Nieder:
+
+	+ modify CF_DISABLE_ECHO autoconf macro to ensure that command lines
+	  in Makefile.in begin with a tab.
+
+	+ the makefile does not use $(MAKE); remove the SET_MAKE substitution.
+
+	+ add some files to the "make clean" rule, in case make gets
+	  interrupted in the middle of a rule.
+
+	+ add a maintainer-clean rule to the makefile, to remove files which
+	  could be regenerated.
+
+	+ fix an unescaped "-" in man/mawk.1
 
 20090920
 	+ improve hash function by using FNV-1 algorithm (patch/analysis by
