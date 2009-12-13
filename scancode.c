@@ -1,3 +1,4 @@
+#include "scancode.h"
 
 
 /* scancode.c */

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: makescan.c,v 1.7 2009/12/13 19:49:18 tom Exp $
+ * $MawkId: makescan.c,v 1.8 2009/12/13 21:25:07 tom Exp $
  * @Log: makescan.c,v @
  * Revision 1.3  1993/07/17  13:23:01  mike
  * indent and general code cleanup
@@ -91,6 +91,7 @@ scan_print(void)
     register int c;		/* column */
     register int r;		/* row */
 
+    printf("#include \"scancode.h\"\n");
     printf("\n\n/* scancode.c */\n\n\n");
     printf("char scan_code[256] = {\n");
 
