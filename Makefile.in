@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.26 2009/12/13 18:16:18 Jonathan.Nieder Exp $
+# $MawkId: Makefile.in,v 1.27 2009/12/13 19:13:14 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -132,7 +132,7 @@ TAGS :
 
 $(BINDIR) \
 $(MANDIR) :
-	sh mkdirs.sh "$@"
+	mkdir -p "$@"
 
 # output from  mawk -f deps.awk *.c
 array.o : config.h field.h bi_vars.h mawk.h symtype.h nstd.h memory.h array.h zmalloc.h types.h sizes.h
