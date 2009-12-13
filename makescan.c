@@ -29,10 +29,8 @@ the GNU General Public License, version 2, 1991.
    via:	  makescan.exe > scancode.c
 */
 
-
-#define	 MAKESCAN
-
-#include  "scan.h"
+#include <stdio.h>
+#include  "scancode.h"
 
 char scan_code[256] ;
 

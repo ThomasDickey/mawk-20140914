@@ -1,7 +1,7 @@
 /* missing.c */
 
 /*
- * $MawkId: missing.c,v 1.2 2009/07/24 00:39:00 tom Exp $
+ * $MawkId: missing.c,v 1.3 2009/12/13 19:43:23 Jonathan.Nieder Exp $
  * @Log: missing.c,v @
  * Revision 1.2  1995/06/03  09:31:11  mike
  * handle strchr(s,0) correctly
@@ -9,7 +9,7 @@
  */
 
 #include "nstd.h"
-#include "scan.h"
+#include "scancode.h"
 
 #ifdef	NO_STRCHR
 #undef strchr
