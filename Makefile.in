@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.25 2009/12/13 18:05:06 Jonathan.Nieder Exp $
+# $MawkId: Makefile.in,v 1.26 2009/12/13 18:16:18 Jonathan.Nieder Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -54,10 +54,10 @@ OBJS = parse$o scan$o memory$o main$o hash$o execute$o code$o \
 .SUFFIXES: .c .i $o
 
 .c.i :
-@RULE_CC@
+	@RULE_CC@
 	@ECHO_CC@$(CPP) -C $(CPPFLAGS) $< >$@
 .c$o :
-@RULE_CC@
+	@RULE_CC@
 	@ECHO_CC@$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
 
 all :	$(PROG)
