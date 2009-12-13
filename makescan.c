@@ -30,6 +30,7 @@ the GNU General Public License, version 2, 1991.
 */
 
 #include <stdio.h>
+#include  "nstd.h"
 #include  "scancode.h"
 
 char scan_code[256] ;
