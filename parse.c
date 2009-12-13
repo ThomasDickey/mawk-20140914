@@ -8,7 +8,7 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define YYBYACC 1
 #define YYMAJOR 1
 #define YYMINOR 9
-#define YYPATCH 20090221
+#define YYPATCH 20091027
 
 #define YYEMPTY        (-1)
 #define yyclearin      (yychar = YYEMPTY)
@@ -1146,7 +1146,7 @@ static short   *yyss;
 static short   *yysslim;
 static YYSTYPE *yyvs;
 static unsigned yystacksize;
-#line 1149 "parse.y"
+#line 1148 "parse.y"
 
 /* resize the code for a user function */
 
@@ -2568,27 +2568,26 @@ case 164:
              if ( yyvsp[0].ca_p )  code1(yyvsp[0].ca_p->arg_num+1) ;
              else  code1(0) ;
 
-             check_fcall(yyvsp[-2].fbp, scope, code_move_level, active_funct,
-                         yyvsp[0].ca_p) ;
+             check_fcall(yyvsp[-2].fbp, scope, code_move_level, active_funct, yyvsp[0].ca_p) ;
            }
 break;
 case 165:
-#line 1100 "parse.y"
+#line 1099 "parse.y"
 	{ yyval.ca_p = (CA_REC *) 0 ; }
 break;
 case 166:
-#line 1102 "parse.y"
+#line 1101 "parse.y"
 	{ yyval.ca_p = yyvsp[0].ca_p ;
                  yyval.ca_p->link = yyvsp[-1].ca_p ;
                  yyval.ca_p->arg_num = yyvsp[-1].ca_p ? yyvsp[-1].ca_p->arg_num+1 : 0 ;
                }
 break;
 case 167:
-#line 1117 "parse.y"
+#line 1116 "parse.y"
 	{ yyval.ca_p = (CA_REC *) 0 ; }
 break;
 case 168:
-#line 1119 "parse.y"
+#line 1118 "parse.y"
 	{ yyval.ca_p = ZMALLOC(CA_REC) ;
                 yyval.ca_p->link = yyvsp[-2].ca_p ;
                 yyval.ca_p->type = CA_EXPR  ;
@@ -2597,7 +2596,7 @@ case 168:
               }
 break;
 case 169:
-#line 1126 "parse.y"
+#line 1125 "parse.y"
 	{ yyval.ca_p = ZMALLOC(CA_REC) ;
                 yyval.ca_p->type = ST_NONE ;
                 yyval.ca_p->link = yyvsp[-2].ca_p ;
@@ -2607,20 +2606,20 @@ case 169:
               }
 break;
 case 170:
-#line 1136 "parse.y"
+#line 1135 "parse.y"
 	{ yyval.ca_p = ZMALLOC(CA_REC) ;
                 yyval.ca_p->type = CA_EXPR ;
                 yyval.ca_p->call_offset = code_offset ;
               }
 break;
 case 171:
-#line 1142 "parse.y"
+#line 1141 "parse.y"
 	{ yyval.ca_p = ZMALLOC(CA_REC) ;
                 yyval.ca_p->type = ST_NONE ;
                 code_call_id(yyval.ca_p, yyvsp[-1].stp) ;
               }
 break;
-#line 2623 "y.tab.c"
+#line 2622 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
