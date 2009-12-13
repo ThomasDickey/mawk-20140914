@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.5 2009/09/20 22:24:48 tom Exp $
+ * $MawkId: symtype.h,v 1.6 2009/12/13 19:36:24 Jonathan.Nieder Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme
@@ -167,13 +167,13 @@ typedef struct fcall {
     INST *call_start;		/* computed later as code may be moved */
     CA_REC *arg_list;
     short arg_cnt_checked;
-    unsigned line_no;		/* for error messages */
 } FCALL_REC;
 
 extern FCALL_REC *resolve_list;
 
 void resolve_fcalls(void);
-void check_fcall(FBLOCK *, int, int, FBLOCK *, CA_REC *, unsigned);
+void check_fcall(FBLOCK *callee, int call_scope, int move_level,
+                 FBLOCK *call, CA_REC *arg_list);
 void relocate_resolve_list(int, int, FBLOCK *, int, unsigned, int);
 
 /* hash.c */

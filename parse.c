@@ -2569,7 +2569,7 @@ case 164:
              else  code1(0) ;
 
              check_fcall(yyvsp[-2].fbp, scope, code_move_level, active_funct,
-                         yyvsp[0].ca_p, token_lineno) ;
+                         yyvsp[0].ca_p) ;
            }
 break;
 case 165:

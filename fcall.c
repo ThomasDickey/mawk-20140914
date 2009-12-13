@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fcall.c,v 1.5 2009/09/13 16:43:54 tom Exp $
+ * $MawkId: fcall.c,v 1.6 2009/12/13 19:36:24 Jonathan.Nieder Exp $
  * @Log: fcall.c,v @
  * Revision 1.7  1995/08/27  15:46:47  mike
  * change some errmsgs to compile_errors
@@ -68,8 +68,7 @@ static int check_progress;
 static CA_REC *
 call_arg_check(FBLOCK * callee,
 	       CA_REC * entry_list,
-	       INST * start,
-	       unsigned line_no)
+	       INST * start)
 {
     register CA_REC *q;
     CA_REC *exit_list = (CA_REC *) 0;
@@ -163,8 +162,7 @@ call_arg_check(FBLOCK * callee,
 
 static int
 arg_cnt_ok(FBLOCK * fbp,
-	   CA_REC * q,
-	   unsigned line_no)
+	   CA_REC * q)
 {
     if ((int) q->arg_num >= (int) fbp->nargs) {
 	compile_error("too many arguments in call to %s", fbp->name);
@@ -202,7 +200,7 @@ first_pass(FCALL_REC * p)
 	/* note p->arg_list starts with last argument */
 	else if (!p->arg_list /* nothing to do */  ||
 		 (!p->arg_cnt_checked &&
-		  !arg_cnt_ok(p->callee, p->arg_list, p->line_no))) {
+		  !arg_cnt_ok(p->callee, p->arg_list))) {
 	    q->link = p->link;	/* delete p */
 	    /* the ! arg_list case is not an error so free memory */
 	    ZFREE(p);
@@ -263,7 +261,7 @@ resolve_fcalls(void)
 	old_list = p->link;
 
 	if ((p->arg_list = call_arg_check(p->callee, p->arg_list,
-					  p->call_start, p->line_no))) {
+					  p->call_start))) {
 	    /* still have work to do , put on new_list   */
 	    progress |= check_progress;
 	    p->link = new_list;
@@ -287,8 +285,7 @@ check_fcall(
 	       int call_scope,
 	       int move_level,
 	       FBLOCK * call,
-	       CA_REC * arg_list,
-	       unsigned line_no)
+	       CA_REC * arg_list)
 {
     FCALL_REC *p;
 
@@ -301,16 +298,15 @@ check_fcall(
 	p->call = call;
 	p->arg_list = arg_list;
 	p->arg_cnt_checked = 0;
-	p->line_no = line_no;
 	/* add to resolve list */
 	p->link = resolve_list;
 	resolve_list = p;
-    } else if (arg_list && arg_cnt_ok(callee, arg_list, line_no)) {
+    } else if (arg_list && arg_cnt_ok(callee, arg_list)) {
 	/* usually arg_list disappears here and all is well
 	   otherwise add to resolve list */
 
 	if ((arg_list = call_arg_check(callee, arg_list,
-				       code_base, line_no))) {
+				       code_base))) {
 	    p = ZMALLOC(FCALL_REC);
 	    p->callee = callee;
 	    p->call_scope = call_scope;
@@ -318,7 +314,6 @@ check_fcall(
 	    p->call = call;
 	    p->arg_list = arg_list;
 	    p->arg_cnt_checked = 1;
-	    p->line_no = line_no;
 	    /* add to resolve list */
 	    p->link = resolve_list;
 	    resolve_list = p;

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.6 2009/07/23 22:50:31 tom Exp $
+ * $MawkId: parse.y,v 1.7 2009/12/13 19:36:24 Jonathan.Nieder Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -1091,8 +1091,7 @@ p_expr  :  FUNCT_ID mark  call_args
              if ( $3 )  code1($3->arg_num+1) ;
              else  code1(0) ;
 
-             check_fcall($1, scope, code_move_level, active_funct,
-                         $3, token_lineno) ;
+             check_fcall($1, scope, code_move_level, active_funct, $3) ;
            }
         ;
 

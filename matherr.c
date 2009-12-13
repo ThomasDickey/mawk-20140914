@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.11 2009/07/27 15:14:07 tom Exp $
+ * $MawkId: matherr.c,v 1.12 2009/12/13 19:36:20 Jonathan.Nieder Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -160,6 +160,7 @@ struct exception;
 int
 matherr(struct exception *e)
 {
+    (void) e;
     return 1;
 }
 
