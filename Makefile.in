@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.23 2009/12/13 18:02:58 Jonathan.Nieder Exp $
+# $MawkId: Makefile.in,v 1.24 2009/12/13 18:03:45 Jonathan.Nieder Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -116,6 +116,13 @@ distclean :  clean
 	rm -f config.h Makefile \
 	    config.status config.log config.cache
 	rm -f defines.out maxint.out fpe_check tags 
+
+maintainer-clean :  distclean
+	rm -f parse.c parse.h
+	rm -f array.c array.h
+	rm -f scancode.c
+	rm -f configure config.guess config.sub install-sh
+	rm -fr autom4te.cache
 
 tags :
 	ctags *.[ch] */*.[ch]
