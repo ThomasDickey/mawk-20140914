@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.9 2009/07/28 23:23:22 tom Exp $
+ * $MawkId: error.c,v 1.10 2009/12/14 00:36:47 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -124,7 +124,7 @@ static int missing_rbrace[] =
 {EOF, BEGIN, END, 0};
 
 static void
-missing(int c, const char *n, int ln)
+missing(int c, const char *n, unsigned ln)
 {
     const char *s0, *s1;
 
