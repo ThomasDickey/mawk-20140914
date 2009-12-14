@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.9 2009/09/20 22:54:13 tom Exp $
+ * $MawkId: regexp_system.c,v 1.10 2009/12/14 09:26:50 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -202,8 +202,13 @@ REerror(void)
 	len = regerror(err_code, &last_used_regexp->re,
 		       error_buffer, sizeof(error_buffer));
     } else {
-	snprintf(error_buffer, sizeof(error_buffer), "malloc failed: %s",
-		 strerror(errno));
+	char *msg = strerror(errno);
+	const char *fmt = "malloc failed: %.*s";
+
+	sprintf(error_buffer,
+		fmt,
+		(int) (sizeof(error_buffer) - strlen(msg)),
+		msg);
     }
     return error_buffer;
 }
