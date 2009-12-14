@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.14 2009/12/14 01:04:55 tom Exp $
+ * $MawkId: matherr.c,v 1.15 2009/12/14 10:22:01 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -117,10 +117,7 @@ fpe_init(void)
 {
     TURN_ON_FPE_TRAPS;
 
-#ifndef  MAWK_SV_SIGINFO
-    signal(SIGFPE, fpe_catch);
-
-#else
+#ifdef MAWK_SV_SIGINFO
     {
 	struct sigaction x;
 
@@ -130,9 +127,11 @@ fpe_init(void)
 
 	sigaction(SIGFPE, &x, (struct sigaction *) 0);
     }
+#else
+    signal(SIGFPE, fpe_catch);
 #endif
 
-#ifdef  HAVE_STRTOD_OVF_BUG
+#ifdef HAVE_STRTOD_OVF_BUG
     /* we've already turned the traps on */
     working_mask = fpgetmask();
     entry_mask = working_mask & ~FP_X_DZ & ~FP_X_OFL;
