@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.20 2009/09/16 00:00:51 tom Exp $
+ * $MawkId: fin.c,v 1.21 2009/12/14 01:08:06 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -86,8 +86,6 @@ the GNU General Public License, version 2, 1991.
    buffering and (most important) splitting files into
    records, FINgets().
 */
-
-int isatty(int);
 
 static FIN *next_main(int);
 static char *enlarge_fin_buffer(FIN *);
