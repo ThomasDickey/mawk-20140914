@@ -3283,7 +3283,7 @@ else
 
 cf_check_func=`echo "NO_${cf_func}" | sed y%abcdefghijklmnopqrstuvwxyz./-%ABCDEFGHIJKLMNOPQRSTUVWXYZ___%`
 
-        cat >>confdefs.h <<\EOF
+        cat >>confdefs.h <<EOF
 #define $cf_check_func 1
 EOF
 
