@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.7 2009/07/27 11:59:32 tom Exp $
+ * $MawkId: main.c,v 1.8 2009/12/14 00:23:56 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -60,10 +60,7 @@ initialize_locale(void)
 {
 #ifdef LOCALE
     setlocale(LC_CTYPE, "");
-    setlocale(LC_COLLATE, "");
-    setlocale(LC_MESSAGES, "");
     setlocale(LC_NUMERIC, "C");
-    setlocale(LC_TIME, "");
 #endif
 }
 
