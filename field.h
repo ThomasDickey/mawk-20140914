@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.h,v 1.4 2009/09/13 17:57:52 tom Exp $
+ * $MawkId: field.h,v 1.5 2009/12/14 00:50:40 tom Exp $
  * @Log: field.h,v @
  * Revision 1.2  1995/06/18  19:42:16  mike
  * Remove some redundant declarations and add some prototypes
@@ -55,6 +55,13 @@ extern CELL *fbank[NUM_FBANK];	/* fbank[0] == field */
 
 /* index to CELL *  for a field */
 #define field_ptr(i) ((i) <= MAX_SPLIT ? field + (i) : slow_field_ptr(i))
+
+/* some, such as RS may be defined in system-headers */
+#undef NF
+#undef RS
+#undef FS
+#undef CONVFMT
+#undef OFMT
 
 /* the pseudo fields, assignment has side effects */
 #define  NF       (field + MAX_SPLIT + 1)	/* must be first */
