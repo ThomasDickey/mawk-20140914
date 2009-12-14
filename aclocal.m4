@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.33 2009/12/14 00:58:49 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.34 2009/12/14 09:20:35 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -626,12 +626,12 @@ AC_MSG_RESULT($cf_cv_locale)
 test $cf_cv_locale = yes && { ifelse($1,,AC_DEFINE(LOCALE),[$1]) }
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_FUNC version: 4 updated: 2009/07/23 05:15:39
+dnl CF_MAWK_CHECK_FUNC version: 5 updated: 2009/12/14 04:19:08
 dnl ------------------
 AC_DEFUN([CF_MAWK_CHECK_FUNC],[
     AC_CHECK_FUNC($1,,[
         CF_UPPER(cf_check_func,NO_$1)
-        AC_DEFINE($cf_check_func)])
+        AC_DEFINE_UNQUOTED($cf_check_func)])
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_FUNCS version: 3 updated: 2008/09/09 20:32:43
