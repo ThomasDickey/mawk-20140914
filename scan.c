@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.12 2009/09/17 09:35:28 tom Exp $
+ * $MawkId: scan.c,v 1.13 2009/12/14 01:09:18 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -90,8 +90,9 @@ static int collect_RE(void);
  *----------------------------*/
 
 char *pfile_name;
-STRING *program_string;
 PFILE *pfile_list;
+
+static STRING *program_string;
 static UChar *buffer;
 static UChar *buffp;
  /* unsigned so it works with 8 bit chars */
