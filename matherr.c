@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.13 2009/12/14 00:41:55 tom Exp $
+ * $MawkId: matherr.c,v 1.14 2009/12/14 01:04:55 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -83,14 +83,14 @@ static fp_except working_mask;
 
 #ifdef   MAWK_SV_SIGINFO
 static void
-fpe_catch(int signal, siginfo_t * sip)
+fpe_catch(int sig, siginfo_t * sip)
 {
     int why = sip->si_code;
 
 #else
 
 static void
-fpe_catch(int signal, int why)
+fpe_catch(int sig, int why)
 {
 #endif /* MAWK_SV_SIGINFO  */
 
