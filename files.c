@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.8 2009/07/27 15:46:04 tom Exp $
+ * $MawkId: files.c,v 1.9 2009/12/14 01:08:10 tom Exp $
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -100,8 +100,6 @@ typedef struct file {
 static FILE_NODE *file_list;
 
 /* Prototypes for local functions */
-
-extern int isatty(int);
 
 static FILE *tfopen(const char *, const char *);
 static void efflush(FILE *);
