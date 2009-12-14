@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.9 2009/12/14 01:08:10 tom Exp $
+ * $MawkId: files.c,v 1.10 2009/12/14 01:17:34 tom Exp $
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -119,7 +119,7 @@ file_find(STRING * sval, int type)
 	    /* open a new one */
 	    p = ZMALLOC(FILE_NODE);
 
-	    switch (p->type = type) {
+	    switch (p->type = (short) type) {
 	    case F_TRUNC:
 #ifdef MSDOS
 		ostr = (binmode() & 2) ? "wb" : "w";
