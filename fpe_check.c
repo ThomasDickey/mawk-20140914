@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.6 2009/12/14 00:38:55 tom Exp $
+ * $MawkId: fpe_check.c,v 1.7 2009/12/14 10:42:12 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -32,6 +32,10 @@
 #include <signal.h>
 #include <math.h>
 
+#ifdef  MAWK_SV_SIGINFO
+#include <siginfo.h>
+#endif
+
 /* Sets up NetBSD 1.0A for ieee floating point */
 #if defined(_LIB_VERSION_TYPE) && defined(_LIB_VERSION) && defined(_IEEE_)
 #ifdef _CONST
@@ -51,6 +55,7 @@ int may_be_safe_to_look_at_why = 0;
 int why_v;
 int checking_for_strtod_ovf_bug = 0;
 
+static void catch_FPEs(void);
 static RETSIGTYPE fpe_catch();
 static int is_nan(double);
 static void check_strtod_ovf(void);
@@ -84,7 +89,7 @@ check_fpe_traps(void)
     } else {
 	traps = 1;
 	message("division by zero generates an exception");
-	signal(SIGFPE, fpe_catch);	/* set again if sysV */
+	catch_FPEs();		/* set again if sysV */
     }
 
     if (setjmp(jbuff) == 0) {
@@ -93,7 +98,7 @@ check_fpe_traps(void)
     } else {
 	traps |= 2;
 	message("overflow generates an exception");
-	signal(SIGFPE, fpe_catch);
+	catch_FPEs();
     }
 
     if (traps == 0) {
@@ -141,14 +146,14 @@ get_fpe_codes(void)
 	div_by(1000.0, 0.0);
     else {
 	divz = why_v;
-	signal(SIGFPE, fpe_catch);
+	catch_FPEs();
     }
 
     if (setjmp(jbuff) == 0)
 	overflow(1000.0);
     else {
 	ovf = why_v;
-	signal(SIGFPE, fpe_catch);
+	catch_FPEs();
     }
 
     /* make some guesses if sane values */
@@ -164,7 +169,7 @@ int
 main(int argc, char *argv[])
 {
 
-    signal(SIGFPE, fpe_catch);
+    catch_FPEs();
     switch (argc) {
     case 1:
 	check_fpe_traps();
@@ -193,6 +198,24 @@ fpe_catch(sig, why)
     if (may_be_safe_to_look_at_why)
 	why_v = why;
     longjmp(jbuff, 1);
+}
+
+static void
+catch_FPEs(void)
+{
+#ifdef MAWK_SV_SIGINFO
+    {
+	struct sigaction x;
+
+	memset(&x, 0, sizeof(x));
+	x.sa_handler = fpe_catch;
+	x.sa_flags = SA_SIGINFO;
+
+	sigaction(SIGFPE, &x, (struct sigaction *) 0);
+    }
+#else
+    signal(SIGFPE, fpe_catch);
+#endif
 }
 
 char longstr[] =
