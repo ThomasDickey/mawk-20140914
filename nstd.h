@@ -8,7 +8,7 @@
 */
 
 /*
- * $MawkId: nstd.h,v 1.6 2009/07/24 01:03:16 tom Exp $
+ * $MawkId: nstd.h,v 1.7 2009/12/14 00:37:25 tom Exp $
  * @Log: nstd.h,v @
  * Revision 1.6  1995/06/18  19:42:22  mike
  * Remove some redundant declarations and add some prototypes
@@ -93,7 +93,7 @@ double fmod(double, double);
 
 /* if have to diddle with errno to get errors from the math library */
 #ifndef STDC_MATHERR
-#define STDC_MATHERR   (defined(FPE_TRAPS_ON) && NO_MATHERR)
+#define STDC_MATHERR   (defined(FPE_TRAPS_ON) && defined(NO_MATHERR))
 #endif
 
 #endif /* NSTD_H */
