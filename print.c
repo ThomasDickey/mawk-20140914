@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.18 2009/12/14 00:40:35 tom Exp $
+ * $MawkId: print.c,v 1.19 2009/12/14 01:10:05 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -70,6 +70,7 @@ the GNU General Public License, version 2, 1991.
 #include "field.h"
 #include "scan.h"
 #include "files.h"
+#include "init.h"
 
 static void write_error(void);
 
