@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.5 2009/07/27 15:13:02 tom Exp $
+ * $MawkId: fpe_check.c,v 1.6 2009/12/14 00:38:55 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -54,7 +54,6 @@ int checking_for_strtod_ovf_bug = 0;
 static RETSIGTYPE fpe_catch();
 static int is_nan(double);
 static void check_strtod_ovf(void);
-extern double strtod();
 
 static double
 div_by(double x, double y)
