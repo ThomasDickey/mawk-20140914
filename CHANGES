@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.73 2009/12/14 01:02:15 tom Exp $
+-- $MawkId: CHANGES,v 1.74 2009/12/14 09:24:21 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091214
+	+ build fixes for AIX, Tru64.
+
 	+ add configure check for 'environ'.
 
 	+ remove redundant setlocale() calls; only LC_CTYPE and LC_NUMERIC
