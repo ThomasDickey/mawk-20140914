@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.31 2009/12/15 00:26:22 tom Exp $
+# $MawkId: Makefile.in,v 1.32 2009/12/15 09:48:55 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -94,7 +94,7 @@ array.h : array.w
 	notangle -R'"array.h"' array.w | $(NOIDENT) | cpif array.h
 
 scancode.c :  makescan.c  scancode.h nstd.h config.h
-	@ECHO_LD@$(CC) -o makescan.exe  makescan.c
+	@ECHO_LD@$(CC) $(CFLAGS) $(CPPFLAGS) -o makescan.exe  makescan.c
 	rm -f scancode.c
 	./makescan.exe > scancode.c
 	rm makescan.exe
