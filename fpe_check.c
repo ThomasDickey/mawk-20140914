@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.7 2009/12/14 10:42:12 tom Exp $
+ * $MawkId: fpe_check.c,v 1.8 2009/12/15 00:16:31 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -47,7 +47,7 @@ _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
 static void
 message(const char *s)
 {
-    printf("\t%s\n", s);
+    printf("/* %s */\n", s);
 }
 
 jmp_buf jbuff;
@@ -158,8 +158,8 @@ get_fpe_codes(void)
 
     /* make some guesses if sane values */
     if (divz > 0 && ovf > 0 && divz != ovf) {
-	printf("X FPE_ZERODIVIDE %d\n", divz);
-	printf("X FPE_OVERFLOW %d\n", ovf);
+	printf("#define FPE_ZERODIVIDE %d\n", divz);
+	printf("#define FPE_OVERFLOW %d\n", ovf);
 	exit(0);
     } else
 	exit(1);
