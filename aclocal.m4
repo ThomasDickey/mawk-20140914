@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.34 2009/12/14 09:20:35 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.35 2009/12/15 00:25:13 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -742,18 +742,19 @@ AC_DEFUN([CF_MAWK_FIND_SIZE_T],
 [CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
 CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FPE_SIGINFO version: 3 updated: 2009/07/23 05:15:39
+dnl CF_MAWK_FPE_SIGINFO version: 4 updated: 2009/12/14 19:23:36
 dnl -------------------
 dnl SYSv and Solaris FPE checks
 AC_DEFUN([CF_MAWK_FPE_SIGINFO],
-[AC_CHECK_FUNC(sigaction, sigaction=1)
-AC_CHECK_HEADER(siginfo.h,siginfo_h=1)
-if test "$sigaction" = 1 && test "$siginfo_h" = 1 ; then
-   AC_DEFINE(MAWK_SV_SIGINFO)
-else
+[
+if test "x$cf_use_sv_siginfo" = "xno"
+then
    AC_CHECK_FUNC(sigvec,sigvec=1)
-   if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then :
-   else AC_DEFINE(NOINFO_SIGFPE)
+   # 1:check_fpe_traps
+   if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then
+	   :
+   else
+	   AC_DEFINE(NOINFO_SIGFPE)
    fi
 fi])
 dnl ---------------------------------------------------------------------------
@@ -806,19 +807,30 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 5 updated: 2009/09/17 20:44:39
+dnl CF_MAWK_RUN_FPE_TESTS version: 6 updated: 2009/12/14 19:23:36
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
-[if echo "$USER_DEFINES" | grep FPE_TRAPS_ON >/dev/null
-then echo skipping fpe tests based on '$'USER_DEFINES
+[
+AC_CHECK_FUNC(sigaction, sigaction=1)
+AC_CHECK_HEADER(siginfo.h,siginfo_h=1)
+
+if test "$sigaction" = 1 && test "$siginfo_h" = 1 ; then
+	cf_use_sv_siginfo=yes
+	AC_DEFINE(MAWK_SV_SIGINFO)
 else
+	cf_use_sv_siginfo=no
+fi
+
 AC_TYPE_SIGNAL
 [
 echo checking handling of floating point exceptions
+
 rm -f fpe_check$ac_exeext 
 $CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -o fpe_check $srcdir/fpe_check.c $MATHLIB
+
 if test -f fpe_check$ac_exeext   ; then
+	# 0:check_strtod_ovf
    ./fpe_check 2>/dev/null
    status=$?
 else 
@@ -841,12 +853,17 @@ AC_DEFINE(FPE_TRAPS_ON)
 AC_DEFINE(USE_IEEEFP_H)
 AC_DEFINE_UNQUOTED([TURN_ON_FPE_TRAPS],
 [fpsetmask(fpgetmask()|FP_X_DZ|FP_X_OFL)])
+
 CF_MAWK_FPE_SIGINFO 
+
 # look for strtod overflow bug
 AC_MSG_CHECKING([strtod bug on overflow])
+
 rm -f fpe_check$ac_exeext 
 $CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -DUSE_IEEEFP_H \
 	    -o fpe_check $srcdir/fpe_check.c $MATHLIB
+
+# 2:get_fpe_codes
 if ./fpe_check phoney_arg phoney_arg 2>/dev/null
 then 
    AC_MSG_RESULT([no bug])
@@ -901,8 +918,9 @@ EOF
 # quit or not ???
 ;;
 esac 
+
 rm -f fpe_check$ac_exeext   # whew!!]
-fi])
+])
 dnl ---------------------------------------------------------------------------
 dnl CF_MSG_LOG version: 4 updated: 2007/07/29 09:55:12
 dnl ----------
