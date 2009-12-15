@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.16 2009/12/15 00:42:35 tom Exp $
+ * $MawkId: matherr.c,v 1.17 2009/12/15 01:54:23 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -45,6 +45,14 @@ the GNU General Public License, version 2, 1991.
 #include  "init.h"
 
 #include  <math.h>
+
+#ifdef HAVE_SIGACTION
+#define FPE_ARGS int sig, siginfo_t *sip, void *data
+#define FPE_DECL int why = sip->si_code
+#else
+#define FPE_ARGS int sig, int why
+#define FPE_DECL /* nothing */
+#endif
 
 /* Sets up NetBSD 1.0A for ieee floating point */
 #if defined(_LIB_VERSION_TYPE) && defined(_LIB_VERSION) && defined(_IEEE_)
@@ -81,18 +89,10 @@ static fp_except working_mask;
 
 /* machine dependent changes might be needed here */
 
-#ifdef   HAVE_SIGACTION
 static void
-fpe_catch(int sig, siginfo_t * sip)
+fpe_catch(FPE_ARGS)
 {
-    int why = sip->si_code;
-
-#else
-
-static void
-fpe_catch(int sig, int why)
-{
-#endif /* HAVE_SIGACTION  */
+    FPE_DECL;
 
 #ifdef NOINFO_SIGFPE
     rt_error("floating point exception, probably overflow");
