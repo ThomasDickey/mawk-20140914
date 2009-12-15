@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.35 2009/12/15 00:25:13 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.36 2009/12/15 01:33:25 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -742,12 +742,12 @@ AC_DEFUN([CF_MAWK_FIND_SIZE_T],
 [CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
 CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FPE_SIGINFO version: 4 updated: 2009/12/14 19:23:36
+dnl CF_MAWK_FPE_SIGINFO version: 5 updated: 2009/12/14 20:32:04
 dnl -------------------
 dnl SYSv and Solaris FPE checks
 AC_DEFUN([CF_MAWK_FPE_SIGINFO],
 [
-if test "x$cf_use_sv_siginfo" = "xno"
+if test "x$cf_cv_use_sv_siginfo" = "xno"
 then
    AC_CHECK_FUNC(sigvec,sigvec=1)
    # 1:check_fpe_traps
@@ -807,27 +807,35 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 6 updated: 2009/12/14 19:23:36
+dnl CF_MAWK_RUN_FPE_TESTS version: 7 updated: 2009/12/14 20:32:04
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
 [
-AC_CHECK_FUNC(sigaction, sigaction=1)
-AC_CHECK_HEADER(siginfo.h,siginfo_h=1)
+AC_CHECK_FUNC(sigaction)
+test "$ac_cv_func_sigaction" = yes && sigaction=1
 
+AC_CHECK_HEADER(siginfo.h)
+test "$ac_cv_header_siginfo_h" = yes && siginfo_h=1
+
+AC_CACHE_CHECK(if we should use siginfo,cf_cv_use_sv_siginfo,[
 if test "$sigaction" = 1 && test "$siginfo_h" = 1 ; then
-	cf_use_sv_siginfo=yes
-	AC_DEFINE(MAWK_SV_SIGINFO)
+	cf_cv_use_sv_siginfo=yes
 else
-	cf_use_sv_siginfo=no
+	cf_cv_use_sv_siginfo=no
 fi
+])
 
 AC_TYPE_SIGNAL
-[
+
+cf_FPE_DEFS="$CPPFLAGS -DRETSIGTYPE=$ac_cv_type_signal"
+test "$ac_cv_func_sigaction" = yes && cf_FPE_DEFS="$cf_FPE_DEFS -DHAVE_SIGACTION"
+test "$ac_cv_header_siginfo_h" = yes && cf_FPE_DEFS="$cf_FPE_DEFS -DHAVE_SIGINFO_H"
+
 echo checking handling of floating point exceptions
 
 rm -f fpe_check$ac_exeext 
-$CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -o fpe_check $srcdir/fpe_check.c $MATHLIB
+$CC $CFLAGS $cf_FPE_DEFS -o fpe_check $srcdir/fpe_check.c $MATHLIB 2>&AC_FD_CC
 
 if test -f fpe_check$ac_exeext   ; then
 	# 0:check_strtod_ovf
@@ -840,7 +848,7 @@ fi
 
 case $status in
    0)  ;;  # good news do nothing
-   3)      # reasonably good news]
+   3)      # reasonably good news
 AC_DEFINE(FPE_TRAPS_ON)
 CF_MAWK_FPE_SIGINFO ;;
 
@@ -860,8 +868,7 @@ CF_MAWK_FPE_SIGINFO
 AC_MSG_CHECKING([strtod bug on overflow])
 
 rm -f fpe_check$ac_exeext 
-$CC $CFLAGS -DRETSIGTYPE=$ac_cv_type_signal -DUSE_IEEEFP_H \
-	    -o fpe_check $srcdir/fpe_check.c $MATHLIB
+$CC $CFLAGS $cf_FPE_DEFS -DUSE_IEEEFP_H -o fpe_check $srcdir/fpe_check.c $MATHLIB 2>&AC_FD_CC
 
 # 2:get_fpe_codes
 if ./fpe_check phoney_arg phoney_arg 2>/dev/null
