@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.17 2009/12/15 01:54:23 tom Exp $
+ * $MawkId: matherr.c,v 1.18 2009/12/15 09:20:04 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -94,7 +94,7 @@ fpe_catch(FPE_ARGS)
 {
     FPE_DECL;
 
-#ifdef NOINFO_SIGFPE
+#if defined(NOINFO_SIGFPE) || defined(FPE_TRAPS_ON)
     rt_error("floating point exception, probably overflow");
     /* does not return */
 #else
