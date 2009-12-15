@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.13 2009/09/20 19:53:18 tom Exp $
+ * $MawkId: split.c,v 1.14 2009/12/15 10:59:30 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -209,6 +209,10 @@ re_ov_split(char *s, size_t slen, PTR re)
 	    goto done; \
 	sval = split_buff[i++] = new_STRING1(s, (unsigned) (t - s)); \
 	s = t + mlen; \
+	if (s > limit) { \
+	    slen = (size_t) (-1); \
+	    goto done; \
+	} \
 	slen = (size_t) (limit - s)
 
 int
