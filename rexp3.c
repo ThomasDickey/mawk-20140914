@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.13 2009/09/14 09:04:12 tom Exp $
+ * $MawkId: rexp3.c,v 1.14 2009/12/15 01:50:07 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -48,10 +48,6 @@ the GNU General Public License, version 2, 1991.
 /*  match a string against a machine   */
 
 #include "rexp.h"
-
-extern RT_STATE *RE_run_stack_base;
-extern RT_STATE *RE_run_stack_limit;
-extern RT_STATE *RE_run_stack_empty;
 
 #define	 push(mx,sx,ssx,ux)   if (++stackp == RE_run_stack_limit)\
 				stackp = RE_new_run_stack() ;\
