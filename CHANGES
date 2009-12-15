@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.74 2009/12/14 09:24:21 tom Exp $
+-- $MawkId: CHANGES,v 1.75 2009/12/15 01:52:44 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091214
+	+ improve configure checks for sigaction, making the definitions used
+	  in fpe_check.c consistent with matherr.c
+
 	+ build fixes for AIX, Tru64.
 
 	+ add configure check for 'environ'.
