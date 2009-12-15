@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.15 2009/12/14 10:22:01 tom Exp $
+ * $MawkId: matherr.c,v 1.16 2009/12/15 00:42:35 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -70,7 +70,7 @@ static fp_except working_mask;
 #define	 TURN_ON_FPE_TRAPS	/* nothing */
 #endif
 
-#ifdef  MAWK_SV_SIGINFO
+#ifdef  HAVE_SIGINFO_H
 #include <siginfo.h>
 #define  FPE_ZERODIVIDE  FPE_FLTDIV
 #define  FPE_OVERFLOW    FPE_FLTOVF
@@ -81,7 +81,7 @@ static fp_except working_mask;
 
 /* machine dependent changes might be needed here */
 
-#ifdef   MAWK_SV_SIGINFO
+#ifdef   HAVE_SIGACTION
 static void
 fpe_catch(int sig, siginfo_t * sip)
 {
@@ -92,7 +92,7 @@ fpe_catch(int sig, siginfo_t * sip)
 static void
 fpe_catch(int sig, int why)
 {
-#endif /* MAWK_SV_SIGINFO  */
+#endif /* HAVE_SIGACTION  */
 
 #ifdef NOINFO_SIGFPE
     rt_error("floating point exception, probably overflow");
@@ -117,7 +117,7 @@ fpe_init(void)
 {
     TURN_ON_FPE_TRAPS;
 
-#ifdef MAWK_SV_SIGINFO
+#ifdef HAVE_SIGACTION
     {
 	struct sigaction x;
 
