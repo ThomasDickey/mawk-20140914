@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.10 2009/12/15 01:19:01 tom Exp $
+ * $MawkId: fpe_check.c,v 1.11 2009/12/15 01:53:45 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -41,8 +41,8 @@
 #define FPE_ARGS int sig, siginfo_t *sip, void *data
 #define FPE_DECL int why = sip->si_code
 #else
-#define FPE_ARGS int sig
-#define FPE_DECL int why = -1
+#define FPE_ARGS int sig, int why
+#define FPE_DECL /* nothing */
 #endif
 
 /* Sets up NetBSD 1.0A for ieee floating point */
