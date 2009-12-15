@@ -1,9 +1,10 @@
 /*
- * $MawkId: config_h.in,v 1.9 2009/12/15 00:42:42 tom Exp $
+ * $MawkId: config_h.in,v 1.10 2009/12/15 01:40:42 tom Exp $
  * vile:cmode
  * template for config.h
  */
 
+#undef DECL_ENVIRON
 #undef FPE_TRAPS_ON
 #undef GCC_NORETURN
 #undef GCC_PRINTF
