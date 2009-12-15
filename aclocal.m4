@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.36 2009/12/15 01:33:25 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.37 2009/12/15 09:24:42 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -812,10 +812,10 @@ dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
 [
-AC_CHECK_FUNC(sigaction)
+AC_CHECK_FUNCS(sigaction)
 test "$ac_cv_func_sigaction" = yes && sigaction=1
 
-AC_CHECK_HEADER(siginfo.h)
+AC_CHECK_HEADERS(siginfo.h)
 test "$ac_cv_header_siginfo_h" = yes && siginfo_h=1
 
 AC_CACHE_CHECK(if we should use siginfo,cf_cv_use_sv_siginfo,[
