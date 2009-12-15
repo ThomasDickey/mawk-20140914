@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.18 2009/12/15 09:20:04 tom Exp $
+ * $MawkId: matherr.c,v 1.19 2009/12/15 10:08:19 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -122,7 +122,7 @@ fpe_init(void)
 	struct sigaction x;
 
 	memset(&x, 0, sizeof(x));
-	x.sa_handler = fpe_catch;
+	x.sa_sigaction = fpe_catch;
 	x.sa_flags = SA_SIGINFO;
 
 	sigaction(SIGFPE, &x, (struct sigaction *) 0);
