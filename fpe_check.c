@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.9 2009/12/15 00:35:43 tom Exp $
+ * $MawkId: fpe_check.c,v 1.10 2009/12/15 01:19:01 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -30,10 +30,19 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <string.h>
 #include <math.h>
 
-#ifdef  MAWK_SV_SIGINFO
+#ifdef HAVE_SIGINFO_H
 #include <siginfo.h>
+#endif
+
+#ifdef HAVE_SIGACTION
+#define FPE_ARGS int sig, siginfo_t *sip, void *data
+#define FPE_DECL int why = sip->si_code
+#else
+#define FPE_ARGS int sig
+#define FPE_DECL int why = -1
 #endif
 
 /* Sets up NetBSD 1.0A for ieee floating point */
@@ -189,10 +198,10 @@ main(int argc, char *argv[])
    may have seen a prototype without 2nd argument */
 
 static RETSIGTYPE
-fpe_catch(sig, why)
-     int sig;
-     int why;
+fpe_catch(FPE_ARGS)
 {
+    FPE_DECL;
+
     if (checking_for_strtod_ovf_bug)
 	exit(1);
     if (may_be_safe_to_look_at_why)
@@ -203,7 +212,7 @@ fpe_catch(sig, why)
 static void
 catch_FPEs(void)
 {
-#if defined(MAWK_SV_SIGINFO) || defined(HAVE_SIGACTION)
+#if defined(HAVE_SIGACTION)
     {
 	struct sigaction x;
 
