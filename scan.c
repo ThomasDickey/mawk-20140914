@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.13 2009/12/14 01:09:18 tom Exp $
+ * $MawkId: scan.c,v 1.14 2009/12/16 09:57:25 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -733,6 +733,7 @@ collect_decimal(int c, int *flag)
 {
     register UChar *p = (UChar *) string_buff + 1;
     UChar *endp;
+    char *temp;
     double d;
 
     *flag = 0;
@@ -786,7 +787,8 @@ collect_decimal(int c, int *flag)
     }
 
     errno = 0;			/* check for overflow/underflow */
-    d = strtod(string_buff, (char **) &endp);
+    d = strtod(string_buff, &temp);
+    endp = (UChar *) temp;
 
 #ifndef	 STRTOD_UNDERFLOW_ON_ZERO_BUG
     if (errno)
