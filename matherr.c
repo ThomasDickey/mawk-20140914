@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.19 2009/12/15 10:08:19 tom Exp $
+ * $MawkId: matherr.c,v 1.20 2009/12/16 00:50:12 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -51,7 +51,7 @@ the GNU General Public License, version 2, 1991.
 #define FPE_DECL int why = sip->si_code
 #else
 #define FPE_ARGS int sig, int why
-#define FPE_DECL /* nothing */
+#define FPE_DECL		/* nothing */
 #endif
 
 /* Sets up NetBSD 1.0A for ieee floating point */
@@ -80,8 +80,14 @@ static fp_except working_mask;
 
 #ifdef  HAVE_SIGINFO_H
 #include <siginfo.h>
-#define  FPE_ZERODIVIDE  FPE_FLTDIV
-#define  FPE_OVERFLOW    FPE_FLTOVF
+#define  FPE_UNDERFLOW   FPE_FLTUND
+#endif
+
+#ifdef WIN32
+#include <crt/float.h>
+#define  FPE_FLTDIV      FPE_ZERODIVIDE
+#define  FPE_FLTOVF      FPE_OVERFLOW
+#define  FPE_FLTUND      FPE_UNDERFLOW
 #endif
 
 #ifdef	 FPE_TRAPS_ON
@@ -94,17 +100,26 @@ fpe_catch(FPE_ARGS)
 {
     FPE_DECL;
 
-#if defined(NOINFO_SIGFPE) || defined(FPE_TRAPS_ON)
+#if defined(NOINFO_SIGFPE)
     rt_error("floating point exception, probably overflow");
     /* does not return */
 #else
 
     switch (why) {
-    case FPE_ZERODIVIDE:
-	rt_error("division by zero");
+#ifdef FPE_FLTDIV
+    case FPE_FLTDIV:
+	rt_error("floating point division by zero");
+#endif
 
-    case FPE_OVERFLOW:
+#ifdef FPE_FLTOVF
+    case FPE_FLTOVF:
 	rt_error("floating point overflow");
+#endif
+
+#ifdef FPE_FLTUND
+    case FPE_FLTUND:
+	rt_error("floating point underflow");
+#endif
 
     default:
 	rt_error("floating point exception");
