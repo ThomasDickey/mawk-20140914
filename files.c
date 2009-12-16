@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.10 2009/12/14 01:17:34 tom Exp $
+ * $MawkId: files.c,v 1.11 2009/12/16 09:42:53 tom Exp $
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -64,8 +64,11 @@ the GNU General Public License, version 2, 1991.
 #include "init.h"
 
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
+
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
 
 #ifdef	V7
 #include  <sgtty.h>		/* defines FIOCLEX */
