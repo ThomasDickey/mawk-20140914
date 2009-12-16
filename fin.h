@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.h,v 1.7 2009/09/13 21:02:12 tom Exp $
+ * $MawkId: fin.h,v 1.8 2009/12/16 23:44:26 tom Exp $
  * @Log: fin.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:13  mike
  * move source to cvs
@@ -55,9 +55,5 @@ unsigned fillbuff(int, char *, unsigned);
 
 extern FIN *main_fin;		/* for the main input stream */
 void open_main(void);
-
-#ifdef MSDOS
-void setmode(int, int);
-#endif
 
 #endif /* FIN_H */
