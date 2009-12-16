@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.h,v 1.7 2009/07/27 15:35:11 tom Exp $
+ * $MawkId: files.h,v 1.8 2009/12/16 23:45:58 tom Exp $
  * @Log: files.h,v @
  * Revision 1.3  1996/01/14  17:14:11  mike
  * flush_all_output()
@@ -62,9 +62,13 @@ char *tmp_file_name(int, char *);
 
 #ifdef MSDOS
 int DOSexec(char *);
+void enlarge_output_buffer(FILE *);
+#endif
+
+#if USE_BINMODE
 int binmode(void);
 void set_binmode(int);
-void enlarge_output_buffer(FILE *);
+void stdout_init(void);
 #endif
 
 #endif /* MAWK_FILES_H */

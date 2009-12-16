@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.15 2009/12/16 09:54:23 tom Exp $
+ * $MawkId: init.c,v 1.16 2009/12/16 23:46:43 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -67,6 +67,7 @@ the GNU General Public License, version 2, 1991.
 #include "symtype.h"
 #include "init.h"
 #include "bi_vars.h"
+#include "files.h"
 #include "field.h"
 #include <stdlib.h>
 
@@ -85,7 +86,6 @@ static void bad_option(char *);
 static void no_program(void);
 
 #ifdef  MSDOS
-void stdout_init(void);
 #if  HAVE_REARGV
 void reargv(int *, char ***);
 #endif
@@ -111,7 +111,7 @@ initialize(int argc, char **argv)
     kw_init();			/* load the keywords */
     field_init();
 
-#ifdef   MSDOS
+#if USE_BINMODE
     {
 	char *p = getenv("MAWKBINMODE");
 
@@ -126,7 +126,7 @@ initialize(int argc, char **argv)
     fpe_init();
     set_stderr();
 
-#ifdef  MSDOS
+#if USE_BINMODE
     stdout_init();
 #endif
 }
@@ -227,7 +227,7 @@ process_cmdline(int argc, char **argv)
 		    sprintf_limit = sprintf_buff + x;
 		}
 	    }
-#ifdef  MSDOS
+#if USE_BINMODE
 	    else if (optArg[0] == 'B') {
 		char *p = strchr(optArg, '=');
 		int x = p ? atoi(p + 1) : 0;
