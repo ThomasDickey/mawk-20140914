@@ -1,9 +1,11 @@
--- $MawkId: CHANGES,v 1.77 2009/12/15 11:43:49 tom Exp $
+-- $MawkId: CHANGES,v 1.78 2009/12/16 01:03:10 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091215
 	+ bump version to 1.3.4
+
+	+ add check for floating-point underflow exceptions
 
 	+ fix an old 1.3.3 bug in re_split(), which did not check properly for
 	  the end of buffer; this broke on Tru64.
