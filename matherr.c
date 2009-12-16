@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.20 2009/12/16 00:50:12 tom Exp $
+ * $MawkId: matherr.c,v 1.21 2009/12/16 01:34:23 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -83,15 +83,17 @@ static fp_except working_mask;
 #define  FPE_UNDERFLOW   FPE_FLTUND
 #endif
 
+#ifdef	 FPE_TRAPS_ON
+#include <signal.h>
+
+#ifndef FPE_FLTDIV
 #ifdef WIN32
 #include <crt/float.h>
 #define  FPE_FLTDIV      FPE_ZERODIVIDE
 #define  FPE_FLTOVF      FPE_OVERFLOW
 #define  FPE_FLTUND      FPE_UNDERFLOW
 #endif
-
-#ifdef	 FPE_TRAPS_ON
-#include <signal.h>
+#endif
 
 /* machine dependent changes might be needed here */
 
