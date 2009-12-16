@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.14 2009/12/15 01:50:45 tom Exp $
+ * $MawkId: init.c,v 1.15 2009/12/16 09:54:23 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -354,7 +354,9 @@ set_ARGV(int argc, char **argv, int i)
 
 #ifdef DECL_ENVIRON
 #ifndef	 MSDOS_MSC		/* MSC declares it near */
+#ifndef environ
 extern char **environ;
+#endif
 #endif
 #endif
 
