@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.26 2009/12/16 00:23:15 tom Exp $
+dnl $MawkId: configure.in,v 1.27 2009/12/16 09:55:40 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -58,6 +58,13 @@ if test "x${with_builtin_regex}" != xno; then
 fi
 AC_MSG_RESULT($with_builtin_regex)
 
+if test "x${with_builtin_regex}" = xno; then
+    AC_CHECK_HEADER(regex.h,cf_have_regex_h=yes,cf_have_regex_h=no)
+    if test "$cf_have_regex_h" != yes ; then
+	AC_MSG_ERROR(could not find regex.h)
+    fi
+fi
+
 AC_PROG_YACC
 CF_ANSI_CC_REQD
 CF_XOPEN_SOURCE
@@ -65,8 +72,14 @@ CF_XOPEN_SOURCE
 CF_MAWK_FIND_SIZE_T
 CF_LOCALE
 CF_CHECK_ENVIRON(environ)
+
+AC_CHECK_FUNCS(fork pipe wait)
+test "$ac_cv_func_fork" = yes && \
+test "$ac_cv_func_pipe" = yes && \
+test "$ac_cv_func_wait" = yes && \
 AC_DEFINE(HAVE_REAL_PIPES)
-CF_MAWK_CHECK_HEADERS(fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h)
+
+CF_MAWK_CHECK_HEADERS(fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h sys/wait.h)
 CF_MAWK_CHECK_FUNCS(memcpy strchr strerror vfprintf strtod fmod matherr)
 CF_MAWK_FIND_MAX_INT
 CF_MAWK_RUN_FPE_TESTS
