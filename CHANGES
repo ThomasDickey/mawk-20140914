@@ -1,11 +1,14 @@
--- $MawkId: CHANGES,v 1.78 2009/12/16 01:03:10 tom Exp $
+-- $MawkId: CHANGES,v 1.79 2009/12/16 09:35:17 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20091215
+20091216
 	+ bump version to 1.3.4
 
-	+ add check for floating-point underflow exceptions
+	+ add configure check for functions used for pipe/system calls, e.g.,
+	  for MinGW where these are absent.
+
+	+ add runtime check for floating-point underflow exceptions
 
 	+ fix an old 1.3.3 bug in re_split(), which did not check properly for
 	  the end of buffer; this broke on Tru64.
