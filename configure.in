@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.25 2009/12/14 01:00:51 tom Exp $
+dnl $MawkId: configure.in,v 1.26 2009/12/16 00:23:15 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -60,6 +60,8 @@ AC_MSG_RESULT($with_builtin_regex)
 
 AC_PROG_YACC
 CF_ANSI_CC_REQD
+CF_XOPEN_SOURCE
+
 CF_MAWK_FIND_SIZE_T
 CF_LOCALE
 CF_CHECK_ENVIRON(environ)
