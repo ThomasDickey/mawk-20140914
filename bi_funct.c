@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.20 2009/12/13 19:26:02 Jonathan.Nieder Exp $
+ * $MawkId: bi_funct.c,v 1.21 2009/12/16 09:54:37 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -664,11 +664,10 @@ bi_fflush(CELL * sp)
     return sp;
 }
 
-#ifdef   HAVE_REAL_PIPES
-
 CELL *
-bi_system(CELL * sp)
+bi_system(CELL * sp GCC_UNUSED)
 {
+#ifdef HAVE_REAL_PIPES
     int pid;
     unsigned ret_val;
 
@@ -699,15 +698,7 @@ bi_system(CELL * sp)
     sp->type = C_DOUBLE;
     sp->dval = (double) ret_val;
     return sp;
-}
-
-#endif /* HAVE_REAL_PIPES */
-
-#ifdef   MSDOS
-
-CELL *
-bi_system(CELL * sp)
-{
+#elif defined(MSDOS)
     int retval;
 
     if (sp->type < C_STRING)
@@ -717,9 +708,10 @@ bi_system(CELL * sp)
     sp->type = C_DOUBLE;
     sp->dval = (double) retval;
     return sp;
-}
-
+#else
+    return 0;
 #endif
+}
 
 /*  getline()  */
 
