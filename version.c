@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.6 2009/09/18 09:42:30 tom Exp $
+ * $MawkId: version.c,v 1.7 2009/12/16 00:58:04 tom Exp $
  * @Log: version.c,v @
  * Revision 1.10  1996/07/28 21:47:07  mike
  * gnuish patch
@@ -31,7 +31,9 @@ the GNU General Public License, version 2, 1991.
 #include "patchlev.h"
 
 #define	 VERSION_STRING	 \
-  "mawk 1.3%s%s %s, Copyright (C) Michael D. Brennan\n\n"
+  "mawk 1.3%s%s %s\n\
+Copyright 2009, Thomas E. Dickey\n\
+Copyright 1996, Michael D. Brennan\n\n"
 
 /* If use different command line syntax for MSDOS
    mark that in VERSION	 */
