@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.5 2009/07/27 12:40:38 tom Exp $
+ * $MawkId: rexp1.c,v 1.6 2009/12/17 09:59:12 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
@@ -42,12 +42,12 @@ the GNU General Public License, version 2, 1991.
 /* initialize a two state machine */
 static void
 new_TWO(
-	   SType type,
+	   int type,
 	   MACHINE * mp)	/* init mp-> */
 {
     mp->start = (STATE *) RE_malloc(2 * STATESZ);
     mp->stop = mp->start + 1;
-    mp->start->s_type = type;
+    mp->start->s_type = (SType) type;
     mp->stop->s_type = M_ACCEPT;
 }
 
