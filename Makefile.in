@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.32 2009/12/15 09:48:55 tom Exp $
+# $MawkId: Makefile.in,v 1.33 2009/12/17 23:14:20 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -27,7 +27,7 @@ CPPFLAGS	= -I. -I$(srcdir) -DHAVE_CONFIG_H @CPPFLAGS@
 EXTRA_CFLAGS	= @EXTRA_CFLAGS@
 CFLAGS          = @CFLAGS@ $(EXTRA_CFLAGS)
 LDFLAGS         = @CFLAGS@ @LDFLAGS@
-MATHLIB         = @MATHLIB@
+LIBS            = @LIBS@
 
 YACC            = @YACC@
 
@@ -65,7 +65,7 @@ all :	$(PROG)
 check :  mawk_test fpe_test
 
 $(PROG) : $(OBJS)
-	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(MATHLIB)
+	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 TESTPATH= PATH=`pwd`:`cd $(srcdir);pwd`/test:/bin:/usr/bin; export PATH
 
