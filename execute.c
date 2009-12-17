@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.10 2009/08/01 15:21:41 tom Exp $
+ * $MawkId: execute.c,v 1.11 2009/12/17 10:33:20 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -107,7 +107,7 @@ static int d_to_index(double);
 
 #ifdef	 NOINFO_SIGFPE
 static char dz_msg[] = "division by zero";
-#define	 CHECK_DIVZERO(x) if( (x) == 0.0 )rt_error(dz_msg);else
+#define	 CHECK_DIVZERO(x) do { if ((x) == 0.0 ) rt_error(dz_msg); } while (0)
 #endif
 
 #ifdef	 DEBUG
