@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.9 2009/09/13 18:49:39 tom Exp $
+ * $MawkId: field.c,v 1.10 2009/12/17 00:20:11 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -624,7 +624,7 @@ load_field_ov(void)
     }
 }
 
-#ifdef  MSDOS
+#if USE_BINMODE
 
 /* read current value of BINMODE */
 int
@@ -643,21 +643,22 @@ void
 set_binmode(int x)
 {
     CELL c;
+    int change = ((x & 4) == 0);
 
     /* set RS */
     c.type = C_STRING;
-    c.ptr = (PTR) new_STRING((x & 1) ? "\r\n" : "\n");
+    c.ptr = (PTR) new_STRING((change && (x & 1)) ? "\r\n" : "\n");
     field_assign(RS, &c);
     free_STRING(string(&c));
 
     /* set ORS */
     cell_destroy(ORS);
     ORS->type = C_STRING;
-    ORS->ptr = (PTR) new_STRING((x & 2) ? "\r\n" : "\n");
+    ORS->ptr = (PTR) new_STRING((change && (x & 2)) ? "\r\n" : "\n");
 
     cell_destroy(BINMODE);
     BINMODE->type = C_DOUBLE;
     BINMODE->dval = (double) x;
 }
 
-#endif /* MSDOS */
+#endif /* USE_BINMODE */
