@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.10 2009/12/14 00:36:47 tom Exp $
+ * $MawkId: error.c,v 1.11 2009/12/17 00:05:10 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -278,7 +278,7 @@ overflow(const char *s, unsigned size)
     mawk_exit(2);
 }
 
-/* print as much as we know about where a rt error occured */
+/* print as much as we know about where a rt error occurred */
 
 static void
 rt_where(void)
