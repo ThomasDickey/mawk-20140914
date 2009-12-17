@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.12 2009/09/21 00:16:34 tom Exp $
+# $MawkId: mawktest,v 1.13 2009/12/17 00:21:50 tom Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -8,6 +8,11 @@
 #
 # It needs to be run from  mawk/test
 # and mawk needs to be in mawk/test or in PATH
+
+PROG=mawk
+
+MAWKBINMODE=7
+export MAWKBINMODE
 
 if test $# != 0 ; then
 SRC=$1
@@ -25,21 +30,21 @@ trap 'echo mawk_test failed ; rm -f $STDOUT ; exit 1'  0
 PATH=.:$PATH
 
 # find out which mawk we're testing
-mawk -W version
+$PROG -W version
 
-NULLS=`mawk -W version 2>&1 |fgrep 'internal regex' 2>/dev/null`
+NULLS=`$PROG -W version 2>&1 |fgrep 'internal regex' 2>/dev/null`
 #################################
 echo
 echo testing input and field splitting
 
-LC_ALL=C mawk -f wc.awk $dat | cmp -s - wc-awk.out || exit
-LC_ALL=C mawk -f null-rs.awk null-rs.dat | cmp -s - null-rs.out || exit
+LC_ALL=C $PROG -f wc.awk $dat | cmp -s - wc-awk.out || exit
+LC_ALL=C $PROG -f null-rs.awk null-rs.dat | cmp -s - null-rs.out || exit
 
 if test -n "$NULLS" ; then
-	LC_ALL=C mawk -F '\000'    -f nulls0.awk $nulldat > $STDOUT
-	LC_ALL=C mawk -F '[\000 ]' -f nulls0.awk $nulldat >> $STDOUT
+	LC_ALL=C $PROG -F '\000'    -f nulls0.awk $nulldat > $STDOUT
+	LC_ALL=C $PROG -F '[\000 ]' -f nulls0.awk $nulldat >> $STDOUT
 	cmp -s  nulls.out $STDOUT || exit
-	echo "... mawk supports matches with NUL bytes"
+	echo "... $PROG supports matches with NUL bytes"
 fi
 
 echo input and field splitting OK
@@ -47,11 +52,11 @@ echo input and field splitting OK
 
 echo
 echo testing regular expression matching
-LC_ALL=C mawk -f reg0.awk $dat > $STDOUT
-LC_ALL=C mawk -f reg1.awk $dat >> $STDOUT
-LC_ALL=C mawk -f reg2.awk $dat >> $STDOUT
-LC_ALL=C mawk -f reg4.awk $dat >> $STDOUT
-LC_ALL=C mawk -f reg5.awk $dat >> $STDOUT
+LC_ALL=C $PROG -f reg0.awk $dat > $STDOUT
+LC_ALL=C $PROG -f reg1.awk $dat >> $STDOUT
+LC_ALL=C $PROG -f reg2.awk $dat >> $STDOUT
+LC_ALL=C $PROG -f reg4.awk $dat >> $STDOUT
+LC_ALL=C $PROG -f reg5.awk $dat >> $STDOUT
 
 cmp -s  reg-awk.out $STDOUT || exit
 
@@ -62,10 +67,10 @@ echo
 if [ -c /dev/full ]; then
     echo testing checking for write errors
     # Check for write errors noticed when closing the file
-    LC_ALL=C mawk '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
+    LC_ALL=C $PROG '{print}' <full-awk.dat >/dev/full 2>/dev/null && exit
     # Check for write errors noticed on writing
     # The file has to be bigger than the buffer size of the libc
-    LC_ALL=C mawk '{print}' <$SRC/scan.c >/dev/full 2>/dev/null && exit
+    LC_ALL=C $PROG '{print}' <$SRC/scan.c >/dev/full 2>/dev/null && exit
 
     echo checking for write errors OK
 else
@@ -77,7 +82,7 @@ fi
 echo
 echo testing arrays and flow of control
 
-LC_ALL=C mawk -f wfrq0.awk $dat | cmp -s - wfrq-awk.out || exit
+LC_ALL=C $PROG -f wfrq0.awk $dat | cmp -s - wfrq-awk.out || exit
 
 echo array test OK
 #################################
@@ -85,13 +90,13 @@ echo array test OK
 echo
 echo testing function calls and general stress test
 
-LC_ALL=C mawk -f $SRC/examples/decl.awk $dat | cmp -s - decl-awk.out || exit
+LC_ALL=C $PROG -f $SRC/examples/decl.awk $dat | cmp -s - decl-awk.out || exit
 
 echo general stress test passed
 
 
 echo
-echo  tested mawk seems OK
+echo  tested $PROG seems OK
 
 trap 0
 rm -f $STDOUT
