@@ -1,4 +1,5 @@
-.TH MAWK 1  "Dec 22 1994" "Version 1.2" "USER COMMANDS"
+.\" $MawkId: mawk.1,v 1.4 2009/12/17 01:09:21 tom Exp $
+.TH MAWK 1  "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
 .SH NAME
@@ -1440,9 +1441,11 @@ ANSI C conversion specifications for printf() and sprintf().
 
 New command options:  \-v var=value, multiple \-f options and
 implementation options as arguments to \-W.
+
+For systems (MS-DOS or Windows) which provide a \fIsetmode\fP function,
+an environment variable MAWKBINMODE and a built-in variable BINMODE.
 .RE
 .sp
-
 Posix AWK is oriented to operate on files a line at 
 a time.
 .B RS
@@ -1618,3 +1621,5 @@ Implementors of the AWK language have shown a consistent lack
 of imagination when naming their programs.
 .SH AUTHOR
 Mike Brennan (brennan@whidbey.com).
+.br
+Thomas E. Dickey <dickey@invisible-island.net>.
