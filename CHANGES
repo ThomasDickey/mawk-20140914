@@ -1,9 +1,13 @@
--- $MawkId: CHANGES,v 1.79 2009/12/16 09:35:17 tom Exp $
+-- $MawkId: CHANGES,v 1.80 2009/12/17 00:55:42 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091216
 	+ bump version to 1.3.4
+
+	+ extend MAWKBINMODE, adding a third bit which when set will suppress
+	  the change for RS or ORS to use CR/LF rather than LF.  This is used
+	  for MinGW to make the "check" rule in a build work, for instance.
 
 	+ add configure check for functions used for pipe/system calls, e.g.,
 	  for MinGW where these are absent.
