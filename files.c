@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.11 2009/12/16 09:42:53 tom Exp $
+ * $MawkId: files.c,v 1.12 2009/12/17 00:06:51 tom Exp $
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -124,7 +124,7 @@ file_find(STRING * sval, int type)
 
 	    switch (p->type = (short) type) {
 	    case F_TRUNC:
-#ifdef MSDOS
+#if USE_BINMODE
 		ostr = (binmode() & 2) ? "wb" : "w";
 #else
 		ostr = "w";
@@ -134,7 +134,7 @@ file_find(STRING * sval, int type)
 		break;
 
 	    case F_APPEND:
-#ifdef MSDOS
+#if USE_BINMODE
 		ostr = (binmode() & 2) ? "ab" : "a";
 #else
 		ostr = "a";
@@ -583,7 +583,7 @@ tfopen(const char *name, const char *mode)
     return retval;
 }
 
-#ifdef  MSDOS
+#ifdef MSDOS
 void
 enlarge_output_buffer(FILE *fp)
 {
@@ -592,20 +592,24 @@ enlarge_output_buffer(FILE *fp)
 	mawk_exit(2);
     }
 }
+#endif
 
+#if USE_BINMODE
 void
 stdout_init(void)
 {
+#ifdef MSDOS
     if (!isatty(1))
 	enlarge_output_buffer(stdout);
+#endif
     if (binmode() & 2) {
 	setmode(1, O_BINARY);
 	setmode(2, O_BINARY);
     }
 }
-#endif /* MSDOS */
+#endif /* USE_BINMODE */
 
-/* An error occured closing the file referred to by P. We tell the
+/* An error occurred closing the file referred to by P. We tell the
    user and terminate the program. */
 
 static void

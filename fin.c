@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.21 2009/12/14 01:08:06 tom Exp $
+ * $MawkId: fin.c,v 1.22 2009/12/17 00:06:57 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -132,14 +132,14 @@ FINopen(char *filename, int main_flag)
     int fd;
     int oflag = O_RDONLY;
 
-#ifdef  MSDOS
+#if USE_BINMODE
     int bm = binmode() & 1;
     if (bm)
 	oflag |= O_BINARY;
 #endif
 
     if (filename[0] == '-' && filename[1] == 0) {
-#ifdef  MSDOS
+#if USE_BINMODE
 	if (bm)
 	    setmode(0, O_BINARY);
 #endif
@@ -416,7 +416,7 @@ open_main(void)
 {
     CELL argc;
 
-#ifdef  MSDOS
+#if USE_BINMODE
     int k = binmode();
 
     if (k & 1)
