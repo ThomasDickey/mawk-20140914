@@ -1,9 +1,9 @@
-dnl $MawkId: aclocal.m4,v 1.38 2009/12/16 00:47:25 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.39 2009/12/18 10:54:49 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
 dnl renamed for consistency by Thomas E Dickey.
-dnl 
+dnl
 dnl ---------------------------------------------------------------------------
 dnl ---------------------------------------------------------------------------
 dnl CF_ADD_CFLAGS version: 8 updated: 2009/01/06 19:33:30
@@ -722,7 +722,7 @@ AC_CACHE_VAL(cf_cv_size_t_$2,[
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FIND_MAX_INT version: 4 updated: 2009/07/26 17:53:03
+dnl CF_MAWK_FIND_MAX_INT version: 5 updated: 2009/12/18 05:50:47
 dnl --------------------
 dnl Try to find a definition of MAX__INT from limits.h else compute.
 AC_DEFUN([CF_MAWK_FIND_MAX_INT],
@@ -745,14 +745,14 @@ int main()
 #else
 	max_uint = MAXINT;
 	max_uint <<= 1;
-	max_uint |= 1;  
+	max_uint |= 1;
 #endif
     fprintf(out, "MAX__UINT 0x%lx\n", max_uint) ;
     exit(0) ; return(0) ;
 }
 ], cf_maxint_set=yes,[CF_MAWK_CHECK_LIMITS_MSG])
    fi
-if test "x$cf_maxint_set" != xyes ; then 
+if test "x$cf_maxint_set" != xyes ; then
 # compute it  --  assumes two's complement
 AC_TRY_RUN(CF_MAWK_MAX__INT_PROGRAM,:,[CF_MAWK_CHECK_LIMITS_MSG])
 fi
@@ -772,19 +772,20 @@ AC_DEFUN([CF_MAWK_FIND_SIZE_T],
 [CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
 CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FPE_SIGINFO version: 6 updated: 2009/12/15 19:43:43
+dnl CF_MAWK_FPE_SIGINFO version: 7 updated: 2009/12/18 05:50:47
 dnl -------------------
 dnl SYSv and Solaris FPE checks
 AC_DEFUN([CF_MAWK_FPE_SIGINFO],
 [
 if test "x$cf_cv_use_sv_siginfo" = "xno"
 then
-   AC_CHECK_FUNC(sigvec,sigvec=1)
-   # FPE_CHECK 2:get_fpe_codes
-   if test "$sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then
-	   :
-   else
-	   AC_DEFINE(NOINFO_SIGFPE)
+    AC_CHECK_FUNC(sigvec,cf_have_sigvec=1)
+    echo "FPE_CHECK 2:get_fpe_codes" >&AC_FD_CC
+    if test "$cf_have_sigvec" = 1 && ./fpe_check$ac_exeext  phoney_arg >> defines.out ; then
+	:
+    else
+	dnl FIXME - look for sigprocmask if we have sigaction
+	AC_DEFINE(NOINFO_SIGFPE)
    fi
 fi])
 dnl ---------------------------------------------------------------------------
@@ -837,12 +838,12 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 8 updated: 2009/12/15 19:43:43
+dnl CF_MAWK_RUN_FPE_TESTS version: 9 updated: 2009/12/18 05:53:28
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
 [
-AC_CHECK_FUNCS(sigaction)
+AC_CHECK_FUNCS(isnan nanf sigaction)
 test "$ac_cv_func_sigaction" = yes && sigaction=1
 
 AC_CHECK_HEADERS(siginfo.h)
@@ -858,105 +859,139 @@ fi
 
 AC_TYPE_SIGNAL
 
-cf_FPE_DEFS="$CPPFLAGS -DRETSIGTYPE=$ac_cv_type_signal"
-test "$ac_cv_func_sigaction" = yes && cf_FPE_DEFS="$cf_FPE_DEFS -DHAVE_SIGACTION"
-test "$ac_cv_header_siginfo_h" = yes && cf_FPE_DEFS="$cf_FPE_DEFS -DHAVE_SIGINFO_H"
+AC_CACHE_CHECK(if we should use sigaction.sa_sigaction,cf_cv_use_sa_sigaction,
+[
+cf_cv_use_sa_sigaction=no
+if test "$ac_cv_func_sigaction" = yes
+then
+    AC_TRY_COMPILE([#include <signal.h>],[
+	struct sigaction foo;
+	foo.sa_sigaction = 0;
+],[cf_cv_use_sa_sigaction=yes])
+fi
+])
+
+test "$cf_cv_use_sa_sigaction" = yes && AC_DEFINE(HAVE_SIGACTION_SA_SIGACTION)
+
+cf_FPE_DEFS="$CPPFLAGS"
+cf_FPE_LIBS="$LIBS"
+cf_FPE_SRCS="$srcdir/fpe_check.c"
+
+CPPFLAGS="$CPPFLAGS -I. -DRETSIGTYPE=$ac_cv_type_signal"
+test "$ac_cv_func_isnan" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_ISNAN"
+test "$ac_cv_func_nanf" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_NANF"
+test "$ac_cv_func_sigaction" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_SIGACTION"
+test "$ac_cv_header_siginfo_h" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_SIGINFO_H"
+test "$cf_cv_use_sa_sigaction" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_SIGACTION_SA_SIGACTION"
+
+LIBS="$LIBS $MATHLIB"
 
 echo checking handling of floating point exceptions
 
-rm -f fpe_check$ac_exeext 
-$CC $CFLAGS $cf_FPE_DEFS -o fpe_check $srcdir/fpe_check.c $MATHLIB 2>&AC_FD_CC
+cat >conftest.$ac_ext <<CF_EOF
+#include <$cf_FPE_SRCS>
+CF_EOF
 
-if test -f fpe_check$ac_exeext   ; then
-	# FPE_CHECK 1:check_fpe_traps
-   ./fpe_check 2>/dev/null
-   status=$?
-else 
-   echo $srcdir/fpe_check.c failed to compile 1>&2
-   status=100
+rm -f conftest$ac_exeext
+
+if AC_TRY_EVAL(ac_link); then
+    echo "FPE_CHECK 1:check_fpe_traps" >&AC_FD_CC
+    ./conftest 2>/dev/null
+    cf_status=$?
+else
+    echo "$cf_FPE_SRCS failed to compile" 1>&2
+    cf_status=100
 fi
 
-case $status in
+echo "FPE_CHECK status=$cf_status" >&AC_FD_CC
+case $cf_status in
    0)  ;;  # good news do nothing
    3)      # reasonably good news
-AC_DEFINE(FPE_TRAPS_ON)
-CF_MAWK_FPE_SIGINFO ;;
+    AC_DEFINE(FPE_TRAPS_ON)
+    CF_MAWK_FPE_SIGINFO ;;
 
    1|2|4)   # bad news have to turn off traps
 	    # only know how to do this on systemV and solaris
-AC_CHECK_HEADER(ieeefp.h, ieeefp_h=1)
-AC_CHECK_FUNC(fpsetmask, fpsetmask=1)
-[if test "$ieeefp_h" = 1 && test "$fpsetmask" = 1 ; then]
-AC_DEFINE(FPE_TRAPS_ON)
-AC_DEFINE(USE_IEEEFP_H)
-AC_DEFINE_UNQUOTED([TURN_ON_FPE_TRAPS],
-[fpsetmask(fpgetmask()|FP_X_DZ|FP_X_OFL)])
+    AC_CHECK_HEADER(ieeefp.h, cf_have_ieeefp_h=1)
+    AC_CHECK_FUNC(fpsetmask, cf_have_fpsetmask=1)
 
-CF_MAWK_FPE_SIGINFO 
+    if test "$cf_have_ieeefp_h" = 1 && test "$cf_have_fpsetmask" = 1 ; then
+	AC_DEFINE(FPE_TRAPS_ON)
+	AC_DEFINE(USE_IEEEFP_H)
+	AC_DEFINE_UNQUOTED([TURN_ON_FPE_TRAPS],
+	    [fpsetmask(fpgetmask() | (FP_X_DZ|FP_X_OFL))])
+	AC_DEFINE_UNQUOTED([TURN_OFF_FPE_TRAPS],
+	    [fpsetmask(fpgetmask() & ~(FP_X_DZ|FP_X_OFL))])
 
-# look for strtod overflow bug
-AC_MSG_CHECKING([strtod bug on overflow])
+	CF_MAWK_FPE_SIGINFO
 
-rm -f fpe_check$ac_exeext 
-$CC $CFLAGS $cf_FPE_DEFS -DUSE_IEEEFP_H -o fpe_check $srcdir/fpe_check.c $MATHLIB 2>&AC_FD_CC
+	# look for strtod overflow bug
+	AC_MSG_CHECKING([strtod bug on overflow])
 
-# FPE_CHECK 3:check_strtod_ovf
-if ./fpe_check phoney_arg phoney_arg 2>/dev/null
-then 
-   AC_MSG_RESULT([no bug])
-else
-   AC_MSG_RESULT([buggy -- will use work around])
-   AC_DEFINE_UNQUOTED([HAVE_STRTOD_OVF_BUG],1)
-fi
+	rm -f conftest$ac_exeext
+	CPPFLAGS="$CPPFLAGS -DUSE_IEEEFP_H"
+	if AC_TRY_EVAL(ac_link); then
+	    echo "FPE_CHECK 3:check_strtod_ovf" >&AC_FD_CC
+	    if ./conftest phoney_arg phoney_arg 2>/dev/null
+	    then
+	       AC_MSG_RESULT([no bug])
+	    else
+	       AC_MSG_RESULT([buggy -- will use work around])
+	       AC_DEFINE_UNQUOTED([HAVE_STRTOD_OVF_BUG],1)
+	    fi
+	fi
+    else
+	if test $cf_status != 4 ; then
+	    AC_DEFINE(FPE_TRAPS_ON)
+	    CF_MAWK_FPE_SIGINFO
+	fi
 
-else
-   [if test $status != 4 ; then]
-      AC_DEFINE(FPE_TRAPS_ON)
-      CF_MAWK_FPE_SIGINFO 
-    fi
-
-    [case $status in
-    1) 
-cat 1>&2 <<'EOF'
-Warning: Your system defaults generate floating point exception 
-on divide by zero but not on overflow.  You need to 
-#define TURN_ON_FPE_TRAPS to handle overflow.
-Please report this so I can fix this script to do it automatically.
+	[case $cf_status in
+	1)
+	    cat 1>&2 <<-'EOF'
+	    Warning: Your system defaults generate floating point exception
+	    on divide by zero but not on overflow.  You need to
+	    #define TURN_ON_FPE_TRAPS to handle overflow.
 EOF
-;;
-    2)
-cat 1>&2 <<'EOF'
-Warning: Your system defaults generate floating point exception 
-on overflow  but not on divide by zero.  You need to 
-#define TURN_ON_FPE_TRAPS to handle divide by zero.
-Please report this so I can fix this script to do it automatically.
+	    ;;
+	2)
+	    cat 1>&2 <<-'EOF'
+	    Warning: Your system defaults generate floating point exception
+	    on overflow  but not on divide by zero.  You need to
+	    #define TURN_ON_FPE_TRAPS to handle divide by zero.
 EOF
-;;
-    4)
-cat 1>&2 <<'EOF'
-Warning: Your system defaults do not generate floating point
-exceptions, but your math library does not support this behavior.
-You need to
-#define TURN_ON_FPE_TRAPS to use fp exceptions for consistency.
-Please report this so I can fix this script to do it automatically.
+	    ;;
+	4)
+	    cat 1>&2 <<-'EOF'
+	    Warning: Your system defaults do not generate floating point
+	    exceptions, but your math library does not support this behavior.
+	    You need to
+	    #define TURN_ON_FPE_TRAPS to use fp exceptions for consistency.
 EOF
-;;
+	;;
     esac]
-echo CF_MAWK_MAINTAINER
-[echo You can continue with the build and the resulting mawk will be
-echo useable, but getting FPE_TRAPS_ON correct eventually is best.
-fi  ;;
+	cat 1>&2 <<-'EOF'
+	Please report this so I can fix this script to do it automatically.
+	CF_MAWK_MAINTAINER
+	You can continue with the build and the resulting mawk will be
+	useable, but getting FPE_TRAPS_ON correct eventually is best.
+EOF
+fi
+    ;;
 
   *)  # some sort of disaster
-cat 1>&2 <<'EOF'
-The program `fpe_check' compiled from $srcdir/fpe_check.c seems to have
-unexpectly blown up.  Please report this to ]CF_MAWK_MAINTAINER.[
+    cat 1>&2 <<-'EOF'
+    The program `fpe_check' compiled from $cf_FPE_SRCS seems to have
+    unexpectly blown up.  Please report this to CF_MAWK_MAINTAINER
 EOF
-# quit or not ???
-;;
-esac 
+    # quit or not ???
+    ;;
+esac
 
-rm -f fpe_check$ac_exeext   # whew!!]
+CPPFLAGS="$cf_FPE_DEFS"
+LIBS="$cf_FPE_LIBS"
+
+rm -f conftest.$ac_ext fpe_check$ac_exeext   # whew!!
 ])
 dnl ---------------------------------------------------------------------------
 dnl CF_MSG_LOG version: 4 updated: 2007/07/29 09:55:12
