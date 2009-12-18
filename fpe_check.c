@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.11 2009/12/15 01:53:45 tom Exp $
+ * $MawkId: fpe_check.c,v 1.12 2009/12/18 10:36:19 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -37,12 +37,12 @@
 #include <siginfo.h>
 #endif
 
-#ifdef HAVE_SIGACTION
+#ifdef HAVE_SIGACTION_SA_SIGACTION
 #define FPE_ARGS int sig, siginfo_t *sip, void *data
 #define FPE_DECL int why = sip->si_code
 #else
 #define FPE_ARGS int sig, int why
-#define FPE_DECL /* nothing */
+#define FPE_DECL		/* nothing */
 #endif
 
 /* Sets up NetBSD 1.0A for ieee floating point */
@@ -65,7 +65,6 @@ int why_v;
 int checking_for_strtod_ovf_bug = 0;
 
 static void catch_FPEs(void);
-static RETSIGTYPE fpe_catch();
 static int is_nan(double);
 static void check_strtod_ovf(void);
 
@@ -111,8 +110,13 @@ check_fpe_traps(void)
     }
 
     if (traps == 0) {
-	double maybe_nan = log(-8.0);
+	double maybe_nan;
 
+#ifdef HAVE_NANF
+	maybe_nan = nanf("NAN");
+#else
+	maybe_nan = log(-8.0);
+#endif
 	if (is_nan(maybe_nan)) {
 	    message("math library supports ieee754");
 	} else {
@@ -127,15 +131,22 @@ check_fpe_traps(void)
 static int
 is_nan(double d)
 {
+    int result;
     char command[128];
 
-    if (!(d == d))
-	return 1;
-
-    /* on some systems with an ieee754 bug, we need to make another check */
-    sprintf(command,
-	    "echo '%f' | egrep '[nN][aA][nN]|\\?' >/dev/null", d);
-    return system(command) == 0;
+#ifdef HAVE_ISNAN
+    result = isnan(d);
+#else
+    if (!(d == d)) {
+	result = 1;
+    } else {
+	/* on some systems with an ieee754 bug, we need to make another check */
+	sprintf(command,
+		"echo '%f' | egrep '[nN][aA][nN]|\\?' >/dev/null", d);
+	result = system(command) == 0;
+    }
+#endif
+    return result;
 }
 
 /*
@@ -194,9 +205,6 @@ main(int argc, char *argv[])
     return 0;
 }
 
-/* put this down here in attempt to defeat ambitious compiler that
-   may have seen a prototype without 2nd argument */
-
 static RETSIGTYPE
 fpe_catch(FPE_ARGS)
 {
@@ -212,12 +220,12 @@ fpe_catch(FPE_ARGS)
 static void
 catch_FPEs(void)
 {
-#if defined(HAVE_SIGACTION)
+#if defined(HAVE_SIGACTION_SA_SIGACTION)
     {
 	struct sigaction x;
 
 	memset(&x, 0, sizeof(x));
-	x.sa_handler = fpe_catch;
+	x.sa_sigaction = fpe_catch;
 	x.sa_flags = SA_SIGINFO;
 
 	sigaction(SIGFPE, &x, (struct sigaction *) 0);
