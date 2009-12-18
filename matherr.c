@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.21 2009/12/16 01:34:23 tom Exp $
+ * $MawkId: matherr.c,v 1.22 2009/12/18 10:22:03 tom Exp $
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
@@ -46,7 +46,7 @@ the GNU General Public License, version 2, 1991.
 
 #include  <math.h>
 
-#ifdef HAVE_SIGACTION
+#ifdef HAVE_SIGACTION_SA_SIGACTION
 #define FPE_ARGS int sig, siginfo_t *sip, void *data
 #define FPE_DECL int why = sip->si_code
 #else
@@ -71,7 +71,7 @@ static fp_except working_mask;
 #endif
 
 #ifndef	 TURN_OFF_FPE_TRAPS
-#define	 TURN_OFF_FPE_TRAPS()	/* nothing */
+#define	 TURN_OFF_FPE_TRAPS	/* nothing */
 #endif
 
 #ifndef	 TURN_ON_FPE_TRAPS
@@ -134,7 +134,7 @@ fpe_init(void)
 {
     TURN_ON_FPE_TRAPS;
 
-#ifdef HAVE_SIGACTION
+#ifdef HAVE_SIGACTION_SA_SIGACTION
     {
 	struct sigaction x;
 
@@ -160,7 +160,7 @@ fpe_init(void)
 void
 fpe_init(void)
 {
-    TURN_OFF_FPE_TRAPS();
+    TURN_OFF_FPE_TRAPS;
 }
 #endif
 
