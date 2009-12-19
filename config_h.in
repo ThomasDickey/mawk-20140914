@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.12 2009/12/18 10:16:40 tom Exp $
+ * $MawkId: config_h.in,v 1.13 2009/12/19 16:36:24 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -15,6 +15,9 @@
 #undef HAVE_FORK
 #undef HAVE_PIPE
 #undef HAVE_REAL_PIPES
+#undef HAVE_REGEXPR_H_FUNCS
+#undef HAVE_REGEXP_H_FUNCS
+#undef HAVE_REGEX_H_FUNCS
 #undef HAVE_SIGACTION
 #undef HAVE_SIGACTION_SA_SIGACTION
 #undef HAVE_SIGINFO_H
