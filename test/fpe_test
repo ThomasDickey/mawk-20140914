@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: fpe_test,v 1.4 2009/09/18 09:46:00 tom Exp $
+# $MawkId: fpe_test,v 1.5 2009/12/19 16:18:19 tom Exp $
 
 # tests if mawk has been compiled to correctly handle
 # floating point exceptions
@@ -11,6 +11,8 @@
 # Revision 1.2  1994/12/18  18:51:55  mike
 # recognize NAN printed as ? for hpux
 #
+
+PROG=mawk
 
 echo "testing floating point exception handling"
 
@@ -27,24 +29,25 @@ test2='BEGIN {
   print "loop terminated"
 }'
 
-test3='BEGIN{ print log(-8) }'
+# this used to test log(-8), but that was too challenging for cygwin hackers
+test3='BEGIN{ print sqrt(-8) }'
 
 
 echo "testing division by zero"
-echo mawk "$test1"
-mawk "$test1"
+echo $PROG "$test1"
+$PROG "$test1"
 ret1=$?
 echo
 
 echo "testing overflow"
-echo mawk "$test2"
-mawk "$test2"
+echo $PROG "$test2"
+$PROG "$test2"
 ret2=$?
 echo
 
 echo "testing domain error"
-echo mawk "$test3"
-mawk "$test3"  > $STDOUT
+echo $PROG "$test3"
+$PROG "$test3"  > $STDOUT
 ret3=$?
 cat $STDOUT
 echo
@@ -82,16 +85,21 @@ if [ $same = 1 ]
    then
    if [ $ret1 = 0 ]
       then
-	echo results consistent: ignoring floating exceptions
+	echo "results consistent: ignoring floating exceptions"
 	# some versions of hpux print NAN as ?
-	if  egrep '[nN][aA][nN]|\?' $STDOUT  > /dev/null
-	   then :
-	   else
+	if egrep '[nN][aA][nN]|\?' $STDOUT  > /dev/null
+	then
+	     :
+	# MSYS / MinGW uses a different string...
+	elif fgrep '#IND' $STDOUT > /dev/null
+	then
+	     echo "found MinGW hack for NaN..."
+	else
 	     echo "but the library is not IEEE754 compatible"
 	     echo "test 3 failed"
 	     exit 1
 	fi
-      else echo results consistent: trapping floating exceptions
+      else echo "results consistent: trapping floating exceptions"
    fi
 
    trap  0
@@ -99,9 +107,11 @@ if [ $same = 1 ]
    exit 0
 
    else
-   echo results are not consistent
-echo 'return values should all be 0 if ignoring FPEs (e.g. with IEEE754)
-or all 2 if trapping FPEs'
+	   cat <<-EOF
+		results are not consistent
+		return values should all be 0 if ignoring FPEs (e.g. with IEEE754)
+		or all 2 if trapping FPEs
+EOF
 
 exit 1
 fi
