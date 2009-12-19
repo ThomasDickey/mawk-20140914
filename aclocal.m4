@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.39 2009/12/18 10:54:49 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.40 2009/12/19 18:19:46 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -793,12 +793,12 @@ dnl CF_MAWK_MAINTAINER version: 2 updated: 2009/07/12 09:10:33
 dnl ------------------
 AC_DEFUN([CF_MAWK_MAINTAINER], [dickey@invisible-island.net])
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_MATHLIB version: 2 updated: 2009/07/05 13:56:25
+dnl CF_MAWK_MATHLIB version: 3 updated: 2009/12/19 13:18:53
 dnl ---------------
 dnl Look for math library.
 AC_DEFUN([CF_MAWK_MATHLIB],[
 if test "${MATHLIB+set}" != set  ; then
-AC_CHECK_LIB(m,log,[MATHLIB=-lm ; LIBS="$LIBS -lm"],
+AC_CHECK_LIB(m,log,[MATHLIB=-lm ; LIBS="-lm $LIBS"],
 [# maybe don't need separate math library
 AC_CHECK_FUNC(log, log=yes)
 if test "$log" = yes
@@ -838,7 +838,7 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 9 updated: 2009/12/18 05:53:28
+dnl CF_MAWK_RUN_FPE_TESTS version: 10 updated: 2009/12/19 13:18:53
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
@@ -884,7 +884,7 @@ test "$ac_cv_func_sigaction" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_SIGACTION"
 test "$ac_cv_header_siginfo_h" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_SIGINFO_H"
 test "$cf_cv_use_sa_sigaction" = yes && CPPFLAGS="$CPPFLAGS -DHAVE_SIGACTION_SA_SIGACTION"
 
-LIBS="$LIBS $MATHLIB"
+LIBS="$MATHLIB $LIBS"
 
 echo checking handling of floating point exceptions
 
@@ -1103,6 +1103,52 @@ make a defined-error
 	cf_cv_cc_u_d_options=no])
 	CPPFLAGS="$cf_save_CPPFLAGS"
 ])
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_REGEX version: 5 updated: 2009/12/19 13:18:53
+dnl --------
+dnl Attempt to determine if we've got one of the flavors of regular-expression
+dnl code that we can support.
+AC_DEFUN([CF_REGEX],
+[
+
+AC_CHECK_FUNC(regcomp,,[
+	AC_CHECK_LIB(regex,regcomp,[LIBS="-lregex $LIBS"],[
+		AC_CHECK_LIB(re,regcomp,[LIBS="-lre $LIBS"],[
+			AC_CHECK_FUNC(compile,,[
+				AC_CHECK_LIB(gen,compile,[LIBS="-lgen $LIBS"],[
+					AC_MSG_WARN(cannot find regular expression library)
+				])
+			])
+		])
+	])
+])
+
+AC_CACHE_CHECK(for regular-expression headers,cf_cv_regex_hdrs,[
+cf_cv_regex_hdrs=no
+AC_TRY_LINK([#include <sys/types.h>
+#include <regex.h>],[
+	regex_t *p;
+	int x = regcomp(p, "", 0);
+	int y = regexec(p, "", 0, 0, 0);
+	regfree(p);
+	],[cf_cv_regex_hdrs="regex.h"],[
+	AC_TRY_LINK([#include <regexp.h>],[
+		char *p = compile("", "", "", 0);
+		int x = step("", "");
+	],[cf_cv_regex_hdrs="regexp.h"],[
+		AC_TRY_LINK([#include <regexpr.h>],[
+			char *p = compile("", "", "");
+			int x = step("", "");
+		],[cf_cv_regex_hdrs="regexpr.h"])])])
+])
+
+case $cf_cv_regex_hdrs in #(vi
+    no)	       AC_MSG_WARN(no regular expression header found) ;; #(vi
+    regex.h)   AC_DEFINE(HAVE_REGEX_H_FUNCS) ;; #(vi
+    regexp.h)  AC_DEFINE(HAVE_REGEXP_H_FUNCS) ;; #(vi
+    regexpr.h) AC_DEFINE(HAVE_REGEXPR_H_FUNCS) ;;
+esac
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_REMOVE_DEFINE version: 2 updated: 2005/07/09 16:12:18
