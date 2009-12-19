@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.28 2009/12/16 10:16:46 tom Exp $
+dnl $MawkId: configure.in,v 1.29 2009/12/19 17:00:20 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -59,10 +59,7 @@ fi
 AC_MSG_RESULT($with_builtin_regex)
 
 if test "x${with_builtin_regex}" = xno; then
-    AC_CHECK_HEADER(regex.h,cf_have_regex_h=yes,cf_have_regex_h=no)
-    if test "$cf_have_regex_h" != yes ; then
-	AC_MSG_ERROR(could not find regex.h)
-    fi
+    CF_REGEX
 fi
 
 AC_PROG_YACC
