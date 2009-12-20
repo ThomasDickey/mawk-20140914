@@ -1,9 +1,11 @@
--- $MawkId: CHANGES,v 1.82 2009/12/20 14:54:00 tom Exp $
+-- $MawkId: CHANGES,v 1.83 2009/12/20 14:55:03 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20091220
 	+ bump version to 1.3.4
+
+	+ update INSTALL file.
 
 	+ improve configure checks for math library.
 
