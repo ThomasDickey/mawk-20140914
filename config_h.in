@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.14 2009/12/20 17:10:36 tom Exp $
+ * $MawkId: config_h.in,v 1.15 2009/12/20 17:31:58 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -14,7 +14,6 @@
 #undef GCC_UNUSED
 #undef HAVE_FORK
 #undef HAVE_ISNAN
-#undef HAVE_NANF
 #undef HAVE_PIPE
 #undef HAVE_REAL_PIPES
 #undef HAVE_REGEXPR_H_FUNCS
