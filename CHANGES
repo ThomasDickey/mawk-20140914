@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.85 2009/12/20 15:05:13 tom Exp $
+-- $MawkId: CHANGES,v 1.86 2009/12/20 19:59:15 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -12,8 +12,8 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	  + change test for NaN to use sqrt() rather than log() to work around
 	    cygwin's partly broken math functions.
 
-	  + add/use isnanf() and nanf(), to work around other breakage in
-	    cygwin math functions.
+	  + add/use isnanf() to work around other breakage in cygwin math
+	    functions.
 
 	  + add configure check for _XOPEN_SOURCE, etc., needed to define
 	    proper function pointer for sigaction, e.g., on Tru64.
