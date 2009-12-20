@@ -895,10 +895,6 @@ SSEEEE AALLSSOO
        arrays is excellent.  It also discusses Posix requirements for AWK.
 
 BBUUGGSS
-       mmaawwkk  cannot  handle ascii NUL \0 in the source or data files.  You can
-       output NUL using printf with %c, and  any  other  8  bit  character  is
-       acceptable input.
-
        mmaawwkk  implements  printf() and sprintf() using the C library functions,
        printf and sprintf, so full  ANSI  compatibility  requires  an  ANSI  C
        library.   In practice this means the h conversion qualifier may not be

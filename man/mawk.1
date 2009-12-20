@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.5 2009/12/20 16:02:18 tom Exp $
+.\" $MawkId: mawk.1,v 1.6 2009/12/20 16:09:46 tom Exp $
 .TH MAWK 1  "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
@@ -1621,10 +1621,6 @@ and assumes the reader may be a novice programmer.
 The section on AWK arrays is excellent.  It also
 discusses Posix requirements for AWK.
 .SH BUGS
-.B mawk
-cannot handle ascii NUL \e0 in the source or data files.  You
-can output NUL using printf with %c, and any other 8 bit
-character is acceptable input.
 .PP
 .B mawk
 implements printf() and sprintf() using the C library functions,
