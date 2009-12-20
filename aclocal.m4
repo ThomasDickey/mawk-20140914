@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.42 2009/12/20 17:31:33 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.43 2009/12/20 17:51:48 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -838,7 +838,7 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 10 updated: 2009/12/19 13:18:53
+dnl CF_MAWK_RUN_FPE_TESTS version: 11 updated: 2009/12/20 12:50:49
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
