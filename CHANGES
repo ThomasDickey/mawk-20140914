@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.84 2009/12/20 15:02:27 tom Exp $
+-- $MawkId: CHANGES,v 1.85 2009/12/20 15:05:13 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -151,7 +151,7 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 	+ modify logic to allow setting RS to an explicit null character, e.g.,
 		RS="\0"
-	  (Ubuntu #400409). 
+	  (Ubuntu #400409).
 
 	+ modify workaround for (incorrect) scripts which use a zero-parameter
 	  for substr to ensure the overall length of the result stays the same.
@@ -300,7 +300,7 @@ Debian patches:
 
 2) Added ferror() checks on writes.
 
-3) Added some static storage specs to array.c to keep non-ansi 
+3) Added some static storage specs to array.c to keep non-ansi
    compilers happy.
 
 1.3 -> 1.3.1 Sep 1996
@@ -317,7 +317,7 @@ fast access to arrays created with split.  Many of the ideas in the
 new design were inspired by reading "The Design and Implementation of
 Dynamic Hashing Sets and Tables in Icon" by William Griswold and
 Gregg Townsend, SPE 23,351-367.
- 
+
 1.2.1 -> 1.2.2  Jan 1996
 
 1) Improved autoconfig, in particular, fpe tests.  This is far from
@@ -328,10 +328,85 @@ Gregg Townsend, SPE 23,351-367.
 3) Flush all output before system().  Previous behavior was to only
    flush std{out,err}.
 
-4) Explicitly fclose() all output on exit to work around AIX4.1 bug. 
+4) Explicitly fclose() all output on exit to work around AIX4.1 bug.
 
 5) Fixed random number generator to work with longs larger than
    32bits.
 
 6) Added a type Int which is int on real machines and long on dos machines.
    Believe that all implicit assumptions that int=32bits are now gone.
+
+-------------------------------------------------------------------------------
+Changes from version 1.1.4 to 1.2:
+
+1) Limit on code size set by #define in sizes.h is gone.
+
+2) A number of obscure bugs have been fixed such as,
+   you can now make a recursive function call inside a for( i in A) loop.
+   Function calls with array parameters in loop expressions sometimes
+   generated erroneous internal code.
+
+   See RCS log comments in code for details.
+
+   Reported bugs are fixed.
+
+3) new -W options
+
+
+   -We file   :  reads commands from file and next argument, regardless
+	      of form, is ARGV[1].  Useful  for passing -v , -f etc to
+	      an awk program started with #!/.../mawk
+
+
+      #!/usr/local/bin/mawk -We
+
+      myprogram -v   works, while
+
+      #!/usr/local/bin/mawk -f
+
+      myprogram -v    gives error message
+	  mawk: option -v lacks argument
+
+      This is really a posix bozo.  Posix says you end arguments with
+      "--" , but this doesn't work with the "#!" convention.
+
+   -W interactive :  forces stdout to be unbuffered and stdin to
+	be line buffered.  Records from stdin are lines regardless of
+	the value of RS.  Useful for interaction with a mawk on a pipe.
+
+   -W dump, -Wd   :  disassembles internal code to stdout (used to be
+       stderr) and exits 0.
+
+4)  FS = "" causes each record to be broken into characters and placed
+     into $1,$2 ...
+
+     same with split(x,A,"") and split(x,A,//)
+
+5)  print > "/dev/stdout"  writes to stdout, exactly the same as
+    print
+
+    This is useful for passing stdout to
+
+    function my_special_output_routine(s, file)
+    {
+	# do something fancy with s
+	print s > file
+    }
+
+6) New built-in function fflush() -- copied from the lastest att awk.
+
+      fflush() : flushes stdout  and returns 0
+      fflush(file)  flushes file and returns 0; if file was not an
+      open output file then returns -1.
+
+7)  delete  A ;  -- removes all elements of the array A
+
+    intended to replace:
+
+	 for( i in A) delete A[i]
+
+8)  mawk errors such as compilation failure, file open failure, etc.
+    now exit 2 which reserves exit 1 for the user.
+
+9)  No program now silently exits 0, prior behavior was to exit 2 with
+    an error message
