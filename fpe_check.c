@@ -3,7 +3,7 @@
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.12 2009/12/18 10:36:19 tom Exp $
+ * $MawkId: fpe_check.c,v 1.13 2009/12/20 17:33:18 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -112,11 +112,7 @@ check_fpe_traps(void)
     if (traps == 0) {
 	double maybe_nan;
 
-#ifdef HAVE_NANF
-	maybe_nan = nanf("NAN");
-#else
-	maybe_nan = log(-8.0);
-#endif
+	maybe_nan = sqrt(-8.0);
 	if (is_nan(maybe_nan)) {
 	    message("math library supports ieee754");
 	} else {
