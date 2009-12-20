@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.4 2009/12/17 01:09:21 tom Exp $
+.\" $MawkId: mawk.1,v 1.5 2009/12/20 16:02:18 tom Exp $
 .TH MAWK 1  "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
@@ -1444,6 +1444,23 @@ implementation options as arguments to \-W.
 
 For systems (MS-DOS or Windows) which provide a \fIsetmode\fP function,
 an environment variable MAWKBINMODE and a built-in variable BINMODE.
+The bits of the BINMODE value tell \fImawk\fP how to modify the
+\fBRS\fP and \fBORS\fP variables:
+.RS 3
+.TP 3
+0
+set standard input to binary mode,
+and if BIT-2 is unset, set \fBRS\fP to "\\r\\n" (CR/LF) rather than "\\n" (LF).
+.TP 3
+1
+set standard output to binary mode,
+and if BIT-2 is unset, set \fBORS\fP to "\\r\\n" (CR/LF) rather than "\\n" (LF).
+.TP 3
+2
+suppress the assignment to \fBRS\fP and \fBORS\fP of CR/LF,
+making it possible to run scripts and generate output compatible
+with Unix line-endings.
+.RE
 .RE
 .sp
 Posix AWK is oriented to operate on files a line at 
