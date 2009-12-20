@@ -775,21 +775,32 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
 
               For  systems  (MS-DOS  or Windows) which provide a _s_e_t_m_o_d_e func-
               tion, an environment variable MAWKBINMODE and a  built-in  vari-
-              able BINMODE.
+              able  BINMODE.   The  bits of the BINMODE value tell _m_a_w_k how to
+              modify the RRSS and OORRSS variables:
 
-       Posix  AWK is oriented to operate on files a line at a time.  RRSS can be
-       changed from "\n" to another single character, but it is hard  to  find
-       any  use for this -- there are no examples in the AWK book.  By conven-
+                 0  set standard input to binary mode, and if BIT-2 is  unset,
+                    set RRSS to "\r\n" (CR/LF) rather than "\n" (LF).
+
+                 1  set standard output to binary mode, and if BIT-2 is unset,
+                    set OORRSS to "\r\n" (CR/LF) rather than "\n" (LF).
+
+                 2  suppress the assignment to RRSS and OORRSS of CR/LF, making  it
+                    possible  to  run  scripts  and generate output compatible
+                    with Unix line-endings.
+
+       Posix AWK is oriented to operate on files a line at a time.  RRSS can  be
+       changed  from  "\n" to another single character, but it is hard to find
+       any use for this -- there are no examples in the AWK book.  By  conven-
        tion, RRSS = "", makes one or more blank lines separate records, allowing
-       multi-line  records.   When  RRSS  = "", "\n" is always a field separator
+       multi-line records.  When RRSS = "", "\n" is  always  a  field  separator
        regardless of the value in FFSS.
 
-       mmaawwkk, on the other hand, allows RRSS to be a  regular  expression.   When
-       "\n"  appears  in records, it is treated as space, and FFSS always deter-
+       mmaawwkk,  on  the  other hand, allows RRSS to be a regular expression.  When
+       "\n" appears in records, it is treated as space, and FFSS  always  deter-
        mines fields.
 
        Removing the line at a time paradigm can make some programs simpler and
-       can  often  improve  performance.   For example, redoing example 3 from
+       can often improve performance.  For example,  redoing  example  3  from
        above,
 
             BEGIN { RS = "[^A-Za-z]+" }
@@ -801,11 +812,11 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
               print cnt
             }
 
-       counts the number of unique words by making each  word  a  record.   On
-       moderate  size  files, mmaawwkk executes twice as fast, because of the sim-
+       counts  the  number  of  unique words by making each word a record.  On
+       moderate size files, mmaawwkk executes twice as fast, because of  the  sim-
        plified inner loop.
 
-       The following program replaces each comment by a single space  in  a  C
+       The  following  program  replaces each comment by a single space in a C
        program file,
 
             BEGIN {
@@ -819,79 +830,79 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
 
               END { printf "%s" , hold }
 
-       Buffering  one  record  is  needed to avoid terminating the last record
+       Buffering one record is needed to avoid  terminating  the  last  record
        with a space.
 
        With mmaawwkk, the following are all equivalent,
 
             x ~ /a\+b/    x ~ "a\+b"     x ~ "a\\+b"
 
-       The strings get scanned twice, once  as  string  and  once  as  regular
-       expression.   On the string scan, mmaawwkk ignores the escape on non-escape
-       characters while the AWK book advocates _\_c be  recognized  as  _c  which
-       necessitates  the double escaping of meta-characters in strings.  Posix
-       explicitly declines to define the behavior which passively forces  pro-
-       grams  that  must  run under a variety of awks to use the more portable
+       The  strings  get  scanned  twice,  once  as string and once as regular
+       expression.  On the string scan, mmaawwkk ignores the escape on  non-escape
+       characters  while  the  AWK  book advocates _\_c be recognized as _c which
+       necessitates the double escaping of meta-characters in strings.   Posix
+       explicitly  declines to define the behavior which passively forces pro-
+       grams that must run under a variety of awks to use  the  more  portable
        but less readable, double escape.
 
-       Posix AWK does not  recognize  "/dev/std{out,err}"  or  \x  hex  escape
-       sequences  in strings.  Unlike ANSI C, mmaawwkk limits the number of digits
-       that follows \x to two as the current implementation  only  supports  8
-       bit  characters.  The built-in fffflluusshh first appeared in a recent (1993)
-       AT&T awk released to netlib, and is not part  of  the  posix  standard.
+       Posix  AWK  does  not  recognize  "/dev/std{out,err}"  or \x hex escape
+       sequences in strings.  Unlike ANSI C, mmaawwkk limits the number of  digits
+       that  follows  \x  to two as the current implementation only supports 8
+       bit characters.  The built-in fffflluusshh first appeared in a recent  (1993)
+       AT&T  awk  released  to  netlib, and is not part of the posix standard.
        Aggregate deletion with ddeelleettee _a_r_r_a_y is not part of the posix standard.
 
        Posix explicitly leaves the behavior of FFSS = "" undefined, and mentions
-       splitting the record into characters as a possible interpretation,  but
+       splitting  the record into characters as a possible interpretation, but
        currently this use is not portable across implementations.
 
-       Finally,  here  is  how mmaawwkk handles exceptional cases not discussed in
-       the AWK book or the Posix draft.  It is unsafe  to  assume  consistency
+       Finally, here is how mmaawwkk handles exceptional cases  not  discussed  in
+       the  AWK  book  or the Posix draft.  It is unsafe to assume consistency
        across awks and safe to skip to the next section.
 
-              substr(s,  i, n) returns the characters of s in the intersection
+              substr(s, i, n) returns the characters of s in the  intersection
               of the closed interval [1, length(s)] and the half-open interval
-              [i,  i+n).  When this intersection is empty, the empty string is
+              [i, i+n).  When this intersection is empty, the empty string  is
               returned; so substr("ABC", 1, 0) = "" and substr("ABC", -4, 6) =
               "A".
 
-              Every  string,  including  the  empty  string, matches the empty
-              string at the front so, s ~ // and s ~ "", are always  1  as  is
+              Every string, including the  empty  string,  matches  the  empty
+              string  at  the  front so, s ~ // and s ~ "", are always 1 as is
               match(s, //) and match(s, "").  The last two set RRLLEENNGGTTHH to 0.
 
-              index(s,  t)  is always the same as match(s, t1) where t1 is the
-              same as t with metacharacters escaped.  Hence  consistency  with
-              match  requires  that  index(s,  "") always returns 1.  Also the
-              condition, index(s,t) != 0 if and only t is a  substring  of  s,
+              index(s, t) is always the same as match(s, t1) where t1  is  the
+              same  as  t with metacharacters escaped.  Hence consistency with
+              match requires that index(s, "") always  returns  1.   Also  the
+              condition,  index(s,t)  !=  0 if and only t is a substring of s,
               requires index("","") = 1.
 
-              If  getline  encounters  end  of  file,  getline var, leaves var
-              unchanged.  Similarly, on entry to  the  EENNDD  actions,  $$00,  the
+              If getline encounters end  of  file,  getline  var,  leaves  var
+              unchanged.   Similarly,  on  entry  to  the EENNDD actions, $$00, the
               fields and NNFF have their value unaltered from the last record.
 
 SSEEEE AALLSSOO
        _e_g_r_e_p(1)
 
-       Aho,  Kernighan  and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g _L_a_n_g_u_a_g_e, Addison-
-       Wesley Publishing, 1988, (the AWK book), defines the language,  opening
-       with  a  tutorial and advancing to many interesting programs that delve
-       into issues of software design and analysis relevant to programming  in
+       Aho, Kernighan and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g  _L_a_n_g_u_a_g_e,  Addison-
+       Wesley  Publishing, 1988, (the AWK book), defines the language, opening
+       with a tutorial and advancing to many interesting programs  that  delve
+       into  issues of software design and analysis relevant to programming in
        any language.
 
-       _T_h_e  _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial and
-       language reference that does not attempt the depth of the AWK book  and
-       assumes  the  reader  may  be  a novice programmer.  The section on AWK
+       _T_h_e _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial  and
+       language  reference that does not attempt the depth of the AWK book and
+       assumes the reader may be a novice  programmer.   The  section  on  AWK
        arrays is excellent.  It also discusses Posix requirements for AWK.
 
 BBUUGGSS
-       mmaawwkk cannot handle ascii NUL \0 in the source or data files.   You  can
-       output  NUL  using  printf  with  %c,  and any other 8 bit character is
+       mmaawwkk  cannot  handle ascii NUL \0 in the source or data files.  You can
+       output NUL using printf with %c, and  any  other  8  bit  character  is
        acceptable input.
 
-       mmaawwkk implements printf() and sprintf() using the C  library  functions,
-       printf  and  sprintf,  so  full  ANSI  compatibility requires an ANSI C
-       library.  In practice this means the h conversion qualifier may not  be
-       available.   Also  mmaawwkk inherits any bugs or limitations of the library
+       mmaawwkk  implements  printf() and sprintf() using the C library functions,
+       printf and sprintf, so full  ANSI  compatibility  requires  an  ANSI  C
+       library.   In practice this means the h conversion qualifier may not be
+       available.  Also mmaawwkk inherits any bugs or limitations of  the  library
        functions.
 
        Implementors of the AWK language have shown a consistent lack of imagi-
