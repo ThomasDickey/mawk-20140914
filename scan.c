@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.14 2009/12/16 09:57:25 tom Exp $
+ * $MawkId: scan.c,v 1.15 2010/01/24 20:19:29 Jonathan.Nieder Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -999,7 +999,7 @@ collect_RE(void)
     STRING *sval;
 
     while (1) {
-	if (p == (string_buff + MIN_SPRINTF - 2)) {
+	if (p >= (string_buff + MIN_SPRINTF - 2)) {
 	    compile_error(
 			     "regular expression /%.10s ..."
 			     " exceeds implementation size limit",
