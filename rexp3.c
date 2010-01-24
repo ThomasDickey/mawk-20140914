@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.16 2010/01/24 17:16:36 Jonathan.Nieder Exp $
+ * $MawkId: rexp3.c,v 1.17 2010/01/24 19:15:32 Jonathan.Nieder Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -422,9 +422,6 @@ REmatch(char *str,		/* string to test */
 	    cb_ss = ss;
 	    cb_e = s;
 	    m_best = m;
-	} else if (cb_ss == ss && s == cb_e && m_best == m) {
-	    /* infinite loop - give up */
-	    return NULL;
 	}
 	goto refill;
 
@@ -440,9 +437,6 @@ REmatch(char *str,		/* string to test */
 	    cb_ss = ss;
 	    cb_e = s;
 	    m_best = m;
-	} else if (cb_ss == ss && s == cb_e && m_best == m) {
-	    /* infinite loop - give up */
-	    return NULL;
 	}
 	goto refill;
 
