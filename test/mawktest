@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.15 2010/01/24 18:42:46 Jonathan.Nieder Exp $
+# $MawkId: mawktest,v 1.16 2010/01/24 20:19:29 Jonathan.Nieder Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -67,6 +67,14 @@ LC_ALL=C $PROG -f reg5.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg6.awk $dat >> $STDOUT
 
 cmp -s  reg-awk.out $STDOUT || exit
+
+# 640 backslashes
+backslashes='\\\\\\\\\\'
+backslashes="$backslashes$backslashes$backslashes$backslashes"
+backslashes="$backslashes$backslashes$backslashes$backslashes"
+backslashes="$backslashes$backslashes$backslashes$backslashes"
+backslashes="$backslashes$backslashes$backslashes$backslashes"
+( set +e; LC_ALL=C $PROG "/a$backslashes/" $dat; test $? -eq 2 ) || exit
 
 echo regular expression matching OK
 #######################################
