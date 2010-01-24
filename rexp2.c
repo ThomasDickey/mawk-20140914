@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.11 2009/09/14 09:02:53 tom Exp $
+ * $MawkId: rexp2.c,v 1.12 2010/01/24 16:39:52 Jonathan.Nieder Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -71,6 +71,10 @@ RT_STATE *RE_run_stack_limit;
    This hack fixes it without rewriting the whole thing, 5/31/91 */
 RT_STATE *RE_run_stack_empty;
 
+RT_POS_ENTRY *RE_pos_stack_base;
+RT_POS_ENTRY *RE_pos_stack_limit;
+RT_POS_ENTRY *RE_pos_stack_empty;
+
 void
 RE_run_stack_init(void)
 {
@@ -79,6 +83,21 @@ RE_run_stack_init(void)
 	    RE_malloc(sizeof(RT_STATE) * STACKGROWTH);
 	RE_run_stack_limit = RE_run_stack_base + STACKGROWTH;
 	RE_run_stack_empty = RE_run_stack_base - 1;
+    }
+}
+
+void
+RE_pos_stack_init(void)
+{
+    if (!RE_pos_stack_base) {
+	RE_pos_stack_base = (RT_POS_ENTRY *)
+	    RE_malloc(sizeof(RT_POS_ENTRY) * STACKGROWTH);
+	RE_pos_stack_limit = RE_pos_stack_base + STACKGROWTH;
+	RE_pos_stack_empty = RE_pos_stack_base;
+
+	RE_pos_stack_base->pos = NULL;	/* RE_pos_peek(RE_pos_stack_empty) */
+	RE_pos_stack_base->owner = -1;	/* avoid popping base */
+	RE_pos_stack_base->prev_offset = 0;	/* avoid popping below base */
     }
 }
 
@@ -117,6 +136,30 @@ RE_new_run_stack(void)
 
     /* return the new stackp */
     return RE_run_stack_base + oldsize;
+}
+
+RT_POS_ENTRY *
+RE_new_pos_stack(void)
+{
+    unsigned oldsize = (unsigned) (RE_pos_stack_limit - RE_pos_stack_base);
+    unsigned newsize = oldsize + STACKGROWTH;
+
+    /* FIXME: handle overflow on multiplication for large model DOS
+     * (see RE_new_run_stack()).
+     */
+    RE_pos_stack_base = (RT_POS_ENTRY *)
+	realloc(RE_pos_stack_base, newsize * sizeof(RT_POS_ENTRY));
+
+    if (!RE_pos_stack_base) {
+	fprintf(stderr, "out of memory for RE string position stack\n");
+	exit(100);
+    }
+
+    RE_pos_stack_limit = RE_pos_stack_base + newsize;
+    RE_pos_stack_empty = RE_pos_stack_base;
+
+    /* return the new stackp */
+    return RE_pos_stack_base + oldsize;
 }
 
 #ifdef	DEBUG
