@@ -1,6 +1,12 @@
--- $MawkId: CHANGES,v 1.86 2009/12/20 19:59:15 tom Exp $
+-- $MawkId: CHANGES,v 1.87 2010/01/24 15:53:23 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20100124
+	+ improve configure macro CF_XOPEN_SOURCE, making it remove possibly
+	  conflicting definitions before adding new ones.
+
+	+ update config.guess and config.sub
 
 20091220
 	+ bump version to 1.3.4
