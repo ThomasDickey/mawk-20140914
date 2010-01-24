@@ -195,3 +195,7 @@ reg5.2<<D_ANODE>>
 reg5.1<<D_ANODE>>
 28..7:           zfree(p, sizeof(D_ANODE)) ;
 reg5.2<<D_ANODE>>
+1..1:extern unsigned hash() ;
+reg6.2<<e>>
+23..6:   which is two hash tables in one.  One for strings
+reg6.1<<ables >>

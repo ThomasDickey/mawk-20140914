@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.13 2009/12/17 00:21:50 tom Exp $
+# $MawkId: mawktest,v 1.14 2010/01/24 18:21:42 Jonathan.Nieder Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -25,6 +25,7 @@ nulldat=mawknull.dat
 
 STDOUT=${TMPDIR-/tmp}/mawktest$$
 
+ulimit -v 25000
 trap 'echo mawk_test failed ; rm -f $STDOUT ; exit 1'  0
 
 PATH=.:$PATH
@@ -39,6 +40,9 @@ echo testing input and field splitting
 
 LC_ALL=C $PROG -f wc.awk $dat | cmp -s - wc-awk.out || exit
 LC_ALL=C $PROG -f null-rs.awk null-rs.dat | cmp -s - null-rs.out || exit
+
+LC_ALL=C $PROG -F '(a?)+b' -f wc.awk $dat > $STDOUT
+LC_ALL=C $PROG -F 'a*b' -f wc.awk $dat | cmp -s - $STDOUT || exit
 
 if test -n "$NULLS" ; then
 	LC_ALL=C $PROG -F '\000'    -f nulls0.awk $nulldat > $STDOUT
@@ -57,6 +61,7 @@ LC_ALL=C $PROG -f reg1.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg2.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg4.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg5.awk $dat >> $STDOUT
+LC_ALL=C $PROG -f reg6.awk $dat >> $STDOUT
 
 cmp -s  reg-awk.out $STDOUT || exit
 
