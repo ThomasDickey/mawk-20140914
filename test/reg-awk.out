@@ -199,3 +199,7 @@ reg5.2<<D_ANODE>>
 reg6.2<<e>>
 23..6:   which is two hash tables in one.  One for strings
 reg6.1<<ables >>
+23..2:   which is two hash tables in one.  One for strings
+reg6.3<<ab>>
+19..5:   and one for doubles.
+reg6.4<<bles.>>

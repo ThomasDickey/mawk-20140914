@@ -1,5 +1,5 @@
 BEGIN {
-	patterns = "(a?)+bles /(^)+e"
+	patterns = "(a?)+bles /(^)+e/a(a?)*b/(a?)+*bles\\."
 	n = split(patterns, pattern, "/")
 }
 {

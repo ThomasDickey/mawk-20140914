@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.14 2010/01/24 18:21:42 Jonathan.Nieder Exp $
+# $MawkId: mawktest,v 1.15 2010/01/24 18:42:46 Jonathan.Nieder Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -40,6 +40,9 @@ echo testing input and field splitting
 
 LC_ALL=C $PROG -f wc.awk $dat | cmp -s - wc-awk.out || exit
 LC_ALL=C $PROG -f null-rs.awk null-rs.dat | cmp -s - null-rs.out || exit
+
+LC_ALL=C $PROG -F '(a?)*b' -f wc.awk $dat > $STDOUT
+LC_ALL=C $PROG -F 'a*b' -f wc.awk $dat | cmp -s - $STDOUT || exit
 
 LC_ALL=C $PROG -F '(a?)+b' -f wc.awk $dat > $STDOUT
 LC_ALL=C $PROG -F 'a*b' -f wc.awk $dat | cmp -s - $STDOUT || exit
