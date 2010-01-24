@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.13 2010/01/24 16:52:30 Jonathan.Nieder Exp $
+ * $MawkId: rexp2.c,v 1.14 2010/01/24 17:16:36 Jonathan.Nieder Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -374,6 +374,11 @@ REtest(char *str,		/* string to test */
 	m += m->s_data.jump;
 	goto reswitch;
 
+      CASE_UANY(M_SAVE_POS):	/* save position for a later M_2JC */
+	sp = RE_pos_push(sp, stackp, s);
+	m++;
+	goto reswitch;
+
       CASE_UANY(M_2JA):	/* take the non jump branch */
 	/* don't stack an ACCEPT */
 	if ((tm = m + m->s_data.jump)->s_type == M_ACCEPT)
@@ -381,6 +386,14 @@ REtest(char *str,		/* string to test */
 	push(tm, s, sp, u_flag);
 	m++;
 	goto reswitch;
+
+      CASE_UANY(M_2JC):	/* take the jump branch if position changed */
+	if (RE_pos_pop(&sp, stackp) == s) {
+	    /* did not advance: do not jump back */
+	    m++;
+	    goto reswitch;
+	}
+	/* fall thru */
 
       CASE_UANY(M_2JB):	/* take the jump branch */
 	/* don't stack an ACCEPT */

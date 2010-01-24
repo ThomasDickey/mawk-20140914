@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexpdb.c,v 1.6 2009/07/27 15:39:39 tom Exp $
+ * $MawkId: rexpdb.c,v 1.7 2010/01/24 17:16:36 Jonathan.Nieder Exp $
  * @Log: rexpdb.c,v @
  * Revision 1.2  1993/07/23  13:21:51  mike
  * cleanup rexp code
@@ -42,6 +42,8 @@ static const char *xlat[] =
     "M_1J",
     "M_2JA",
     "M_2JB",
+    "M_SAVE_POS",
+    "M_2JC",
     "M_ACCEPT"};
 
 void
@@ -71,6 +73,7 @@ REmprint(PTR m, FILE *f)
 	case M_1J:
 	case M_2JA:
 	case M_2JB:
+	case M_2JC:
 	    fprintf(f, "%d", p->s_data.jump);
 	    break;
 	case M_CLASS:

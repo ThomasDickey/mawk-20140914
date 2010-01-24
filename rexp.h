@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.15 2010/01/24 16:52:30 Jonathan.Nieder Exp $
+ * $MawkId: rexp.h,v 1.16 2010/01/24 17:16:36 Jonathan.Nieder Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -69,8 +69,10 @@ PTR RE_realloc(void *, unsigned);
 #define  M_1J      	6	/* mandatory jump */
 #define  M_2JA     	7	/* optional (undesirable) jump */
 #define  M_2JB     	8	/* optional (desirable) jump */
-#define  M_ACCEPT  	9	/* end of match */
-#define  U_ON      	10
+#define  M_SAVE_POS	9	/* push position onto stack */
+#define  M_2JC     	10	/* pop pos'n, optional jump if advanced */
+#define  M_ACCEPT  	11	/* end of match */
+#define  U_ON      	12
 
 #define  U_OFF     0
 #define  END_OFF   0
