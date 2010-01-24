@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.11 2009/12/15 09:09:23 tom Exp $
+ * $MawkId: rexp.h,v 1.12 2010/01/24 16:36:02 Jonathan.Nieder Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -60,16 +60,16 @@ PTR RE_realloc(void *, unsigned);
 
 /*  finite machine  state types  */
 
-#define  M_STR     	0
-#define  M_CLASS   	1
-#define  M_ANY     	2
-#define  M_START   	3
-#define  M_END     	4
-#define  M_U       	5
-#define  M_1J      	6
-#define  M_2JA     	7
-#define  M_2JB     	8
-#define  M_ACCEPT  	9
+#define  M_STR     	0	/* matching a literal string */
+#define  M_CLASS   	1	/* character class */
+#define  M_ANY     	2	/* arbitrary character (.) */
+#define  M_START   	3	/* start of string (^) */
+#define  M_END     	4	/* end of string ($) */
+#define  M_U       	5	/* arbitrary string (.*) */
+#define  M_1J      	6	/* mandatory jump */
+#define  M_2JA     	7	/* optional (undesirable) jump */
+#define  M_2JB     	8	/* optional (desirable) jump */
+#define  M_ACCEPT  	9	/* end of match */
 #define  U_ON      	10
 
 #define  U_OFF     0
