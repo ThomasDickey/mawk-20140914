@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.16 2009/09/17 22:58:49 tom Exp $
+ * $MawkId: rexp0.c,v 1.17 2010/01/24 16:52:30 Jonathan.Nieder Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -120,6 +120,7 @@ RE_lex_init(char *re, size_t len)
     re_len = len + 1;
     prev = NOT_STARTED;
     RE_run_stack_init();
+    RE_pos_stack_init();
 }
 
 int

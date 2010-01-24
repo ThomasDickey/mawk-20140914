@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.14 2009/12/15 01:50:07 tom Exp $
+ * $MawkId: rexp3.c,v 1.15 2010/01/24 16:52:30 Jonathan.Nieder Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -49,12 +49,15 @@ the GNU General Public License, version 2, 1991.
 
 #include "rexp.h"
 
-#define	 push(mx,sx,ssx,ux)   if (++stackp == RE_run_stack_limit)\
-				stackp = RE_new_run_stack() ;\
-			      stackp->m = (mx); \
-			      stackp->s = (sx); \
-			      stackp->ss = (ssx); \
-			      stackp->u = (ux)
+#define	 push(mx,sx,px,ssx,ux) do { \
+	if (++stackp == RE_run_stack_limit) \
+		stackp = RE_new_run_stack() ;\
+	stackp->m = (mx); \
+	stackp->s = (sx); \
+	stackp->sp = (px) - RE_pos_stack_base; \
+	stackp->ss = (ssx); \
+	stackp->u = (ux); \
+} while(0)
 
 #define	  CASE_UANY(x)	case  x + U_OFF :  case	 x + U_ON
 
@@ -73,6 +76,7 @@ REmatch(char *str,		/* string to test */
     register RT_STATE *stackp;
     int u_flag, t;
     char *str_end = s + str_len;
+    RT_POS_ENTRY *sp;
     char *ts;
 
     /* state of current best match stored here */
@@ -92,6 +96,7 @@ REmatch(char *str,		/* string to test */
     u_flag = U_ON;
     cb_ss = ss = (char *) 0;
     stackp = RE_run_stack_empty;
+    sp = RE_pos_stack_empty;
     goto reswitch;
 
   refill:
@@ -113,6 +118,7 @@ REmatch(char *str,		/* string to test */
     }
 
     m = (stackp + 1)->m;
+    sp = RE_pos_stack_base + (stackp + 1)->sp;
     u_flag = (stackp + 1)->u;
 
   reswitch:
@@ -155,7 +161,7 @@ REmatch(char *str,		/* string to test */
 	if (s >= str + strlen(str)) {
 	    goto refill;
 	}
-	push(m, s + 1, ss, U_ON);
+	push(m, s + 1, sp, ss, U_ON);
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
 		goto refill;
@@ -230,7 +236,7 @@ REmatch(char *str,		/* string to test */
 	    }
 	}
 	s++;
-	push(m, s, ss, U_ON);
+	push(m, s, sp, ss, U_ON);
 	if (!ss) {
 	    if (cb_ss && s - 1 > cb_ss) {
 		goto refill;
@@ -293,7 +299,7 @@ REmatch(char *str,		/* string to test */
 	    goto refill;
 	}
 	s++;
-	push(m, s, ss, U_ON);
+	push(m, s, sp, ss, U_ON);
 	if (!ss) {
 	    if (cb_ss && s - 1 > cb_ss) {
 		goto refill;
@@ -385,12 +391,12 @@ REmatch(char *str,		/* string to test */
 	goto reswitch;
 
       CASE_UANY(M_2JA):	/* take the non jump branch */
-	push(m + m->s_data.jump, s, ss, u_flag);
+	push(m + m->s_data.jump, s, sp, ss, u_flag);
 	m++;
 	goto reswitch;
 
       CASE_UANY(M_2JB):	/* take the jump branch */
-	push(m + 1, s, ss, u_flag);
+	push(m + 1, s, sp, ss, u_flag);
 	m += m->s_data.jump;
 	goto reswitch;
 

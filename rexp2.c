@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.12 2010/01/24 16:39:52 Jonathan.Nieder Exp $
+ * $MawkId: rexp2.c,v 1.13 2010/01/24 16:52:30 Jonathan.Nieder Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -168,6 +168,7 @@ slow_push(
 	     RT_STATE * sp,
 	     STATE * m,
 	     char *s,
+	     RT_POS_ENTRY *pos_top,
 	     int u)
 {
     if (sp == RE_run_stack_limit)
@@ -175,18 +176,24 @@ slow_push(
     sp->m = m;
     sp->s = s;
     sp->u = u;
+    sp->sp = pos_top - RE_pos_stack_base;
     return sp;
 }
 #endif
 
 #ifdef	 DEBUG
-#define	 push(mx,sx,ux)	  stackp = slow_push(++stackp, mx, sx, ux)
+#define	 push(mx,sx,px,ux) do { \
+		stackp = slow_push(++stackp, mx, sx, px, ux); \
+	} while(0)
 #else
-#define	 push(mx,sx,ux)	  if (++stackp == RE_run_stack_limit) \
-				stackp = RE_new_run_stack(); \
-			  stackp->m = (mx); \
-			  stackp->s = (sx); \
-			  stackp->u = (ux)
+#define	 push(mx,sx,px,ux) do { \
+		if (++stackp == RE_run_stack_limit) \
+			stackp = RE_new_run_stack(); \
+		stackp->m = (mx); \
+		stackp->s = (sx); \
+		stackp->u = (ux); \
+		stackp->sp = (px) - RE_pos_stack_base; \
+	} while(0)
 #endif
 
 #define	  CASE_UANY(x)	case  x + U_OFF :  case	 x + U_ON
@@ -204,6 +211,7 @@ REtest(char *str,		/* string to test */
     register RT_STATE *stackp;
     int u_flag;
     char *str_end = str + len;
+    RT_POS_ENTRY *sp;
     int t;			/*convenient temps */
     STATE *tm;
 
@@ -213,6 +221,7 @@ REtest(char *str,		/* string to test */
     } else {
 	u_flag = U_ON;
 	stackp = RE_run_stack_empty;
+	sp = RE_pos_stack_empty;
 	goto reswitch;
     }
 
@@ -221,6 +230,7 @@ REtest(char *str,		/* string to test */
 	return 0;
     m = stackp->m;
     s = stackp->s;
+    sp = RE_pos_stack_base + stackp->sp;
     u_flag = (stackp--)->u;
 
   reswitch:
@@ -243,7 +253,7 @@ REtest(char *str,		/* string to test */
     case M_STR + U_ON + END_OFF:
 	if (!(s = str_str(s, (unsigned) (str_end - s), m->s_data.str, m->s_len)))
 	    goto refill;
-	push(m, s + 1, U_ON);
+	push(m, s + 1, sp, U_ON);
 	s += m->s_len;
 	m++;
 	u_flag = U_OFF;
@@ -283,7 +293,7 @@ REtest(char *str,		/* string to test */
 	    s++;
 	}
 	s++;
-	push(m, s, U_ON);
+	push(m, s, sp, U_ON);
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
@@ -314,7 +324,7 @@ REtest(char *str,		/* string to test */
 	if (s >= str_end)
 	    goto refill;
 	s++;
-	push(m, s, U_ON);
+	push(m, s, sp, U_ON);
 	m++;
 	u_flag = U_OFF;
 	goto reswitch;
@@ -368,7 +378,7 @@ REtest(char *str,		/* string to test */
 	/* don't stack an ACCEPT */
 	if ((tm = m + m->s_data.jump)->s_type == M_ACCEPT)
 	    return 1;
-	push(tm, s, u_flag);
+	push(tm, s, sp, u_flag);
 	m++;
 	goto reswitch;
 
@@ -376,7 +386,7 @@ REtest(char *str,		/* string to test */
 	/* don't stack an ACCEPT */
 	if ((tm = m + 1)->s_type == M_ACCEPT)
 	    return 1;
-	push(tm, s, u_flag);
+	push(tm, s, sp, u_flag);
 	m += m->s_data.jump;
 	goto reswitch;
 
