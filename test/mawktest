@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.19 2010/01/27 20:15:52 Jonathan.Nieder Exp $
+# $MawkId: mawktest,v 1.20 2010/01/27 20:15:57 Jonathan.Nieder Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -59,6 +59,9 @@ LC_ALL=C $PROG -F '[[a]' -f wc.awk $dat | cmp -s - $STDOUT || exit
 
 LC_ALL=C $PROG -F '(])' -f wc.awk $dat > $STDOUT
 LC_ALL=C $PROG -F '[]]' -f wc.awk $dat | cmp -s - $STDOUT || exit
+
+# check that the regexp [\ does not make mawk segfault
+LC_ALL=C $PROG -F '[\' || exit
 
 if test -n "$NULLS" ; then
 	LC_ALL=C $PROG -F '\000'    -f nulls0.awk $nulldat > $STDOUT

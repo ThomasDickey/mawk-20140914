@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.92 2010/01/27 20:15:52 Jonathan.Nieder Exp $
+-- $MawkId: CHANGES,v 1.93 2010/01/27 20:15:57 Jonathan.Nieder Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -18,11 +18,11 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 	+ improve buffer-overflow check for string_buff.
 
-	+ fix collect_RE to treat [^]] as a character class (meaning "not a
-	  closing bracket") but [^^]] not as one.  This also requires
+	+ fix collect_RE to treat "[^]]" as a character class (meaning "not a
+	  closing bracket") but "[^^]]" not as one.  This also requires
 	  initializing the local "start of character class" variable to NULL
 	  rather than the beginning of the string, to avoid an invalid array
-	  access when collecting expressions such as ^text.
+	  access when collecting expressions such as "^text".
 
 	+ within a character class and not followed by a :, ., or ~, a "[" is
 	  just like any other character.  This way, you can tell mawk to scan
@@ -30,7 +30,10 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	  or ] with "mawk /[][]/".  Also clean up the relevant loop in
 	  do_class() to make it a bit more readable.
 
-	+ outside a character class, a ] is just like any other character.
+	+ outside a character class, a "]" is just like any other character.
+
+	+ prevent do_class() from scanning past the end, e.g., if the
+	  terminating zero byte was escaped.
 
 20091220
 	+ bump version to 1.3.4

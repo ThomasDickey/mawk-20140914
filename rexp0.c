@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.18 2010/01/27 20:15:47 Jonathan.Nieder Exp $
+ * $MawkId: rexp0.c,v 1.19 2010/01/27 20:15:57 Jonathan.Nieder Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -563,7 +563,8 @@ do_class(char **start, MACHINE * mp)
 	    --level;
 	} else if (*q == '\\') {
 	    ++q;
-	} else if (*q == '\0' && q == (re_str + re_len - 1)) {
+	}
+	if (*q == '\0' && q == (re_str + re_len - 1)) {
 	    /* no closing bracket */
 	    RE_error_trap(-E3);
 	}
