@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.15 2010/01/24 20:19:29 Jonathan.Nieder Exp $
+ * $MawkId: scan.c,v 1.16 2010/01/27 10:47:53 Jonathan.Nieder Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -993,7 +993,7 @@ static int
 collect_RE(void)
 {
     char *p = string_buff;
-    char *first = string_buff;
+    const char *first = NULL;
     int c;
     int boxed = 0;
     STRING *sval;
@@ -1009,7 +1009,8 @@ collect_RE(void)
 	c = (UChar) (*p++ = (char) next());
 	switch (scan_code[c]) {
 	case SC_POW:
-	    if (p == first + 1) {
+	    /* Handle [^]] and [^^] correctly. */
+	    if (p - 1 == first && first[-1] == '[') {
 		first = p;
 	    }
 	    break;
@@ -1023,7 +1024,7 @@ collect_RE(void)
 	    if (!boxed) {
 		first = p;
 		++boxed;
-	    } else if (p != first + 1) {
+	    } else if (p - 1 != first) {
 		++boxed;
 	    } else {
 		if (next() == ':') {
@@ -1038,7 +1039,7 @@ collect_RE(void)
 	     * A right square-bracket loses its special meaning if it occurs
 	     * first in the list (after an optional "^").
 	     */
-	    if (p != first + 1) {
+	    if (p - 1 != first) {
 		--boxed;
 	    }
 	    break;

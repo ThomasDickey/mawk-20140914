@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.16 2010/01/24 20:19:29 Jonathan.Nieder Exp $
+# $MawkId: mawktest,v 1.17 2010/01/27 10:47:53 Jonathan.Nieder Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -47,6 +47,13 @@ LC_ALL=C $PROG -F 'a*b' -f wc.awk $dat | cmp -s - $STDOUT || exit
 LC_ALL=C $PROG -F '(a?)+b' -f wc.awk $dat > $STDOUT
 LC_ALL=C $PROG -F 'a*b' -f wc.awk $dat | cmp -s - $STDOUT || exit
 
+LC_ALL=C $PROG -F '[^^]' -f wc.awk $dat > $STDOUT
+LC_ALL=C $PROG -F '(.)' -f wc.awk $dat | cmp -s - $STDOUT || exit
+
+LC_ALL=C $PROG -F '[^]]' -f wc.awk $dat > $STDOUT
+LC_ALL=C $PROG -F '[[#a-zA-Z0-9/*!=<>+,;.&_%(){}" -]' -f wc.awk $dat |
+	cmp -s - $STDOUT || exit
+
 if test -n "$NULLS" ; then
 	LC_ALL=C $PROG -F '\000'    -f nulls0.awk $nulldat > $STDOUT
 	LC_ALL=C $PROG -F '[\000 ]' -f nulls0.awk $nulldat >> $STDOUT
@@ -75,6 +82,12 @@ backslashes="$backslashes$backslashes$backslashes$backslashes"
 backslashes="$backslashes$backslashes$backslashes$backslashes"
 backslashes="$backslashes$backslashes$backslashes$backslashes"
 ( set +e; LC_ALL=C $PROG "/a$backslashes/" $dat; test $? -eq 2 ) || exit
+
+LC_ALL=C $PROG '/^[^^]*$/' $dat > $STDOUT
+cmp -s $dat $STDOUT || exit
+
+LC_ALL=C $PROG '!/^[^]]*$/' $dat > $STDOUT
+LC_ALL=C grep ']' $dat | cmp -s - $STDOUT || exit
 
 echo regular expression matching OK
 #######################################
