@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.16 2010/01/27 10:47:53 Jonathan.Nieder Exp $
+ * $MawkId: scan.c,v 1.17 2010/01/27 20:15:47 Jonathan.Nieder Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -1024,9 +1024,15 @@ collect_RE(void)
 	    if (!boxed) {
 		first = p;
 		++boxed;
-	    } else if (p - 1 != first) {
-		++boxed;
 	    } else {
+		/* XXX. Does not handle collating symbols or equivalence
+		 * class expressions. */
+		/* XXX. Does not match logic used in rexp0.c to check for
+		 * a character class expression, though probably the
+		 * latter should be adjusted.
+		 * POSIX and common sense give us license to complain about
+		 * expressions such as '[[:not a special character class]]'.
+		 */
 		if (next() == ':') {
 		    ++boxed;
 		}

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.17 2010/01/24 16:52:30 Jonathan.Nieder Exp $
+ * $MawkId: rexp0.c,v 1.18 2010/01/27 20:15:47 Jonathan.Nieder Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -549,17 +549,18 @@ do_class(char **start, MACHINE * mp)
     else if (p[0] == '^' && (literal_leftsq(p + 1) || p[1] == ']'))
 	p += 2;
 
-    for (level = 0, q = p; (level != 0) || (*q != ']'); ++q) {
-	if (*q == '[') {
-	    if (q[1] != ':' || ++level > 1) {
+    /* XXX. Does not handle collating symbols or equivalence
+     * class expressions.  See also collect_RE(). */
+    for (level = 0, q = p;; ++q) {
+	if (*q == '[' && q[1] == ':') {
+	    if (++level > 1)
 		RE_error_trap(-E3);
-	    }
 	} else if (*q == ']') {
-	    if (level > 0) {
-		if (q[-1] != ':')
-		    RE_error_trap(-E3);
-		--level;
-	    }
+	    if (level == 0)
+		break;
+	    if (q[-1] != ':')
+		RE_error_trap(-E3);
+	    --level;
 	} else if (*q == '\\') {
 	    ++q;
 	} else if (*q == '\0' && q == (re_str + re_len - 1)) {
