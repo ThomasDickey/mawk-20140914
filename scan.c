@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.17 2010/01/27 20:15:47 Jonathan.Nieder Exp $
+ * $MawkId: scan.c,v 1.18 2010/01/27 20:15:52 Jonathan.Nieder Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -1045,7 +1045,7 @@ collect_RE(void)
 	     * A right square-bracket loses its special meaning if it occurs
 	     * first in the list (after an optional "^").
 	     */
-	    if (p - 1 != first) {
+	    if (boxed && p - 1 != first) {
 		--boxed;
 	    }
 	    break;
