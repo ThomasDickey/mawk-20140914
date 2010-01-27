@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.89 2010/01/27 10:43:47 tom Exp $
+-- $MawkId: CHANGES,v 1.90 2010/01/27 10:47:53 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -17,6 +17,12 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	  the workaround for gawk's noloop1 testcase from 20090726.
 
 	+ improve buffer-overflow check for string_buff.
+
+	+ fix collect_RE to treat [^]] as a character class (meaning "not a
+	  closing bracket") but [^^]] not as one.  This also requires
+	  initializing the local "start of character class" variable to NULL
+	  rather than the beginning of the string, to avoid an invalid array
+	  access when collecting expressions such as ^text.
 
 20091220
 	+ bump version to 1.3.4
