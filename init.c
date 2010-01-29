@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.16 2009/12/16 23:46:43 tom Exp $
+ * $MawkId: init.c,v 1.17 2010/01/29 20:03:43 Jan.Psota Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -154,7 +154,7 @@ no_program(void)
 static void
 process_cmdline(int argc, char **argv)
 {
-    int i, nextarg;
+    int i, j, nextarg;
     char *optArg;
     PFILE dummy;		/* starts linked list of filenames */
     PFILE *tail = &dummy;
@@ -210,49 +210,50 @@ process_cmdline(int argc, char **argv)
 	}
 
 	switch (argv[i][1]) {
+
 	case 'W':
+	    for (j = 0; j < strlen(optArg); j++) {
+		if (isalpha((UChar) optArg[j]))
+		    optArg[j] = (char) toupper((UChar) optArg[j]);
+		if (optArg[j] == 'V')
+		    print_version();
+		else if (optArg[j] == 'D') {
+		    dump_code_flag = 1;
+		} else if (optArg[j] == 'S') {
+		    char *p = strchr(optArg, '=');
+		    int x = p ? atoi(p + 1) : 0;
 
-	    if (isalpha((UChar) optArg[0]))
-		optArg[0] = (char) toupper((UChar) optArg[0]);
-	    if (optArg[0] == 'V')
-		print_version();
-	    else if (optArg[0] == 'D') {
-		dump_code_flag = 1;
-	    } else if (optArg[0] == 'S') {
-		char *p = strchr(optArg, '=');
-		int x = p ? atoi(p + 1) : 0;
-
-		if (x > (int) SPRINTF_SZ) {
-		    sprintf_buff = (char *) zmalloc((unsigned) x);
-		    sprintf_limit = sprintf_buff + x;
+		    if (x > (int) SPRINTF_SZ) {
+			sprintf_buff = (char *) zmalloc((unsigned) x);
+			sprintf_limit = sprintf_buff + x;
+		    }
 		}
-	    }
 #if USE_BINMODE
-	    else if (optArg[0] == 'B') {
-		char *p = strchr(optArg, '=');
-		int x = p ? atoi(p + 1) : 0;
+		else if (optArg[j] == 'B') {
+		    char *p = strchr(optArg, '=');
+		    int x = p ? atoi(p + 1) : 0;
 
-		set_binmode(x);
-	    }
+		    set_binmode(x);
+		}
 #endif
-	    else if (optArg[0] == 'P') {
-		posix_space_flag = 1;
-	    } else if (optArg[0] == 'E') {
-		if (pfile_name) {
-		    errmsg(0, "-W exec is incompatible with -f");
-		    mawk_exit(2);
-		} else if (nextarg == argc)
-		    no_program();
+		else if (optArg[j] == 'P') {
+		    posix_space_flag = 1;
+		} else if (optArg[j] == 'E') {
+		    if (pfile_name) {
+			errmsg(0, "-W exec is incompatible with -f");
+			mawk_exit(2);
+		    } else if (nextarg == argc)
+			no_program();
 
-		pfile_name = argv[nextarg];
-		i = nextarg + 1;
-		goto no_more_opts;
-	    } else if (optArg[0] == 'I') {
-		interactive_flag = 1;
-		setbuf(stdout, (char *) 0);
-	    } else
-		errmsg(0, "vacuous option: -W %s", optArg);
-
+		    pfile_name = argv[nextarg];
+		    i = nextarg + 1;
+		    goto no_more_opts;
+		} else if (optArg[j] == 'I') {
+		    interactive_flag = 1;
+		    setbuf(stdout, (char *) 0);
+		} else
+		    errmsg(0, "vacuous option: -W %s", optArg);
+	    }
 	    break;
 
 	case 'v':
