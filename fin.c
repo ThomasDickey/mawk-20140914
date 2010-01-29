@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.22 2009/12/17 00:06:57 tom Exp $
+ * $MawkId: fin.c,v 1.23 2010/01/29 20:03:43 Jan.Psota Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -107,7 +107,7 @@ FINdopen(int fd, int main_flag)
     fin->buff[0] = 0;
 
     if ((isatty(fd) && rs_shadow.type == SEP_CHAR && rs_shadow.c == '\n')
-	|| (interactive_flag && fd == 0)) {
+	|| interactive_flag) {
 	/* interactive, i.e., line buffer this file */
 	if (fd == 0)
 	    fin->fp = stdin;
