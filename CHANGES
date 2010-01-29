@@ -1,12 +1,19 @@
--- $MawkId: CHANGES,v 1.93 2010/01/27 20:15:57 Jonathan.Nieder Exp $
+-- $MawkId: CHANGES,v 1.94 2010/01/29 20:03:43 Jan.Psota Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20100127
+20100129
 	+ improve configure macro CF_XOPEN_SOURCE, making it remove possibly
 	  conflicting definitions before adding new ones.
 
 	+ update config.guess and config.sub
+
+	> patches by Jan Psota:
+
+	+ improve buffering for -Winteractive option.
+
+	+ allow multiple single-character flags after -W, e.g., "-Wie" for
+	  "-Winteractive" and "-Werror".
 
 	> patches by Jonathan Nieder:
 
