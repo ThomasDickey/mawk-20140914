@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.94 2010/01/29 20:03:43 Jan.Psota Exp $
+-- $MawkId: CHANGES,v 1.95 2010/01/31 21:13:47 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100129
+	+ add timestamp to scancode.c, to help manage revisions.
+
 	+ improve configure macro CF_XOPEN_SOURCE, making it remove possibly
 	  conflicting definitions before adding new ones.
 
