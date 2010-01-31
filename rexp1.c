@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.9 2010/01/24 18:42:46 Jonathan.Nieder Exp $
+ * $MawkId: rexp1.c,v 1.10 2010/01/31 22:08:20 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
@@ -162,13 +162,13 @@ RE_close(MACHINE * mp)
     unsigned sz;
 
     /*
-     *		2JA end
+     *                2JA end
      * loop:
-     *		SAVE_POS
-     *		m
-     *		2JC loop
+     *          SAVE_POS
+     *          m
+     *          2JC loop
      * end:
-     *		ACCEPT
+     *          ACCEPT
      */
     sz = (unsigned) (mp->stop - mp->start + 1);
     p = (STATE *) RE_malloc((sz + 3) * STATESZ);
@@ -194,10 +194,10 @@ RE_poscl(MACHINE * mp)
 
     /*
      * loop:
-     *		SAVE_POS
-     *		m
-     *		2JC loop
-     *		ACCEPT
+     *          SAVE_POS
+     *          m
+     *          2JC loop
+     *          ACCEPT
      */
     sz = (unsigned) (mp->stop - mp->start + 1);
     p = (STATE *) RE_malloc((sz + 2) * STATESZ);

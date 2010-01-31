@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.14 2010/01/24 17:16:36 Jonathan.Nieder Exp $
+ * $MawkId: rexp2.c,v 1.15 2010/01/31 22:08:20 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -168,7 +168,7 @@ slow_push(
 	     RT_STATE * sp,
 	     STATE * m,
 	     char *s,
-	     RT_POS_ENTRY *pos_top,
+	     RT_POS_ENTRY * pos_top,
 	     int u)
 {
     if (sp == RE_run_stack_limit)
