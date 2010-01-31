@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.21 2010/01/31 21:53:05 Jonathan.Nieder Exp $
+# $MawkId: mawktest,v 1.22 2010/01/31 23:18:11 tom Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -23,10 +23,11 @@ fi
 dat=mawktest.dat
 nulldat=mawknull.dat
 
-STDOUT=${TMPDIR-/tmp}/mawktest$$
+STDOUT=${TMPDIR-/tmp}/mawk-out$$
+STDERR=${TMPDIR-/tmp}/mawk-err$$
 
 ulimit -v 25000
-trap 'echo mawk_test failed ; rm -f $STDOUT ; exit 1'  0
+trap 'echo mawk_test failed ; rm -f $STDOUT $STDERR; exit 1'  0
 
 PATH=.:$PATH
 
@@ -61,7 +62,7 @@ LC_ALL=C $PROG -F '(])' -f wc.awk $dat > $STDOUT
 LC_ALL=C $PROG -F '[]]' -f wc.awk $dat | cmp -s - $STDOUT || exit
 
 # check that the regexp [\ does not make mawk segfault
-LC_ALL=C $PROG -F '[\' || exit
+LC_ALL=C $PROG -F '[\' 2> $STDERR || exit
 
 LC_ALL=C $PROG -F '(^)?)' -f wc.awk $dat > $STDOUT
 LC_ALL=C $PROG -F ')' -f wc.awk $dat | cmp -s - $STDOUT || exit
@@ -78,7 +79,7 @@ echo input and field splitting OK
 
 echo
 echo testing regular expression matching
-LC_ALL=C $PROG -f reg0.awk $dat > $STDOUT
+LC_ALL=C $PROG -f reg0.awk $dat >  $STDOUT
 LC_ALL=C $PROG -f reg1.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg2.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg4.awk $dat >> $STDOUT
@@ -93,7 +94,7 @@ backslashes="$backslashes$backslashes$backslashes$backslashes"
 backslashes="$backslashes$backslashes$backslashes$backslashes"
 backslashes="$backslashes$backslashes$backslashes$backslashes"
 backslashes="$backslashes$backslashes$backslashes$backslashes"
-( set +e; LC_ALL=C $PROG "/a$backslashes/" $dat; test $? -eq 2 ) || exit
+( set +e; LC_ALL=C $PROG "/a$backslashes/" $dat 2> $STDERR ; test $? = 2 ) || exit
 
 LC_ALL=C $PROG '/^[^^]*$/' $dat > $STDOUT
 cmp -s $dat $STDOUT || exit
