@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.11 2009/12/17 10:33:20 tom Exp $
+ * $MawkId: execute.c,v 1.12 2010/01/31 22:58:42 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -219,7 +219,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
     }
 
     while (1)
-	switch (cdp++->op) {
+	switch ((cdp++)->op) {
 
 /* HALT only used by the disassemble now ; this remains
    so compilers don't offset the jump table */
@@ -234,19 +234,19 @@ execute(INST * cdp,		/* code ptr, start execution here */
 
 	case _PUSHC:
 	    inc_sp();
-	    cellcpy(sp, cdp++->ptr);
+	    cellcpy(sp, (cdp++)->ptr);
 	    break;
 
 	case _PUSHD:
 	    inc_sp();
 	    sp->type = C_DOUBLE;
-	    sp->dval = *(double *) cdp++->ptr;
+	    sp->dval = *(double *) (cdp++)->ptr;
 	    break;
 
 	case _PUSHS:
 	    inc_sp();
 	    sp->type = C_STRING;
-	    sp->ptr = cdp++->ptr;
+	    sp->ptr = (cdp++)->ptr;
 	    string(sp)->ref_cnt++;
 	    break;
 
@@ -280,26 +280,26 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	case _PUSHA:
 	case A_PUSHA:
 	    inc_sp();
-	    sp->ptr = cdp++->ptr;
+	    sp->ptr = (cdp++)->ptr;
 	    break;
 
 	case _PUSHI:
 	    /* put contents of next address on stack */
 	    inc_sp();
-	    cellcpy(sp, cdp++->ptr);
+	    cellcpy(sp, (cdp++)->ptr);
 	    break;
 
 	case L_PUSHI:
 	    /* put the contents of a local var on stack,
 	       cdp->op holds the offset from the frame pointer */
 	    inc_sp();
-	    cellcpy(sp, fp + cdp++->op);
+	    cellcpy(sp, fp + (cdp++)->op);
 	    break;
 
 	case L_PUSHA:
 	    /* put a local address on eval stack */
 	    inc_sp();
-	    sp->ptr = (PTR) (fp + cdp++->op);
+	    sp->ptr = (PTR) (fp + (cdp++)->op);
 	    break;
 
 	case F_PUSHI:
@@ -373,7 +373,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	       array, replace the expr with the cell address inside
 	       the array */
 
-	    cp = array_find((ARRAY) cdp++->ptr, sp, CREATE);
+	    cp = array_find((ARRAY) (cdp++)->ptr, sp, CREATE);
 	    cell_destroy(sp);
 	    sp->ptr = (PTR) cp;
 	    break;
@@ -383,7 +383,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	       array, replace the expr with the contents of the
 	       cell inside the array */
 
-	    cp = array_find((ARRAY) cdp++->ptr, sp, CREATE);
+	    cp = array_find((ARRAY) (cdp++)->ptr, sp, CREATE);
 	    cell_destroy(sp);
 	    cellcpy(sp, cp);
 	    break;
@@ -394,7 +394,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	       has an ARRAY in the ptr field, replace expr
 	       with  array[expr]
 	     */
-	    cp = array_find((ARRAY) fp[cdp++->op].ptr, sp, CREATE);
+	    cp = array_find((ARRAY) fp[(cdp++)->op].ptr, sp, CREATE);
 	    cell_destroy(sp);
 	    cellcpy(sp, cp);
 	    break;
@@ -405,7 +405,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	       has an ARRAY in the ptr field, replace expr
 	       with  & array[expr]
 	     */
-	    cp = array_find((ARRAY) fp[cdp++->op].ptr, sp, CREATE);
+	    cp = array_find((ARRAY) fp[(cdp++)->op].ptr, sp, CREATE);
 	    cell_destroy(sp);
 	    sp->ptr = (PTR) cp;
 	    break;
@@ -416,7 +416,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	       on the eval stack
 	     */
 	    inc_sp();
-	    sp->ptr = fp[cdp++->op].ptr;
+	    sp->ptr = fp[(cdp++)->op].ptr;
 	    break;
 
 	case SET_ALOOP:
@@ -867,12 +867,12 @@ execute(INST * cdp,		/* code ptr, start execution here */
 
 	case _PUSHINT:
 	    inc_sp();
-	    sp->type = cdp++->op;
+	    sp->type = (short) (cdp++)->op;
 	    break;
 
 	case _BUILTIN:
 	case _PRINT:
-	    sp = (*(PF_CP) cdp++->ptr) (sp);
+	    sp = (*(PF_CP) (cdp++)->ptr) (sp);
 	    break;
 
 	case _POST_INC:
@@ -1039,7 +1039,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		sp->type = C_DOUBLE;
 		sp->dval = (REtest(string(field)->str,
 				   string(field)->len,
-				   cast_to_re(cdp++->ptr))
+				   cast_to_re((cdp++)->ptr))
 			    ? 1.0
 			    : 0.0);
 
@@ -1055,7 +1055,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		cast1_to_s(sp);
 	    t = REtest(string(sp)->str,
 		       string(sp)->len,
-		       cast_to_re(cdp++->ptr));
+		       cast_to_re((cdp++)->ptr));
 	    free_STRING(string(sp));
 	    sp->type = C_DOUBLE;
 	    sp->dval = t ? 1.0 : 0.0;
@@ -1106,7 +1106,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 
 	    /* form a multiple array index */
 	case A_CAT:
-	    sp = array_cat(sp, cdp++->op);
+	    sp = array_cat(sp, (cdp++)->op);
 	    break;
 
 	case _EXIT:
@@ -1272,8 +1272,8 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	     */
 
 	    {
-		FBLOCK *fbp = (FBLOCK *) cdp++->ptr;
-		int a_args = cdp++->op;		/* actual number of args */
+		FBLOCK *fbp = (FBLOCK *) (cdp++)->ptr;
+		int a_args = (cdp++)->op;	/* actual number of args */
 		CELL *nfp = sp - a_args + 1;	/* new fp for callee */
 		CELL *local_p = sp + 1;		/* first local argument on stack */
 		char *type_p = 0;	/* pts to type of an argument */
