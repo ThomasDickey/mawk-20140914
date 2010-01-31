@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.2 2009/07/12 15:59:17 tom Exp $
+ * $MawkId: code.c,v 1.3 2010/01/31 22:17:18 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -68,9 +68,9 @@ INST *execution_start = 0;
 void
 code_grow(void)
 {
-    unsigned oldsize = code_limit - code_base;
+    unsigned oldsize = (unsigned) (code_limit - code_base);
     unsigned newsize = PAGESZ + oldsize;
-    unsigned delta = code_ptr - code_base;
+    unsigned delta = (unsigned) (code_ptr - code_base);
 
     if (code_ptr > code_limit)
 	bozo("CODEWARN is too small");

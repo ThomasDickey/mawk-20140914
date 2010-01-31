@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.17 2010/01/29 20:03:43 Jan.Psota Exp $
+ * $MawkId: init.c,v 1.18 2010/01/31 22:13:04 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -212,7 +212,7 @@ process_cmdline(int argc, char **argv)
 	switch (argv[i][1]) {
 
 	case 'W':
-	    for (j = 0; j < strlen(optArg); j++) {
+	    for (j = 0; j < (int) strlen(optArg); j++) {
 		if (isalpha((UChar) optArg[j]))
 		    optArg[j] = (char) toupper((UChar) optArg[j]);
 		if (optArg[j] == 'V')
