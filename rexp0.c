@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.19 2010/01/27 20:15:57 Jonathan.Nieder Exp $
+ * $MawkId: rexp0.c,v 1.20 2010/01/31 21:53:05 Jonathan.Nieder Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -109,6 +109,7 @@ char RE_char2token['|' + 1] =
 #define NOT_STARTED    (-1)
 
 static int prev;
+static size_t nest;
 static char *lp;		/*  ptr to reg exp string  */
 static char *re_str;		/*  base of 'lp' */
 static unsigned re_len;
@@ -119,13 +120,31 @@ RE_lex_init(char *re, size_t len)
     re_str = lp = re;
     re_len = len + 1;
     prev = NOT_STARTED;
+    nest = 0;
     RE_run_stack_init();
     RE_pos_stack_init();
 }
 
+/*
+ * Get the next token from re_str.
+ *
+ * For nullary operations (T_STR, T_ANY, T_U, T_CLASS, T_START, T_END),
+ * before returning the appropriate token, this will write the
+ * corresponding machine to *mp.
+ *
+ * For the rest (T_PLUS, T_STAR, T_OR, T_Q, T_RP, T_LP, and T_CAT), *mp
+ * is left alone.
+ *
+ * Returns 0 for end of regexp.
+ */
 int
 RE_lex(MACHINE * mp)
 {
+    /*
+     * lp records the current position while parsing.
+     * nest records the parenthesis nesting level.
+     * prev records the last token returned.
+     */
     register int c;
 
     if ((unsigned) (1 + lp - re_str) >= re_len) {
@@ -141,12 +160,18 @@ RE_lex(MACHINE * mp)
 
     case T_OR:
     case T_Q:
-    case T_RP:
 	lp++;
 	return prev = c;
 
-    case T_SLASH:
-	break;
+    case T_RP:
+	if (!nest) {
+	    /* ) without matching ( is ordinary */
+	    c = T_CHAR;
+	    break;
+	}
+	nest--;
+	lp++;
+	return prev = c;
 
     case 0:
 	return 0;
@@ -166,6 +191,7 @@ RE_lex(MACHINE * mp)
 	    return prev = T_CAT;
 
 	default:
+	    nest++;
 	    lp++;
 	    return prev = T_LP;
 	}

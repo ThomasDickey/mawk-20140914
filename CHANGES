@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.95 2010/01/31 21:13:47 tom Exp $
+-- $MawkId: CHANGES,v 1.96 2010/01/31 21:53:05 Jonathan.Nieder Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -43,6 +43,9 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 	+ prevent do_class() from scanning past the end, e.g., if the
 	  terminating zero byte was escaped.
+
+	+ fix regular-expression parsing when a right parenthesis ")" is
+	  found without a preceding left parenthesis.
 
 20091220
 	+ bump version to 1.3.4
