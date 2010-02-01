@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.96 2010/01/31 21:53:05 Jonathan.Nieder Exp $
+-- $MawkId: CHANGES,v 1.97 2010/02/01 00:54:04 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20100129
+20100131
+	+ modify parsing of -W option to use comma-separated values, e.g.,
+	  "-Wi,e" for "-Winteractive" and "-Werror".
+
 	+ add timestamp to scancode.c, to help manage revisions.
 
 	+ improve configure macro CF_XOPEN_SOURCE, making it remove possibly
@@ -15,7 +18,9 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	+ improve buffering for -Winteractive option.
 
 	+ allow multiple single-character flags after -W, e.g., "-Wie" for
-	  "-Winteractive" and "-Werror".
+	  "-Winteractive" and "-Werror" to permit these to be passed on a
+	  "#"-line of a shell script, e.g.,
+	  	#!/usr/bin/mawk -Wie
 
 	> patches by Jonathan Nieder:
 
