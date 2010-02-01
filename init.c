@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.18 2010/01/31 22:13:04 tom Exp $
+ * $MawkId: init.c,v 1.19 2010/02/01 00:50:04 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -79,6 +79,19 @@ the GNU General Public License, version 2, 1991.
 #include <stdlib.h>
 #endif
 #endif
+
+typedef enum {
+    W_UNKNOWN = 0,
+#if USE_BINMODE
+    W_BINMODE,
+#endif
+    W_VERSION,
+    W_DUMP,
+    W_INTERACTIVE,
+    W_EXEC,
+    W_SPRINTF,
+    W_POSIX_SPACE
+} W_OPTIONS;
 
 static void process_cmdline(int, char **);
 static void set_ARGV(int, char **, int);
@@ -151,11 +164,96 @@ no_program(void)
     mawk_exit(0);
 }
 
+/*
+ * Compare ignoring case, but warn about mismatches.
+ */
+static int
+ok_abbrev(const char *fullName, const char *partName, int partLen)
+{
+    int result = 1;
+    int n;
+
+    for (n = 0; n < partLen; ++n) {
+	UChar ch = (UChar) partName[n];
+	if (isalpha(ch))
+	    ch = (UChar) toupper(ch);
+	if (ch != (UChar) fullName[n]) {
+	    result = 0;
+	    break;
+	}
+    }
+    return result;
+}
+
+static char *
+skipValue(char *value)
+{
+    while (*value != '\0' && *value != ',') {
+	++value;
+    }
+    return value;
+}
+
+static W_OPTIONS
+parse_w_opt(char *source, char **next)
+{
+#define DATA(name) { W_##name, #name }
+    static const struct {
+	W_OPTIONS code;
+	const char *name;
+    } w_options[] = {
+	DATA(VERSION),
+#if USE_BINMODE
+	    DATA(BINMODE),
+#endif
+	    DATA(DUMP),
+	    DATA(INTERACTIVE),
+	    DATA(EXEC),
+	    DATA(SPRINTF),
+	    DATA(POSIX_SPACE)
+    };
+#undef DATA
+    W_OPTIONS result = W_UNKNOWN;
+    int n;
+    int match = -1;
+    const char *first;
+
+    /* forgive and ignore empty options */
+    while (*source != '\0' && *source == ',') {
+	++source;
+    }
+
+    first = source;
+    if (*source != '\0') {
+	while (*source != '\0' && *source != ',' && *source != '=') {
+	    ++source;
+	}
+	for (n = 0; n < (int) (sizeof(w_options) / sizeof(w_options[0])); ++n) {
+	    if (ok_abbrev(w_options[n].name, first, source - first)) {
+		if (match >= 0) {
+		    errmsg(0, "? ambiguous -W value: %s vs %s\n",
+			   w_options[match].name,
+			   w_options[n].name);
+		} else {
+		    match = n;
+		}
+	    }
+	}
+    }
+    *next = source;
+
+    if (match >= 0)
+	result = w_options[match].code;
+
+    return result;
+}
+
 static void
 process_cmdline(int argc, char **argv)
 {
     int i, j, nextarg;
     char *optArg;
+    char *optNext;
     PFILE dummy;		/* starts linked list of filenames */
     PFILE *tail = &dummy;
     unsigned length;
@@ -212,47 +310,70 @@ process_cmdline(int argc, char **argv)
 	switch (argv[i][1]) {
 
 	case 'W':
-	    for (j = 0; j < (int) strlen(optArg); j++) {
-		if (isalpha((UChar) optArg[j]))
-		    optArg[j] = (char) toupper((UChar) optArg[j]);
-		if (optArg[j] == 'V')
+	    for (j = 0; j < (int) strlen(optArg); j = (optNext - optArg)) {
+		switch (parse_w_opt(optArg + j, &optNext)) {
+		case W_VERSION:
 		    print_version();
-		else if (optArg[j] == 'D') {
-		    dump_code_flag = 1;
-		} else if (optArg[j] == 'S') {
-		    char *p = strchr(optArg, '=');
-		    int x = p ? atoi(p + 1) : 0;
-
-		    if (x > (int) SPRINTF_SZ) {
-			sprintf_buff = (char *) zmalloc((unsigned) x);
-			sprintf_limit = sprintf_buff + x;
-		    }
-		}
+		    break;
 #if USE_BINMODE
-		else if (optArg[j] == 'B') {
-		    char *p = strchr(optArg, '=');
-		    int x = p ? atoi(p + 1) : 0;
-
-		    set_binmode(x);
-		}
+		case W_BINMODE:
+		    if (*optNext == '=') {
+			set_binmode(atoi(optNext + 1));
+			optNext = skipValue(optNext);
+		    } else {
+			errmsg(0, "missing value for -W binmode");
+			mawk_exit(2);
+		    }
+		    break;
 #endif
-		else if (optArg[j] == 'P') {
-		    posix_space_flag = 1;
-		} else if (optArg[j] == 'E') {
+		case W_DUMP:
+		    dump_code_flag = 1;
+		    break;
+
+		case W_EXEC:
 		    if (pfile_name) {
 			errmsg(0, "-W exec is incompatible with -f");
 			mawk_exit(2);
-		    } else if (nextarg == argc)
+		    } else if (nextarg == argc) {
 			no_program();
-
+		    }
 		    pfile_name = argv[nextarg];
 		    i = nextarg + 1;
 		    goto no_more_opts;
-		} else if (optArg[j] == 'I') {
+		    break;
+
+		case W_INTERACTIVE:
 		    interactive_flag = 1;
 		    setbuf(stdout, (char *) 0);
-		} else
-		    errmsg(0, "vacuous option: -W %s", optArg);
+		    break;
+
+		case W_POSIX_SPACE:
+		    posix_space_flag = 1;
+		    break;
+
+		case W_SPRINTF:
+		    if (*optNext == '=') {
+			int x = atoi(optNext + 1);
+
+			if (x > (int) SPRINTF_SZ) {
+			    sprintf_buff = (char *) zmalloc((unsigned) x);
+			    sprintf_limit = sprintf_buff + x;
+			}
+			optNext = skipValue(optNext);
+		    } else {
+			errmsg(0, "missing value for -W sprintf");
+			mawk_exit(2);
+		    }
+		    break;
+
+		case W_UNKNOWN:
+		    errmsg(0, "vacuous option: -W %s", optArg + j);
+		    break;
+		}
+		while (*optNext == '=') {
+		    errmsg(0, "unexpected option value %s", optArg + j);
+		    optNext = skipValue(optNext);
+		}
 	    }
 	    break;
 
