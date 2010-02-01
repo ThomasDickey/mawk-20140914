@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.19 2010/02/01 00:50:04 tom Exp $
+ * $MawkId: init.c,v 1.20 2010/02/01 01:07:53 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -194,6 +194,18 @@ skipValue(char *value)
     return value;
 }
 
+static int
+haveValue(char *value)
+{
+    int result = 0;
+
+    if (*value++ == '=') {
+	if (*value != '\0' && strchr("=,", *value) == 0)
+	    result = 1;
+    }
+    return result;
+}
+
 static W_OPTIONS
 parse_w_opt(char *source, char **next)
 {
@@ -317,7 +329,7 @@ process_cmdline(int argc, char **argv)
 		    break;
 #if USE_BINMODE
 		case W_BINMODE:
-		    if (*optNext == '=') {
+		    if (haveValue(optNext)) {
 			set_binmode(atoi(optNext + 1));
 			optNext = skipValue(optNext);
 		    } else {
@@ -352,7 +364,7 @@ process_cmdline(int argc, char **argv)
 		    break;
 
 		case W_SPRINTF:
-		    if (*optNext == '=') {
+		    if (haveValue(optNext)) {
 			int x = atoi(optNext + 1);
 
 			if (x > (int) SPRINTF_SZ) {
