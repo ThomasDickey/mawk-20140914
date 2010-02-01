@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.6 2009/12/20 16:09:46 tom Exp $
+.\" $MawkId: mawk.1,v 1.7 2010/02/01 00:56:37 tom Exp $
 .TH MAWK 1  "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
@@ -133,6 +133,10 @@ The short forms
 .BR \-W [vdiesp]
 are recognized and on some systems \fB\-W\fRe is mandatory to avoid
 command line length limitations.
+.PP
+.B mawk
+allows multiple \fB-W\fP options to be combined by separating the options
+with commas, e.g., -Wsprint=2000,posix.
 .SH "THE AWK LANGUAGE"
 .SS "\fB1. Program structure"
 An AWK program is a sequence of 
