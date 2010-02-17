@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.99 2010/02/17 11:43:34 tom Exp $
+-- $MawkId: CHANGES,v 1.100 2010/02/17 11:48:46 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -56,7 +56,8 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 	+ modify regular-expression enginge to avoid exponential running time
 	  for some regular expression matches in which the first match mawk
-	  finds extends to the end of the string.
+	  finds extends to the end of the string.  This is a new fix for the
+	  gawk noloop2 test, added here for regression testing.
 
 20091220
 	+ bump version to 1.3.4
