@@ -1,6 +1,6 @@
 /*
- * $MawkId: patchlev.h,v 1.16 2010/02/01 01:18:08 tom Exp $
+ * $MawkId: patchlev.h,v 1.17 2010/02/17 11:41:46 tom Exp $
  */
 #define  PATCHLEVEL	3
 #define  PATCH_STRING	".4"
-#define  DATE_STRING    "20100131"
+#define  DATE_STRING    "20100217"
