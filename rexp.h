@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.18 2010/01/31 22:13:38 tom Exp $
+ * $MawkId: rexp.h,v 1.19 2010/02/17 10:52:07 Jonathan.Nieder Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -137,6 +137,7 @@ typedef struct {
     int u;			/* save the u_flag */
     char *s;			/* save the active string ptr */
     int sp;			/* size of position stack */
+    int tp;			/* offset to top entry of position stack */
     char *ss;			/* save the match start -- only used by REmatch */
 } RT_STATE;			/* run time state */
 

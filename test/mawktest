@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.22 2010/01/31 23:18:11 tom Exp $
+# $MawkId: mawktest,v 1.23 2010/02/17 10:52:07 Jonathan.Nieder Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -67,6 +67,9 @@ LC_ALL=C $PROG -F '[\' 2> $STDERR || exit
 LC_ALL=C $PROG -F '(^)?)' -f wc.awk $dat > $STDOUT
 LC_ALL=C $PROG -F ')' -f wc.awk $dat | cmp -s - $STDOUT || exit
 
+echo baaab | LC_ALL=C $PROG -F 'a*+' '{print NF}' > $STDOUT
+echo baaab | LC_ALL=C $PROG -F 'a*' '{print NF}' | cmp -s - $STDOUT || exit
+
 if test -n "$NULLS" ; then
 	LC_ALL=C $PROG -F '\000'    -f nulls0.awk $nulldat > $STDOUT
 	LC_ALL=C $PROG -F '[\000 ]' -f nulls0.awk $nulldat >> $STDOUT
@@ -107,6 +110,10 @@ LC_ALL=C $PROG '/[[a]/' $dat | cmp -s - $STDOUT || exit
 
 LC_ALL=C $PROG '/]/' $dat > $STDOUT
 LC_ALL=C $PROG '/[]]/' $dat | cmp -s - $STDOUT || exit
+
+echo aaa | LC_ALL=C $PROG '/a*+/' > $STDOUT
+echo aaa | LC_ALL=C $PROG '/a*/' | cmp -s - $STDOUT || exit
+echo aaa | cmp -s - $STDOUT || exit
 
 echo regular expression matching OK
 #######################################

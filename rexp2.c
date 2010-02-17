@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.15 2010/01/31 22:08:20 tom Exp $
+ * $MawkId: rexp2.c,v 1.16 2010/02/17 10:52:07 Jonathan.Nieder Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -177,6 +177,7 @@ slow_push(
     sp->s = s;
     sp->u = u;
     sp->sp = pos_top - RE_pos_stack_base;
+    sp->tp = pos_top->prev_offset;
     return sp;
 }
 #endif
@@ -193,6 +194,7 @@ slow_push(
 		stackp->s = (sx); \
 		stackp->u = (ux); \
 		stackp->sp = (px) - RE_pos_stack_base; \
+		stackp->tp = (px)->prev_offset; \
 	} while(0)
 #endif
 
@@ -231,6 +233,7 @@ REtest(char *str,		/* string to test */
     m = stackp->m;
     s = stackp->s;
     sp = RE_pos_stack_base + stackp->sp;
+    sp->prev_offset = stackp->tp;
     u_flag = (stackp--)->u;
 
   reswitch:
