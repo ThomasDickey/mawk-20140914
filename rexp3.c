@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.18 2010/02/17 10:52:07 Jonathan.Nieder Exp $
+ * $MawkId: rexp3.c,v 1.19 2010/02/17 11:38:24 Jonathan.Nieder Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -110,10 +110,10 @@ REmatch(char *str,		/* string to test */
     s = (stackp--)->s;
     if (cb_ss) {		/* does new state start too late ? */
 	if (ss) {
-	    if (cb_ss < ss) {
+	    if (cb_ss < ss || (cb_ss == ss && cb_e == str_end)) {
 		goto refill;
 	    }
-	} else if (cb_ss < s) {
+	} else if (cb_ss < s || (cb_ss == s && cb_e == str_end)) {
 	    goto refill;
 	}
     }

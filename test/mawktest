@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.23 2010/02/17 10:52:07 Jonathan.Nieder Exp $
+# $MawkId: mawktest,v 1.24 2010/02/17 11:38:24 Jonathan.Nieder Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -98,6 +98,12 @@ backslashes="$backslashes$backslashes$backslashes$backslashes"
 backslashes="$backslashes$backslashes$backslashes$backslashes"
 backslashes="$backslashes$backslashes$backslashes$backslashes"
 ( set +e; LC_ALL=C $PROG "/a$backslashes/" $dat 2> $STDERR ; test $? = 2 ) || exit
+
+# To be uncommented when they stop taking so long to run.
+echo "''Italics with an apostrophe' embedded''" |
+	LC_ALL=C $PROG -f noloop.awk || exit
+#echo "''Italics with an apostrophe'' embedded''" |
+#	LC_ALL=C $PROG -f noloop.awk || exit
 
 LC_ALL=C $PROG '/^[^^]*$/' $dat > $STDOUT
 cmp -s $dat $STDOUT || exit
