@@ -10,7 +10,8 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: dosexec.c,v 1.2 2009/07/23 23:04:08 tom Exp $
+ * $MawkId: dosexec.c,v 1.3 2010/02/21 16:01:36 tom Exp $
+ *
  * @Log: dosexec.c,v @
  * Revision 1.3  1995/08/20  16:37:22  mike
  * exit(1) -> exit(2)
@@ -34,21 +35,20 @@ the GNU General Public License, version 2, 1991.
  *
  * Revision 1.1  91/10/29  09:45:56  brennan
  * Initial revision
- * 
  */
 
-/* system() and pipes() for MSDOS */
+/* system() and pipes() for MSDOS and Win32 console */
 
 #include "mawk.h"
 
-#if MSDOS
+#if defined(MSDOS) || defined(_WINNT)
 #include "memory.h"
 #include "files.h"
 #include "fin.h"
 
 #include <process.h>
 
-static char *shell;		/* e.g.   "c:\\sys\\command.com"  */
+static char *my_shell;		/* e.g.   "c:\\sys\\command.com"  */
 static char *command_opt;	/*  " /c"  */
 
 static void
@@ -63,12 +63,12 @@ get_shell(void)
 	while (*p != ' ' && *p != '\t')
 	    p++;
 	len = p - s;
-	shell = (char *) zmalloc(len + 1);
-	memcpy(shell, s, len);
-	shell[len] = 0;
+	my_shell = (char *) zmalloc(len + 1);
+	memcpy(my_shell, s, len);
+	my_shell[len] = 0;
 	command_opt = p;
     } else if ((s = getenv("COMSPEC")) != 0) {
-	shell = s;
+	my_shell = s;
 	command_opt = " /c";
 	/* leading space needed because of bug in command.com */
     } else {
@@ -83,7 +83,7 @@ DOSexec(char *command)
 {
     char xbuff[256];
 
-    if (!shell)
+    if (!my_shell)
 	get_shell();
 
     sprintf(xbuff, "%s %s", command_opt, command);
@@ -91,7 +91,7 @@ DOSexec(char *command)
     fflush(stderr);
     fflush(stdout);
 
-    return spawnl(P_WAIT, shell, shell, xbuff, (char *) 0);
+    return spawnl(P_WAIT, my_shell, my_shell, xbuff, (char *) 0);
 }
 
 static int next_tmp;		/* index for naming temp files */
@@ -106,11 +106,12 @@ tmp_file_name(int id,
     if (mawkid == 0) {
 	/* first time */
 	union {
-	    void far *ptr;
+	    void *ptr;
 	    unsigned w[2];
 	} xptr;
 
-	xptr.ptr = (void far *) &mawkid;
+	memset(&xptr, 0, sizeof(xptr));
+	xptr.ptr = (void *) &mawkid;
 	mawkid = xptr.w[1];
 
 	tmpdir = getenv("MAWKTMPDIR");
