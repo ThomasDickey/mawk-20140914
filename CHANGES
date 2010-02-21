@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.103 2010/02/21 19:20:10 tom Exp $
+-- $MawkId: CHANGES,v 1.104 2010/02/21 20:01:44 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -68,7 +68,7 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 	+ fix resetting of position stack when backtracking.
 
-	+ modify regular-expression enginge to avoid exponential running time
+	+ modify regular-expression engine to avoid exponential running time
 	  for some regular expression matches in which the first match mawk
 	  finds extends to the end of the string.  This is a new fix for the
 	  gawk noloop2 test, added here for regression testing.
