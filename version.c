@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.7 2009/12/16 00:58:04 tom Exp $
+ * $MawkId: version.c,v 1.8 2010/02/21 16:12:16 tom Exp $
  * @Log: version.c,v @
  * Revision 1.10  1996/07/28 21:47:07  mike
  * gnuish patch
@@ -113,7 +113,8 @@ print_aux_limits(void)
     fprintf(stderr, fmt, "heap size", (unsigned long) coreleft());
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && (_MSC_VER < 800)
+    _MSC_VER;
     fprintf(stderr, fmt, "stack size", (unsigned long) stackavail());
 #endif
 
