@@ -4319,7 +4319,7 @@ cat >>confdefs.h <<\EOF
 #define HAVE_REAL_PIPES 1
 EOF
 
-for ac_header in sys/wait.h
+for ac_header in unistd.h sys/wait.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 echo "$as_me:4325: checking for $ac_header" >&5
