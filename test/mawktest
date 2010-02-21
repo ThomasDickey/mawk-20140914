@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.25 2010/02/21 00:16:50 tom Exp $
+# $MawkId: mawktest,v 1.26 2010/02/21 00:59:49 tom Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -11,7 +11,7 @@
 
 # POSIX shells have functions...
 Fail() {
-	echo ".. fail $*"
+	echo "?? fail $*"
 	FAIL=`expr $FAIL + 1`
 	ERRS=`expr $ERRS + 1`
 }
