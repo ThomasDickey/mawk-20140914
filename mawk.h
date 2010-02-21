@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.16 2009/12/16 23:29:20 tom Exp $
+ * $MawkId: mawk.h,v 1.17 2010/02/21 16:08:11 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -41,8 +41,7 @@ the GNU General Public License, version 2, 1991.
  *
  * Revision 1.2  1993/07/04  12:52:06  mike
  * start on autoconfig changes
- *
-*/
+ */
 
 /*  mawk.h  */
 
@@ -50,12 +49,21 @@ the GNU General Public License, version 2, 1991.
 #define  MAWK_H
 
 #include "nstd.h"
+
 #include <stdio.h>
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
 #include "types.h"
 
 #ifndef GCC_NORETURN
 #define GCC_NORETURN		/* nothing */
+#endif
+
+#ifndef GCC_UNUSED
+#define GCC_UNUSED		/* nothing */
 #endif
 
 #ifdef   DEBUG
@@ -64,7 +72,7 @@ extern int yydebug;		/* print parse if on */
 extern int dump_RE;
 #endif
 
-#if defined(MSDOS) || defined(__MINGW32__)
+#if defined(MSDOS) || defined(__MINGW32__) || defined(_WINNT)
 #define USE_BINMODE 1
 #else
 #define USE_BINMODE 0
