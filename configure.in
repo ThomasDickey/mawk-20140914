@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.29 2009/12/19 17:00:20 tom Exp $
+dnl $MawkId: configure.in,v 1.30 2010/02/21 19:52:22 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -76,7 +76,7 @@ test "$ac_cv_func_pipe" = yes && \
 test "$ac_cv_func_wait" = yes && \
 AC_DEFINE(HAVE_REAL_PIPES)
 
-AC_CHECK_HEADERS(sys/wait.h)
+AC_CHECK_HEADERS(unistd.h sys/wait.h)
 
 CF_MAWK_CHECK_HEADERS(fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h)
 CF_MAWK_CHECK_FUNCS(memcpy strchr strerror vfprintf strtod fmod matherr)
