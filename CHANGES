@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.101 2010/02/20 14:31:50 tom Exp $
+-- $MawkId: CHANGES,v 1.102 2010/02/21 00:19:40 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100220
+	+ modify mawktest script to report results from all tests, rather than
+	  halting on the first failure.
+
 	+ add limit-check after processing match(test, "[^0-9A-Za-z]") to
 	  ensure the internal trailing null of the test-string is not mistaken
 	  for part of the string, i.e., RSTART, RLENGTH are computed correctly
