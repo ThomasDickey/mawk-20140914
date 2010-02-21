@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: fpe_test,v 1.5 2009/12/19 16:18:19 tom Exp $
+# $MawkId: fpe_test,v 1.6 2010/02/21 20:09:46 Guido.Berhoerster Exp $
 
 # tests if mawk has been compiled to correctly handle
 # floating point exceptions
@@ -12,11 +12,12 @@
 # recognize NAN printed as ? for hpux
 #
 
-PROG=mawk
+PROG="${MAWK:-../mawk}"
+
+PATH=/bin:/usr/bin
+export PATH
 
 echo "testing floating point exception handling"
-
-PATH=.:$PATH
 
 STDOUT=${TMPDIR-/tmp}/mawktest$$
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.27 2010/02/21 01:06:26 tom Exp $
+# $MawkId: mawktest,v 1.28 2010/02/21 20:09:46 Guido.Berhoerster Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -49,7 +49,10 @@ Summary() {
 	fi
 }
 
-PROG=mawk
+PROG="${MAWK:-../mawk}"
+
+PATH=/bin:/usr/bin
+export PATH
 
 MAWKBINMODE=7
 export MAWKBINMODE
@@ -70,8 +73,6 @@ STDERR=${TMPDIR-/tmp}/mawk-err$$
 #ulimit -v 25000
 
 trap 'echo mawk_test failed ; rm -f $STDOUT $STDERR; exit 1'  0
-
-PATH=.:$PATH
 
 # find out which mawk we're testing
 $PROG -W version
