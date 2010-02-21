@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.35 2010/02/21 20:09:46 Guido.Berhoerster Exp $
+# $MawkId: Makefile.in,v 1.36 2010/02/21 20:30:35 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -68,11 +68,13 @@ check :  mawk_test fpe_test
 $(PROG) : $(OBJS)
 	@ECHO_LD@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
+CHECK	= MAWK=`pwd`/$(PROG); export MAWK; cd $(srcdir)/test; echo "** $@"
+
 mawk_test :  $(PROG)  # test that we have a sane mawk
-	@sh -c 'cd $(srcdir)/test ; echo "** mawktest"; ./mawktest'
+	@sh -c '$(CHECK); ./mawktest'
 
 fpe_test :  $(PROG) # test FPEs are handled OK
-	@sh -c 'cd $(srcdir)/test ; echo "** fpe_test"; ./fpe_test'
+	@sh -c '$(CHECK); ./fpe_test'
 
 parse.c  : parse.y
 	@echo  expect 4 shift/reduce conflicts
@@ -92,8 +94,8 @@ array.h : array.w
 	-@rm -f $@
 	notangle -R'"array.h"' array.w | $(NOIDENT) | cpif array.h
 
-scancode.c :  makescan.c  scancode.h nstd.h config.h
-	@ECHO_LD@$(CC) $(CFLAGS) $(CPPFLAGS) -o makescan.exe  makescan.c
+scancode.c :  $(srcdir)/makescan.c  scancode.h nstd.h config.h
+	@ECHO_LD@$(CC) $(CFLAGS) $(CPPFLAGS) -o makescan.exe $(srcdir)/makescan.c
 	rm -f scancode.c
 	./makescan.exe > scancode.c
 	rm makescan.exe
