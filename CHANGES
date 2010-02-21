@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.108 2010/02/21 22:41:02 tom Exp $
+-- $MawkId: CHANGES,v 1.109 2010/02/21 23:03:20 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100221
+	+ modify check in collect_RE() to show the actual limit value, e.g.,
+	  MIN_SPRINTF-2 used for built-in regular expressions.
+
 	+ increase MIN_SPRINTF, used as limit on regular-expression size, to
 	  match the MAX_SPLIT value, i.e., slightly more than doubling the size
 	  (report by Markus Gnam).
