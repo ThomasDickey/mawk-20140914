@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.21 2009/12/16 09:54:37 tom Exp $
+ * $MawkId: bi_funct.c,v 1.22 2010/02/21 14:46:33 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -60,8 +60,7 @@ the GNU General Public License, version 2, 1991.
  *
  * Revision 5.1	 1991/12/05  07:55:35  brennan
  * 1.1 pre-release
- *
-*/
+ */
 
 #include "mawk.h"
 #include "bi_funct.h"
@@ -76,7 +75,6 @@ the GNU General Public License, version 2, 1991.
 
 #include <ctype.h>
 #include <math.h>
-#include <unistd.h>
 
 /* global for the disassembler */
 /* *INDENT-OFF* */
