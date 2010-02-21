@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.18 2010/01/27 20:15:52 Jonathan.Nieder Exp $
+ * $MawkId: scan.c,v 1.19 2010/02/21 22:29:19 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -994,16 +994,18 @@ collect_RE(void)
 {
     char *p = string_buff;
     const char *first = NULL;
+    int limit = MIN_SPRINTF - 2;
     int c;
     int boxed = 0;
     STRING *sval;
 
     while (1) {
-	if (p >= (string_buff + MIN_SPRINTF - 2)) {
+	if (p >= (string_buff + limit)) {
 	    compile_error(
 			     "regular expression /%.10s ..."
-			     " exceeds implementation size limit",
-			     string_buff);
+			     " exceeds implementation size limit (%d)",
+			     string_buff,
+			     limit);
 	    mawk_exit(2);
 	}
 	c = (UChar) (*p++ = (char) next());
