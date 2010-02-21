@@ -10,7 +10,8 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.22 2009/12/18 10:22:03 tom Exp $
+ * $MawkId: matherr.c,v 1.23 2010/02/21 15:37:21 tom Exp $
+ *
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
  * Third try at bug fix for solaris strtod.
