@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.105 2010/02/21 20:07:14 tom Exp $
+-- $MawkId: CHANGES,v 1.106 2010/02/21 20:22:26 Guido.Berhoerster Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100221
+	+ modify makefile and mawktest to use relative path again, since the
+	  existing script did not work with openSUSE's build (patch by Guido
+	  Berhoerster).
+
 	+ fix makefile's .c.i rule, which lacked CPP definition.
 
 	+ update mawktest.bat script to more/less correspond with mawktest,
