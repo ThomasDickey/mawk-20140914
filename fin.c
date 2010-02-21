@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.23 2010/01/29 20:03:43 Jan.Psota Exp $
+ * $MawkId: fin.c,v 1.24 2010/02/21 01:45:21 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -317,7 +317,7 @@ FINgets(FIN * fin, unsigned *len_p)
 	unsigned rr;
 	unsigned amount = (unsigned) (fin->limit - p);
 
-	p = (char *) memcpy(fin->buff, p, r = (unsigned) (fin->limit - p));
+	p = (char *) memmove(fin->buff, p, r = (unsigned) (fin->limit - p));
 	q = p + r;
 	rr = fin->nbuffs * BUFFSZ - r;
 
