@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.26 2010/02/21 00:59:49 tom Exp $
+# $MawkId: mawktest,v 1.27 2010/02/21 01:06:26 tom Exp $
 
 # This is a simple test that a new made mawk seems to
 # be working OK.
@@ -131,6 +131,7 @@ Begin "testing regular expression matching"
 LC_ALL=C $PROG -f reg0.awk $dat >  $STDOUT
 LC_ALL=C $PROG -f reg1.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg2.awk $dat >> $STDOUT
+LC_ALL=C $PROG -f reg3.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg4.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg5.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg6.awk $dat >> $STDOUT

@@ -1,5 +1,5 @@
 echo off
-rem $MawkId: mawktest.bat,v 1.4 2009/07/27 18:59:23 tom Exp $
+rem $MawkId: mawktest.bat,v 1.5 2010/02/21 01:04:23 tom Exp $
 rem vile:rs=lf
 rem
 rem  This is a simple test that a new made mawk seems to
@@ -35,6 +35,7 @@ echo testing regular expression matching
 ..\mawk -f reg0.awk %dat% > temp$$
 ..\mawk -f reg1.awk %dat% >> temp$$
 ..\mawk -f reg2.awk %dat% >> temp$$
+..\mawk -f reg3.awk %dat% >> temp$$
 ..\mawk -f reg4.awk %dat% >> temp$$
 ..\mawk -f reg5.awk %dat% >> temp$$
 %CMP% temp$$ reg-awk.out
