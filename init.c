@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.20 2010/02/01 01:07:53 tom Exp $
+ * $MawkId: init.c,v 1.21 2010/02/21 14:58:21 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -75,9 +75,6 @@ the GNU General Public License, version 2, 1991.
 
 #ifdef MSDOS
 #include <fcntl.h>
-#ifdef MSDOS_MSC
-#include <stdlib.h>
-#endif
 #endif
 
 typedef enum {

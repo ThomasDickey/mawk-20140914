@@ -10,7 +10,8 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.13 2010/02/21 01:32:50 tom Exp $
+ * $MawkId: files.c,v 1.14 2010/02/21 14:54:07 tom Exp $
+ *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -52,8 +53,7 @@ the GNU General Public License, version 2, 1991.
  *
  * Revision 5.1	 91/12/05  07:56:00  brennan
  * 1.1 pre-release
- *
-*/
+ */
 
 /* files.c */
 
@@ -64,7 +64,6 @@ the GNU General Public License, version 2, 1991.
 #include "init.h"
 
 #include <sys/types.h>
-#include <unistd.h>
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
