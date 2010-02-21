@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.12 2009/12/17 00:06:51 tom Exp $
+ * $MawkId: files.c,v 1.13 2010/02/21 01:32:50 tom Exp $
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
  * flush_all_output()
@@ -506,7 +506,7 @@ remove_from_child_list(int pid)
 int
 wait_for(int pid)
 {
-    int exit_status;
+    int exit_status = 0;
     struct child *p;
     int id;
 
