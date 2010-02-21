@@ -1,8 +1,14 @@
--- $MawkId: CHANGES,v 1.102 2010/02/21 00:19:40 tom Exp $
+-- $MawkId: CHANGES,v 1.103 2010/02/21 19:20:10 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20100220
+20100221
+	+ update mawktest.bat script to more/less correspond with mawktest,
+	  for Win32 console except where echo command does not handle the
+	  required quoting syntax.
+
+	+ add vs6.mak, for Visual Studio 6.
+
 	+ modify mawktest script to report results from all tests, rather than
 	  halting on the first failure.
 
