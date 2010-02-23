@@ -56,10 +56,10 @@ check :  mawk_test fpe_test
 #	rename y_tab.c parse.c
 ########################################
 
-#scancode.c :  makescan.c  scan.h
-#	$(CC) -o makescan.exe  makescan.c
-#	makescan.exe > scancode.c
-#	del makescan.exe
+scancode.c :  makescan.c  scan.h
+	$(CC) -o makescan.exe  makescan.c
+	makescan.exe > scancode.c
+	del makescan.exe
 
 clean :
 	-del *.bak
@@ -71,6 +71,7 @@ clean :
 
 distclean : clean
 	-del dosexec.c
+	-del scancode.c
 	-del config.h
 
 #  dependencies of .objs on .h
