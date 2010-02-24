@@ -1,9 +1,9 @@
--- $MawkId: CHANGES,v 1.110 2010/02/24 09:50:17 tom Exp $
+-- $MawkId: CHANGES,v 1.111 2010/02/24 09:54:38 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100224
-	+ add a configure check for large files.
+	+ add a configure check for large files (report by Sean Kumar).
 
 	+ modify check in collect_RE() to show the actual limit value, e.g.,
 	  MIN_SPRINTF-2 used for built-in regular expressions.
