@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.44 2010/01/09 16:05:50 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.45 2010/02/24 09:50:26 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -644,6 +644,45 @@ cf_save_CFLAGS="$cf_save_CFLAGS -we147 -no-gcc"
 	esac
 fi
 ])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_LARGEFILE version: 7 updated: 2007/06/02 11:58:50
+dnl ------------
+dnl Add checks for large file support.
+AC_DEFUN([CF_LARGEFILE],[
+ifdef([AC_FUNC_FSEEKO],[
+    AC_SYS_LARGEFILE
+    if test "$enable_largefile" != no ; then
+	AC_FUNC_FSEEKO
+
+	# Normally we would collect these definitions in the config.h,
+	# but (like _XOPEN_SOURCE), some environments rely on having these
+	# defined before any of the system headers are included.  Another
+	# case comes up with C++, e.g., on AIX the compiler compiles the
+	# header files by themselves before looking at the body files it is
+	# told to compile.  For ncurses, those header files do not include
+	# the config.h
+	test "$ac_cv_sys_large_files"      != no && CPPFLAGS="$CPPFLAGS -D_LARGE_FILES "
+	test "$ac_cv_sys_largefile_source" != no && CPPFLAGS="$CPPFLAGS -D_LARGEFILE_SOURCE "
+	test "$ac_cv_sys_file_offset_bits" != no && CPPFLAGS="$CPPFLAGS -D_FILE_OFFSET_BITS=$ac_cv_sys_file_offset_bits "
+
+	AC_CACHE_CHECK(whether to use struct dirent64, cf_cv_struct_dirent64,[
+		AC_TRY_COMPILE([
+#include <sys/types.h>
+#include <dirent.h>
+		],[
+		/* if transitional largefile support is setup, this is true */
+		extern struct dirent64 * readdir(DIR *);
+		struct dirent64 *x = readdir((DIR *)0);
+		struct dirent *y = readdir((DIR *)0);
+		int z = x - y;
+		],
+		[cf_cv_struct_dirent64=yes],
+		[cf_cv_struct_dirent64=no])
+	])
+	test "$cf_cv_struct_dirent64" = yes && AC_DEFINE(HAVE_STRUCT_DIRENT64)
+    fi
+])
+])
 dnl ---------------------------------------------------------------------------
 dnl CF_LOCALE version: 4 updated: 2003/02/16 08:16:04
 dnl ---------
