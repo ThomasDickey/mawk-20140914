@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.45 2010/02/24 09:50:26 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.46 2010/04/18 19:06:15 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -1152,42 +1152,69 @@ make a defined-error
 ])
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_REGEX version: 5 updated: 2009/12/19 13:18:53
+dnl CF_REGEX version: 6 updated: 2010/03/27 13:41:56
 dnl --------
 dnl Attempt to determine if we've got one of the flavors of regular-expression
 dnl code that we can support.
 AC_DEFUN([CF_REGEX],
 [
 
-AC_CHECK_FUNC(regcomp,,[
-	AC_CHECK_LIB(regex,regcomp,[LIBS="-lregex $LIBS"],[
-		AC_CHECK_LIB(re,regcomp,[LIBS="-lre $LIBS"],[
-			AC_CHECK_FUNC(compile,,[
-				AC_CHECK_LIB(gen,compile,[LIBS="-lgen $LIBS"],[
-					AC_MSG_WARN(cannot find regular expression library)
-				])
-			])
-		])
-	])
+cf_regex_func=no
+
+AC_CHECK_FUNC(regcomp,[cf_regex_func=regcomp],[
+	for cf_regex_lib in regex re
+	do
+		AC_CHECK_LIB($cf_regex_lib,regcomp,[
+				LIBS="-l$cf_regex_lib $LIBS"
+				cf_regex_func=regcomp
+				break])
+	done
 ])
 
+if test "$cf_regex_func" = no ; then
+	AC_CHECK_FUNC(compile,[cf_regex_func=compile],[
+		AC_CHECK_LIB(gen,compile,[
+				LIBS="-lgen $LIBS"
+				cf_regex_func=compile])])
+fi
+
+if test "$cf_regex_func" = no ; then
+	AC_MSG_WARN(cannot find regular expression library)
+fi
+
 AC_CACHE_CHECK(for regular-expression headers,cf_cv_regex_hdrs,[
+
 cf_cv_regex_hdrs=no
-AC_TRY_LINK([#include <sys/types.h>
-#include <regex.h>],[
-	regex_t *p;
-	int x = regcomp(p, "", 0);
-	int y = regexec(p, "", 0, 0, 0);
-	regfree(p);
-	],[cf_cv_regex_hdrs="regex.h"],[
-	AC_TRY_LINK([#include <regexp.h>],[
-		char *p = compile("", "", "", 0);
-		int x = step("", "");
-	],[cf_cv_regex_hdrs="regexp.h"],[
-		AC_TRY_LINK([#include <regexpr.h>],[
-			char *p = compile("", "", "");
+case $cf_regex_func in #(vi
+compile) #(vi
+	for cf_regex_hdr in regexp.h regexpr.h
+	do
+		AC_TRY_LINK([#include <$cf_regex_hdr>],[
+			char *p = compile("", "", "", 0);
 			int x = step("", "");
-		],[cf_cv_regex_hdrs="regexpr.h"])])])
+		],[
+			cf_cv_regex_hdrs=$cf_regex_hdr
+			break
+		])
+	done
+	;;
+*)
+	for cf_regex_hdr in regex.h
+	do
+		AC_TRY_LINK([#include <sys/types.h>
+#include <$cf_regex_hdr>],[
+			regex_t *p;
+			int x = regcomp(p, "", 0);
+			int y = regexec(p, "", 0, 0, 0);
+			regfree(p);
+		],[
+			cf_cv_regex_hdrs=$cf_regex_hdr
+			break
+		])
+	done
+	;;
+esac
+
 ])
 
 case $cf_cv_regex_hdrs in #(vi
@@ -1232,7 +1259,7 @@ AC_DEFUN([CF_VERBOSE],
 CF_MSG_LOG([$1])
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_XOPEN_SOURCE version: 32 updated: 2010/01/09 11:05:50
+dnl CF_XOPEN_SOURCE version: 33 updated: 2010/03/28 15:35:52
 dnl ---------------
 dnl Try to get _XOPEN_SOURCE defined properly that we can use POSIX functions,
 dnl or adapt to the vendor's definitions to get equivalent functionality,
@@ -1295,7 +1322,10 @@ nto-qnx*) #(vi
 sco*) #(vi
 	# setting _XOPEN_SOURCE breaks Lynx on SCO Unix / OpenServer
 	;;
-solaris*) #(vi
+solaris2.1[[0-9]]) #(vi
+	cf_xopen_source="-D__EXTENSIONS__ -D_XOPEN_SOURCE=$cf_XOPEN_SOURCE"
+	;;
+solaris2.[[1-9]]) #(vi
 	cf_xopen_source="-D__EXTENSIONS__"
 	;;
 *)
