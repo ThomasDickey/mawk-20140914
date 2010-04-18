@@ -1,6 +1,11 @@
--- $MawkId: CHANGES,v 1.111 2010/02/24 09:54:38 tom Exp $
+-- $MawkId: CHANGES,v 1.112 2010/04/18 19:06:09 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+	+ add special case for Solaris 10 (and up) to configure check
+	  CF_XOPEN_SOURCE
+
+	+ refactored configure check CF_REGEX 
 
 20100224
 	+ add a configure check for large files (report by Sean Kumar).
