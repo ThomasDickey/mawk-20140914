@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: types.h,v 1.5 2009/07/27 22:34:09 tom Exp $
+ * $MawkId: types.h,v 1.6 2010/04/18 22:03:27 tom Exp $
  * @Log: types.h,v @
  * Revision 1.3  1993/07/15  23:56:18  mike
  * general cleanup
@@ -73,7 +73,7 @@ typedef unsigned char UChar;
 
 typedef struct {
     unsigned len;
-    unsigned short ref_cnt;
+    unsigned ref_cnt;
     char str[2];
 } STRING;
 
