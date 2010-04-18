@@ -1,6 +1,11 @@
--- $MawkId: CHANGES,v 1.112 2010/04/18 19:06:09 tom Exp $
+-- $MawkId: CHANGES,v 1.113 2010/04/18 22:06:15 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20100418
+	+ increase size of reference-count for strings to unsigned.  It was an
+	  unsigned short, which prevented using arrays larger than 64k (report
+	  by Morris Lee).
 
 	+ add special case for Solaris 10 (and up) to configure check
 	  CF_XOPEN_SOURCE
