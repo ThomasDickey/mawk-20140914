@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.15 2010/04/19 08:47:37 tom Exp $
+ * $MawkId: split.c,v 1.16 2010/04/19 08:56:21 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -240,17 +240,18 @@ re_split(STRING * s_param, PTR re)
 }
 
 static int
-null_ov_split(char *s)
+null_ov_split(char *s, unsigned slen)
 {
     SPLIT_OV dummy;
     SPLIT_OV *ovp = &dummy;
     int cnt = 0;
 
-    while (*s) {
+    while (slen) {
 	ovp = ovp->link = ZMALLOC(SPLIT_OV);
 	ovp->sval = new_STRING0(1);
 	ovp->sval->str[0] = *s++;
 	cnt++;
+	--slen;
     }
     ovp->link = (SPLIT_OV *) 0;
     split_ov_list = dummy.link;
@@ -264,14 +265,17 @@ null_split(char *s, unsigned slen)
     STRING *sval;
     int i = 0;			/* indexes split_buff[] */
 
-    while (slen--) {
-	if (cnt == MAX_SPLIT)
-	    return cnt + null_ov_split(s);
-
-	sval = new_STRING0(1);
-	sval->str[0] = *s++;
-	split_buff[i++] = sval;
-	cnt++;
+    while (slen) {
+	if (cnt == MAX_SPLIT) {
+	    cnt += null_ov_split(s, slen);
+	    break;
+	} else {
+	    sval = new_STRING0(1);
+	    sval->str[0] = *s++;
+	    split_buff[i++] = sval;
+	    cnt++;
+	    --slen;
+	}
     }
     return cnt;
 }
