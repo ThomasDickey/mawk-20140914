@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.14 2009/12/15 10:59:30 tom Exp $
+ * $MawkId: split.c,v 1.15 2010/04/19 08:47:37 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -67,8 +67,39 @@ the GNU General Public License, version 2, 1991.
 
 SPLIT_OV *split_ov_list;
 
-static int space_ov_split(char *, char *);
-static int null_ov_split(char *);
+#define EAT_SPACE()   while ( scan_code[*(unsigned char*)s] ==\
+			      SC_SPACE )  s++
+#define EAT_NON_SPACE()	  \
+    *back = ' ' ; /* sentinel */\
+    while ( scan_code[*(unsigned char*)s] != SC_SPACE )	 s++ ;\
+    *back = 0
+
+static int
+space_ov_split(char *s, char *back)
+{
+    SPLIT_OV dummy;
+    register SPLIT_OV *tail = &dummy;
+    char *q;
+    int cnt = 0;
+    unsigned len;
+
+    while (1) {
+	EAT_SPACE();
+	if (*s == 0)
+	    break;		/* done */
+	q = s++;
+	EAT_NON_SPACE();
+
+	tail = tail->link = ZMALLOC(SPLIT_OV);
+	tail->sval = new_STRING0(len = (unsigned) (s - q));
+	memcpy(tail->sval->str, q, len);
+	cnt++;
+    }
+
+    tail->link = (SPLIT_OV *) 0;
+    split_ov_list = dummy.link;
+    return cnt;
+}
 
 /*
  * Split string s of length slen on SPACE without changing s.
@@ -84,13 +115,6 @@ space_split(char *s, unsigned slen)
     char *q;
     STRING *sval;
     int lcnt = MAX_SPLIT / 3;
-
-#define EAT_SPACE()   while ( scan_code[*(unsigned char*)s] ==\
-			      SC_SPACE )  s++
-#define EAT_NON_SPACE()	  \
-    *back = ' ' ; /* sentinel */\
-    while ( scan_code[*(unsigned char*)s] != SC_SPACE )	 s++ ;\
-    *back = 0
 
     while (lcnt--) {
 	EAT_SPACE();
@@ -121,33 +145,6 @@ space_split(char *s, unsigned slen)
 
   done:
     return i;
-}
-
-static int
-space_ov_split(char *s, char *back)
-{
-    SPLIT_OV dummy;
-    register SPLIT_OV *tail = &dummy;
-    char *q;
-    int cnt = 0;
-    unsigned len;
-
-    while (1) {
-	EAT_SPACE();
-	if (*s == 0)
-	    break;		/* done */
-	q = s++;
-	EAT_NON_SPACE();
-
-	tail = tail->link = ZMALLOC(SPLIT_OV);
-	tail->sval = new_STRING0(len = (unsigned) (s - q));
-	memcpy(tail->sval->str, q, len);
-	cnt++;
-    }
-
-    tail->link = (SPLIT_OV *) 0;
-    split_ov_list = dummy.link;
-    return cnt;
 }
 
 /* match a string with a regular expression, but
@@ -242,25 +239,6 @@ re_split(STRING * s_param, PTR re)
     return i;
 }
 
-int
-null_split(char *s)
-{
-    int cnt = 0;		/* number of fields split */
-    STRING *sval;
-    int i = 0;			/* indexes split_buff[] */
-
-    while (*s) {
-	if (cnt == MAX_SPLIT)
-	    return cnt + null_ov_split(s);
-
-	sval = new_STRING0(1);
-	sval->str[0] = *s++;
-	split_buff[i++] = sval;
-	cnt++;
-    }
-    return cnt;
-}
-
 static int
 null_ov_split(char *s)
 {
@@ -276,6 +254,25 @@ null_ov_split(char *s)
     }
     ovp->link = (SPLIT_OV *) 0;
     split_ov_list = dummy.link;
+    return cnt;
+}
+
+int
+null_split(char *s, unsigned slen)
+{
+    int cnt = 0;		/* number of fields split */
+    STRING *sval;
+    int i = 0;			/* indexes split_buff[] */
+
+    while (slen--) {
+	if (cnt == MAX_SPLIT)
+	    return cnt + null_ov_split(s);
+
+	sval = new_STRING0(1);
+	sval->str[0] = *s++;
+	split_buff[i++] = sval;
+	cnt++;
+    }
     return cnt;
 }
 
@@ -311,7 +308,7 @@ bi_split(CELL * sp)
 	    break;
 
 	case C_SNULL:		/* split on empty string */
-	    cnt = null_split(string(sp)->str);
+	    cnt = null_split(string(sp)->str, string(sp)->len);
 	    break;
 
 	default:
