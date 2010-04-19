@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.114 2010/04/19 09:04:51 tom Exp $
+-- $MawkId: CHANGES,v 1.115 2010/04/19 09:05:58 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -15,8 +15,9 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	  (report by Morris Lee).
 
 	+ increase size of reference-count for strings to unsigned.  It was an
-	  unsigned short, which prevented using arrays larger than 64k (report
-	  by Morris Lee).
+	  unsigned short, which prevented using arrays larger than 64k, e.g.,
+		BEGIN{for(i = 1; i <= 65550; ++i){if(i >= 65534 && i<= 65537) print i; s[i] = "a"}; delete s;}
+	  (report by Morris Lee).
 
 	+ add special case for Solaris 10 (and up) to configure check
 	  CF_XOPEN_SOURCE
