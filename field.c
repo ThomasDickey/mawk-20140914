@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.10 2009/12/17 00:20:11 tom Exp $
+ * $MawkId: field.c,v 1.11 2010/04/19 08:32:57 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -238,7 +238,7 @@ split_field0(void)
     else {
 	switch (fs_shadow.type) {
 	case C_SNULL:		/* FS == "" */
-	    nf = null_split(string(cp)->str);
+	    nf = null_split(string(cp)->str, string(cp)->len);
 	    break;
 
 	case C_SPACE:
