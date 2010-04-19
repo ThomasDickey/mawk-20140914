@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.19 2010/02/17 10:52:07 Jonathan.Nieder Exp $
+ * $MawkId: rexp.h,v 1.20 2010/04/19 22:12:27 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -194,6 +194,7 @@ extern RT_POS_ENTRY *RE_pos_stack_base;
 extern RT_POS_ENTRY *RE_pos_stack_limit;
 extern RT_POS_ENTRY *RE_pos_stack_empty;
 
+#ifdef LOCAL_REGEXP
 static /* inline */ RT_POS_ENTRY *
 RE_pos_push(RT_POS_ENTRY * head, const RT_STATE * owner, const char *s)
 {
@@ -234,5 +235,6 @@ RE_pos_pop(RT_POS_ENTRY ** head, const RT_STATE * current)
 
     return prev->pos;
 }
+#endif /* LOCAL_REGEXP */
 
 #endif /* REXP_H  */
