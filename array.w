@@ -213,6 +213,7 @@ CELL* array_find(
    int create_flag)
 {
    ANODE *ap ;
+   int redid ;
    if (A->size == 0 && !create_flag)
       /* eliminating this trivial case early avoids unnecessary conversions later */
       return (CELL*) 0 ;
@@ -221,10 +222,10 @@ CELL* array_find(
 	 <<if the [[*cp]] is an integer, find by integer value else find by string value>>
 	 break ;
       case C_NOINIT:
-	 ap = find_by_sval(A, &null_str, create_flag) ;
+	 ap = find_by_sval(A, &null_str, create_flag, &redid) ;
 	 break ;
       default:
-	 ap = find_by_sval(A, string(cp), create_flag) ;
+	 ap = find_by_sval(A, string(cp), create_flag, &redid) ;
 	 break ;
    }
    return ap ? &ap->cell : (CELL *) 0 ;
@@ -248,7 +249,7 @@ back to double.  If we get the same number we started with, then
          convert_split_array_to_table(A) ;
       }
       else if (A->type == AY_NULL) make_empty_table(A, AY_INT) ;
-      ap = find_by_ival(A, ival, create_flag) ;
+      ap = find_by_ival(A, ival, create_flag, &redid) ;
    }
    else {
       /* convert to string */
@@ -256,7 +257,7 @@ back to double.  If we get the same number we started with, then
       STRING *sval ;
       sprintf(buff, string(CONVFMT)->str, d) ;
       sval = new_STRING(buff) ;
-      ap = find_by_sval(A,sval,create_flag) ;
+      ap = find_by_sval(A, sval, create_flag, &redid) ;
       free_STRING(sval) ;
    }
 }
@@ -269,7 +270,8 @@ to lookup in a hash table by integer value.
 static ANODE* find_by_ival(
    ARRAY A ,
    Int ival ,
-   int create_flag )
+   int create_flag ,
+   int *redo )
 {
    DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
    unsigned indx = ival & A->hmask ;
@@ -313,7 +315,10 @@ if (A->type & AY_STR) {
    STRING *sval ;
    sprintf(buff, INT_FMT, ival) ;
    sval = new_STRING(buff) ;
-   p = find_by_sval(A, sval, create_flag) ;
+   p = find_by_sval(A, sval, create_flag, redo) ;
+   if (*redo) {
+      table = (DUAL_LINK*) A->ptr ;
+   }
    free_STRING(sval) ;
    if (!p) return (ANODE*) 0 ;
 }
@@ -341,7 +346,8 @@ which is done by the function [[add_string_associations]].
 static ANODE* find_by_sval(
    ARRAY A ,
    STRING *sval ,
-   int create_flag )
+   int create_flag ,
+   int *redo )
 {
    unsigned hval = ahash(sval) ;
    char *str = sval->str ;
@@ -353,6 +359,7 @@ static ANODE* find_by_sval(
    table = (DUAL_LINK*) A->ptr ;
    indx = hval & A->hmask ;
    p = table[indx].slink ;
+   *redo = 0 ;
    while(1) {
       if (!p)  {
          if (create_flag) {
@@ -398,6 +405,10 @@ This works because [[d_to_I]] returns a value in [[[-Max_Int, Max_Int]]].
       double_the_hash_table(A) ; /* changes table, may change index */
       table = (DUAL_LINK*) A->ptr ;
       indx = hval & A->hmask ;
+      p = table[indx].slink ;
+      q = p ; p = q->slink ;
+      *redo = 1 ;
+      continue;
    }
 }
 
@@ -448,6 +459,7 @@ void array_delete(
    CELL *cp)
 {
    ANODE *ap ;
+   int redid ;
    if (A->size == 0) return ;
    switch(cp->type) {
       case C_DOUBLE :
@@ -460,16 +472,16 @@ void array_delete(
 	       STRING *sval ;
 	       sprintf(buff, string(CONVFMT)->str, d) ;
 	       sval = new_STRING(buff) ;
-	       ap = find_by_sval(A, sval, NO_CREATE) ;
+	       ap = find_by_sval(A, sval, NO_CREATE, &redid) ;
 	       free_STRING(sval) ;
 	    }
 	 }
 	 break ;
       case C_NOINIT :
-	 ap = find_by_sval(A, &null_str, NO_CREATE) ;
+	 ap = find_by_sval(A, &null_str, NO_CREATE, &redid) ;
 	 break ;
       default :
-	 ap = find_by_sval(A, string(cp), NO_CREATE) ;
+	 ap = find_by_sval(A, string(cp), NO_CREATE, &redid) ;
 	 break ;
    }
    if (ap) { /* remove from the front of the slist */
@@ -491,7 +503,7 @@ void array_delete(
           convert_split_array_to_table(A) ;
       else return ; /* ival not in range */
      }
-   ap = find_by_ival(A, ival, NO_CREATE) ;
+   ap = find_by_ival(A, ival, NO_CREATE, &redid) ;
    if (ap) { /* remove from the front of the ilist */
       DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
       table[ap->ival & A->hmask].ilink = ap->ilink ;
@@ -1025,8 +1037,8 @@ put a copyright and links to the source file, [[array.w]], in each
 output file.
 
 <<local constants, defs and prototypes>>=
-static ANODE* find_by_ival(ARRAY, Int, int);
-static ANODE* find_by_sval(ARRAY, STRING*, int);
+static ANODE* find_by_ival(ARRAY, Int, int, int*);
+static ANODE* find_by_sval(ARRAY, STRING*, int, int*);
 static void add_string_associations(ARRAY);
 static void make_empty_table(ARRAY, int);
 static void convert_split_array_to_table(ARRAY);
@@ -1067,7 +1079,7 @@ This file was generated with the command
 
 <<mawk blurb>>=
 
-$MawkId: array.w,v 1.8 2009/09/20 22:44:15 tom Exp $
+$MawkId: array.w,v 1.9 2010/04/19 00:20:19 tom Exp $
 
 copyright 1991-96, Michael D. Brennan
 
