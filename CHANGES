@@ -1,8 +1,13 @@
--- $MawkId: CHANGES,v 1.116 2010/05/06 22:59:31 tom Exp $
+-- $MawkId: CHANGES,v 1.117 2010/05/06 23:30:06 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100507
+	+ update/improve configure script
+	  + modify CF_GCC_VERSION to ignore stderr, e.g., from c89 alias
+	  + modify CF_GCC_WARNINGS, moving -W and -Wall into the list to check,
+	    since c89 alias for gcc complains about these options.
+	  + add --disable-leaks and related options, for testing.
 	+ amend change of array.w, fixes a regression in "delete" (report by
 	  Heiner Marxen).
 
@@ -26,7 +31,7 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	+ add special case for Solaris 10 (and up) to configure check
 	  CF_XOPEN_SOURCE
 
-	+ refactored configure check CF_REGEX 
+	+ refactored configure check CF_REGEX
 
 20100224
 	+ add a configure check for large files (report by Sean Kumar).
