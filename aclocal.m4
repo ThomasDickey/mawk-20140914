@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.47 2010/05/06 23:20:46 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.48 2010/05/06 23:30:49 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -323,6 +323,28 @@ AC_SUBST(ECHO_LD)
 AC_SUBST(RULE_CC)
 AC_SUBST(SHOW_CC)
 AC_SUBST(ECHO_CC)
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_DISABLE_LEAKS version: 5 updated: 2010/03/13 15:14:55
+dnl ----------------
+dnl Combine no-leak checks with the libraries or tools that are used for the
+dnl checks.
+AC_DEFUN([CF_DISABLE_LEAKS],[
+
+AC_REQUIRE([CF_WITH_DMALLOC])
+AC_REQUIRE([CF_WITH_DBMALLOC])
+AC_REQUIRE([CF_WITH_VALGRIND])
+
+AC_MSG_CHECKING(if you want to perform memory-leak testing)
+AC_ARG_ENABLE(leaks,
+	[  --disable-leaks         test: free permanent memory, analyze leaks],
+	[if test "x$enableval" = xno; then with_no_leaks=yes; else with_no_leaks=no; fi],
+	: ${with_no_leaks:=no})
+AC_MSG_RESULT($with_no_leaks)
+
+if test "$with_no_leaks" = yes ; then
+	AC_DEFINE(NO_LEAKS)
+fi
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_ENABLE_WARNINGS version: 4 updated: 2009/07/26 17:53:03
@@ -1054,6 +1076,35 @@ AC_DEFUN([CF_MSG_LOG],[
 echo "${as_me-configure}:__oline__: testing $* ..." 1>&AC_FD_CC
 ])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_NO_LEAKS_OPTION version: 4 updated: 2006/12/16 14:24:05
+dnl ------------------
+dnl see CF_WITH_NO_LEAKS
+AC_DEFUN([CF_NO_LEAKS_OPTION],[
+AC_MSG_CHECKING(if you want to use $1 for testing)
+AC_ARG_WITH($1,
+	[$2],
+	[AC_DEFINE($3)ifelse([$4],,[
+	 $4
+])
+	: ${with_cflags:=-g}
+	: ${with_no_leaks:=yes}
+	 with_$1=yes],
+	[with_$1=])
+AC_MSG_RESULT(${with_$1:-no})
+
+case .$with_cflags in #(vi
+.*-g*)
+	case .$CFLAGS in #(vi
+	.*-g*) #(vi
+		;;
+	*)
+		CF_ADD_CFLAGS([-g])
+		;;
+	esac
+	;;
+esac
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_POSIX_C_SOURCE version: 7 updated: 2010/01/09 11:05:50
 dnl -----------------
 dnl Define _POSIX_C_SOURCE to the given level, and _POSIX_SOURCE if needed.
@@ -1257,6 +1308,54 @@ dnl Use AC_VERBOSE w/o the warnings
 AC_DEFUN([CF_VERBOSE],
 [test -n "$verbose" && echo "	$1" 1>&AC_FD_MSG
 CF_MSG_LOG([$1])
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_WITH_DBMALLOC version: 6 updated: 2006/12/16 14:24:05
+dnl ----------------
+dnl Configure-option for dbmalloc.  The optional parameter is used to override
+dnl the updating of $LIBS, e.g., to avoid conflict with subsequent tests.
+AC_DEFUN([CF_WITH_DBMALLOC],[
+CF_NO_LEAKS_OPTION(dbmalloc,
+	[  --with-dbmalloc         test: use Conor Cahill's dbmalloc library],
+	[USE_DBMALLOC])
+
+if test "$with_dbmalloc" = yes ; then
+	AC_CHECK_HEADER(dbmalloc.h,
+		[AC_CHECK_LIB(dbmalloc,[debug_malloc]ifelse($1,,[],[,$1]))])
+fi
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_WITH_DMALLOC version: 6 updated: 2006/12/16 14:24:05
+dnl ---------------
+dnl Configure-option for dmalloc.  The optional parameter is used to override
+dnl the updating of $LIBS, e.g., to avoid conflict with subsequent tests.
+AC_DEFUN([CF_WITH_DMALLOC],[
+CF_NO_LEAKS_OPTION(dmalloc,
+	[  --with-dmalloc          test: use Gray Watson's dmalloc library],
+	[USE_DMALLOC])
+
+if test "$with_dmalloc" = yes ; then
+	AC_CHECK_HEADER(dmalloc.h,
+		[AC_CHECK_LIB(dmalloc,[dmalloc_debug]ifelse($1,,[],[,$1]))])
+fi
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_WITH_PURIFY version: 2 updated: 2006/12/14 18:43:43
+dnl --------------
+AC_DEFUN([CF_WITH_PURIFY],[
+CF_NO_LEAKS_OPTION(purify,
+	[  --with-purify           test: use Purify],
+	[USE_PURIFY],
+	[LINK_PREFIX="$LINK_PREFIX purify"])
+AC_SUBST(LINK_PREFIX)
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_WITH_VALGRIND version: 1 updated: 2006/12/14 18:00:21
+dnl ----------------
+AC_DEFUN([CF_WITH_VALGRIND],[
+CF_NO_LEAKS_OPTION(valgrind,
+	[  --with-valgrind         test: use valgrind],
+	[USE_VALGRIND])
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_XOPEN_SOURCE version: 33 updated: 2010/03/28 15:35:52
