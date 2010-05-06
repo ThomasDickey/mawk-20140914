@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.117 2010/05/06 23:30:06 tom Exp $
+-- $MawkId: CHANGES,v 1.118 2010/05/06 23:50:11 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -8,6 +8,8 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	  + modify CF_GCC_WARNINGS, moving -W and -Wall into the list to check,
 	    since c89 alias for gcc complains about these options.
 	  + add --disable-leaks and related options, for testing.
+	  + add lint rule to makefile.
+	  + add configure-check for ctags to work with pkgsrc.
 	+ amend change of array.w, fixes a regression in "delete" (report by
 	  Heiner Marxen).
 
