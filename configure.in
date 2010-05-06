@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.32 2010/05/06 23:27:59 tom Exp $
+dnl $MawkId: configure.in,v 1.33 2010/05/06 23:51:17 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -63,6 +63,8 @@ if test "x${with_builtin_regex}" = xno; then
 fi
 
 AC_PROG_YACC
+CF_PROG_LINT
+CF_MAKE_TAGS
 CF_ANSI_CC_REQD
 CF_XOPEN_SOURCE
 CF_LARGEFILE
