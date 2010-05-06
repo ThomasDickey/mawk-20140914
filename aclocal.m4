@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.48 2010/05/06 23:30:49 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.49 2010/05/06 23:52:51 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -723,6 +723,43 @@ AC_MSG_RESULT($cf_cv_locale)
 test $cf_cv_locale = yes && { ifelse($1,,AC_DEFINE(LOCALE),[$1]) }
 ])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_MAKE_TAGS version: 5 updated: 2010/04/03 20:07:32
+dnl ------------
+dnl Generate tags/TAGS targets for makefiles.  Do not generate TAGS if we have
+dnl a monocase filesystem.
+AC_DEFUN([CF_MAKE_TAGS],[
+AC_REQUIRE([CF_MIXEDCASE_FILENAMES])
+
+AC_CHECK_PROGS(CTAGS, exctags ctags)
+AC_CHECK_PROGS(ETAGS, exetags etags)
+
+AC_CHECK_PROG(MAKE_LOWER_TAGS, ${CTAGS-ctags}, yes, no)
+
+if test "$cf_cv_mixedcase" = yes ; then
+	AC_CHECK_PROG(MAKE_UPPER_TAGS, ${ETAGS-etags}, yes, no)
+else
+	MAKE_UPPER_TAGS=no
+fi
+
+if test "$MAKE_UPPER_TAGS" = yes ; then
+	MAKE_UPPER_TAGS=
+else
+	MAKE_UPPER_TAGS="#"
+fi
+
+if test "$MAKE_LOWER_TAGS" = yes ; then
+	MAKE_LOWER_TAGS=
+else
+	MAKE_LOWER_TAGS="#"
+fi
+
+AC_SUBST(CTAGS)
+AC_SUBST(ETAGS)
+
+AC_SUBST(MAKE_UPPER_TAGS)
+AC_SUBST(MAKE_LOWER_TAGS)
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_FUNC version: 5 updated: 2009/12/14 04:19:08
 dnl ------------------
 AC_DEFUN([CF_MAWK_CHECK_FUNC],[
@@ -1068,6 +1105,36 @@ LIBS="$cf_FPE_LIBS"
 rm -f conftest.$ac_ext fpe_check$ac_exeext   # whew!!
 ])
 dnl ---------------------------------------------------------------------------
+dnl CF_MIXEDCASE_FILENAMES version: 3 updated: 2003/09/20 17:07:55
+dnl ----------------------
+dnl Check if the file-system supports mixed-case filenames.  If we're able to
+dnl create a lowercase name and see it as uppercase, it doesn't support that.
+AC_DEFUN([CF_MIXEDCASE_FILENAMES],
+[
+AC_CACHE_CHECK(if filesystem supports mixed-case filenames,cf_cv_mixedcase,[
+if test "$cross_compiling" = yes ; then
+	case $target_alias in #(vi
+	*-os2-emx*|*-msdosdjgpp*|*-cygwin*|*-mingw32*|*-uwin*) #(vi
+		cf_cv_mixedcase=no
+		;;
+	*)
+		cf_cv_mixedcase=yes
+		;;
+	esac
+else
+	rm -f conftest CONFTEST
+	echo test >conftest
+	if test -f CONFTEST ; then
+		cf_cv_mixedcase=no
+	else
+		cf_cv_mixedcase=yes
+	fi
+	rm -f conftest CONFTEST
+fi
+])
+test "$cf_cv_mixedcase" = yes && AC_DEFINE(MIXEDCASE_FILENAMES)
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_MSG_LOG version: 4 updated: 2007/07/29 09:55:12
 dnl ----------
 dnl Write a debug message to config.log, along with the line number in the
@@ -1178,29 +1245,12 @@ fi
 
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_PROG_CC_U_D version: 1 updated: 2005/07/14 16:59:30
-dnl --------------
-dnl Check if C (preprocessor) -U and -D options are processed in the order
-dnl given rather than by type of option.  Some compilers insist on apply all
-dnl of the -U options after all of the -D options.  Others allow mixing them,
-dnl and may predefine symbols that conflict with those we define.
-AC_DEFUN([CF_PROG_CC_U_D],
+dnl CF_PROG_LINT version: 2 updated: 2009/08/12 04:43:14
+dnl ------------
+AC_DEFUN([CF_PROG_LINT],
 [
-AC_CACHE_CHECK(if $CC -U and -D options work together,cf_cv_cc_u_d_options,[
-	cf_save_CPPFLAGS="$CPPFLAGS"
-	CPPFLAGS="-UU_D_OPTIONS -DU_D_OPTIONS -DD_U_OPTIONS -UD_U_OPTIONS"
-	AC_TRY_COMPILE([],[
-#ifndef U_D_OPTIONS
-make an undefined-error
-#endif
-#ifdef  D_U_OPTIONS
-make a defined-error
-#endif
-	],[
-	cf_cv_cc_u_d_options=yes],[
-	cf_cv_cc_u_d_options=no])
-	CPPFLAGS="$cf_save_CPPFLAGS"
-])
+AC_CHECK_PROGS(LINT, tdlint lint alint splint lclint)
+AC_SUBST(LINT_OPTS)
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_REGEX version: 6 updated: 2010/03/27 13:41:56
