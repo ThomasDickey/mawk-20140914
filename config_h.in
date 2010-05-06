@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.16 2010/02/21 19:52:16 tom Exp $
+ * $MawkId: config_h.in,v 1.17 2010/05/06 23:36:28 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -34,6 +34,7 @@
 #undef NO_ERRNO_H
 #undef NO_FCNTL_H
 #undef NO_FMOD
+#undef NO_LEAKS
 #undef NO_MATHERR
 #undef NO_MATH_H
 #undef NO_MEMCPY
