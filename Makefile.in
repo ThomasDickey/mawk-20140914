@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.36 2010/02/21 20:30:35 tom Exp $
+# $MawkId: Makefile.in,v 1.37 2010/05/06 23:57:21 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -31,6 +31,12 @@ LDFLAGS         = @CFLAGS@ @LDFLAGS@
 LIBS            = @LIBS@
 
 YACC            = @YACC@
+
+CTAGS		= @CTAGS@
+ETAGS		= @ETAGS@
+
+LINT		= @LINT@
+LINTOPTS	= 
 
 INSTALL         = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -125,11 +131,14 @@ maintainer-clean :  distclean
 	rm -f configure config.guess config.sub install-sh
 	rm -fr autom4te.cache
 
-tags :
-	ctags *.[ch] */*.[ch]
+lint :
+	$(LINT) $(LINTOPTS) $(CPPFLAGS) $(OBJS:$o=.c)
 
-TAGS :
-	etags *.[ch] */*.[ch]
+tags :
+	$(CTAGS) *.[ch] */*.[ch]
+
+@MAKE_UPPER_TAGS@TAGS :
+@MAKE_UPPER_TAGS@	$(ETAGS) *.[ch] */*.[ch]
 
 $(BINDIR) \
 $(MANDIR) :
