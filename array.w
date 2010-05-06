@@ -405,10 +405,7 @@ This works because [[d_to_I]] returns a value in [[[-Max_Int, Max_Int]]].
       double_the_hash_table(A) ; /* changes table, may change index */
       table = (DUAL_LINK*) A->ptr ;
       indx = hval & A->hmask ;
-      p = table[indx].slink ;
-      q = p ; p = q->slink ;
       *redo = 1 ;
-      continue;
    }
 }
 
@@ -1079,7 +1076,7 @@ This file was generated with the command
 
 <<mawk blurb>>=
 
-$MawkId: array.w,v 1.9 2010/04/19 00:20:19 tom Exp $
+$MawkId: array.w,v 1.10 2010/05/06 22:18:07 tom Exp $
 
 copyright 1991-96, Michael D. Brennan
 
