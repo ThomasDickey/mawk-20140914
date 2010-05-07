@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.16 2010/04/19 08:56:21 tom Exp $
+ * $MawkId: split.c,v 1.17 2010/05/07 00:03:02 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -113,7 +113,6 @@ space_split(char *s, unsigned slen)
     char *back = s + slen;
     int i = 0;
     char *q;
-    STRING *sval;
     int lcnt = MAX_SPLIT / 3;
 
     while (lcnt--) {
@@ -123,21 +122,21 @@ space_split(char *s, unsigned slen)
 	/* mark the front with q */
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
+	split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
 
 	EAT_SPACE();
 	if (*s == 0)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
+	split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
 
 	EAT_SPACE();
 	if (*s == 0)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	sval = split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
+	split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
 
     }
     /* we've overflowed */

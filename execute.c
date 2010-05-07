@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.12 2010/01/31 22:58:42 tom Exp $
+ * $MawkId: execute.c,v 1.13 2010/05/07 00:08:50 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -440,13 +440,14 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	case ALOOP:
 	    {
 		ALOOP_STATE *ap = aloop_state;
-		if (ap->ptr < ap->limit) {
+		if (ap != 0 && (ap->ptr < ap->limit)) {
 		    cell_destroy(ap->var);
 		    ap->var->type = C_STRING;
 		    ap->var->ptr = (PTR) * ap->ptr++;
 		    cdp += cdp->op;
-		} else
+		} else {
 		    cdp++;
+		}
 	    }
 	    break;
 
@@ -454,17 +455,19 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    {
 		/* finish up an array loop */
 		ALOOP_STATE *ap = aloop_state;
-		aloop_state = ap->link;
-		while (ap->ptr < ap->limit) {
-		    free_STRING(*ap->ptr);
-		    ap->ptr++;
+		if (ap != 0) {
+		    aloop_state = ap->link;
+		    while (ap->ptr < ap->limit) {
+			free_STRING(*ap->ptr);
+			ap->ptr++;
+		    }
+		    if (ap->base < ap->limit) {
+			zfree(ap->base,
+			      ((unsigned) (ap->limit - ap->base)
+			       * sizeof(STRING *)));
+		    }
+		    ZFREE(ap);
 		}
-		if (ap->base < ap->limit) {
-		    zfree(ap->base,
-			  ((unsigned) (ap->limit - ap->base)
-			   * sizeof(STRING *)));
-		}
-		ZFREE(ap);
 	    }
 	    break;
 
@@ -1305,8 +1308,9 @@ execute(INST * cdp,		/* code ptr, start execution here */
 				array_clear(sp->ptr);
 				ZFREE((ARRAY) sp->ptr);
 			    }
-			} else
+			} else {
 			    cell_destroy(sp);
+			}
 
 			type_p--;
 			sp--;
