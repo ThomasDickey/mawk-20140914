@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.23 2010/05/07 08:11:28 tom Exp $
+ * $MawkId: bi_funct.c,v 1.24 2010/05/07 10:59:46 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -204,7 +204,7 @@ str_str(char *target, size_t target_len, char *key, size_t key_len)
 CELL *
 bi_index(CELL * sp)
 {
-    register int idx;
+    size_t idx;
     size_t len;
     const char *p;
 
@@ -213,12 +213,12 @@ bi_index(CELL * sp)
 	cast2_to_s(sp);
 
     if ((len = string(sp + 1)->len)) {
-	idx = ((p = str_str(string(sp)->str,
-			    string(sp)->len,
-			    string(sp + 1)->str,
-			    len))
-	       ? p - string(sp)->str + 1
-	       : 0);
+	idx = (size_t) ((p = str_str(string(sp)->str,
+				     string(sp)->len,
+				     string(sp + 1)->str,
+				     len))
+			? p - string(sp)->str + 1
+			: 0);
     } else {			/* index of the empty string */
 	idx = 1;
     }
@@ -558,10 +558,10 @@ static CELL cseed;		/* argument of last call to srand() */
 		   if ( s <= 0 ) s += M
 #else
 /* 64 bit longs */
-#define crank(s)	{ unsigned long t = s ;\
+#define crank(s)	{ unsigned long t = (unsigned long) s ;\
 			  t = (A * (t % Q) - R * (t / Q)) & MX ;\
 			  if ( t >= M ) t = (t+M)&M ;\
-			  s = t ;\
+			  s = (long) t ;\
 			}
 #endif
 
@@ -572,10 +572,11 @@ bi_srand(CELL * sp)
 
     if (sp->type == 0)		/* seed off clock */
     {
+	time_t secs = time((time_t *) 0);
 	cellcpy(sp, &cseed);
 	cell_destroy(&cseed);
 	cseed.type = C_DOUBLE;
-	cseed.dval = time((time_t *) 0);
+	cseed.dval = (double) secs;
     } else {			/* user seed */
 	sp--;
 	/* swap cseed and *sp ; don't need to adjust ref_cnts */

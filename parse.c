@@ -1629,16 +1629,16 @@ case 13:
                INST *p1 = CDP(yystack.l_mark[-1].start) ;
              int len ;
 
-               code_push(p1, code_ptr - p1, scope, active_funct) ;
+               code_push(p1, (unsigned) CodeOffset(p1), scope, active_funct) ;
                code_ptr = p1 ;
 
                code2op(_RANGE, 1) ;
                code_ptr += 3 ;
-               len = code_pop(code_ptr) ;
+               len = (int) code_pop(code_ptr) ;
              code_ptr += len ;
                code1(_STOP) ;
              p1 = CDP(yystack.l_mark[-1].start) ;
-               p1[2].op = code_ptr - (p1+1) ;
+               p1[2].op = CodeOffset(p1 + 1) ;
              }
 break;
 case 14:
@@ -1650,8 +1650,8 @@ case 15:
 	{
                INST *p1 = CDP(yystack.l_mark[-5].start) ;
 
-               p1[3].op = CDP(yystack.l_mark[0].start) - (p1+1) ;
-               p1[4].op = code_ptr - (p1+1) ;
+               p1[3].op = (int) (CDP(yystack.l_mark[0].start) - (p1 + 1)) ;
+               p1[4].op = CodeOffset(p1 + 1) ;
              }
 break;
 case 16:
@@ -2048,7 +2048,7 @@ case 99:
                      code_ptr -= 2 ;
                   else
                   { INST *p3 = CDP(yystack.l_mark[-1].start) ;
-                    code_push(p3, code_ptr-p3, scope, active_funct) ;
+                    code_push(p3, (unsigned) CodeOffset(p3), scope, active_funct) ;
                     code_ptr = p3 ;
                     code2(_JMP, (INST*)0) ; /* code2() not code_jmp() */
                   }
@@ -2064,9 +2064,9 @@ case 100:
 
                   if ( p1 != p2 )  /* real test in loop */
                   {
-                    p1[1].op = code_ptr-(p1+1) ;
+                    p1[1].op = CodeOffset(p1 + 1) ;
                     saved_offset = code_offset ;
-                    len = code_pop(code_ptr) ;
+                    len = (int) code_pop(code_ptr) ;
                     code_ptr += len ;
                     code_jmp(_JNZ, CDP(yystack.l_mark[0].start)) ;
                     BC_clear(code_ptr, CDP(saved_offset)) ;
@@ -2090,7 +2090,7 @@ case 101:
 
                   if ( p2 != p4 )  /* real test in for2 */
                   {
-                    p4[-1].op = code_ptr - p4 + 1 ;
+                    p4[-1].op = CodeOffset(p4 - 1) ;
                     len = code_pop(code_ptr) ;
                     code_ptr += len ;
                     code_jmp(_JNZ, CDP(yystack.l_mark[0].start)) ;
@@ -2125,7 +2125,7 @@ case 105:
              else
              {
                INST *p1 = CDP(yystack.l_mark[-1].start) ;
-               code_push(p1, code_ptr-p1, scope, active_funct) ;
+               code_push(p1, (unsigned) CodeOffset(p1), scope, active_funct) ;
                code_ptr = p1 ;
                code2(_JMP, (INST*)0) ;
              }
@@ -2143,7 +2143,7 @@ case 107:
 
              eat_nl() ; BC_new() ;
              code1(_POP) ;
-             code_push(p1, code_ptr - p1, scope, active_funct) ;
+             code_push(p1, (unsigned) CodeOffset(p1), scope, active_funct) ;
              code_ptr -= code_ptr - p1 ;
            }
 break;
@@ -2244,7 +2244,7 @@ case 116:
 	{
                 INST *p2 = CDP(yystack.l_mark[0].start) ;
 
-                p2[-1].op = code_ptr - p2 + 1 ;
+                p2[-1].op = CodeOffset(p2 - 1) ;
                 BC_clear( code_ptr+2 , code_ptr) ;
                 code_jmp(ALOOP, p2) ;
                 code1(POP_AL) ;
@@ -2505,7 +2505,7 @@ case 156:
                    active_funct = yystack.l_mark[-3].fbp ;
                    *main_code_p = active_code ;
 
-                   yystack.l_mark[-3].fbp->nargs = yystack.l_mark[-1].ival ;
+                   yystack.l_mark[-3].fbp->nargs = (unsigned short) yystack.l_mark[-1].ival ;
                    if ( yystack.l_mark[-1].ival )
                         yystack.l_mark[-3].fbp->typev = (char *)
                         memset( zmalloc((size_t) yystack.l_mark[-1].ival), ST_LOCAL_NONE, (size_t) yystack.l_mark[-1].ival) ;
@@ -2568,7 +2568,7 @@ case 162:
                 else
                 { yystack.l_mark[0].stp = save_id(yystack.l_mark[0].stp->name) ;
                   yystack.l_mark[0].stp->type = ST_LOCAL_NONE ;
-                  yystack.l_mark[0].stp->offset = yystack.l_mark[-2].ival ;
+                  yystack.l_mark[0].stp->offset = (unsigned char) yystack.l_mark[-2].ival ;
                   yyval.ival = yystack.l_mark[-2].ival + 1 ;
                 }
               }
@@ -2603,7 +2603,7 @@ case 166:
 #line 1101 "parse.y"
 	{ yyval.ca_p = yystack.l_mark[0].ca_p ;
                  yyval.ca_p->link = yystack.l_mark[-1].ca_p ;
-                 yyval.ca_p->arg_num = yystack.l_mark[-1].ca_p ? yystack.l_mark[-1].ca_p->arg_num+1 : 0 ;
+                 yyval.ca_p->arg_num = (short) (yystack.l_mark[-1].ca_p ? yystack.l_mark[-1].ca_p->arg_num+1 : 0) ;
                }
 break;
 case 167:
@@ -2615,7 +2615,7 @@ case 168:
 	{ yyval.ca_p = ZMALLOC(CA_REC) ;
                 yyval.ca_p->link = yystack.l_mark[-2].ca_p ;
                 yyval.ca_p->type = CA_EXPR  ;
-                yyval.ca_p->arg_num = yystack.l_mark[-2].ca_p ? yystack.l_mark[-2].ca_p->arg_num+1 : 0 ;
+                yyval.ca_p->arg_num = (short) (yystack.l_mark[-2].ca_p ? yystack.l_mark[-2].ca_p->arg_num+1 : 0) ;
                 yyval.ca_p->call_offset = code_offset ;
               }
 break;
@@ -2624,7 +2624,7 @@ case 169:
 	{ yyval.ca_p = ZMALLOC(CA_REC) ;
                 yyval.ca_p->type = ST_NONE ;
                 yyval.ca_p->link = yystack.l_mark[-2].ca_p ;
-                yyval.ca_p->arg_num = yystack.l_mark[-2].ca_p ? yystack.l_mark[-2].ca_p->arg_num+1 : 0 ;
+                yyval.ca_p->arg_num = (short) (yystack.l_mark[-2].ca_p ? yystack.l_mark[-2].ca_p->arg_num+1 : 0) ;
 
                 code_call_id(yyval.ca_p, yystack.l_mark[-1].stp) ;
               }

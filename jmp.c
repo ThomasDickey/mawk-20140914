@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: jmp.c,v 1.4 2009/07/23 23:38:31 tom Exp $
+ * $MawkId: jmp.c,v 1.5 2010/05/07 10:59:46 tom Exp $
  * @Log: jmp.c,v @
  * Revision 1.4  1995/06/18  19:42:19  mike
  * Remove some redundant declarations and add some prototypes
@@ -70,7 +70,7 @@ code_jmp(int jtype, INST * target)
        relocation might make it invalid */
 
     if (target)
-	code2op(jtype, target - (code_ptr + 1));
+	code2op(jtype, (int) (target - (code_ptr + 1)));
     else {
 	register JMP *p = ZMALLOC(JMP);
 
@@ -98,7 +98,7 @@ patch_jmp(INST * target)
 	p = jmp_top;
 	jmp_top = p->link;
 	source = p->source_offset + code_base;
-	source->op = target - source;
+	source->op = (int) (target - source);
 
 	ZFREE(p);
     }
@@ -136,7 +136,7 @@ BC_insert(int type, INST * address)
     } else {
 	p = ZMALLOC(BC);
 	p->type = type;
-	p->source_offset = address - code_base;
+	p->source_offset = (int) (address - code_base);
 	p->link = bc_top;
 	bc_top = p;
     }
@@ -156,8 +156,8 @@ BC_clear(INST * B_address, INST * C_address)
     /* pop down to the mark node */
     while (p->type) {
 	source = code_base + p->source_offset;
-	source->op = (p->type == 'B' ? B_address : C_address)
-	    - source;
+	source->op = (int) ((p->type == 'B' ? B_address : C_address)
+			    - source);
 
 	q = p;
 	p = p->link;
@@ -212,7 +212,7 @@ code_push(INST * code, unsigned len, int scope, FBLOCK * fbp)
 	    p->move_level = code_move_level;
 	    p->fbp = fbp;
 	    if (code)
-		p->offset = code - code_base;
+		p->offset = (int) (code - code_base);
 	    else
 		p->offset = 0;
 	}
@@ -243,7 +243,7 @@ code_pop(INST * target)
     len = p->len;
 
     while (target + len >= code_warn) {
-	target_offset = target - code_base;
+	target_offset = (int) (target - code_base);
 	code_grow();
 	target = code_base + target_offset;
     }
@@ -254,7 +254,7 @@ code_pop(INST * target)
     }
 
     if (p->scope != NO_SCOPE) {
-	target_offset = target - code_base;
+	target_offset = (int) (target - code_base);
 	relocate_resolve_list(p->scope, p->move_level, p->fbp,
 			      p->offset, len, target_offset - p->offset);
     }

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.8 2010/05/07 08:40:15 tom Exp $
+ * $MawkId: parse.y,v 1.9 2010/05/07 10:51:08 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -236,16 +236,16 @@ PA_block  :  block
                INST *p1 = CDP($1) ;
              int len ;
 
-               code_push(p1, code_ptr - p1, scope, active_funct) ;
+               code_push(p1, (unsigned) CodeOffset(p1), scope, active_funct) ;
                code_ptr = p1 ;
 
                code2op(_RANGE, 1) ;
                code_ptr += 3 ;
-               len = code_pop(code_ptr) ;
+               len = (int) code_pop(code_ptr) ;
              code_ptr += len ;
                code1(_STOP) ;
              p1 = CDP($1) ;
-               p1[2].op = code_ptr - (p1+1) ;
+               p1[2].op = CodeOffset(p1 + 1) ;
              }
              expr
              { code1(_STOP) ; }
@@ -254,8 +254,8 @@ PA_block  :  block
              {
                INST *p1 = CDP($1) ;
 
-               p1[3].op = CDP($6) - (p1+1) ;
-               p1[4].op = code_ptr - (p1+1) ;
+               p1[3].op = (int) (CDP($6) - (p1 + 1)) ;
+               p1[4].op = CodeOffset(p1 + 1) ;
              }
           ;
 
@@ -571,7 +571,7 @@ while_front :  WHILE LPAREN expr RPAREN
                      code_ptr -= 2 ;
                   else
                   { INST *p3 = CDP($3) ;
-                    code_push(p3, code_ptr-p3, scope, active_funct) ;
+                    code_push(p3, (unsigned) CodeOffset(p3), scope, active_funct) ;
                     code_ptr = p3 ;
                     code2(_JMP, (INST*)0) ; /* code2() not code_jmp() */
                   }
@@ -588,9 +588,9 @@ statement  :    while_front  statement
 
                   if ( p1 != p2 )  /* real test in loop */
                   {
-                    p1[1].op = code_ptr-(p1+1) ;
+                    p1[1].op = CodeOffset(p1 + 1) ;
                     saved_offset = code_offset ;
-                    len = code_pop(code_ptr) ;
+                    len = (int) code_pop(code_ptr) ;
                     code_ptr += len ;
                     code_jmp(_JNZ, CDP($2)) ;
                     BC_clear(code_ptr, CDP(saved_offset)) ;
@@ -616,7 +616,7 @@ statement   :   for1 for2 for3 statement
 
                   if ( p2 != p4 )  /* real test in for2 */
                   {
-                    p4[-1].op = code_ptr - p4 + 1 ;
+                    p4[-1].op = CodeOffset(p4 - 1) ;
                     len = code_pop(code_ptr) ;
                     code_ptr += len ;
                     code_jmp(_JNZ, CDP($4)) ;
@@ -645,7 +645,7 @@ for2    :  SEMI_COLON   { $$ = code_offset ; }
              else
              {
                INST *p1 = CDP($1) ;
-               code_push(p1, code_ptr-p1, scope, active_funct) ;
+               code_push(p1, (unsigned) CodeOffset(p1), scope, active_funct) ;
                code_ptr = p1 ;
                code2(_JMP, (INST*)0) ;
              }
@@ -661,7 +661,7 @@ for3    :  RPAREN
 
              eat_nl() ; BC_new() ;
              code1(_POP) ;
-             code_push(p1, code_ptr - p1, scope, active_funct) ;
+             code_push(p1, (unsigned) CodeOffset(p1), scope, active_funct) ;
              code_ptr -= code_ptr - p1 ;
            }
         ;
@@ -764,7 +764,7 @@ statement  :  array_loop_front  statement
               {
                 INST *p2 = CDP($2) ;
 
-                p2[-1].op = code_ptr - p2 + 1 ;
+                p2[-1].op = CodeOffset(p2 - 1) ;
                 BC_clear( code_ptr+2 , code_ptr) ;
                 code_jmp(ALOOP, p2) ;
                 code1(POP_AL) ;
@@ -1005,7 +1005,7 @@ funct_start   :  funct_head  LPAREN  f_arglist  RPAREN
                    active_funct = $1 ;
                    *main_code_p = active_code ;
 
-                   $1->nargs = $3 ;
+                   $1->nargs = (unsigned short) $3 ;
                    if ( $3 )
                         $1->typev = (char *)
                         memset( zmalloc((size_t) $3), ST_LOCAL_NONE, (size_t) $3) ;
@@ -1065,7 +1065,7 @@ f_args     :  ID
                 else
                 { $3 = save_id($3->name) ;
                   $3->type = ST_LOCAL_NONE ;
-                  $3->offset = $1 ;
+                  $3->offset = (unsigned char) $1 ;
                   $$ = $1 + 1 ;
                 }
               }
@@ -1100,7 +1100,7 @@ call_args  :   LPAREN   RPAREN
            |   ca_front  ca_back
                { $$ = $2 ;
                  $$->link = $1 ;
-                 $$->arg_num = $1 ? $1->arg_num+1 : 0 ;
+                 $$->arg_num = (short) ($1 ? $1->arg_num+1 : 0) ;
                }
            ;
 
@@ -1118,14 +1118,14 @@ ca_front   :  LPAREN
               { $$ = ZMALLOC(CA_REC) ;
                 $$->link = $1 ;
                 $$->type = CA_EXPR  ;
-                $$->arg_num = $1 ? $1->arg_num+1 : 0 ;
+                $$->arg_num = (short) ($1 ? $1->arg_num+1 : 0) ;
                 $$->call_offset = code_offset ;
               }
            |  ca_front  ID   COMMA
               { $$ = ZMALLOC(CA_REC) ;
                 $$->type = ST_NONE ;
                 $$->link = $1 ;
-                $$->arg_num = $1 ? $1->arg_num+1 : 0 ;
+                $$->arg_num = (short) ($1 ? $1->arg_num+1 : 0) ;
 
                 code_call_id($$, $2) ;
               }

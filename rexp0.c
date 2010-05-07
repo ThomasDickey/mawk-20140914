@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.21 2010/05/07 00:43:22 tom Exp $
+ * $MawkId: rexp0.c,v 1.22 2010/05/07 10:55:15 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -270,7 +270,7 @@ RE_lex(MACHINE * mp)
 
     /* check for end character */
     if (*lp == '$') {
-	mp->start->s_type += END_ON;
+	mp->start->s_type = (SType) (mp->start->s_type + END_ON);
 	lp++;
     }
 

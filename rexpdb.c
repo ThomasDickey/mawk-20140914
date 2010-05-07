@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexpdb.c,v 1.7 2010/01/24 17:16:36 Jonathan.Nieder Exp $
+ * $MawkId: rexpdb.c,v 1.8 2010/05/07 10:56:15 tom Exp $
  * @Log: rexpdb.c,v @
  * Revision 1.2  1993/07/23  13:21:51  mike
  * cleanup rexp code
@@ -54,7 +54,7 @@ REmprint(PTR m, FILE *f)
 
     while (1) {
 	if (p->s_type >= END_ON) {
-	    p->s_type -= END_ON;
+	    p->s_type = (SType) (p->s_type - END_ON);
 	    end_on_string = "$";
 	} else
 	    end_on_string = "";
@@ -87,7 +87,7 @@ REmprint(PTR m, FILE *f)
 	}
 	fprintf(f, "%s\n", end_on_string);
 	if (end_on_string[0])
-	    p->s_type += END_ON;
+	    p->s_type = (SType) (p->s_type + END_ON);
 	if (p->s_type == M_ACCEPT)
 	    return;
 	p++;
