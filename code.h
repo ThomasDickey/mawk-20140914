@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.h,v 1.3 2010/05/07 08:36:59 tom Exp $
+ * $MawkId: code.h,v 1.4 2010/05/07 09:49:46 tom Exp $
  * @Log: code.h,v @
  * Revision 1.5  1995/06/18  19:42:15  mike
  * Remove some redundant declarations and add some prototypes
@@ -68,11 +68,13 @@ extern INST *execution_start;
 extern INST *next_label;	/* next statements jump to here */
 extern int dump_code_flag;
 
+#define CodeOffset(base) (int)(code_ptr - (base))
+
 #define code_ptr  active_code.ptr
 #define code_base active_code.base
 #define code_warn active_code.warn
 #define code_limit active_code.limit
-#define code_offset (code_ptr-code_base)
+#define code_offset CodeOffset(code_base)
 
 #define INST_BYTES(x) (sizeof(INST)*(unsigned)(x))
 
