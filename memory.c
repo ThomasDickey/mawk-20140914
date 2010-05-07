@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.c,v 1.5 2009/07/27 15:15:07 tom Exp $
+ * $MawkId: memory.c,v 1.6 2010/05/07 00:41:10 tom Exp $
  * @Log: memory.c,v @
  * Revision 1.2  1993/07/17  13:23:08  mike
  * indent and general code cleanup
@@ -35,7 +35,7 @@ STRING null_str =
 {0, 1, ""};
 
 static STRING *
-xnew_STRING(unsigned len)
+xnew_STRING(size_t len)
 {
     STRING *sval = (STRING *) zmalloc(len + STRING_OH);
 
@@ -47,7 +47,7 @@ xnew_STRING(unsigned len)
 /* allocate space for a STRING */
 
 STRING *
-new_STRING0(unsigned len)
+new_STRING0(size_t len)
 {
     if (len == 0) {
 	null_str.ref_cnt++;
@@ -63,7 +63,7 @@ new_STRING0(unsigned len)
  * Create a new string which may contain embedded nulls.
  */
 STRING *
-new_STRING1(const char *s, unsigned len)
+new_STRING1(const char *s, size_t len)
 {
     if (len == 0) {
 	null_str.ref_cnt++;

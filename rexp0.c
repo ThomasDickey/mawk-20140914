@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.20 2010/01/31 21:53:05 Jonathan.Nieder Exp $
+ * $MawkId: rexp0.c,v 1.21 2010/05/07 00:43:22 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -112,7 +112,7 @@ static int prev;
 static size_t nest;
 static char *lp;		/*  ptr to reg exp string  */
 static char *re_str;		/*  base of 'lp' */
-static unsigned re_len;
+static size_t re_len;
 
 void
 RE_lex_init(char *re, size_t len)

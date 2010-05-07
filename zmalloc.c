@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.10 2009/07/23 22:42:18 tom Exp $
+ * $MawkId: zmalloc.c,v 1.11 2010/05/07 00:38:55 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -100,7 +100,7 @@ typedef union zblock {
 static ZBLOCK *pool[POOLSZ];
 
 PTR
-zmalloc(unsigned size)
+zmalloc(size_t size)
 {
     unsigned blocks = BytesToBlocks(size);
     register ZBLOCK *p;
@@ -145,7 +145,7 @@ zmalloc(unsigned size)
 }
 
 void
-zfree(PTR p, unsigned size)
+zfree(PTR p, size_t size)
 {
     unsigned blocks = BytesToBlocks(size);
 
@@ -158,7 +158,7 @@ zfree(PTR p, unsigned size)
 }
 
 PTR
-zrealloc(PTR p, unsigned old_size, unsigned new_size)
+zrealloc(PTR p, size_t old_size, size_t new_size)
 {
     register PTR q;
 
@@ -173,14 +173,3 @@ zrealloc(PTR p, unsigned old_size, unsigned new_size)
     }
     return q;
 }
-
-#ifndef	 __GNUC__
-/* pacifier for Bison , this is really dead code */
-PTR
-alloca(unsigned sz)
-{
-    /* hell just froze over */
-    exit(100);
-    return (PTR) 0;
-}
-#endif

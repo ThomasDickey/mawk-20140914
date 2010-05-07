@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.h,v 1.6 2009/07/27 15:14:56 tom Exp $
+ * $MawkId: memory.h,v 1.7 2010/05/07 00:41:27 tom Exp $
  * @Log: memory.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:17  mike
  * move source to cvs
@@ -32,8 +32,8 @@ the GNU General Public License, version 2, 1991.
 #include "zmalloc.h"
 
 STRING *new_STRING(const char *);
-STRING *new_STRING0(unsigned);
-STRING *new_STRING1(const char *, unsigned);
+STRING *new_STRING0(size_t);
+STRING *new_STRING1(const char *, size_t);
 
 #ifdef   DEBUG
 void DB_free_STRING(STRING *);

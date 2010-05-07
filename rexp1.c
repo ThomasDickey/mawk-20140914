@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.10 2010/01/31 22:08:20 tom Exp $
+ * $MawkId: rexp1.c,v 1.11 2010/05/07 00:42:33 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
@@ -235,7 +235,7 @@ MEMORY	ALLOCATION
  *==============================*/
 
 PTR
-RE_malloc(unsigned sz)
+RE_malloc(size_t sz)
 {
     register PTR p;
 
@@ -245,7 +245,7 @@ RE_malloc(unsigned sz)
 }
 
 PTR
-RE_realloc(PTR p, unsigned sz)
+RE_realloc(PTR p, size_t sz)
 {
     if (!(p = realloc(p, sz)))
 	RE_error_trap(MEMORY_FAILURE);
