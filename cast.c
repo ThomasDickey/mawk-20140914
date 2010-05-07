@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.9 2009/09/16 09:29:51 tom Exp $
+ * $MawkId: cast.c,v 1.10 2010/05/07 00:57:28 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -305,7 +305,7 @@ cast_for_split(CELL * cp)
     static char meta[] = "^$.*+?|[]()";
     static char xbuff[] = "\\X";
     int c;
-    unsigned len;
+    size_t len;
 
     if (cp->type < C_STRING)
 	cast1_to_s(cp);

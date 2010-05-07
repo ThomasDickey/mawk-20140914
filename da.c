@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.7 2009/07/27 16:21:15 tom Exp $
+ * $MawkId: da.c,v 1.8 2010/05/07 00:56:51 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -131,9 +131,9 @@ static const char *jfmt = "%s%s%03d\n";
 static const char *tab2 = "\t\t";
 
 void
-da_string(FILE *fp, const char *str, unsigned len)
+da_string(FILE *fp, const char *str, size_t len)
 {
-    unsigned n;
+    size_t n;
 
     fputc('"', fp);
     for (n = 0; n < len; ++n) {

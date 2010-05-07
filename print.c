@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.19 2009/12/14 01:10:05 tom Exp $
+ * $MawkId: print.c,v 1.20 2010/05/07 00:57:34 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -84,7 +84,7 @@ char *sprintf_limit = string_buff + SPRINTF_SZ;
 static void
 print_cell(CELL * p, FILE *fp)
 {
-    unsigned len;
+    size_t len;
 
     switch (p->type) {
     case C_NOINIT:
