@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.118 2010/05/06 23:50:11 tom Exp $
+-- $MawkId: CHANGES,v 1.119 2010/05/07 00:31:31 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100507
+	+ fix warnings from clang --analyze
 	+ update/improve configure script
 	  + modify CF_GCC_VERSION to ignore stderr, e.g., from c89 alias
 	  + modify CF_GCC_WARNINGS, moving -W and -Wall into the list to check,
