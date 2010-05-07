@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.4 2010/05/07 08:37:47 tom Exp $
+ * $MawkId: code.c,v 1.5 2010/05/07 09:47:06 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -147,7 +147,7 @@ set_code(void)
 {
     /* set the main code which is active_code */
     if (end_code_p || code_offset > 1) {
-	int gl_offset = (int) code_offset;
+	int gl_offset = code_offset;
 
 	if (NR_flag)
 	    code2op(OL_GL_NR, _HALT);
