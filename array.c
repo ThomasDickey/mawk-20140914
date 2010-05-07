@@ -184,13 +184,13 @@ void array_delete(
 
 void array_load(
    ARRAY A,
-   int cnt)
+   size_t cnt)
 {
    CELL *cells ; /* storage for A[1..cnt] */
-   int i ;  /* index into cells[] */
+   size_t i ;  /* index into cells[] */
    if (A->type != AY_SPLIT || A->limit < (unsigned) cnt) {
       array_clear(A) ;
-      A->limit = (cnt&~3)+4 ;
+      A->limit = (unsigned) ( (cnt & (size_t) ~3) + 4 ) ;
       A->ptr = zmalloc(A->limit*sizeof(CELL)) ;
       A->type = AY_SPLIT ;
    }
@@ -273,7 +273,7 @@ static int string_compare(
 
 STRING** array_loop_vector(
    ARRAY A,
-   unsigned *sizep)
+   size_t *sizep)
 {
    STRING** ret ;
    *sizep = A->size ;
@@ -306,10 +306,10 @@ CELL *array_cat(
 {
    CELL *p ;  /* walks the eval stack */
    CELL subsep ;  /* local copy of SUBSEP */
-   unsigned subsep_len ; /* string length of subsep_str */
+   size_t subsep_len ; /* string length of subsep_str */
    char *subsep_str ;
 
-   unsigned total_len ;  /* length of cat'ed expression */
+   size_t total_len ;  /* length of cat'ed expression */
    CELL *top ;   /* value of sp at entry */
    char *target ;  /* build cat'ed char* here */
    STRING *sval ;  /* build cat'ed STRING here */
@@ -318,9 +318,11 @@ CELL *array_cat(
    subsep_len = string(&subsep)->len ;
    subsep_str = string(&subsep)->str ;
 
+   assert(cnt > 0);
+
    top = sp ; sp -= (cnt-1) ;
 
-   total_len = (cnt-1)*subsep_len ;
+   total_len = ((size_t) (cnt-1)) * subsep_len ;
    for(p = sp ; p <= top ; p++) {
       if ( p->type < C_STRING ) cast1_to_s(p) ;
       total_len += string(p)->len ;

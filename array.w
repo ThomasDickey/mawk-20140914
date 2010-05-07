@@ -52,7 +52,7 @@ The meaning of the other fields depends on the [[type]] field.
 <<array typedefs and [[#defines]]>>=
 typedef struct array {
    PTR ptr ;  /* What this points to depends on the type */
-   unsigned size ; /* number of elts in the table */
+   size_t size ; /* number of elts in the table */
    unsigned limit ; /* Meaning depends on type */
    unsigned hmask ; /* bitwise and with hash value to get table index */
    short type ;  /* values in AY_NULL .. AY_SPLIT */
@@ -157,14 +157,14 @@ an element of [[A]], then the element is created with value \Null\/.
 $A[\expr]$ from the array $A$.  [[cp]] points at the [[CELL]] holding
 \expr\/.
 
-\hi [[void array_load(ARRAY A, int cnt)]] builds a split array.  The
+\hi [[void array_load(ARRAY A, size_t cnt)]] builds a split array.  The
 values $A[1..{\it cnt}]$ are copied from the array
 ${\it split\_buff}[0..{\it cnt}-1]$.
 
 \hi [[void array_clear(ARRAY A)]] removes all elements of $A$.  The
 type of $A$ is then [[AY_NULL]].
 
-\hi [[STRING** array_loop_vector(ARRAY A, unsigned *sizep)]]
+\hi [[STRING** array_loop_vector(ARRAY A, size_t *sizep)]]
 returns a pointer
 to a linear vector that holds all the strings that are indices of $A$.
 The size of the the vector is returned indirectly in [[*sizep]].
@@ -180,9 +180,9 @@ $\circ$ denotes concatenation.
 <<interface prototypes>>=
 CELL* array_find(ARRAY, CELL*, int);
 void  array_delete(ARRAY, CELL*);
-void  array_load(ARRAY, int);
+void  array_load(ARRAY, size_t);
 void  array_clear(ARRAY);
-STRING** array_loop_vector(ARRAY, unsigned*);
+STRING** array_loop_vector(ARRAY, size_t*);
 CELL* array_cat(CELL*, int);
 
 @ Array Find
@@ -560,10 +560,10 @@ created.
 <<interface functions>>=
 void array_load(
    ARRAY A,
-   int cnt)
+   size_t cnt)
 {
    CELL *cells ; /* storage for A[1..cnt] */
-   int i ;  /* index into cells[] */
+   size_t i ;  /* index into cells[] */
    <<clean up the existing array and prepare an empty split array>>
    cells = (CELL*) A->ptr ;
    A->size = cnt ;
@@ -604,7 +604,7 @@ to a multiple of 4.
 <<clean up the existing array and prepare an empty split array>>=
 if (A->type != AY_SPLIT || A->limit < (unsigned) cnt) {
    array_clear(A) ;
-   A->limit = (cnt&~3)+4 ;
+   A->limit = (unsigned) ( (cnt & (size_t) ~3) + 4 ) ;
    A->ptr = zmalloc(A->limit*sizeof(CELL)) ;
    A->type = AY_SPLIT ;
 }
@@ -900,7 +900,7 @@ static int string_compare(
 
 STRING** array_loop_vector(
    ARRAY A,
-   unsigned *sizep)
+   size_t *sizep)
 {
    STRING** ret ;
    *sizep = A->size ;
@@ -959,7 +959,7 @@ CELL *array_cat(
    CELL *p ;  /* walks the eval stack */
    CELL subsep ;  /* local copy of SUBSEP */
    <<subsep parts>>
-   unsigned total_len ;  /* length of cat'ed expression */
+   size_t total_len ;  /* length of cat'ed expression */
    CELL *top ;   /* value of sp at entry */
    char *target ;  /* build cat'ed char* here */
    STRING *sval ;  /* build cat'ed STRING here */
@@ -975,7 +975,7 @@ We make a copy of [[SUBSEP]] which we can cast to string in the
 unlikely event the user has assigned a number to [[SUBSEP]].
 
 <<subsep parts>>=
-unsigned subsep_len ; /* string length of subsep_str */
+size_t subsep_len ; /* string length of subsep_str */
 char *subsep_str ;
 
 <<get subsep and compute parts>>=
@@ -989,6 +989,8 @@ Set [[sp]] and [[top]] so the cells to concatenate are inclusively
 between [[sp]] and [[top]].
 
 <<set [[top]] and return value of [[sp]]>>=
+assert(cnt > 0);
+
 top = sp ; sp -= (cnt-1) ;
 
 @
@@ -996,7 +998,7 @@ The [[total_len]] is the sum of the lengths of the [[cnt]]
 strings and the [[cnt-1]] copies of [[subsep]].
 
 <<cast cells to string and compute [[total_len]]>>=
-total_len = (cnt-1)*subsep_len ;
+total_len = ((size_t) (cnt-1)) * subsep_len ;
 for(p = sp ; p <= top ; p++) {
    if ( p->type < C_STRING ) cast1_to_s(p) ;
    total_len += string(p)->len ;
@@ -1076,7 +1078,7 @@ This file was generated with the command
 
 <<mawk blurb>>=
 
-$MawkId: array.w,v 1.10 2010/05/06 22:18:07 tom Exp $
+$MawkId: array.w,v 1.11 2010/05/07 08:55:53 tom Exp $
 
 copyright 1991-96, Michael D. Brennan
 
