@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.25 2010/05/07 08:13:11 tom Exp $
+ * $MawkId: fin.c,v 1.26 2010/05/07 22:13:30 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -101,7 +101,7 @@ FINdopen(int fd, int main_flag)
 
     fin->fd = fd;
     fin->flags = main_flag ? (MAIN_FLAG | START_FLAG) : START_FLAG;
-    fin->buffp = fin->buff = (char *) zmalloc(BUFFSZ + 1);
+    fin->buffp = fin->buff = (char *) zmalloc((size_t) (BUFFSZ + 1));
     fin->limit = fin->buffp;
     fin->nbuffs = 1;
     fin->buff[0] = 0;
@@ -161,7 +161,7 @@ FINsemi_close(FIN * fin)
     static char dead = 0;
 
     if (fin->buff != &dead) {
-	zfree(fin->buff, fin->nbuffs * BUFFSZ + 1);
+	zfree(fin->buff, (size_t) (fin->nbuffs * BUFFSZ + 1));
 
 	if (fin->fd) {
 	    if (fin->fp)
@@ -190,12 +190,12 @@ FINclose(FIN * fin)
 */
 
 char *
-FINgets(FIN * fin, unsigned *len_p)
+FINgets(FIN * fin, size_t *len_p)
 {
     char *p;
     char *q = 0;
     size_t match_len;
-    unsigned r;
+    size_t r;
 
   restart:
 
@@ -232,7 +232,7 @@ FINgets(FIN * fin, unsigned *len_p)
 	    }
 	} else {
 	    /* block buffering */
-	    r = fillbuff(fin->fd, fin->buff, fin->nbuffs * BUFFSZ);
+	    r = fillbuff(fin->fd, fin->buff, (size_t) (fin->nbuffs * BUFFSZ));
 	    if (r == 0) {
 		fin->flags |= EOF_FLAG;
 		fin->buffp = fin->buff;
@@ -269,14 +269,14 @@ FINgets(FIN * fin, unsigned *len_p)
 
     case SEP_STR:
 	q = str_str(p,
-		    (unsigned) (fin->limit - p),
+		    (size_t) (fin->limit - p),
 		    ((STRING *) rs_shadow.ptr)->str,
 		    match_len = ((STRING *) rs_shadow.ptr)->len);
 	break;
 
     case SEP_MLR:
     case SEP_RE:
-	q = re_pos_match(p, (unsigned) (fin->limit - p), rs_shadow.ptr, &match_len);
+	q = re_pos_match(p, (size_t) (fin->limit - p), rs_shadow.ptr, &match_len);
 	/* if the match is at the end, there might still be
 	   more to match in the file */
 	if (q && q[match_len] == 0 && !(fin->flags & EOF_FLAG))
@@ -314,10 +314,10 @@ FINgets(FIN * fin, unsigned *len_p)
 	p = enlarge_fin_buffer(fin);
     } else {
 	/* move a partial line to front of buffer and try again */
-	unsigned rr;
-	unsigned amount = (unsigned) (fin->limit - p);
+	size_t rr;
+	size_t amount = (size_t) (fin->limit - p);
 
-	p = (char *) memmove(fin->buff, p, r = (unsigned) (fin->limit - p));
+	p = (char *) memmove(fin->buff, p, r = (size_t) (fin->limit - p));
 	q = p + r;
 	rr = fin->nbuffs * BUFFSZ - r;
 
@@ -332,9 +332,9 @@ FINgets(FIN * fin, unsigned *len_p)
 static char *
 enlarge_fin_buffer(FIN * fin)
 {
-    unsigned r;
-    unsigned oldsize = fin->nbuffs * BUFFSZ + 1;
-    unsigned limit = (unsigned) (fin->limit - fin->buff);
+    size_t r;
+    size_t oldsize = fin->nbuffs * BUFFSZ + 1;
+    size_t limit = (size_t) (fin->limit - fin->buff);
 
 #ifdef  MSDOS
     /* I'm not sure this can really happen:
@@ -349,7 +349,7 @@ enlarge_fin_buffer(FIN * fin)
 	fin->buff = (char *) zrealloc(fin->buff, oldsize, oldsize + BUFFSZ);
     fin->nbuffs++;
 
-    r = fillbuff(fin->fd, fin->buff + (oldsize - 1), BUFFSZ);
+    r = fillbuff(fin->fd, fin->buff + (oldsize - 1), (size_t) BUFFSZ);
     if (r < BUFFSZ)
 	fin->flags |= EOF_FLAG;
 
@@ -362,10 +362,10 @@ enlarge_fin_buffer(FIN * fin)
   on exit the back of the target is zero terminated
  *--------------*/
 unsigned
-fillbuff(int fd, char *target, unsigned size)
+fillbuff(int fd, char *target, size_t size)
 {
     register int r;
-    unsigned entry_size = size;
+    size_t entry_size = size;
 
     while (size)
 	switch (r = (int) read(fd, target, size)) {
@@ -528,7 +528,7 @@ is_cmdline_assign(char *s)
     size_t len;
     CELL cell;			/* used if command line assign to pseudo field */
     CELL *fp = (CELL *) 0;	/* ditto */
-    unsigned length;
+    size_t length;
 
     if (scan_code[*(unsigned char *) s] != SC_IDCHAR)
 	return 0;

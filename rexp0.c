@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.22 2010/05/07 10:55:15 tom Exp $
+ * $MawkId: rexp0.c,v 1.23 2010/05/07 22:18:57 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -293,7 +293,7 @@ do_str(
     char *pt = 0;		/* trails p by one */
     char *str;			/* collect it here */
     register char *s;		/* runs thru the output */
-    unsigned len;		/* length collected */
+    size_t len;			/* length collected */
 
     p = *pp;
     s = str = RE_malloc(re_len);
@@ -410,15 +410,15 @@ lookup_cclass(char **start)
     CCLASS_ENUM code = CCLASS_NONE;
     const char *name;
     char *colon;
-    unsigned size;
-    unsigned item;
+    size_t size;
+    size_t item;
 
     name = (*start += 2);	/* point past "[:" */
     colon = strchr(name, ':');
     if (colon == 0 || colon[1] != ']')
 	return 0;		/* perhaps this is a literal "[:" */
 
-    size = (unsigned) (colon - *start);		/* length of name */
+    size = (size_t) (colon - *start);	/* length of name */
     *start = colon + 2;
 
     for (item = 0; item < sizeof(cclass_table) / sizeof(cclass_table[0]); ++item) {
@@ -435,8 +435,8 @@ lookup_cclass(char **start)
 
     if ((result = cclass_table[item].data) == 0) {
 	int ch = 0;
-	unsigned have = 4;
-	unsigned used = 0;
+	size_t have = 4;
+	size_t used = 0;
 	CCLASS *data = malloc(sizeof(CCLASS) * have);
 	int in_class = 0;
 	int first = -2;

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.11 2010/05/07 00:38:55 tom Exp $
+ * $MawkId: zmalloc.c,v 1.12 2010/05/07 22:11:34 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -108,7 +108,7 @@ zmalloc(size_t size)
     static ZBLOCK *avail;
 
     if (blocks > POOLSZ) {
-	p = (ZBLOCK *) malloc(BlocksToBytes(blocks));
+	p = (ZBLOCK *) malloc((size_t) BlocksToBytes(blocks));
 	if (!p)
 	    out_of_mem();
     } else {
@@ -124,10 +124,10 @@ zmalloc(size_t size)
 		    pool[amt_avail] = avail;
 		}
 
-		if (!(avail = (ZBLOCK *) malloc(CHUNK * ZBLOCKSZ))) {
+		if (!(avail = (ZBLOCK *) malloc((size_t) (CHUNK * ZBLOCKSZ)))) {
 		    /* if we get here, almost out of memory */
 		    amt_avail = 0;
-		    p = (ZBLOCK *) malloc(BlocksToBytes(blocks));
+		    p = (ZBLOCK *) malloc((size_t) BlocksToBytes(blocks));
 		    if (!p)
 			out_of_mem();
 		    return (PTR) p;

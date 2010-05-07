@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.24 2010/05/07 10:59:46 tom Exp $
+ * $MawkId: bi_funct.c,v 1.25 2010/05/07 22:00:37 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -285,8 +285,8 @@ bi_substr(CELL * sp)
 	sp->ptr = (PTR) & null_str;
 	null_str.ref_cnt++;
     } else {			/* got something */
-	sp->ptr = (PTR) new_STRING0((unsigned) n);
-	memcpy(string(sp)->str, sval->str + i, (unsigned) n);
+	sp->ptr = (PTR) new_STRING0((size_t) n);
+	memcpy(string(sp)->str, sval->str + i, (size_t) n);
     }
 
     free_STRING(sval);
@@ -726,7 +726,7 @@ bi_getline(CELL * sp)
     CELL tc;
     CELL *cp = 0;
     char *p = 0;
-    unsigned len;
+    size_t len;
     FIN *fin_p;
 
     switch (sp->type) {

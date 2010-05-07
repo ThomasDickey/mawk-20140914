@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexpdb.c,v 1.8 2010/05/07 10:56:15 tom Exp $
+ * $MawkId: rexpdb.c,v 1.9 2010/05/07 22:09:39 tom Exp $
  * @Log: rexpdb.c,v @
  * Revision 1.2  1993/07/23  13:21:51  mike
  * cleanup rexp code
@@ -67,7 +67,7 @@ REmprint(PTR m, FILE *f)
 	fprintf(f, "%-10s", xlat[(UChar) (p->s_type)]);
 	switch (p->s_type) {
 	case M_STR:
-	    da_string(f, p->s_data.str, p->s_len);
+	    da_string(f, p->s_data.str, (size_t) p->s_len);
 	    break;
 
 	case M_1J:

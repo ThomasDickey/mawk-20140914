@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.12 2010/05/07 08:31:57 tom Exp $
+ * $MawkId: field.c,v 1.13 2010/05/07 22:03:19 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -202,7 +202,7 @@ field_init(void)
 }
 
 void
-set_field0(char *s, unsigned len)
+set_field0(char *s, size_t len)
 {
     cell_destroy(&field[0]);
     nf = -1;

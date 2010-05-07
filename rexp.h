@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.21 2010/05/07 08:21:04 tom Exp $
+ * $MawkId: rexp.h,v 1.22 2010/05/07 22:05:59 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -166,7 +166,7 @@ MACHINE RE_u(void);
 MACHINE RE_start(void);
 MACHINE RE_end(void);
 MACHINE RE_any(void);
-MACHINE RE_str(char *, unsigned);
+MACHINE RE_str(char *, size_t);
 MACHINE RE_class(BV *);
 void RE_cat(MACHINE *, MACHINE *);
 void RE_or(MACHINE *, MACHINE *);

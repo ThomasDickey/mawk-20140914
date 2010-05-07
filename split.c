@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.18 2010/05/07 08:31:03 tom Exp $
+ * $MawkId: split.c,v 1.19 2010/05/07 22:04:50 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -81,7 +81,7 @@ space_ov_split(char *s, char *back)
     register SPLIT_OV *tail = &dummy;
     char *q;
     size_t cnt = 0;
-    unsigned len;
+    size_t len;
 
     while (1) {
 	EAT_SPACE();
@@ -91,7 +91,7 @@ space_ov_split(char *s, char *back)
 	EAT_NON_SPACE();
 
 	tail = tail->link = ZMALLOC(SPLIT_OV);
-	tail->sval = new_STRING0(len = (unsigned) (s - q));
+	tail->sval = new_STRING0(len = (size_t) (s - q));
 	memcpy(tail->sval->str, q, len);
 	cnt++;
     }
@@ -122,21 +122,21 @@ space_split(char *s, size_t slen)
 	/* mark the front with q */
 	q = s++;
 	EAT_NON_SPACE();
-	split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
+	split_buff[i++] = new_STRING1(q, (size_t) (s - q));
 
 	EAT_SPACE();
 	if (*s == 0)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
+	split_buff[i++] = new_STRING1(q, (size_t) (s - q));
 
 	EAT_SPACE();
 	if (*s == 0)
 	    goto done;
 	q = s++;
 	EAT_NON_SPACE();
-	split_buff[i++] = new_STRING1(q, (unsigned) (s - q));
+	split_buff[i++] = new_STRING1(q, (size_t) (s - q));
 
     }
     /* we've overflowed */
@@ -187,13 +187,13 @@ re_ov_split(char *s, size_t slen, PTR re)
     while ((s < limit)
 	   && (t = re_pos_match(s, (size_t) (limit - s), re, &mlen))) {
 	tail = tail->link = ZMALLOC(SPLIT_OV);
-	tail->sval = new_STRING1(s, (unsigned) (t - s));
+	tail->sval = new_STRING1(s, (size_t) (t - s));
 	s = t + mlen;
 	cnt++;
     }
     /* and one more */
     tail = tail->link = ZMALLOC(SPLIT_OV);
-    tail->sval = new_STRING1(s, (unsigned) (limit - s));
+    tail->sval = new_STRING1(s, (size_t) (limit - s));
     tail->link = (SPLIT_OV *) 0;
     split_ov_list = dummy.link;
 
@@ -247,7 +247,7 @@ null_ov_split(char *s, size_t slen)
 
     while (slen) {
 	ovp = ovp->link = ZMALLOC(SPLIT_OV);
-	ovp->sval = new_STRING0(1);
+	ovp->sval = new_STRING0((size_t) 1);
 	ovp->sval->str[0] = *s++;
 	cnt++;
 	--slen;
@@ -269,7 +269,7 @@ null_split(char *s, size_t slen)
 	    cnt += null_ov_split(s, slen);
 	    break;
 	} else {
-	    sval = new_STRING0(1);
+	    sval = new_STRING0((size_t) 1);
 	    sval->str[0] = *s++;
 	    split_buff[i++] = sval;
 	    cnt++;

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.20 2010/05/07 00:06:02 tom Exp $
+ * $MawkId: scan.c,v 1.21 2010/05/07 22:03:19 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -112,7 +112,7 @@ scan_init(char *cmdline_program)
 	eof_flag = 1;
     } else {			/* program from file[s] */
 	scan_open();
-	buffp = buffer = (UChar *) zmalloc(BUFFSZ + 1);
+	buffp = buffer = (UChar *) zmalloc((size_t) (BUFFSZ + 1));
 	scan_fillbuff();
     }
 
@@ -145,7 +145,7 @@ void
 scan_cleanup(void)
 {
     if (program_fd >= 0)
-	zfree(buffer, BUFFSZ + 1);
+	zfree(buffer, (size_t) (BUFFSZ + 1));
     else
 	free_STRING(program_string);
 
@@ -189,7 +189,7 @@ scan_fillbuff(void)
 {
     unsigned r;
 
-    r = fillbuff(program_fd, (char *) buffer, BUFFSZ);
+    r = fillbuff(program_fd, (char *) buffer, (size_t) BUFFSZ);
     if (r < BUFFSZ) {
 	eof_flag = 1;
 	/* make sure eof is terminated */
@@ -896,7 +896,7 @@ escape_test[ET_END + 1] =
 };
 /* *INDENT-ON* */
 /* process the escape characters in a string, in place . */ char *
-rm_escape(char *s, unsigned *lenp)
+rm_escape(char *s, size_t *lenp)
 {
     register char *p, *q;
     char *t;
@@ -945,7 +945,7 @@ collect_string(void)
     register UChar *p = (UChar *) string_buff;
     int c;
     int e_flag = 0;		/* on if have an escape char */
-    unsigned len_buff;
+    size_t len_buff;
 
     while (1)
 	switch (scan_code[*p++ = (UChar) next()]) {

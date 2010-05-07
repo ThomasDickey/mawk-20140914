@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.15 2010/05/07 08:23:12 tom Exp $
+ * $MawkId: execute.c,v 1.16 2010/05/07 22:03:19 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -1162,7 +1162,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	case OL_GL:
 	    {
 		char *p;
-		unsigned len;
+		size_t len;
 
 		if (!(p = FINgets(main_fin, &len))) {
 		    if (!end_start)
@@ -1185,7 +1185,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	case OL_GL_NR:
 	    {
 		char *p;
-		unsigned len;
+		size_t len;
 
 		if (!(p = FINgets(main_fin, &len))) {
 		    if (!end_start)

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.h,v 1.7 2010/05/07 08:31:30 tom Exp $
+ * $MawkId: field.h,v 1.8 2010/05/07 22:03:31 tom Exp $
  * @Log: field.h,v @
  * Revision 1.2  1995/06/18  19:42:16  mike
  * Remove some redundant declarations and add some prototypes
@@ -34,7 +34,7 @@ the GNU General Public License, version 2, 1991.
 #include "nstd.h"
 #include "types.h"
 
-void set_field0(char *, unsigned);
+void set_field0(char *, size_t);
 void split_field0(void);
 size_t space_split(char *, size_t);
 size_t re_split(STRING *, PTR);

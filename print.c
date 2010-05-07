@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.20 2010/05/07 00:57:34 tom Exp $
+ * $MawkId: print.c,v 1.21 2010/05/07 22:01:46 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -100,7 +100,7 @@ print_cell(CELL * p, FILE *fp)
 	    break;
 
 	default:
-	    fwrite(string(p)->str, 1, len, fp);
+	    fwrite(string(p)->str, (size_t) 1, len, fp);
 	}
 	break;
 
@@ -341,7 +341,7 @@ static char *
 SprintfFill(char *buffer, int ch, int fill)
 {
     SprintfOverflow(buffer, fill);
-    memset(buffer, ch, (unsigned) fill);
+    memset(buffer, ch, (size_t) fill);
     return buffer + fill;
 }
 
@@ -349,7 +349,7 @@ static char *
 SprintfBlock(char *buffer, char *source, int length)
 {
     SprintfOverflow(buffer, length);
-    memcpy(buffer, source, (unsigned) length);
+    memcpy(buffer, source, (size_t) length);
     return buffer + length;
 }
 
@@ -392,7 +392,7 @@ puts_sfmt(PTR target,
 		--width;
 	    }
 	}
-	fwrite(src_str, sizeof(char), (unsigned) src_len, fp);
+	fwrite(src_str, sizeof(char), (size_t) src_len, fp);
 	while (src_len < width) {
 	    fputc(' ', fp);
 	    --width;
@@ -494,7 +494,7 @@ do_printf(
 				    (unsigned) (sprintf_limit - sprintf_buff));
 		    } else {	/* really done */
 			return new_STRING1(sprintf_buff,
-					   (unsigned) (target - sprintf_buff));
+					   (size_t) (target - sprintf_buff));
 		    }
 		} else {
 		    *target++ = *q++;

@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.12 2010/05/07 09:09:10 tom Exp $
+ * $MawkId: regexp_system.c,v 1.13 2010/05/07 22:15:27 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -153,7 +153,7 @@ REtest(char *str, size_t str_len GCC_UNUSED, PTR q)
 
     last_used_regexp = re;
 
-    if (regexec(&re->re, str, 0, NULL, 0)) {
+    if (regexec(&re->re, str, (size_t) 0, NULL, 0)) {
 	/* fprintf (stderr, "=1\n"); */
 	return 0;
     } else {
@@ -173,7 +173,7 @@ REmatch(char *str, size_t str_len GCC_UNUSED, PTR q, size_t *lenp)
 
     last_used_regexp = re;
 
-    if (!regexec(&re->re, str, MAX_MATCHES, match, 0)) {
+    if (!regexec(&re->re, str, (size_t) MAX_MATCHES, match, 0)) {
 	*lenp = (size_t) (match[0].rm_eo - match[0].rm_so);
 	/* fprintf (stderr, "=%i/%i\n", match [0].rm_so, *lenp); */
 	return str + match[0].rm_so;

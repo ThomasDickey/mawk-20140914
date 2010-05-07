@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.24 2010/05/07 10:57:03 tom Exp $
+ * $MawkId: rexp3.c,v 1.25 2010/05/07 22:09:39 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -89,7 +89,7 @@ REmatch(char *str,		/* string to test */
 
     /* check for the easy case */
     if ((m + 1)->s_type == M_ACCEPT && m->s_type == M_STR) {
-	if ((ts = str_str(s, str_len, m->s_data.str, m->s_len)))
+	if ((ts = str_str(s, str_len, m->s_data.str, (size_t) m->s_len)))
 	    *lenp = m->s_len;
 	return ts;
     }
@@ -127,7 +127,7 @@ REmatch(char *str,		/* string to test */
 
     switch (m->s_type + u_flag) {
     case M_STR + U_OFF + END_OFF:
-	if (strncmp(s, m->s_data.str, m->s_len)) {
+	if (strncmp(s, m->s_data.str, (size_t) m->s_len)) {
 	    goto refill;
 	}
 	if (!ss) {
@@ -160,7 +160,7 @@ REmatch(char *str,		/* string to test */
 	if (s >= str_end) {
 	    goto refill;
 	}
-	if (!(s = str_str(s, (unsigned) (str_end - s), m->s_data.str, m->s_len))) {
+	if (!(s = str_str(s, (size_t) (str_end - s), m->s_data.str, (size_t) m->s_len))) {
 	    goto refill;
 	}
 	if (s >= str + strlen(str)) {
@@ -181,7 +181,7 @@ REmatch(char *str,		/* string to test */
 
     case M_STR + U_ON + END_ON:
 	t = (int) ((str_end - s) - m->s_len);
-	if (t < 0 || memcmp(ts = s + t, m->s_data.str, m->s_len)) {
+	if (t < 0 || memcmp(ts = s + t, m->s_data.str, (size_t) m->s_len)) {
 	    goto refill;
 	}
 	if (!ss) {

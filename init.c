@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.22 2010/05/07 08:35:39 tom Exp $
+ * $MawkId: init.c,v 1.23 2010/05/07 21:58:49 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -265,7 +265,7 @@ process_cmdline(int argc, char **argv)
     char *optNext;
     PFILE dummy;		/* starts linked list of filenames */
     PFILE *tail = &dummy;
-    unsigned length;
+    size_t length;
 
     for (i = 1; i < argc && argv[i][0] == '-'; i = nextarg) {
 	if (argv[i][1] == 0)	/* -  alone */
@@ -279,7 +279,7 @@ process_cmdline(int argc, char **argv)
 	/*
 	 * Check for "long" options and decide how to handle them.
 	 */
-	if (strlen(argv[i]) > 2 && !strncmp(argv[i], "--", 2)) {
+	if (strlen(argv[i]) > 2 && !strncmp(argv[i], "--", (size_t) 2)) {
 	    char *env = getenv("MAWK_LONG_OPTIONS");
 	    if (env != 0) {
 		switch (*env) {
@@ -365,7 +365,7 @@ process_cmdline(int argc, char **argv)
 			int x = atoi(optNext + 1);
 
 			if (x > (int) SPRINTF_SZ) {
-			    sprintf_buff = (char *) zmalloc((unsigned) x);
+			    sprintf_buff = (char *) zmalloc((size_t) x);
 			    sprintf_limit = sprintf_buff + x;
 			}
 			optNext = skipValue(optNext);
@@ -503,7 +503,7 @@ load_environ(ARRAY ENV)
 
     while (*p) {
 	if ((s = strchr(*p, '='))) {	/* shouldn't fail */
-	    unsigned len = (unsigned) (s - *p);
+	    size_t len = (size_t) (s - *p);
 	    c.ptr = (PTR) new_STRING0(len);
 	    memcpy(string(&c)->str, *p, len);
 	    s++;

@@ -53,7 +53,7 @@ The meaning of the other fields depends on the [[type]] field.
 typedef struct array {
    PTR ptr ;  /* What this points to depends on the type */
    size_t size ; /* number of elts in the table */
-   unsigned limit ; /* Meaning depends on type */
+   size_t limit ; /* Meaning depends on type */
    unsigned hmask ; /* bitwise and with hash value to get table index */
    short type ;  /* values in AY_NULL .. AY_SPLIT */
 } *ARRAY ;
@@ -1078,7 +1078,7 @@ This file was generated with the command
 
 <<mawk blurb>>=
 
-$MawkId: array.w,v 1.12 2010/05/07 09:26:37 tom Exp $
+$MawkId: array.w,v 1.13 2010/05/07 22:20:12 tom Exp $
 
 copyright 1991-96, Michael D. Brennan
 

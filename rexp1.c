@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.11 2010/05/07 00:42:33 tom Exp $
+ * $MawkId: rexp1.c,v 1.12 2010/05/07 22:05:40 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
@@ -101,7 +101,7 @@ RE_u(void)
 }
 
 MACHINE
-RE_str(char *str, unsigned len)
+RE_str(char *str, size_t len)
 {
     MACHINE x;
 
