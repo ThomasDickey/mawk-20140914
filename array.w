@@ -274,7 +274,7 @@ static ANODE* find_by_ival(
    int *redo )
 {
    DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
-   unsigned indx = ival & A->hmask ;
+   unsigned indx = (unsigned) ival & A->hmask ;
    ANODE *p = table[indx].ilink ; /* walks ilist */
    ANODE *q = (ANODE*) 0 ; /* trails p */
    while(1) {
@@ -329,7 +329,7 @@ else if (create_flag) {
    if (++A->size > A->limit) {
       double_the_hash_table(A) ; /* changes table, may change index */
       table = (DUAL_LINK*) A->ptr ;
-      indx = A->hmask & ival ;
+      indx = A->hmask & (unsigned) ival ;
    }
 }
 else return (ANODE*) 0 ;
@@ -352,7 +352,7 @@ static ANODE* find_by_sval(
    unsigned hval = ahash(sval) ;
    char *str = sval->str ;
    DUAL_LINK *table ;
-   int indx ;
+   unsigned indx ;
    ANODE *p ;  /* walks list */
    ANODE *q = (ANODE*) 0 ; /* trails p */
    if (! (A->type & AY_STR)) add_string_associations(A) ;
@@ -503,7 +503,7 @@ void array_delete(
    ap = find_by_ival(A, ival, NO_CREATE, &redid) ;
    if (ap) { /* remove from the front of the ilist */
       DUAL_LINK *table = (DUAL_LINK*) A->ptr ;
-      table[ap->ival & A->hmask].ilink = ap->ilink ;
+      table[(unsigned) ap->ival & A->hmask].ilink = ap->ilink ;
       <<if [[sval]] is valid, remove [[ap]] from its slist>>
       cell_destroy(&ap->cell) ;
       ZFREE(ap) ;
@@ -519,7 +519,7 @@ be on an slist and vice-versa.
 <<if [[sval]] is valid, remove [[ap]] from its slist>>=
 if (ap->sval) {
    ANODE *p, *q = 0 ;
-   int indx = ap->hval & A->hmask ;
+   unsigned indx = (unsigned) ap->hval & A->hmask ;
    p = table[indx].slink ;
    while(p != ap) { q = p ; p = q->slink ; }
    if (q) q->slink = p->slink ;
@@ -530,7 +530,7 @@ if (ap->sval) {
 <<if [[ival]] is valid, remove [[ap]] from its ilist>>=
 if (ap->ival != NOT_AN_IVALUE) {
    ANODE *p, *q = 0 ;
-   int indx = ap->ival & A->hmask ;
+   unsigned indx = (unsigned) ap->ival & A->hmask ;
    p = table[indx].ilink ;
    while(p != ap) { q = p ; p = q->ilink ; }
    if (q) q->ilink = p->ilink ;
@@ -696,7 +696,7 @@ static void make_empty_table(
    int type ) /* AY_INT or AY_STR */
 {
    size_t sz = (STARTING_HMASK+1)*sizeof(DUAL_LINK) ;
-   A->type = type ;
+   A->type = (short) type ;
    A->hmask = STARTING_HMASK ;
    A->limit = hmask_to_limit(STARTING_HMASK) ;
    A->ptr = memset(zmalloc(sz), 0, sz) ;
@@ -712,14 +712,14 @@ static void convert_split_array_to_table(ARRAY A)
    CELL *cells = (CELL*) A->ptr ;
    unsigned i ; /* walks cells */
    DUAL_LINK *table ;
-   int j ; /* walks table */
+   unsigned j ; /* walks table */
    unsigned entry_limit = A->limit ;
    <<determine the size of the hash table and allocate>>
    /* insert each cells[i] in the new hash table on an ilist */
    for(i=0, j=1; i < A->size; i++) {
       ANODE *p = ZMALLOC(ANODE) ;
       p->sval = (STRING*) 0 ;
-      p->ival = i+1 ;
+      p->ival = (Int) (i + 1) ;
       p->cell = cells[i] ;
       p->ilink = table[j].ilink ;
       table[j].ilink = p ;
@@ -785,13 +785,13 @@ memset(&table[old_hmask+1], 0, (old_hmask+1)*sizeof(DUAL_LINK)) ;
 
 <<if the old table has string lists, move about half the string nodes>>=
 if (A->type & AY_STR) {
-   int i ; /* index to old lists */
-   int j ; /* index to new lists */
+   unsigned i ; /* index to old lists */
+   unsigned j ; /* index to new lists */
    ANODE *p ; /* walks an old list */
    ANODE *q ; /* trails p for deletion */
    ANODE *tail ; /* builds new list from the back */
    ANODE dummy0, dummy1 ;
-   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++)
+   for(i=0, j=old_hmask+1; i <= old_hmask; i++, j++)
       <<walk one old string list, creating one new string list>>
 }
 
@@ -830,13 +830,13 @@ The doubling of the integer lists is exactly the same except that
 
 <<if the old table has integer lists, move about half the integer nodes>>=
 if (A->type & AY_INT) {
-   int i ; /* index to old lists */
-   int j ; /* index to new lists */
+   unsigned i ; /* index to old lists */
+   unsigned j ; /* index to new lists */
    ANODE *p ; /* walks an old list */
    ANODE *q ; /* trails p for deletion */
    ANODE *tail ; /* builds new list from the back */
    ANODE dummy0, dummy1 ;
-   for(i=0, j=old_hmask+1; (unsigned) i <= old_hmask; i++, j++)
+   for(i=0, j=old_hmask+1; i <= old_hmask; i++, j++)
       <<walk one old integer list, creating one new integer list>>
 }
 
@@ -846,7 +846,7 @@ if (A->type & AY_INT) {
    q->ilink = p = table[i].ilink ;
    tail = &dummy1 ;
    while (p) {
-      if ((p->ival & new_hmask) != (unsigned) i) { /* move it */
+      if (((unsigned) p->ival & new_hmask) != i) { /* move it */
 	 q->ilink = p->ilink ;
 	 tail = tail->ilink = p ;
       }
@@ -1078,7 +1078,7 @@ This file was generated with the command
 
 <<mawk blurb>>=
 
-$MawkId: array.w,v 1.11 2010/05/07 08:55:53 tom Exp $
+$MawkId: array.w,v 1.12 2010/05/07 09:26:37 tom Exp $
 
 copyright 1991-96, Michael D. Brennan
 
