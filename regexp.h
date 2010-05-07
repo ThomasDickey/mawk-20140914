@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: regexp.h,v 1.8 2009/09/13 17:26:08 tom Exp $
+ * $MawkId: regexp.h,v 1.9 2010/05/07 08:10:40 tom Exp $
  * @Log: regexp.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs
@@ -26,8 +26,8 @@ the GNU General Public License, version 2, 1991.
 #include "nstd.h"
 
 PTR REcompile(char *, size_t);
-int REtest(char *, unsigned, PTR);
-char *REmatch(char *, unsigned, PTR, unsigned *);
+int REtest(char *, size_t, PTR);
+char *REmatch(char *, size_t, PTR, size_t *);
 void REmprint(PTR, FILE *);
 const char *REerror(void);
 

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.22 2010/02/21 14:46:33 tom Exp $
+ * $MawkId: bi_funct.c,v 1.23 2010/05/07 08:11:28 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -139,7 +139,7 @@ bi_funct_init(void)
 CELL *
 bi_length(CELL * sp)
 {
-    unsigned len;
+    size_t len;
 
     if (sp->type == 0)
 	cellcpy(sp, field);
@@ -158,7 +158,7 @@ bi_length(CELL * sp)
 }
 
 char *
-str_str(char *target, unsigned target_len, char *key, unsigned key_len)
+str_str(char *target, size_t target_len, char *key, size_t key_len)
 {
     register int k = key[0];
     int k1;
@@ -205,7 +205,7 @@ CELL *
 bi_index(CELL * sp)
 {
     register int idx;
-    unsigned len;
+    size_t len;
     const char *p;
 
     sp--;
@@ -302,7 +302,7 @@ CELL *
 bi_match(CELL * sp)
 {
     char *p;
-    unsigned length;
+    size_t length;
 
     if (sp->type != C_RE)
 	cast_to_RE(sp);
@@ -832,7 +832,7 @@ bi_sub(CELL * sp)
     CELL tc;			/* build the new string here */
     CELL sc;			/* copy of the target CELL */
     char *front, *middle, *back;	/* pieces */
-    unsigned front_len, middle_len, back_len;
+    size_t front_len, middle_len, back_len;
 
     sp -= 2;
     if (sp->type != C_RE)
@@ -901,11 +901,11 @@ static unsigned repl_cnt;	/* number of global replacements */
 */
 
 static STRING *
-gsub(PTR re, CELL * repl, char *target, unsigned target_len, int flag)
+gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
 {
     char *front = 0, *middle;
     STRING *back;
-    unsigned front_len, middle_len;
+    size_t front_len, middle_len;
     STRING *ret_val;
     CELL xrepl;			/* a copy of repl so we can change repl */
 

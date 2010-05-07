@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.6 2009/09/20 22:24:06 tom Exp $
+ * $MawkId: hash.c,v 1.7 2010/05/07 08:18:31 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -50,7 +50,7 @@ hash(const char *s)
 }
 
 unsigned
-hash2(const char *s, unsigned len)
+hash2(const char *s, size_t len)
 {
     /* FNV-1 */
     register unsigned h = 2166136261U;

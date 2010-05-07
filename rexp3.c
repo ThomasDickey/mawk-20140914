@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.22 2010/02/21 02:05:44 tom Exp $
+ * $MawkId: rexp3.c,v 1.23 2010/05/07 08:10:59 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -67,9 +67,9 @@ the GNU General Public License, version 2, 1991.
 
 char *
 REmatch(char *str,		/* string to test */
-	unsigned str_len,	/* ...its length */
+	size_t str_len,		/* ...its length */
 	PTR machine,		/* compiled regular expression */
-	unsigned *lenp)		/* where to return matched-length */
+	size_t *lenp)		/* where to return matched-length */
 {
     register STATE *m = (STATE *) machine;
     char *s = str;

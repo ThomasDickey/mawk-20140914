@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.10 2009/12/14 09:26:50 tom Exp $
+ * $MawkId: regexp_system.c,v 1.11 2010/05/07 08:10:49 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -146,7 +146,7 @@ REcompile(char *regexp, size_t len)
  * is a null-terminated string.
  */
 int
-REtest(char *str, unsigned str_len GCC_UNUSED, PTR q)
+REtest(char *str, size_t str_len GCC_UNUSED, PTR q)
 {
     mawk_re_t *re = (mawk_re_t *) q;
     /* fprintf (stderr, "REtest:  \"%s\" ~ /%s/", str, re -> regexp); */
@@ -165,7 +165,7 @@ REtest(char *str, unsigned str_len GCC_UNUSED, PTR q)
 #define MAX_MATCHES 100
 
 char *
-REmatch(char *str, unsigned str_len GCC_UNUSED, PTR q, unsigned *lenp)
+REmatch(char *str, size_t str_len GCC_UNUSED, PTR q, size_t *lenp)
 {
     mawk_re_t *re = (mawk_re_t *) q;
     regmatch_t match[MAX_MATCHES];

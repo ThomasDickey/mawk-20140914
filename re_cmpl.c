@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.9 2009/09/13 18:43:54 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.10 2010/05/07 08:15:08 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -357,7 +357,7 @@ replv_to_repl(CELL * cp, STRING * sval)
     register STRING **p;
     STRING **sblock = (STRING **) cp->ptr;
     unsigned cnt, vcnt = cp->vcnt;
-    unsigned len;
+    size_t len;
     char *target;
 
 #ifdef DEBUG

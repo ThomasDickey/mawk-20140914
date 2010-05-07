@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.20 2010/04/19 22:12:27 tom Exp $
+ * $MawkId: rexp.h,v 1.21 2010/05/07 08:21:04 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -55,8 +55,8 @@ the GNU General Public License, version 2, 1991.
 #include <stdio.h>
 #include  <setjmp.h>
 
-PTR RE_malloc(unsigned);
-PTR RE_realloc(void *, unsigned);
+PTR RE_malloc(size_t);
+PTR RE_realloc(void *, size_t);
 
 /*  finite machine  state types  */
 
@@ -176,7 +176,7 @@ void RE_01(MACHINE *);
 void RE_panic(const char *) GCC_NORETURN;
 
 #ifndef MAWK_H
-char *str_str(char *, unsigned, char *, unsigned);
+char *str_str(char *, size_t, char *, size_t);
 #endif
 
 void RE_lex_init(char *, size_t);
@@ -199,7 +199,7 @@ static /* inline */ RT_POS_ENTRY *
 RE_pos_push(RT_POS_ENTRY * head, const RT_STATE * owner, const char *s)
 {
     head->pos = s;
-    head->owner = owner - RE_run_stack_base;
+    head->owner = (int) (owner - RE_run_stack_base);
 
     if (++head == RE_pos_stack_limit)
 	head = RE_new_pos_stack();

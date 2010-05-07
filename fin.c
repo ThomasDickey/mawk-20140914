@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.24 2010/02/21 01:45:21 tom Exp $
+ * $MawkId: fin.c,v 1.25 2010/05/07 08:13:11 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -194,7 +194,7 @@ FINgets(FIN * fin, unsigned *len_p)
 {
     char *p;
     char *q = 0;
-    unsigned match_len;
+    size_t match_len;
     unsigned r;
 
   restart:
@@ -368,7 +368,7 @@ fillbuff(int fd, char *target, unsigned size)
     unsigned entry_size = size;
 
     while (size)
-	switch (r = read(fd, target, size)) {
+	switch (r = (int) read(fd, target, size)) {
 	case -1:
 	    errmsg(errno, "read error");
 	    mawk_exit(2);
@@ -525,7 +525,7 @@ is_cmdline_assign(char *s)
     int c;
     SYMTAB *stp;
     CELL *cp = 0;
-    unsigned len;
+    size_t len;
     CELL cell;			/* used if command line assign to pseudo field */
     CELL *fp = (CELL *) 0;	/* ditto */
     unsigned length;

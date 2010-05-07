@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.14 2010/05/07 00:30:15 tom Exp $
+ * $MawkId: execute.c,v 1.15 2010/05/07 08:23:12 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -428,11 +428,10 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	case SET_ALOOP:
 	    {
 		ALOOP_STATE *ap = ZMALLOC(ALOOP_STATE);
-		unsigned vector_size;
+		size_t vector_size;
 
 		ap->var = (CELL *) sp[-1].ptr;
-		ap->base = ap->ptr = array_loop_vector(
-							  (ARRAY) sp->ptr, &vector_size);
+		ap->base = ap->ptr = array_loop_vector((ARRAY) sp->ptr, &vector_size);
 		ap->limit = ap->base + vector_size;
 		sp -= 2;
 
@@ -852,7 +851,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 
 	case _CAT:
 	    {
-		unsigned len1, len2;
+		size_t len1, len2;
 		char *str1, *str2;
 		STRING *b;
 
