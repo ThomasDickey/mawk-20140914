@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.119 2010/05/07 00:31:31 tom Exp $
+-- $MawkId: CHANGES,v 1.120 2010/05/07 11:01:14 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100507
+	+ cleanup gcc warnings for 64-bit platform, e.g., use size_t rather
+	  than unsigned, etc.
 	+ fix warnings from clang --analyze
 	+ update/improve configure script
 	  + modify CF_GCC_VERSION to ignore stderr, e.g., from c89 alias
