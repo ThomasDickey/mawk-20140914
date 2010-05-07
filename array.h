@@ -1,7 +1,7 @@
 /*
 array.h
 
-@MawkId: array.w,v 1.10 2010/05/06 22:18:07 tom Exp @
+@MawkId: array.w,v 1.12 2010/05/07 09:26:37 tom Exp @
 
 copyright 1991-96, Michael D. Brennan
 
