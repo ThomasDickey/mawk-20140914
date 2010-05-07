@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fcall.c,v 1.6 2009/12/13 19:36:24 Jonathan.Nieder Exp $
+ * $MawkId: fcall.c,v 1.7 2010/05/07 09:30:33 tom Exp $
  * @Log: fcall.c,v @
  * Revision 1.7  1995/08/27  15:46:47  mike
  * change some errmsgs to compile_errors
@@ -293,8 +293,8 @@ check_fcall(
 	/* forward reference to a function to be defined later */
 	p = ZMALLOC(FCALL_REC);
 	p->callee = callee;
-	p->call_scope = call_scope;
-	p->move_level = move_level;
+	p->call_scope = (short) call_scope;
+	p->move_level = (short) move_level;
 	p->call = call;
 	p->arg_list = arg_list;
 	p->arg_cnt_checked = 0;
@@ -309,8 +309,8 @@ check_fcall(
 				       code_base))) {
 	    p = ZMALLOC(FCALL_REC);
 	    p->callee = callee;
-	    p->call_scope = call_scope;
-	    p->move_level = move_level;
+	    p->call_scope = (short) call_scope;
+	    p->move_level = (short) move_level;
 	    p->call = call;
 	    p->arg_list = arg_list;
 	    p->arg_cnt_checked = 1;
@@ -367,7 +367,8 @@ relocate_arglist(
 
     /* Note: call_offset is always set even for args that don't need to
        be patched so that this check works. */
-    if (p->call_offset < offset || (unsigned) p->call_offset >= offset + len)
+    if (p->call_offset < offset ||
+	(unsigned) p->call_offset >= (unsigned) offset + len)
 	return;
 
     /* relocate the whole list */
