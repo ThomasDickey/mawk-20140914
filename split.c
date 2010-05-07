@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.17 2010/05/07 00:03:02 tom Exp $
+ * $MawkId: split.c,v 1.18 2010/05/07 08:31:03 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -74,13 +74,13 @@ SPLIT_OV *split_ov_list;
     while ( scan_code[*(unsigned char*)s] != SC_SPACE )	 s++ ;\
     *back = 0
 
-static int
+static size_t
 space_ov_split(char *s, char *back)
 {
     SPLIT_OV dummy;
     register SPLIT_OV *tail = &dummy;
     char *q;
-    int cnt = 0;
+    size_t cnt = 0;
     unsigned len;
 
     while (1) {
@@ -107,11 +107,11 @@ space_ov_split(char *s, char *back)
  *
  * return the number of pieces
  */
-int
-space_split(char *s, unsigned slen)
+size_t
+space_split(char *s, size_t slen)
 {
     char *back = s + slen;
-    int i = 0;
+    size_t i = 0;
     char *q;
     int lcnt = MAX_SPLIT / 3;
 
@@ -150,7 +150,7 @@ space_split(char *s, unsigned slen)
  * only matches of positive length count
  */
 char *
-re_pos_match(char *s, size_t str_len, PTR re, unsigned *lenp)
+re_pos_match(char *s, size_t str_len, PTR re, size_t *lenp)
 {
     char *result = 0;
 
@@ -174,15 +174,15 @@ re_pos_match(char *s, size_t str_len, PTR re, unsigned *lenp)
  *
  *  Return number of pieces.
  */
-static int
+static size_t
 re_ov_split(char *s, size_t slen, PTR re)
 {
     SPLIT_OV dummy;
     SPLIT_OV *tail = &dummy;
-    int cnt = 1;
+    size_t cnt = 1;
     char *limit = s + slen;
     char *t;
-    unsigned mlen;
+    size_t mlen;
 
     while ((s < limit)
 	   && (t = re_pos_match(s, (size_t) (limit - s), re, &mlen))) {
@@ -203,7 +203,7 @@ re_ov_split(char *s, size_t slen, PTR re)
 #define RE_SPLIT3 \
 	if (!(t = re_pos_match(s, slen, re, &mlen))) \
 	    goto done; \
-	sval = split_buff[i++] = new_STRING1(s, (unsigned) (t - s)); \
+	sval = split_buff[i++] = new_STRING1(s, (size_t) (t - s)); \
 	s = t + mlen; \
 	if (s > limit) { \
 	    slen = (size_t) (-1); \
@@ -211,15 +211,15 @@ re_ov_split(char *s, size_t slen, PTR re)
 	} \
 	slen = (size_t) (limit - s)
 
-int
+size_t
 re_split(STRING * s_param, PTR re)
 {
     char *limit = s_param->str + s_param->len;
     char *s = s_param->str;
     char *t;
-    int i = 0;
+    size_t i = 0;
     size_t slen = s_param->len;
-    unsigned mlen;
+    size_t mlen;
     STRING *sval;
     int lcnt = MAX_SPLIT / 3;
 
@@ -238,12 +238,12 @@ re_split(STRING * s_param, PTR re)
     return i;
 }
 
-static int
-null_ov_split(char *s, unsigned slen)
+static size_t
+null_ov_split(char *s, size_t slen)
 {
     SPLIT_OV dummy;
     SPLIT_OV *ovp = &dummy;
-    int cnt = 0;
+    size_t cnt = 0;
 
     while (slen) {
 	ovp = ovp->link = ZMALLOC(SPLIT_OV);
@@ -257,10 +257,10 @@ null_ov_split(char *s, unsigned slen)
     return cnt;
 }
 
-int
-null_split(char *s, unsigned slen)
+size_t
+null_split(char *s, size_t slen)
 {
-    int cnt = 0;		/* number of fields split */
+    size_t cnt = 0;		/* number of fields split */
     STRING *sval;
     int i = 0;			/* indexes split_buff[] */
 
@@ -289,7 +289,7 @@ null_split(char *s, unsigned slen)
 CELL *
 bi_split(CELL * sp)
 {
-    int cnt = 0;		/* the number of pieces */
+    size_t cnt = 0;		/* the number of pieces */
 
     if (sp->type < C_RE)
 	cast_for_split(sp);

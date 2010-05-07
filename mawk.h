@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.17 2010/02/21 16:08:11 tom Exp $
+ * $MawkId: mawk.h,v 1.18 2010/05/07 08:34:35 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -55,6 +55,8 @@ the GNU General Public License, version 2, 1991.
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#include <assert.h>
 
 #include "types.h"
 
@@ -168,11 +170,11 @@ void rt_error(const char *,...) GCC_NORETURN;
 void mawk_exit(int) GCC_NORETURN;
 void da(INST *, FILE *);
 char *rm_escape(char *, unsigned *);
-char *re_pos_match(char *, size_t, PTR, unsigned *);
+char *re_pos_match(char *, size_t, PTR, size_t *);
 int binmode(void);
 
 #ifndef  REXP_H
-char *str_str(char *, unsigned, char *, unsigned);
+char *str_str(char *, size_t, char *, size_t);
 #endif
 
 void parse(void);
@@ -187,7 +189,7 @@ void compile_error(const char *,...);
 
 void execute(INST *, CELL *, CELL *);
 const char *find_kw_str(int);
-void da_string(FILE *fp, const char *, unsigned);
+void da_string(FILE *fp, const char *, size_t);
 
 #ifdef HAVE_STRTOD_OVF_BUG
 double strtod_with_ovf_bug(const char *, char **);

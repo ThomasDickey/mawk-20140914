@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.21 2010/02/21 14:58:21 tom Exp $
+ * $MawkId: init.c,v 1.22 2010/05/07 08:35:39 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -238,7 +238,7 @@ parse_w_opt(char *source, char **next)
 	    ++source;
 	}
 	for (n = 0; n < (int) (sizeof(w_options) / sizeof(w_options[0])); ++n) {
-	    if (ok_abbrev(w_options[n].name, first, source - first)) {
+	    if (ok_abbrev(w_options[n].name, first, (int) (source - first))) {
 		if (match >= 0) {
 		    errmsg(0, "? ambiguous -W value: %s vs %s\n",
 			   w_options[match].name,
@@ -319,7 +319,7 @@ process_cmdline(int argc, char **argv)
 	switch (argv[i][1]) {
 
 	case 'W':
-	    for (j = 0; j < (int) strlen(optArg); j = (optNext - optArg)) {
+	    for (j = 0; j < (int) strlen(optArg); j = (int) (optNext - optArg)) {
 		switch (parse_w_opt(optArg + j, &optNext)) {
 		case W_VERSION:
 		    print_version();

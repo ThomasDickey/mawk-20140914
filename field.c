@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.11 2010/04/19 08:32:57 tom Exp $
+ * $MawkId: field.c,v 1.12 2010/05/07 08:31:57 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -238,15 +238,15 @@ split_field0(void)
     else {
 	switch (fs_shadow.type) {
 	case C_SNULL:		/* FS == "" */
-	    nf = null_split(string(cp)->str, string(cp)->len);
+	    nf = (int) null_split(string(cp)->str, string(cp)->len);
 	    break;
 
 	case C_SPACE:
-	    nf = space_split(string(cp)->str, string(cp)->len);
+	    nf = (int) space_split(string(cp)->str, string(cp)->len);
 	    break;
 
 	default:
-	    nf = re_split(string(cp), fs_shadow.ptr);
+	    nf = (int) re_split(string(cp), fs_shadow.ptr);
 	    break;
 	}
 
@@ -304,7 +304,7 @@ field_assign(CELL * fp, CELL * cp)
     }
 #endif
 
-    switch (i = (fp - field)) {
+    switch (i = (int) (fp - field)) {
 
     case NF_field:
 
@@ -421,7 +421,7 @@ build_field0(void)
     } else {
 	CELL c;
 	STRING *ofs, *tail;
-	unsigned len;
+	size_t len;
 	register CELL *cp;
 	register char *p, *q;
 	int cnt;
@@ -433,7 +433,7 @@ build_field0(void)
 	tail = (STRING *) c.ptr;
 	cnt = nf - 1;
 
-	len = ((unsigned) cnt) * ofs->len + tail->len;
+	len = ((size_t) cnt) * ofs->len + tail->len;
 
 	fbp = fbank;
 	cp_limit = field + FBANK_SZ;
@@ -549,7 +549,7 @@ field_addr_to_index(CELL * cp)
 	      cp < *p || cp >= *p + FBANK_SZ)
 	p++;
 
-    return ((p - fbank) << FB_SHIFT) + (cp - *p);
+    return (int) (((p - fbank) << FB_SHIFT) + (cp - *p));
 }
 
 /*------- more than 1 fbank needed  ------------*/

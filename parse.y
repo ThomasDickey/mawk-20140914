@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.7 2009/12/13 19:36:24 Jonathan.Nieder Exp $
+ * $MawkId: parse.y,v 1.8 2010/05/07 08:40:15 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -1008,7 +1008,7 @@ funct_start   :  funct_head  LPAREN  f_arglist  RPAREN
                    $1->nargs = $3 ;
                    if ( $3 )
                         $1->typev = (char *)
-                        memset( zmalloc($3), ST_LOCAL_NONE, $3) ;
+                        memset( zmalloc((size_t) $3), ST_LOCAL_NONE, (size_t) $3) ;
                    else $1->typev = (char *) 0 ;
 
                    code_ptr = code_base =
@@ -1152,7 +1152,7 @@ static void
 resize_fblock(FBLOCK *fbp)
 {
     CODEBLOCK *p = ZMALLOC(CODEBLOCK) ;
-    unsigned dummy ;
+    size_t dummy ;
 
     code2op(_RET0, _HALT) ;
     /* make sure there is always a return */

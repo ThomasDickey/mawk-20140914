@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.3 2010/01/31 22:17:18 tom Exp $
+ * $MawkId: code.c,v 1.4 2010/05/07 08:37:47 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -60,7 +60,7 @@ CODEBLOCK active_code;
 CODEBLOCK *main_code_p, *begin_code_p, *end_code_p;
 
 INST *begin_start, *main_start, *end_start;
-unsigned begin_size, main_size;
+size_t begin_size, main_size;
 
 INST *execution_start = 0;
 
@@ -85,11 +85,11 @@ code_grow(void)
 
 /* shrinks executable code that's done to its final size */
 INST *
-code_shrink(CODEBLOCK * p, unsigned *sizep)
+code_shrink(CODEBLOCK * p, size_t *sizep)
 {
 
-    unsigned oldsize = INST_BYTES(p->limit - p->base);
-    unsigned newsize = INST_BYTES(p->ptr - p->base);
+    size_t oldsize = INST_BYTES(p->limit - p->base);
+    size_t newsize = INST_BYTES(p->ptr - p->base);
     INST *retval;
 
     *sizep = newsize;
@@ -147,7 +147,7 @@ set_code(void)
 {
     /* set the main code which is active_code */
     if (end_code_p || code_offset > 1) {
-	int gl_offset = code_offset;
+	int gl_offset = (int) code_offset;
 
 	if (NR_flag)
 	    code2op(OL_GL_NR, _HALT);
@@ -165,7 +165,7 @@ set_code(void)
 
     /* set the END code */
     if (end_code_p) {
-	unsigned dummy;
+	size_t dummy;
 
 	active_code = *end_code_p;
 	code2op(_EXIT0, _HALT);

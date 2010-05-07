@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.h,v 1.6 2010/04/19 08:33:15 tom Exp $
+ * $MawkId: field.h,v 1.7 2010/05/07 08:31:30 tom Exp $
  * @Log: field.h,v @
  * Revision 1.2  1995/06/18  19:42:16  mike
  * Remove some redundant declarations and add some prototypes
@@ -36,9 +36,9 @@ the GNU General Public License, version 2, 1991.
 
 void set_field0(char *, unsigned);
 void split_field0(void);
-int space_split(char *, unsigned);
-int re_split(STRING *, PTR);
-int null_split(char *, unsigned);
+size_t space_split(char *, size_t);
+size_t re_split(STRING *, PTR);
+size_t null_split(char *, size_t);
 void field_assign(CELL *, CELL *);
 char *is_string_split(PTR, unsigned *);
 void slow_cell_assign(CELL *, CELL *);
