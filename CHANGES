@@ -1,6 +1,9 @@
--- $MawkId: CHANGES,v 1.120 2010/05/07 11:01:14 tom Exp $
+-- $MawkId: CHANGES,v 1.121 2010/05/13 21:53:56 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+201005??
+	+ fix sentence fragment in README (report by Elias Pipping).
 
 20100507
 	+ cleanup gcc warnings for 64-bit platform, e.g., use size_t rather
