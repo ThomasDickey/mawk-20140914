@@ -1,4 +1,4 @@
--- $MawkId: README,v 1.4 2009/12/20 15:54:32 tom Exp $
+-- $MawkId: README,v 1.5 2010/05/13 21:52:05 tom Exp $
 -- vile:txtmode fc=78
 
 mawk -- an implementation of new/posix awk
@@ -72,6 +72,7 @@ Limitations:
 
 	Use an external regular expression library if you require brace
 	expressions.  Aside from that, mawk's built-in regular expressions
+	provide POSIX functionality.
 
 	Using an external regular expression library means that mawk cannot
 	match expressions containing the null character.  That is a
