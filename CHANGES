@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.121 2010/05/13 21:53:56 tom Exp $
+-- $MawkId: CHANGES,v 1.122 2010/06/19 00:51:31 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-201005??
+20100618
+	+ correct translation of "^{" pattern for system regular expression
+	  library  (report by Elias Pipping).
 	+ fix sentence fragment in README (report by Elias Pipping).
 
 20100507
