@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.13 2010/05/07 22:15:27 tom Exp $
+ * $MawkId: regexp_system.c,v 1.14 2010/06/19 00:46:04 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -19,23 +19,31 @@ static mawk_re_t *last_used_regexp = NULL;
 static int err_code = 0;
 
 /*#define MAWK_EXTRACT_REGEXP_DEBUG*/
+//#define MAWK_EXTRACT_REGEXP_DEBUG
 
-static void
-prepare_regexp(char *regexp)
-{
 #ifdef MAWK_EXTRACT_REGEXP_DEBUG
-    char *begin = regexp;
+#define TRACE(params) fprintf params
+#else
+#define TRACE(params)		/*nothing */
 #endif
-    int bs = 0;
+
+#define NEXT_CH() (((size_t) (source - base) < limit) ? *source : 0)
+#define LIMITED() (((size_t) (source - base) < limit) ? *source++ : 0)
+
+static char *
+prepare_regexp(char *regexp, const char *source, size_t limit)
+{
+    const char *base = source;
+    const char *range = 0;
+    int escape = 0;
+    int cclass = 0;
     char *tail = regexp;
     char ch;
 
-#ifdef MAWK_EXTRACT_REGEXP_DEBUG
-    fprintf(stderr, "in: %s\n", begin);
-#endif
+    TRACE((stderr, "in : %s\n", base));
 
-    while ((ch = *regexp++) != 0) {
-	if (bs) {
+    while ((ch = LIMITED()) != 0) {
+	if (escape) {
 	    switch (ch) {
 	    case 'n':
 		*tail++ = '\n';
@@ -68,46 +76,76 @@ prepare_regexp(char *regexp)
 	    case '7':
 		*tail = (char) (ch - '0');
 
-		ch = *regexp++;
+		ch = LIMITED();
 		if (ch >= '0' && ch <= '7') {
 		    *tail = (char) (((unsigned char) *tail) * 8 + (ch - '0'));
 
-		    ch = *regexp++;
+		    ch = LIMITED();
 		    if (ch >= '0' && ch <= '7') {
 			*tail = (char) (((unsigned char) *tail) * 8 + (ch - '0'));
 		    } else {
-			--regexp;
+			--source;
 		    }
 		} else {
-		    --regexp;
+		    --source;
 		}
 
 		++tail;
 		break;
 	    default:
 		/* pass \<unknown_char> to regcomp */
-#ifdef MAWK_EXTRACT_REGEXP_DEBUG
-		fprintf(stderr, "passing %c%c\n", '\\', ch);
-#endif
+		TRACE((stderr, "passing %c%c\n", '\\', ch));
 		*tail++ = '\\';
 		*tail++ = ch;
 	    }
 
-	    bs = 0;
+	    escape = 0;
 	} else {
-	    if (ch == '\\') {
-		bs = 1;
-	    } else {
+	    switch (ch) {
+	    case '\\':
+		escape = 1;
+		break;
+	    case '[':
+		if (range == 0) {
+		    range = tail;
+		} else {
+		    if (NEXT_CH() == ':') {
+			cclass = ':';
+		    }
+		}
 		*tail++ = ch;
+		break;
+	    case ']':
+		if (range != 0) {
+		    if (cclass != 0) {
+			if (source[-2] == cclass) {
+			    cclass = 0;
+			}
+		    } else if (tail == range + 1
+			       || (tail == range + 2 && range[1] == '^')) {
+			range = 0;
+		    }
+		}
+		*tail++ = ch;
+		break;
+	    case '{':
+		/* FALLTHRU */
+	    case '}':
+		if (range == 0)
+		    *tail++ = '\\';
+		*tail++ = ch;
+		break;
+	    default:
+		*tail++ = ch;
+		break;
 	    }
 	}
     }
 
     *tail = 0;
 
-#ifdef MAWK_EXTRACT_REGEXP_DEBUG
-    fprintf(stderr, "out: %s\n", begin);
-#endif
+    TRACE((stderr, "out: %s\n", regexp));
+    return tail;
 }
 
 void *
@@ -115,16 +153,15 @@ REcompile(char *regexp, size_t len)
 {
     mawk_re_t *re = (mawk_re_t *) malloc(sizeof(mawk_re_t));
     char *new_regexp = (char *) malloc(len + 3);
+    char *buffer = new_regexp;
 
     if (!re || !new_regexp)
 	return NULL;
 
-    new_regexp[0] = '(';
-    memcpy(new_regexp + 1, regexp, len);
-    new_regexp[len + 1] = ')';
-    new_regexp[len + 2] = 0;
-
-    prepare_regexp(new_regexp);
+    *buffer++ = '(';
+    buffer = prepare_regexp(buffer, regexp, len);
+    *buffer++ = ')';
+    *buffer = '\0';
 
     last_used_regexp = re;
 
@@ -149,15 +186,16 @@ int
 REtest(char *str, size_t str_len GCC_UNUSED, PTR q)
 {
     mawk_re_t *re = (mawk_re_t *) q;
-    /* fprintf (stderr, "REtest:  \"%s\" ~ /%s/", str, re -> regexp); */
+
+    TRACE((stderr, "REtest:  \"%s\" ~ /%s/", str, re->regexp));
 
     last_used_regexp = re;
 
     if (regexec(&re->re, str, (size_t) 0, NULL, 0)) {
-	/* fprintf (stderr, "=1\n"); */
+	TRACE((stderr, "=1\n"));
 	return 0;
     } else {
-	/* fprintf (stderr, "=0\n"); */
+	TRACE((stderr, "=0\n"));
 	return 1;
     }
 }
@@ -169,16 +207,17 @@ REmatch(char *str, size_t str_len GCC_UNUSED, PTR q, size_t *lenp)
 {
     mawk_re_t *re = (mawk_re_t *) q;
     regmatch_t match[MAX_MATCHES];
-    /* fprintf (stderr, "REmatch:  \"%s\" ~ /%s/", str, re -> regexp); */
+
+    TRACE((stderr, "REmatch:  \"%s\" ~ /%s/", str, re->regexp));
 
     last_used_regexp = re;
 
     if (!regexec(&re->re, str, (size_t) MAX_MATCHES, match, 0)) {
 	*lenp = (size_t) (match[0].rm_eo - match[0].rm_so);
-	/* fprintf (stderr, "=%i/%i\n", match [0].rm_so, *lenp); */
+	TRACE((stderr, "=%i/%i\n", match[0].rm_so, *lenp));
 	return str + match[0].rm_so;
     } else {
-	/* fprintf (stderr, "=0\n"); */
+	TRACE((stderr, "=0\n"));
 	return NULL;
     }
 }
@@ -203,11 +242,11 @@ REerror(void)
 		       error_buffer, sizeof(error_buffer));
     } else {
 	char *msg = strerror(errno);
-	const char *fmt = "malloc failed: %.*s";
+	const char fmt[] = "malloc failed: %.*s";
 
 	sprintf(error_buffer,
 		fmt,
-		(int) (sizeof(error_buffer) - strlen(msg)),
+		(int) (sizeof(error_buffer) - sizeof(fmt) - strlen(msg)),
 		msg);
     }
     return error_buffer;
