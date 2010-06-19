@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.15 2010/06/19 00:57:03 tom Exp $
+ * $MawkId: regexp_system.c,v 1.16 2010/06/19 01:03:19 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -19,7 +19,6 @@ static mawk_re_t *last_used_regexp = NULL;
 static int err_code = 0;
 
 /*#define MAWK_EXTRACT_REGEXP_DEBUG*/
-//#define MAWK_EXTRACT_REGEXP_DEBUG
 
 #ifdef MAWK_EXTRACT_REGEXP_DEBUG
 #define TRACE(params) fprintf params
