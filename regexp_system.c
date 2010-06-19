@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.14 2010/06/19 00:46:04 tom Exp $
+ * $MawkId: regexp_system.c,v 1.15 2010/06/19 00:57:03 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -27,8 +27,8 @@ static int err_code = 0;
 #define TRACE(params)		/*nothing */
 #endif
 
-#define NEXT_CH() (((size_t) (source - base) < limit) ? *source : 0)
-#define LIMITED() (((size_t) (source - base) < limit) ? *source++ : 0)
+#define NEXT_CH() (char) (((size_t) (source - base) < limit) ? *source : 0)
+#define LIMITED() (char) (((size_t) (source - base) < limit) ? *source++ : 0)
 
 static char *
 prepare_regexp(char *regexp, const char *source, size_t limit)
