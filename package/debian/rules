@@ -33,8 +33,7 @@ configure-stamp:
 		--program-suffix=-cur \
 		--prefix=/usr \
 		--mandir=\$${prefix}/share/man \
-		--sysconfdir=/etc \
-		--program-transform-name='s,^,b,'
+		--sysconfdir=/etc
 
 	touch configure-stamp
 
