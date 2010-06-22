@@ -1,4 +1,4 @@
-Source: new-mawk
+Source: mawk-cur
 Maintainer: Thomas E. Dickey <dickey@invisible-island.net>
 Section: devel
 Priority: extra
@@ -6,7 +6,7 @@ Standards-Version: 3.8.4
 Build-Depends: debhelper (>= 5)
 Homepage: http://invisible-island.net/mawk/
 
-Package: new-mawk
+Package: mawk-cur
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: pattern scanning and text processing language
