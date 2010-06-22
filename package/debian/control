@@ -1,0 +1,15 @@
+Source: new-mawk
+Maintainer: Thomas E. Dickey <dickey@invisible-island.net>
+Section: devel
+Priority: extra
+Standards-Version: 3.8.4
+Build-Depends: debhelper (>= 5)
+Homepage: http://invisible-island.net/mawk/
+
+Package: new-mawk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: pattern scanning and text processing language
+ mawk is an interpreter for the AWK Programming Language.  The AWK language is
+ useful for manipulation of data files, text retrieval and processing, and for
+ prototyping and experimenting with algorithms.
