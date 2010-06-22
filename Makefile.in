@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.37 2010/05/06 23:57:21 tom Exp $
+# $MawkId: Makefile.in,v 1.38 2010/06/22 23:10:31 tom Exp $
 # Makefile-template for MAWK
 
 SHELL=/bin/sh
@@ -41,6 +41,7 @@ LINTOPTS	=
 INSTALL         = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA    = @INSTALL_DATA@
+transform	= @program_transform_name@
 
 # where to put mawk
 BINDIR          = $(DESTDIR)$(bindir)
@@ -49,6 +50,9 @@ BINDIR          = $(DESTDIR)$(bindir)
 MANDIR          = $(DESTDIR)$(mandir)
 
 #######################################
+
+actual_PROG  = `echo mawk|    sed '$(transform)'`
+binary_PROG  = $(actual_PROG)$x
 
 PROG  = mawk$x
 
@@ -106,14 +110,16 @@ scancode.c :  $(srcdir)/makescan.c  scancode.h nstd.h config.h
 	./makescan.exe > scancode.c
 	rm makescan.exe
 
-MAWKMAN = $(MANDIR)/mawk.$(manext)
+MAWK_BIN = $(BINDIR)/$(binary_PROG)
+MAWK_MAN = $(MANDIR)/$(actual_PROG).$(manext)
+
 install :  $(BINDIR) $(MANDIR) $(PROG)
-	$(INSTALL_PROGRAM) $(PROG) $(BINDIR)/$(PROG)
-	$(INSTALL_DATA)  man/mawk.1  $(MAWKMAN)
+	$(INSTALL_PROGRAM) $(PROG) $(MAWK_BIN)
+	$(INSTALL_DATA) man/mawk.1 $(MAWK_MAN)
 
 uninstall :
-	rm -f $(BINDIR)/$(PROG)
-	rm -f $(MAWKMAN)
+	rm -f $(MAWK_BIN)
+	rm -f $(MAWK_MAN)
 
 clean :
 	rm -f y.tab.c y.tab.h makescan.exe
