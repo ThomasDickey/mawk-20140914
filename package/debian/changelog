@@ -1,0 +1,5 @@
+new-mawk (1.3.4-20100621) unstable; urgency=low
+
+  * Add package scripts to upstream source, for test-builds.
+
+ -- Thomas E. Dickey <dickey@invisible-island.net>  Tue, 22 Jun 2010 04:27:28 -0400
