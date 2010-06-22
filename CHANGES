@@ -1,6 +1,11 @@
--- $MawkId: CHANGES,v 1.122 2010/06/19 00:51:31 tom Exp $
+-- $MawkId: CHANGES,v 1.123 2010/06/22 00:32:10 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20100621
+	+ add RPM spec-file.
+	+ move release- and patch-level values from version.c to patchlev.h
+	  to simplify packaging scripts.
 
 20100618
 	+ correct translation of "^{" pattern for system regular expression
