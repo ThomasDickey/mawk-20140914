@@ -1,0 +1,12 @@
+#! /bin/sh
+# prerm script for mawk
+
+set -e
+
+if [ $1 != "upgrade" ]; then
+	update-alternatives --remove new-mawk /usr/bin/new-mawk
+fi
+
+#DEBHELPER#
+
+exit 0
