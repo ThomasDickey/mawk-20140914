@@ -1,0 +1,15 @@
+#! /bin/sh
+# postinst script for mawk
+
+set -e
+
+if [ $1 != "upgrade" ] ; then
+	update-alternatives \
+		--install /usr/bin/new-mawk new-mawk /usr/bin/new-mawk 80 \
+		--slave /usr/share/man/man1/new-mawk.1.gz mawkman \
+			/usr/share/man/man1/new-mawk.1.gz
+fi
+
+#DEBHELPER#
+
+exit 0
