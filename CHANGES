@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.125 2010/06/23 09:26:32 tom Exp $
+-- $MawkId: CHANGES,v 1.126 2010/06/23 22:59:05 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100623
+	+ correct translation of octal and hex escapes for system regular
+	  expression library.
 	+ modify configure script to support --program-suffix, etc.
 	+ add Debian package scripts, for "mawk-cur".
 	+ add RPM spec-file.
