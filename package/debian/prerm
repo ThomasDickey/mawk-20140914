@@ -4,7 +4,7 @@
 set -e
 
 if [ $1 != "upgrade" ]; then
-	update-alternatives --remove mawk-cur /usr/bin/mawk-cur
+	update-alternatives --remove mawk /usr/bin/mawk-cur
 fi
 
 #DEBHELPER#
