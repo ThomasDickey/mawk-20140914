@@ -3,11 +3,26 @@
 
 set -e
 
-if [ $1 != "upgrade" ] ; then
+if [ $1 != "upgrade" ]
+then
+
+	PRI=50
+	ALT=mawk
+	PKG=mawk-cur
+
+	BINDIR=/usr/bin
+	MANDIR=/usr/share/man/man1
+
+	mv $BINDIR/$ALT      $BINDIR/$PKG 
+	mv $MANDIR/$ALT.1.gz $MANDIR/$PKG.1.gz
+
 	update-alternatives \
-		--install /usr/bin/mawk-cur mawk-cur /usr/bin/mawk-cur 80 \
-		--slave /usr/share/man/man1/mawk-cur.1.gz mawkman \
-			/usr/share/man/man1/mawk-cur.1.gz
+		--install \
+			$BINDIR/$ALT $ALT \
+			$BINDIR/$PKG $PRI \
+		--slave $MANDIR/$ALT.1.gz $ALT.1.gz \
+			$MANDIR/$PKG.1.gz
+
 fi
 
 #DEBHELPER#
