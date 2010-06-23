@@ -3,18 +3,18 @@
 
 set -e
 
+PRI=10
+ALT=mawk
+PKG=mawk-base
+
+BINDIR=/usr/bin
+MANDIR=/usr/share/man/man1
+
 if [ ! -f /usr/bin/mawk-base ]
 then
-
-	PRI=10
-	ALT=mawk
-	PKG=mawk-base
-
-	BINDIR=/usr/bin
-	MANDIR=/usr/share/man/man1
-
 	mv $BINDIR/$ALT      $BINDIR/$PKG 
 	mv $MANDIR/$ALT.1.gz $MANDIR/$PKG.1.gz
+fi
 
 	update-alternatives \
 		--install \
@@ -23,7 +23,6 @@ then
 		--slave $MANDIR/$ALT.1.gz $ALT.1.gz \
 			$MANDIR/$PKG.1.gz
 
-fi
 
 #DEBHELPER#
 
