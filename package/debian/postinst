@@ -3,18 +3,15 @@
 
 set -e
 
+PRI=50
+ALT=mawk
+PKG=mawk-cur
+
+BINDIR=/usr/bin
+MANDIR=/usr/share/man/man1
+
 if [ $1 != "upgrade" ]
 then
-
-	PRI=50
-	ALT=mawk
-	PKG=mawk-cur
-
-	BINDIR=/usr/bin
-	MANDIR=/usr/share/man/man1
-
-	mv $BINDIR/$ALT      $BINDIR/$PKG 
-	mv $MANDIR/$ALT.1.gz $MANDIR/$PKG.1.gz
 
 	update-alternatives \
 		--install \
