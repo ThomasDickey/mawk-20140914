@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.16 2010/06/19 01:03:19 tom Exp $
+ * $MawkId: regexp_system.c,v 1.17 2010/06/23 22:51:35 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -29,6 +29,13 @@ static int err_code = 0;
 #define NEXT_CH() (char) (((size_t) (source - base) < limit) ? *source : 0)
 #define LIMITED() (char) (((size_t) (source - base) < limit) ? *source++ : 0)
 
+/*
+ * Keep track, for octal and hex escapes:
+ * octal: 2,3,4
+ * hex: 3,4
+ */
+#define MORE_DIGITS (escape < 4)
+
 static char *
 prepare_regexp(char *regexp, const char *source, size_t limit)
 {
@@ -36,14 +43,102 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
     const char *range = 0;
     int escape = 0;
     int cclass = 0;
+    int radix = 0;
+    int state = 0;
     char *tail = regexp;
     char ch;
+    int value;
+    int added;
 
     TRACE((stderr, "in : %s\n", base));
 
     while ((ch = LIMITED()) != 0) {
 	if (escape) {
+	    added = 0;
+	    ++escape;
+	    switch (radix) {
+	    case 16:
+		switch (ch) {
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		    value = (value << 4) | (ch - '0');
+		    state = MORE_DIGITS;
+		    added = 1;
+		    break;
+		case 'a':
+		case 'b':
+		case 'c':
+		case 'd':
+		case 'e':
+		case 'f':
+		    value = (value << 4) | (10 + (ch - 'a'));
+		    state = MORE_DIGITS;
+		    added = 1;
+		    break;
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+		    value = (value << 4) | (10 + (ch - 'A'));
+		    state = MORE_DIGITS;
+		    added = 1;
+		    break;
+		default:
+		    state = 0;	/* number ended */
+		    break;
+		}
+		if (state) {
+		    continue;
+		} else {
+		    radix = 0;
+		    *tail++ = (char) value;
+		    if (added)
+			continue;
+		}
+		break;
+	    case 8:
+		switch (ch) {
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		    value = (value << 3) | (ch - '0');
+		    state = MORE_DIGITS;
+		    added = 1;
+		    break;
+		default:
+		    state = 0;	/* number ended */
+		    break;
+		}
+		if (state) {
+		    continue;
+		} else {
+		    radix = 0;
+		    *tail++ = (char) value;
+		    if (added)
+			continue;
+		}
+		break;
+	    }
 	    switch (ch) {
+	    case '\\':
+		*tail++ = '\\';
+		*tail++ = '\\';
+		break;
 	    case 'n':
 		*tail++ = '\n';
 		break;
@@ -65,6 +160,11 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    case 'v':
 		*tail++ = '\013';
 		break;
+	    case 'x':
+		radix = 16;
+		value = 0;
+		state = 1;
+		break;
 	    case '0':
 	    case '1':
 	    case '2':
@@ -73,29 +173,13 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    case '5':
 	    case '6':
 	    case '7':
-		*tail = (char) (ch - '0');
-
-		ch = LIMITED();
-		if (ch >= '0' && ch <= '7') {
-		    *tail = (char) (((unsigned char) *tail) * 8 + (ch - '0'));
-
-		    ch = LIMITED();
-		    if (ch >= '0' && ch <= '7') {
-			*tail = (char) (((unsigned char) *tail) * 8 + (ch - '0'));
-		    } else {
-			--source;
-		    }
-		} else {
-		    --source;
-		}
-
-		++tail;
+		radix = 8;
+		value = 0;
+		state = 1;
 		break;
 	    default:
-		/* pass \<unknown_char> to regcomp */
-		TRACE((stderr, "passing %c%c\n", '\\', ch));
-		*tail++ = '\\';
 		*tail++ = ch;
+		break;
 	    }
 
 	    escape = 0;
