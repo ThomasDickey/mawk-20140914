@@ -1,0 +1,30 @@
+#! /bin/sh
+# preinst script for mawk
+
+set -e
+
+if [ ! -f /usr/bin/mawk-base ]
+then
+
+	PRI=10
+	ALT=mawk
+	PKG=mawk-base
+
+	BINDIR=/usr/bin
+	MANDIR=/usr/share/man/man1
+
+	mv $BINDIR/$ALT      $BINDIR/$PKG 
+	mv $MANDIR/$ALT.1.gz $MANDIR/$PKG.1.gz
+
+	update-alternatives \
+		--install \
+			$BINDIR/$ALT $ALT \
+			$BINDIR/$PKG $PRI \
+		--slave $MANDIR/$ALT.1.gz $ALT.1.gz \
+			$MANDIR/$PKG.1.gz
+
+fi
+
+#DEBHELPER#
+
+exit 0
