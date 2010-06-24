@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.20 2010/06/24 22:33:41 tom Exp $
+ * $MawkId: regexp_system.c,v 1.21 2010/06/24 23:34:06 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -28,6 +28,8 @@ static int err_code = 0;
 
 #define NEXT_CH() (char) (((size_t) (source - base) < limit) ? *source : 0)
 #define LIMITED() (char) (((size_t) (source - base) < limit) ? *source++ : 0)
+
+#define IgnoreNull() errmsg(-1, "ignoring embedded null in pattern")
 
 /*
  * Keep track, for octal and hex escapes:
@@ -101,7 +103,10 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		    continue;
 		} else {
 		    radix = 0;
-		    *tail++ = (char) value;
+		    if (value)
+			*tail++ = (char) value;
+		    else
+			IgnoreNull();
 		    if (added)
 			continue;
 		}
@@ -128,7 +133,10 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		    continue;
 		} else {
 		    radix = 0;
-		    *tail++ = (char) value;
+		    if (value)
+			*tail++ = (char) value;
+		    else
+			IgnoreNull();
 		    if (added)
 			continue;
 		}
@@ -168,7 +176,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		radix = 16;
 		value = 0;
 		state = 1;
-		break;
+		continue;
 	    case '0':
 	    case '1':
 	    case '2':
@@ -178,9 +186,9 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    case '6':
 	    case '7':
 		radix = 8;
-		value = 0;
+		value = (ch - '0');
 		state = 1;
-		break;
+		continue;
 	    case '^':
 		if (tail - range == 1)
 		    *tail++ = '\\';
