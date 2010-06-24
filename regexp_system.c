@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.19 2010/06/24 08:13:37 tom Exp $
+ * $MawkId: regexp_system.c,v 1.20 2010/06/24 22:33:41 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -137,7 +137,11 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    switch (ch) {
 	    case '\\':
 		*tail++ = '\\';
+		*tail++ = ch;
+		break;
+	    case '{':
 		*tail++ = '\\';
+		*tail++ = ch;
 		break;
 	    case 'n':
 		*tail++ = '\n';
@@ -177,6 +181,11 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		value = 0;
 		state = 1;
 		break;
+	    case '^':
+		if (tail - range == 1)
+		    *tail++ = '\\';
+		*tail++ = ch;
+		break;
 	    default:
 		*tail++ = ch;
 		break;
@@ -205,13 +214,22 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 			    cclass = 0;
 			}
 		    } else if (tail == range + 1
-			       || (tail == range + 2 && range[1] == '^')) {
+			       || (tail == range + 2 && range[1] == '^')
+			       || (tail > range + 2)) {
 			range = 0;
 		    }
 		}
 		*tail++ = ch;
 		break;
 	    case '{':
+		if (range == 0 &&
+		    ((tail == regexp) ||
+		     (tail[-1] == '*') ||
+		     (tail[-1] == '?'))) {
+		    *tail++ = '\\';
+		    *tail++ = ch;
+		    break;
+		}
 		/* FALLTHRU */
 	    case '}':
 		if (range == 0)
@@ -237,7 +255,7 @@ REcompile(char *regexp, size_t len)
     mawk_re_t *re = (mawk_re_t *) malloc(sizeof(mawk_re_t));
 
     if (re != 0) {
-	size_t need = (len * 2) + 1;	/* might double, with escaping */
+	size_t need = (len * 2) + 8;	/* might double, with escaping */
 	char *new_regexp = (char *) malloc(need);
 
 	if (new_regexp != NULL) {
