@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.17 2010/06/23 22:51:35 tom Exp $
+ * $MawkId: regexp_system.c,v 1.18 2010/06/24 00:41:03 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -50,7 +50,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
     int value;
     int added;
 
-    TRACE((stderr, "in : %s\n", base));
+    TRACE((stderr, "in : \"%s\"\n", base));
 
     while ((ch = LIMITED()) != 0) {
 	if (escape) {
@@ -225,9 +225,9 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	}
     }
 
-    *tail = 0;
+    *tail = '\0';
 
-    TRACE((stderr, "out: %s\n", regexp));
+    TRACE((stderr, "out: \"%s\"\n", regexp));
     return tail;
 }
 
@@ -235,28 +235,40 @@ void *
 REcompile(char *regexp, size_t len)
 {
     mawk_re_t *re = (mawk_re_t *) malloc(sizeof(mawk_re_t));
-    char *new_regexp = (char *) malloc(len + 3);
-    char *buffer = new_regexp;
 
-    if (!re || !new_regexp)
-	return NULL;
+    if (re != 0) {
+	size_t need = (len * 2) + 1;	/* might double, with escaping */
+	char *new_regexp = (char *) malloc(need);
 
-    *buffer++ = '(';
-    buffer = prepare_regexp(buffer, regexp, len);
-    *buffer++ = ')';
-    *buffer = '\0';
+	if (new_regexp != NULL) {
+	    char *buffer = new_regexp;
 
-    last_used_regexp = re;
+	    assert(need > len);
 
-    memset(re, 0, sizeof(mawk_re_t));
-    re->regexp = strdup(new_regexp);
-    err_code = regcomp(&re->re, new_regexp, REG_EXTENDED);
+	    *buffer++ = '(';
+	    buffer = prepare_regexp(buffer, regexp, len);
+	    *buffer++ = ')';
+	    *buffer = '\0';
 
-    free(new_regexp);
+	    assert(strlen(new_regexp) < need);
 
-    if (err_code)
-	return NULL;
+	    last_used_regexp = re;
 
+	    memset(re, 0, sizeof(mawk_re_t));
+	    re->regexp = strdup(new_regexp);
+	    err_code = regcomp(&re->re, new_regexp, REG_EXTENDED);
+
+	    free(new_regexp);
+
+	    if (err_code) {
+		re = NULL;
+	    }
+
+	} else {
+	    free(re);
+	    re = NULL;
+	}
+    }
     return re;
 }
 
@@ -297,7 +309,7 @@ REmatch(char *str, size_t str_len GCC_UNUSED, PTR q, size_t *lenp)
 
     if (!regexec(&re->re, str, (size_t) MAX_MATCHES, match, 0)) {
 	*lenp = (size_t) (match[0].rm_eo - match[0].rm_so);
-	TRACE((stderr, "=%i/%i\n", match[0].rm_so, *lenp));
+	TRACE((stderr, "=%i/%ul\n", match[0].rm_so, (unsigned long) *lenp));
 	return str + match[0].rm_so;
     } else {
 	TRACE((stderr, "=0\n"));
