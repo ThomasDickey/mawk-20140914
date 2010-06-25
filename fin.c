@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.26 2010/05/07 22:13:30 tom Exp $
+ * $MawkId: fin.c,v 1.27 2010/06/25 21:53:18 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -361,7 +361,7 @@ enlarge_fin_buffer(FIN * fin)
   target is big enough to hold size + 1 chars
   on exit the back of the target is zero terminated
  *--------------*/
-unsigned
+size_t
 fillbuff(int fd, char *target, size_t size)
 {
     register int r;
@@ -384,7 +384,7 @@ fillbuff(int fd, char *target, size_t size)
 
   out:
     *target = 0;
-    return entry_size - size;
+    return (size_t) (entry_size - size);
 }
 
 /* main_fin is a handle to the main input stream

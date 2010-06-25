@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.h,v 1.9 2010/05/07 22:02:24 tom Exp $
+ * $MawkId: fin.h,v 1.10 2010/06/25 21:53:10 tom Exp $
  * @Log: fin.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:13  mike
  * move source to cvs
@@ -51,7 +51,7 @@ FIN *FINopen(char *, int);
 void FINclose(FIN *);
 void FINsemi_close(FIN *);
 char *FINgets(FIN *, size_t *);
-unsigned fillbuff(int, char *, size_t);
+size_t fillbuff(int, char *, size_t);
 
 extern FIN *main_fin;		/* for the main input stream */
 void open_main(void);
