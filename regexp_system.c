@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.24 2010/06/25 08:30:10 tom Exp $
+ * $MawkId: regexp_system.c,v 1.25 2010/06/25 08:37:14 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -205,6 +205,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		*tail++ = ch;
 		break;
 	    default:
+		*tail++ = '\\';	/* for "*.()", etc */
 		*tail++ = ch;
 		break;
 	    }
