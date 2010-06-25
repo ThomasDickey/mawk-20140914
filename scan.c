@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.21 2010/05/07 22:03:19 tom Exp $
+ * $MawkId: scan.c,v 1.22 2010/06/25 22:34:36 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -187,7 +187,7 @@ static unsigned lineno = 1;
 static void
 scan_fillbuff(void)
 {
-    unsigned r;
+    size_t r;
 
     r = fillbuff(program_fd, (char *) buffer, (size_t) BUFFSZ);
     if (r < BUFFSZ) {
