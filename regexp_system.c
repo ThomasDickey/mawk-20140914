@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.27 2010/06/25 09:19:12 tom Exp $
+ * $MawkId: regexp_system.c,v 1.28 2010/06/25 09:37:05 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -158,6 +158,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    case '.':		/* FALLTHRU */
 	    case '+':		/* FALLTHRU */
 	    case '{':		/* FALLTHRU */
+	    case '|':		/* FALLTHRU */
 		*tail++ = '\\';
 		*tail++ = ch;
 		break;
