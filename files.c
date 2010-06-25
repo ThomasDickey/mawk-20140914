@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.15 2010/05/07 08:13:25 tom Exp $
+ * $MawkId: files.c,v 1.16 2010/06/25 21:56:01 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -202,7 +202,7 @@ file_find(STRING * sval, int type)
   out_failure:
     errmsg(errno, "cannot open \"%s\" for output", name);
     mawk_exit(2);
-
+    /* NOTREACHED */
 }
 
 /* Close a file and delete it's node from the file_list.
