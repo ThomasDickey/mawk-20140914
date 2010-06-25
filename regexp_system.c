@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.22 2010/06/25 00:24:50 tom Exp $
+ * $MawkId: regexp_system.c,v 1.23 2010/06/25 00:52:32 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -31,7 +31,8 @@ static int err_code = 0;
 #define NEXT_CH() (char) (MORE_CH() ? *source : 0)
 #define LIMITED() (char) (MORE_CH() ? *source++ : 0)
 
-#define IgnoreNull() errmsg(-1, "ignoring embedded null in pattern")
+#define IgnoreNull()    errmsg(-1, "ignoring embedded null in pattern")
+#define IgnoreEscaped() errmsg(-1, "ignoring escaped '%c' in pattern", ch)
 
 /*
  * Keep track, for octal and hex escapes:
@@ -148,6 +149,13 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    case '\\':
 		*tail++ = '\\';
 		*tail++ = ch;
+		break;
+	    case ']':
+		if (range) {
+		    IgnoreEscaped();
+		} else {
+		    *tail++ = ch;
+		}
 		break;
 	    case '{':
 		*tail++ = '\\';
