@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.25 2010/06/25 08:37:14 tom Exp $
+ * $MawkId: regexp_system.c,v 1.26 2010/06/25 09:05:56 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -105,12 +105,14 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		if (state) {
 		    continue;
 		} else {
+		    escape = 0;
 		    radix = 0;
-		    if (value)
+		    if (value) {
 			*tail++ = (char) value;
-		    else
+		    } else {
 			IgnoreNull();
-		    if (added)
+		    }
+		    if (added)	/* ate the current character? */
 			continue;
 		}
 		break;
@@ -135,12 +137,14 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		if (state) {
 		    continue;
 		} else {
+		    escape = 0;
 		    radix = 0;
-		    if (value)
+		    if (value) {
 			*tail++ = (char) value;
-		    else
+		    } else {
 			IgnoreNull();
-		    if (added)
+		    }
+		    if (added)	/* ate the current character? */
 			continue;
 		}
 		break;
@@ -204,8 +208,16 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		    *tail++ = '\\';
 		*tail++ = ch;
 		break;
+	    case '[':
+	    case '(':
+	    case ')':
+	    case '*':
+	    case '.':
+	    case '+':
+		*tail++ = '\\';
+		*tail++ = ch;
+		break;
 	    default:
-		*tail++ = '\\';	/* for "*.()", etc */
 		*tail++ = ch;
 		break;
 	    }
