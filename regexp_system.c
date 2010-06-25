@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.26 2010/06/25 09:05:56 tom Exp $
+ * $MawkId: regexp_system.c,v 1.27 2010/06/25 09:19:12 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -150,7 +150,14 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		break;
 	    }
 	    switch (ch) {
-	    case '\\':
+	    case '\\':		/* FALLTHRU */
+	    case '[':		/* FALLTHRU */
+	    case '(':		/* FALLTHRU */
+	    case ')':		/* FALLTHRU */
+	    case '*':		/* FALLTHRU */
+	    case '.':		/* FALLTHRU */
+	    case '+':		/* FALLTHRU */
+	    case '{':		/* FALLTHRU */
 		*tail++ = '\\';
 		*tail++ = ch;
 		break;
@@ -160,10 +167,6 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 		} else {
 		    *tail++ = ch;
 		}
-		break;
-	    case '{':
-		*tail++ = '\\';
-		*tail++ = ch;
 		break;
 	    case 'n':
 		*tail++ = '\n';
@@ -206,15 +209,6 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    case '^':
 		if (tail - range == 1)
 		    *tail++ = '\\';
-		*tail++ = ch;
-		break;
-	    case '[':
-	    case '(':
-	    case ')':
-	    case '*':
-	    case '.':
-	    case '+':
-		*tail++ = '\\';
 		*tail++ = ch;
 		break;
 	    default:
