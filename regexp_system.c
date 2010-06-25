@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.29 2010/06/25 09:41:40 tom Exp $
+ * $MawkId: regexp_system.c,v 1.30 2010/06/25 10:47:09 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -52,7 +52,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
     int state = 0;
     char *tail = regexp;
     char ch;
-    int value;
+    int value = 0;
     int added;
 
     TRACE((stderr, "in : \"%s\"\n", base));
