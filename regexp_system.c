@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.21 2010/06/24 23:34:06 tom Exp $
+ * $MawkId: regexp_system.c,v 1.22 2010/06/25 00:24:50 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -26,8 +26,10 @@ static int err_code = 0;
 #define TRACE(params)		/*nothing */
 #endif
 
-#define NEXT_CH() (char) (((size_t) (source - base) < limit) ? *source : 0)
-#define LIMITED() (char) (((size_t) (source - base) < limit) ? *source++ : 0)
+#define AT_LAST() ((size_t) (source + 1 - base) >= limit)
+#define MORE_CH() ((size_t) (source - base) < limit)
+#define NEXT_CH() (char) (MORE_CH() ? *source : 0)
+#define LIMITED() (char) (MORE_CH() ? *source++ : 0)
 
 #define IgnoreNull() errmsg(-1, "ignoring embedded null in pattern")
 
@@ -203,7 +205,12 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	} else {
 	    switch (ch) {
 	    case '\\':
-		escape = 1;
+		if (AT_LAST()) {
+		    *tail++ = '\\';
+		    *tail++ = '\\';
+		} else {
+		    escape = 1;
+		}
 		break;
 	    case '[':
 		if (range == 0) {
