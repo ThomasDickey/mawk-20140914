@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.23 2010/06/25 00:52:32 tom Exp $
+ * $MawkId: regexp_system.c,v 1.24 2010/06/25 08:30:10 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -26,7 +26,7 @@ static int err_code = 0;
 #define TRACE(params)		/*nothing */
 #endif
 
-#define AT_LAST() ((size_t) (source + 1 - base) >= limit)
+#define AT_LAST() ((size_t) (source - base) >= limit)
 #define MORE_CH() ((size_t) (source - base) < limit)
 #define NEXT_CH() (char) (MORE_CH() ? *source : 0)
 #define LIMITED() (char) (MORE_CH() ? *source++ : 0)
@@ -214,6 +214,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 	    switch (ch) {
 	    case '\\':
 		if (AT_LAST()) {
+		    errmsg(-1, "dangling backslash");
 		    *tail++ = '\\';
 		    *tail++ = '\\';
 		} else {
