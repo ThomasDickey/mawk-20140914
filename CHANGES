@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.129 2010/07/18 10:32:25 tom Exp $
+-- $MawkId: CHANGES,v 1.130 2010/07/18 10:53:12 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100718
+	+ change section for Debian package to "interpreters" (Debian #442071).
 	+ fix printable token value for SC_MATCH in scan.c (report by Heiner
 	  Marxen).
 
