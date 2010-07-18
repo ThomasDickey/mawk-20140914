@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.23 2010/05/07 21:58:49 tom Exp $
+ * $MawkId: init.c,v 1.24 2010/07/18 13:21:22 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -349,7 +349,6 @@ process_cmdline(int argc, char **argv)
 		    pfile_name = argv[nextarg];
 		    i = nextarg + 1;
 		    goto no_more_opts;
-		    break;
 
 		case W_INTERACTIVE:
 		    interactive_flag = 1;
