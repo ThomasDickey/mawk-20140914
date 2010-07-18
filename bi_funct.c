@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.33 2010/07/18 15:55:59 tom Exp $
+ * $MawkId: bi_funct.c,v 1.34 2010/07/18 15:59:27 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -916,11 +916,9 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
 	    front_len = 0;
 
 	    if (target_len == 0) {	/* target is empty string */
-		repl_destroy(&xrepl);
 		null_str.ref_cnt++;
 		back = &null_str;
 	    } else if (isAnchored(re)) {
-		repl_destroy(&xrepl);
 		back = new_STRING1(target, target_len);
 	    } else {
 		/* make new repl with target[0] */
