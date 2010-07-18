@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.28 2010/07/18 15:03:11 tom Exp $
+ * $MawkId: bi_funct.c,v 1.29 2010/07/18 15:05:01 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -912,7 +912,7 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
 	if (!flag && middle_len == 0 && middle == target) {
 	    /* match at front that's not allowed */
 
-	    if (*target == 0) {	/* target is empty string */
+	    if (target_len == 0) {	/* target is empty string */
 		repl_destroy(&xrepl);
 		null_str.ref_cnt++;
 		return &null_str;
@@ -936,7 +936,7 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
 	    repl_cnt++;
 
 	    front = target;
-	    front_len = (unsigned) (middle - target);
+	    front_len = (size_t) (middle - target);
 
 	    if (front_len == target_len) {	/* matched back of target */
 		back = &null_str;
