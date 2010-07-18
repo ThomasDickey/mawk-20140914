@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.30 2010/07/18 15:24:15 tom Exp $
+ * $MawkId: bi_funct.c,v 1.31 2010/07/18 15:29:52 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -898,11 +898,13 @@ static unsigned repl_cnt;	/* number of global replacements */
 static STRING *
 gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
 {
+    char xbuff[2];
+    char *in_sval;
     char *front = 0, *middle;
     STRING *back;
     size_t front_len, middle_len;
-    STRING *result;
     CELL xrepl;			/* a copy of repl so we can change repl */
+    STRING *result;
 
     middle = REmatch(target, target_len, cast_to_re(re), &middle_len);
     if (middle != 0) {
@@ -920,8 +922,6 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
 		repl_destroy(&xrepl);
 		return new_STRING1(target, target_len);
 	    } else {
-		char xbuff[2];
-
 		front_len = 0;
 		/* make new repl with target[0] */
 		repl_destroy(repl);
@@ -961,21 +961,18 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
 
 	/* put the three pieces together */
 	result = new_STRING0(front_len + string(repl)->len + back->len);
-	{
-	    char *p = result->str;
+	in_sval = result->str;
 
-	    if (front_len) {
-		memcpy(p, front, front_len);
-		p += front_len;
-	    }
-
-	    if (string(repl)->len) {
-		memcpy(p, string(repl)->str, string(repl)->len);
-		p += string(repl)->len;
-	    }
-	    if (back->len)
-		memcpy(p, back->str, back->len);
+	if (front_len) {
+	    memcpy(in_sval, front, front_len);
+	    in_sval += front_len;
 	}
+	if (string(repl)->len) {
+	    memcpy(in_sval, string(repl)->str, string(repl)->len);
+	    in_sval += string(repl)->len;
+	}
+	if (back->len)
+	    memcpy(in_sval, back->str, back->len);
 
 	/* cleanup, repl is freed by the caller */
 	repl_destroy(&xrepl);
