@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.25 2010/05/07 22:00:37 tom Exp $
+ * $MawkId: bi_funct.c,v 1.26 2010/07/18 13:00:24 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -398,7 +398,6 @@ bi_sin(CELL * sp)
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = sin(sp->dval);
-    return sp;
 #else
     double x;
 
@@ -409,8 +408,8 @@ bi_sin(CELL * sp)
     sp->dval = sin(sp->dval);
     if (errno)
 	fplib_err("sin", x, "loss of precision");
-    return sp;
 #endif
+    return sp;
 }
 
 CELL *
@@ -420,7 +419,6 @@ bi_cos(CELL * sp)
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = cos(sp->dval);
-    return sp;
 #else
     double x;
 
@@ -431,8 +429,8 @@ bi_cos(CELL * sp)
     sp->dval = cos(sp->dval);
     if (errno)
 	fplib_err("cos", x, "loss of precision");
-    return sp;
 #endif
+    return sp;
 }
 
 CELL *
@@ -443,7 +441,6 @@ bi_atan2(CELL * sp)
     if (TEST2(sp) != TWO_DOUBLES)
 	cast2_to_d(sp);
     sp->dval = atan2(sp->dval, (sp + 1)->dval);
-    return sp;
 #else
 
     errno = 0;
@@ -453,8 +450,8 @@ bi_atan2(CELL * sp)
     sp->dval = atan2(sp->dval, (sp + 1)->dval);
     if (errno)
 	rt_error("atan2(0,0) : domain error");
-    return sp;
 #endif
+    return sp;
 }
 
 CELL *
@@ -464,7 +461,6 @@ bi_log(CELL * sp)
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = log(sp->dval);
-    return sp;
 #else
     double x;
 
@@ -475,8 +471,8 @@ bi_log(CELL * sp)
     sp->dval = log(sp->dval);
     if (errno)
 	fplib_err("log", x, "domain error");
-    return sp;
 #endif
+    return sp;
 }
 
 CELL *
@@ -486,7 +482,6 @@ bi_exp(CELL * sp)
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = exp(sp->dval);
-    return sp;
 #else
     double x;
 
@@ -498,8 +493,8 @@ bi_exp(CELL * sp)
     if (errno && sp->dval)
 	fplib_err("exp", x, "overflow");
     /* on underflow sp->dval==0, ignore */
-    return sp;
 #endif
+    return sp;
 }
 
 CELL *
@@ -518,7 +513,6 @@ bi_sqrt(CELL * sp)
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = sqrt(sp->dval);
-    return sp;
 #else
     double x;
 
@@ -529,8 +523,8 @@ bi_sqrt(CELL * sp)
     sp->dval = sqrt(sp->dval);
     if (errno)
 	fplib_err("sqrt", x, "domain error");
-    return sp;
 #endif
+    return sp;
 }
 
 #ifndef NO_TIME_H
