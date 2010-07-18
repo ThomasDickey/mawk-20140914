@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.22 2010/06/25 22:34:36 tom Exp $
+ * $MawkId: scan.c,v 1.23 2010/07/18 10:30:07 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -448,7 +448,7 @@ yylex(void)
 	ct_ret(RBOX);
 
     case SC_MATCH:
-	string_buff[0] = '~';
+	string_buff[1] = '~';
 	string_buff[0] = 0;
 	yylval.ival = 1;
 	ct_ret(MATCH);
