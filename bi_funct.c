@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.26 2010/07/18 13:00:24 tom Exp $
+ * $MawkId: bi_funct.c,v 1.27 2010/07/18 15:01:14 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -901,87 +901,91 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
     char *front = 0, *middle;
     STRING *back;
     size_t front_len, middle_len;
-    STRING *ret_val;
+    STRING *result;
     CELL xrepl;			/* a copy of repl so we can change repl */
 
-    if (!(middle = REmatch(target, target_len, cast_to_re(re), &middle_len)))
-	return new_STRING(target);	/* no match */
+    middle = REmatch(target, target_len, cast_to_re(re), &middle_len);
+    if (middle != 0) {
 
-    cellcpy(&xrepl, repl);
+	cellcpy(&xrepl, repl);
 
-    if (!flag && middle_len == 0 && middle == target) {
-	/* match at front that's not allowed */
+	if (!flag && middle_len == 0 && middle == target) {
+	    /* match at front that's not allowed */
 
-	if (*target == 0) {	/* target is empty string */
-	    repl_destroy(&xrepl);
-	    null_str.ref_cnt++;
-	    return &null_str;
-	} else if (1 && isAnchored(re)) {
-	    repl_destroy(&xrepl);
-	    return new_STRING1(target, target_len);
-	} else {
-	    char xbuff[2];
+	    if (*target == 0) {	/* target is empty string */
+		repl_destroy(&xrepl);
+		null_str.ref_cnt++;
+		return &null_str;
+	    } else if (isAnchored(re)) {
+		repl_destroy(&xrepl);
+		return new_STRING1(target, target_len);
+	    } else {
+		char xbuff[2];
 
-	    front_len = 0;
-	    /* make new repl with target[0] */
-	    repl_destroy(repl);
-	    --target_len;
-	    xbuff[0] = *target++;
-	    xbuff[1] = 0;
-	    repl->type = C_REPL;
-	    repl->ptr = (PTR) new_STRING(xbuff);
-	    back = gsub(re, &xrepl, target, target_len, 1);
+		front_len = 0;
+		/* make new repl with target[0] */
+		repl_destroy(repl);
+		--target_len;
+		xbuff[0] = *target++;
+		xbuff[1] = 0;
+		repl->type = C_REPL;
+		repl->ptr = (PTR) new_STRING(xbuff);
+		back = gsub(re, &xrepl, target, target_len, 1);
+	    }
+	} else {		/* a match that counts */
+	    repl_cnt++;
+
+	    front = target;
+	    front_len = (unsigned) (middle - target);
+
+	    if (front_len == target_len) {	/* matched back of target */
+		back = &null_str;
+		null_str.ref_cnt++;
+	    } else {
+		back = gsub(re,
+			    &xrepl,
+			    middle + middle_len,
+			    target_len - (front_len + middle_len),
+			    0);
+	    }
+
+	    /* patch the &'s if needed */
+	    if (repl->type == C_REPLV) {
+		STRING *sval = new_STRING0(middle_len);
+
+		memcpy(sval->str, middle, middle_len);
+		replv_to_repl(repl, sval);
+		free_STRING(sval);
+	    }
 	}
-    } else {			/* a match that counts */
-	repl_cnt++;
 
-	front = target;
-	front_len = (unsigned) (middle - target);
+	/* put the three pieces together */
+	result = new_STRING0(front_len + string(repl)->len + back->len);
+	{
+	    char *p = result->str;
 
-	if (front_len == target_len) {	/* matched back of target */
-	    back = &null_str;
-	    null_str.ref_cnt++;
-	} else {
-	    back = gsub(re,
-			&xrepl,
-			middle + middle_len,
-			target_len - (front_len + middle_len),
-			0);
+	    if (front_len) {
+		memcpy(p, front, front_len);
+		p += front_len;
+	    }
+
+	    if (string(repl)->len) {
+		memcpy(p, string(repl)->str, string(repl)->len);
+		p += string(repl)->len;
+	    }
+	    if (back->len)
+		memcpy(p, back->str, back->len);
 	}
 
-	/* patch the &'s if needed */
-	if (repl->type == C_REPLV) {
-	    STRING *sval = new_STRING0(middle_len);
+	/* cleanup, repl is freed by the caller */
+	repl_destroy(&xrepl);
+	free_STRING(back);
 
-	    memcpy(sval->str, middle, middle_len);
-	    replv_to_repl(repl, sval);
-	    free_STRING(sval);
-	}
+    } else {
+	/* no match */
+	result = new_STRING1(target, target_len);
     }
-
-    /* put the three pieces together */
-    ret_val = new_STRING0(front_len + string(repl)->len + back->len);
-    {
-	char *p = ret_val->str;
-
-	if (front_len) {
-	    memcpy(p, front, front_len);
-	    p += front_len;
-	}
-
-	if (string(repl)->len) {
-	    memcpy(p, string(repl)->str, string(repl)->len);
-	    p += string(repl)->len;
-	}
-	if (back->len)
-	    memcpy(p, back->str, back->len);
-    }
-
-    /* cleanup, repl is freed by the caller */
-    repl_destroy(&xrepl);
-    free_STRING(back);
-
-    return ret_val;
+    return result;
 }
 
 /* set up for call to gsub() */
