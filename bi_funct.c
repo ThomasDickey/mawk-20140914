@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.31 2010/07/18 15:29:52 tom Exp $
+ * $MawkId: bi_funct.c,v 1.32 2010/07/18 15:41:34 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -177,7 +177,7 @@ str_str(char *target, size_t target_len, char *key, size_t key_len)
 	k1 = key[1];
 	prior = target;
 	while (target_len >= key_len && (target = memchr(target, k, target_len))) {
-	    target_len = target_len - (unsigned) (target - prior) - 1;
+	    target_len = target_len - (size_t) (target - prior) - 1;
 	    prior = ++target;
 	    if (target[0] == k1) {
 		result = target - 1;
@@ -189,7 +189,7 @@ str_str(char *target, size_t target_len, char *key, size_t key_len)
 	key_len--;
 	prior = target;
 	while (target_len > key_len && (target = memchr(target, k, target_len))) {
-	    target_len = target_len - (unsigned) (target - prior) - 1;
+	    target_len = target_len - (size_t) (target - prior) - 1;
 	    prior = ++target;
 	    if (memcmp(target, key + 1, key_len) == 0) {
 		result = target - 1;
@@ -843,7 +843,7 @@ bi_sub(CELL * sp)
     front = string(&sc)->str;
 
     if ((middle = REmatch(front, string(&sc)->len, cast_to_re(sp->ptr), &middle_len))) {
-	front_len = (unsigned) (middle - front);
+	front_len = (size_t) (middle - front);
 	back = middle + middle_len;
 	back_len = string(&sc)->len - front_len - middle_len;
 
@@ -856,8 +856,7 @@ bi_sub(CELL * sp)
 	}
 
 	tc.type = C_STRING;
-	tc.ptr = (PTR) new_STRING0(
-				      front_len + string(sp + 1)->len + back_len);
+	tc.ptr = (PTR) new_STRING0(front_len + string(sp + 1)->len + back_len);
 
 	{
 	    char *p = string(&tc)->str;
