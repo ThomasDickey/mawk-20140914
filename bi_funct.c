@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.29 2010/07/18 15:05:01 tom Exp $
+ * $MawkId: bi_funct.c,v 1.30 2010/07/18 15:24:15 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -892,11 +892,11 @@ static unsigned repl_cnt;	/* number of global replacements */
    dealing with empty matches makes this mildly painful
 
    repl is always of type REPL or REPLV, destroyed by caller
-   flag is set if, match of empty string at front is OK
+   empty_ok is set if, match of empty string at front is OK
 */
 
 static STRING *
-gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
+gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
 {
     char *front = 0, *middle;
     STRING *back;
@@ -909,7 +909,7 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
 
 	cellcpy(&xrepl, repl);
 
-	if (!flag && middle_len == 0 && middle == target) {
+	if (!empty_ok && (middle_len == 0) && (middle == target)) {
 	    /* match at front that's not allowed */
 
 	    if (target_len == 0) {	/* target is empty string */
