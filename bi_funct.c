@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.38 2010/07/19 08:22:54 tom Exp $
+ * $MawkId: bi_funct.c,v 1.39 2010/07/19 09:10:54 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -893,6 +893,7 @@ typedef enum {
 
 typedef struct {
     STRING *result;
+    CELL replace;
     char *target;
     size_t target_len;
     int empty_ok;
@@ -903,6 +904,7 @@ typedef struct {
 #define ThisBranch     ThisGSUB.branch_to
 #define ThisResult     ThisGSUB.result
 #define ThisTarget     ThisGSUB.target
+#define ThisReplace    ThisGSUB.replace
 #define ThisEmptyOk    ThisGSUB.empty_ok
 #define ThisTargetLen  ThisGSUB.target_len
 
@@ -910,6 +912,7 @@ typedef struct {
 #define NextBranch     NextGSUB.branch_to
 #define NextResult     NextGSUB.result
 #define NextTarget     NextGSUB.target
+#define NextReplace    NextGSUB.replace
 #define NextEmptyOk    NextGSUB.empty_ok
 #define NextTargetLen  NextGSUB.target_len
 
@@ -927,7 +930,7 @@ static unsigned repl_cnt;	/* number of global replacements */
 */
 
 static STRING *
-gsub(PTR re, CELL * repl, int level)
+gsub(PTR re, int level)
 {
     char xbuff[2];
     char *in_sval;
@@ -945,7 +948,7 @@ gsub(PTR re, CELL * repl, int level)
     middle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &middle_len);
     if (middle != 0) {
 
-	cellcpy(&xrepl, repl);
+	cellcpy(&xrepl, &ThisReplace);
 
 	if (!ThisEmptyOk && (middle_len == 0) && (middle == ThisTarget)) {
 	    /* match at front that's not allowed */
@@ -959,20 +962,20 @@ gsub(PTR re, CELL * repl, int level)
 		back = new_STRING1(ThisTarget, ThisTargetLen);
 	    } else {
 		/* make new repl with target[0] */
-		repl_destroy(repl);
+		repl_destroy(&ThisReplace);
 		xbuff[0] = *ThisTarget;
 		xbuff[1] = 0;
-		repl->type = C_REPL;
-		repl->ptr = (PTR) new_STRING1(xbuff, 1);
+		ThisReplace.type = C_REPL;
+		ThisReplace.ptr = (PTR) new_STRING1(xbuff, 1);
 
 		NextTarget = ThisTarget + 1;
 		NextTargetLen = ThisTargetLen - 1;
 		NextEmptyOk = 1;
 		NextBranch = btEmpty;
+		cellcpy(&NextReplace, &xrepl);
 
 #if FIXME
 		back = gsub(re,
-			    &xrepl,
 			    level + 1);
 #else
 		++level;
@@ -995,10 +998,10 @@ gsub(PTR re, CELL * repl, int level)
 		NextTargetLen = ThisTargetLen - (front_len + middle_len);
 		NextEmptyOk = 0;
 		NextBranch = btNormal;
+		cellcpy(&NextReplace, &xrepl);
 
 #if FIXME
 		back = gsub(re,
-			    &xrepl,
 			    level + 1);
 #else
 		++level;
@@ -1010,25 +1013,25 @@ gsub(PTR re, CELL * repl, int level)
 	    }
 
 	    /* patch the &'s if needed */
-	    if (repl->type == C_REPLV) {
+	    if (ThisReplace.type == C_REPLV) {
 		STRING *sval = new_STRING1(middle, middle_len);
 
-		replv_to_repl(repl, sval);
+		replv_to_repl(&ThisReplace, sval);
 		free_STRING(sval);
 	    }
 	}
 
 	/* put the three pieces together */
-	ThisResult = new_STRING0(front_len + string(repl)->len + back->len);
+	ThisResult = new_STRING0(front_len + string(&ThisReplace)->len + back->len);
 	in_sval = ThisResult->str;
 
 	if (front_len) {
 	    memcpy(in_sval, front, front_len);
 	    in_sval += front_len;
 	}
-	if (string(repl)->len) {
-	    memcpy(in_sval, string(repl)->str, string(repl)->len);
-	    in_sval += string(repl)->len;
+	if (string(&ThisReplace)->len) {
+	    memcpy(in_sval, string(&ThisReplace)->str, string(&ThisReplace)->len);
+	    in_sval += string(&ThisReplace)->len;
 	}
 	if (back->len)
 	    memcpy(in_sval, back->str, back->len);
@@ -1093,12 +1096,13 @@ bi_gsub(CELL * sp)
     }
 
     ThisBranch = btFinish;
+    ThisEmptyOk = 1;
+    cellcpy(&ThisReplace, sp + 1);
     ThisResult = 0;
     ThisTarget = string(&sc)->str;
-    ThisEmptyOk = 1;
     ThisTargetLen = string(&sc)->len;
 
-    tc.ptr = (PTR) gsub(sp->ptr, sp + 1, 0);
+    tc.ptr = (PTR) gsub(sp->ptr, 0);
 
     if (repl_cnt) {
 	tc.type = C_STRING;
