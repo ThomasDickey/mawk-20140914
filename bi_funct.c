@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.37 2010/07/19 00:43:54 tom Exp $
+ * $MawkId: bi_funct.c,v 1.38 2010/07/19 08:22:54 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -885,24 +885,35 @@ bi_sub(CELL * sp)
     return sp;
 }
 
+typedef enum {
+    btFinish = 0,
+    btNormal,
+    btEmpty
+} GSUB_BT;
+
 typedef struct {
     STRING *result;
-    int empty_ok;
     char *target;
     size_t target_len;
+    int empty_ok;
+    int branch_to;
 } GSUB_STK;
 
 #define ThisGSUB       gsub_stk[level]
+#define ThisBranch     ThisGSUB.branch_to
 #define ThisResult     ThisGSUB.result
 #define ThisTarget     ThisGSUB.target
 #define ThisEmptyOk    ThisGSUB.empty_ok
 #define ThisTargetLen  ThisGSUB.target_len
 
 #define NextGSUB       gsub_stk[level + 1]
+#define NextBranch     NextGSUB.branch_to
 #define NextResult     NextGSUB.result
 #define NextTarget     NextGSUB.target
 #define NextEmptyOk    NextGSUB.empty_ok
 #define NextTargetLen  NextGSUB.target_len
+
+#define FIXME 1
 
 static size_t gsub_max;
 static GSUB_STK *gsub_stk;
@@ -924,6 +935,12 @@ gsub(PTR re, CELL * repl, int level)
     STRING *back;
     size_t front_len, middle_len;
     CELL xrepl;			/* a copy of repl so we can change repl */
+
+#if !FIXME
+  loop:
+#endif
+    assert(level >= 0);
+    assert(level + 1 < (int) gsub_max);
 
     middle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &middle_len);
     if (middle != 0) {
@@ -951,10 +968,18 @@ gsub(PTR re, CELL * repl, int level)
 		NextTarget = ThisTarget + 1;
 		NextTargetLen = ThisTargetLen - 1;
 		NextEmptyOk = 1;
+		NextBranch = btEmpty;
 
+#if FIXME
 		back = gsub(re,
 			    &xrepl,
 			    level + 1);
+#else
+		++level;
+		goto loop;
+	      empty_match:
+#endif
+		back = NextResult;
 	    }
 	} else {		/* a match that counts */
 	    repl_cnt++;
@@ -969,10 +994,19 @@ gsub(PTR re, CELL * repl, int level)
 		NextTarget = middle + middle_len;
 		NextTargetLen = ThisTargetLen - (front_len + middle_len);
 		NextEmptyOk = 0;
+		NextBranch = btNormal;
 
+#if FIXME
 		back = gsub(re,
 			    &xrepl,
 			    level + 1);
+#else
+		++level;
+		goto loop;
+
+	      normal_match:
+#endif
+		back = NextResult;
 	    }
 
 	    /* patch the &'s if needed */
@@ -1000,13 +1034,29 @@ gsub(PTR re, CELL * repl, int level)
 	    memcpy(in_sval, back->str, back->len);
 
 	/* cleanup, repl is freed by the caller */
+#if FIXME
 	repl_destroy(&xrepl);
+#endif
 	free_STRING(back);
 
     } else {
 	/* no match */
 	ThisResult = new_STRING1(ThisTarget, ThisTargetLen);
     }
+
+#if !FIXME
+    switch (ThisBranch) {
+    case btEmpty:
+	--level;
+	goto empty_match;
+    case btNormal:
+	--level;
+	goto normal_match;
+    case btFinish:
+	break;
+    }
+#endif
+
     return ThisResult;
 }
 
@@ -1041,6 +1091,8 @@ bi_gsub(CELL * sp)
 	gsub_stk = zmalloc(stack_needs * sizeof(GSUB_STK));
 	gsub_max = stack_needs;
     }
+
+    ThisBranch = btFinish;
     ThisResult = 0;
     ThisTarget = string(&sc)->str;
     ThisEmptyOk = 1;
