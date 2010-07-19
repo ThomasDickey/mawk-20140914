@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.39 2010/07/19 09:10:54 tom Exp $
+ * $MawkId: bi_funct.c,v 1.40 2010/07/19 09:32:58 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -937,7 +937,6 @@ gsub(PTR re, int level)
     char *front = 0, *middle;
     STRING *back;
     size_t front_len, middle_len;
-    CELL xrepl;			/* a copy of repl so we can change repl */
 
 #if !FIXME
   loop:
@@ -947,8 +946,6 @@ gsub(PTR re, int level)
 
     middle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &middle_len);
     if (middle != 0) {
-
-	cellcpy(&xrepl, &ThisReplace);
 
 	if (!ThisEmptyOk && (middle_len == 0) && (middle == ThisTarget)) {
 	    /* match at front that's not allowed */
@@ -962,6 +959,7 @@ gsub(PTR re, int level)
 		back = new_STRING1(ThisTarget, ThisTargetLen);
 	    } else {
 		/* make new repl with target[0] */
+		cellcpy(&NextReplace, &ThisReplace);
 		repl_destroy(&ThisReplace);
 		xbuff[0] = *ThisTarget;
 		xbuff[1] = 0;
@@ -972,7 +970,6 @@ gsub(PTR re, int level)
 		NextTargetLen = ThisTargetLen - 1;
 		NextEmptyOk = 1;
 		NextBranch = btEmpty;
-		cellcpy(&NextReplace, &xrepl);
 
 #if FIXME
 		back = gsub(re,
@@ -998,7 +995,7 @@ gsub(PTR re, int level)
 		NextTargetLen = ThisTargetLen - (front_len + middle_len);
 		NextEmptyOk = 0;
 		NextBranch = btNormal;
-		cellcpy(&NextReplace, &xrepl);
+		cellcpy(&NextReplace, &ThisReplace);
 
 #if FIXME
 		back = gsub(re,
@@ -1037,9 +1034,6 @@ gsub(PTR re, int level)
 	    memcpy(in_sval, back->str, back->len);
 
 	/* cleanup, repl is freed by the caller */
-#if FIXME
-	repl_destroy(&xrepl);
-#endif
 	free_STRING(back);
 
     } else {
