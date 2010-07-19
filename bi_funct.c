@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.36 2010/07/19 00:36:07 tom Exp $
+ * $MawkId: bi_funct.c,v 1.37 2010/07/19 00:43:54 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -916,7 +916,7 @@ static unsigned repl_cnt;	/* number of global replacements */
 */
 
 static STRING *
-gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok, int level)
+gsub(PTR re, CELL * repl, int level)
 {
     char xbuff[2];
     char *in_sval;
@@ -924,52 +924,54 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok, int lev
     STRING *back;
     size_t front_len, middle_len;
     CELL xrepl;			/* a copy of repl so we can change repl */
-    STRING *result;
 
-    middle = REmatch(target, target_len, cast_to_re(re), &middle_len);
+    middle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &middle_len);
     if (middle != 0) {
 
 	cellcpy(&xrepl, repl);
 
-	if (!empty_ok && (middle_len == 0) && (middle == target)) {
+	if (!ThisEmptyOk && (middle_len == 0) && (middle == ThisTarget)) {
 	    /* match at front that's not allowed */
 
 	    front_len = 0;
 
-	    if (target_len == 0) {	/* target is empty string */
+	    if (ThisTargetLen == 0) {	/* target is empty string */
 		null_str.ref_cnt++;
 		back = &null_str;
 	    } else if (isAnchored(re)) {
-		back = new_STRING1(target, target_len);
+		back = new_STRING1(ThisTarget, ThisTargetLen);
 	    } else {
 		/* make new repl with target[0] */
 		repl_destroy(repl);
-		xbuff[0] = *target;
+		xbuff[0] = *ThisTarget;
 		xbuff[1] = 0;
 		repl->type = C_REPL;
 		repl->ptr = (PTR) new_STRING1(xbuff, 1);
+
+		NextTarget = ThisTarget + 1;
+		NextTargetLen = ThisTargetLen - 1;
+		NextEmptyOk = 1;
+
 		back = gsub(re,
 			    &xrepl,
-			    target + 1,
-			    target_len - 1,
-			    1,
 			    level + 1);
 	    }
 	} else {		/* a match that counts */
 	    repl_cnt++;
 
-	    front = target;
-	    front_len = (size_t) (middle - target);
+	    front = ThisTarget;
+	    front_len = (size_t) (middle - ThisTarget);
 
-	    if (front_len == target_len) {	/* matched back of target */
+	    if (front_len == ThisTargetLen) {	/* matched back of target */
 		back = &null_str;
 		null_str.ref_cnt++;
 	    } else {
+		NextTarget = middle + middle_len;
+		NextTargetLen = ThisTargetLen - (front_len + middle_len);
+		NextEmptyOk = 0;
+
 		back = gsub(re,
 			    &xrepl,
-			    middle + middle_len,
-			    target_len - (front_len + middle_len),
-			    0,
 			    level + 1);
 	    }
 
@@ -983,8 +985,8 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok, int lev
 	}
 
 	/* put the three pieces together */
-	result = new_STRING0(front_len + string(repl)->len + back->len);
-	in_sval = result->str;
+	ThisResult = new_STRING0(front_len + string(repl)->len + back->len);
+	in_sval = ThisResult->str;
 
 	if (front_len) {
 	    memcpy(in_sval, front, front_len);
@@ -1003,9 +1005,9 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok, int lev
 
     } else {
 	/* no match */
-	result = new_STRING1(target, target_len);
+	ThisResult = new_STRING1(ThisTarget, ThisTargetLen);
     }
-    return result;
+    return ThisResult;
 }
 
 /* set up for call to gsub() */
@@ -1030,7 +1032,7 @@ bi_gsub(CELL * sp)
 
     repl_cnt = 0;
 
-    stack_needs = (string(&sc)->len + 2);
+    stack_needs = (string(&sc)->len + 2) * 2;
 
     if (stack_needs > gsub_max) {
 	if (gsub_max) {
@@ -1044,8 +1046,7 @@ bi_gsub(CELL * sp)
     ThisEmptyOk = 1;
     ThisTargetLen = string(&sc)->len;
 
-    tc.ptr = (PTR) gsub(sp->ptr, sp + 1, string(&sc)->str, string(&sc)->len,
-			1, 0);
+    tc.ptr = (PTR) gsub(sp->ptr, sp + 1, 0);
 
     if (repl_cnt) {
 	tc.type = C_STRING;
