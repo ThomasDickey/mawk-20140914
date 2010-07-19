@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.7 2010/02/01 00:56:37 tom Exp $
+.\" $MawkId: mawk.1,v 1.8 2010/07/19 09:16:34 tom Exp $
 .TH MAWK 1  "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
@@ -135,8 +135,8 @@ are recognized and on some systems \fB\-W\fRe is mandatory to avoid
 command line length limitations.
 .PP
 .B mawk
-allows multiple \fB-W\fP options to be combined by separating the options
-with commas, e.g., -Wsprint=2000,posix.
+allows multiple \fB\-W\fP options to be combined by separating the options
+with commas, e.g., \-Wsprint=2000,posix.
 .SH "THE AWK LANGUAGE"
 .SS "\fB1. Program structure"
 An AWK program is a sequence of 
@@ -441,7 +441,7 @@ unary (*, + or ?).
 For example,
 .nf
 .sp
-	/^[_a\-zA-Z][_a\-zA\-Z0\-9]*$/  and
+	/^[_a\-zA\-Z][_a\-zA\-Z0\-9]*$/  and
 	/^[\-+]?([0\-9]+\e\|.?|\e\|.[0\-9])[0\-9]*([eE][\-+]?[0\-9]+)?$/
 .sp
 .fi
@@ -659,7 +659,7 @@ execution.
 number of command line arguments.
 .TP
 .B ARGV
-array of command line arguments, 0..ARGC-1.
+array of command line arguments, 0..ARGC\-1.
 .TP
 .B CONVFMT
 format for internal conversion of numbers to string, 
@@ -825,7 +825,7 @@ Arithmetic functions
 .ds Pi pi
 .el \
 .ds Pi \\(*p
-atan2(\fIy,x\fR)	Arctan of \fIy\fR/\fIx\fR between -\*(Pi and \*(Pi.
+atan2(\fIy,x\fR)	Arctan of \fIy\fR/\fIx\fR between \-\*(Pi and \*(Pi.
 .PP  
 cos(\fIx\fR)		Cosine function, \fIx\fR in radians.
 .PP  
@@ -1224,7 +1224,7 @@ the execution phase of the program.
 .B ARGV[0]
 is set the name of the AWK interpreter and
 \fBARGV[1]\fR ... 
-.B ARGV[ARGC-1]
+.B ARGV[ARGC\-1]
 holds the remaining command line arguments exclusive of 
 options and program source.
 For example with
@@ -1260,7 +1260,7 @@ equals 1,
 the input stream is set to stdin,
 else  the command line arguments
 .BR ARGV[1]  " ... 
-.B ARGV[ARGC-1]
+.B ARGV[ARGC\-1]
 are examined for a file argument.
 .PP
 The command line arguments divide into three sets: 
@@ -1389,7 +1389,7 @@ or subsequent error.
 
 3. count the number of unique "real words".
 
-	BEGIN { FS = "[^A-Za-z]+" }
+	BEGIN { FS = "[^A\-Za\-z]+" }
 
 	{ for(i = 1 ; i <= NF ; i++)  word[$i] = "" }
 
@@ -1495,7 +1495,7 @@ often improve performance.  For example,
 redoing example 3 from above,
 .nf
 .sp
-	BEGIN { RS = "[^A-Za-z]+" }
+	BEGIN { RS = "[^A\-Za\-z]+" }
 
 	{ word[ $0 ] = "" }
 
