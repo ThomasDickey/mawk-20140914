@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.35 2010/07/18 22:42:42 tom Exp $
+ * $MawkId: bi_funct.c,v 1.36 2010/07/19 00:36:07 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -885,6 +885,27 @@ bi_sub(CELL * sp)
     return sp;
 }
 
+typedef struct {
+    STRING *result;
+    int empty_ok;
+    char *target;
+    size_t target_len;
+} GSUB_STK;
+
+#define ThisGSUB       gsub_stk[level]
+#define ThisResult     ThisGSUB.result
+#define ThisTarget     ThisGSUB.target
+#define ThisEmptyOk    ThisGSUB.empty_ok
+#define ThisTargetLen  ThisGSUB.target_len
+
+#define NextGSUB       gsub_stk[level + 1]
+#define NextResult     NextGSUB.result
+#define NextTarget     NextGSUB.target
+#define NextEmptyOk    NextGSUB.empty_ok
+#define NextTargetLen  NextGSUB.target_len
+
+static size_t gsub_max;
+static GSUB_STK *gsub_stk;
 static unsigned repl_cnt;	/* number of global replacements */
 
 /* recursive global subsitution
@@ -895,7 +916,7 @@ static unsigned repl_cnt;	/* number of global replacements */
 */
 
 static STRING *
-gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
+gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok, int level)
 {
     char xbuff[2];
     char *in_sval;
@@ -923,12 +944,16 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
 	    } else {
 		/* make new repl with target[0] */
 		repl_destroy(repl);
-		--target_len;
-		xbuff[0] = *target++;
+		xbuff[0] = *target;
 		xbuff[1] = 0;
 		repl->type = C_REPL;
 		repl->ptr = (PTR) new_STRING1(xbuff, 1);
-		back = gsub(re, &xrepl, target, target_len, 1);
+		back = gsub(re,
+			    &xrepl,
+			    target + 1,
+			    target_len - 1,
+			    1,
+			    level + 1);
 	    }
 	} else {		/* a match that counts */
 	    repl_cnt++;
@@ -944,7 +969,8 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int empty_ok)
 			    &xrepl,
 			    middle + middle_len,
 			    target_len - (front_len + middle_len),
-			    0);
+			    0,
+			    level + 1);
 	    }
 
 	    /* patch the &'s if needed */
@@ -989,6 +1015,8 @@ bi_gsub(CELL * sp)
     CELL *cp;			/* pts at the replacement target */
     CELL sc;			/* copy of replacement target */
     CELL tc;			/* build the result here */
+    size_t stack_needs;
+    int level = 0;
 
     sp -= 2;
     if (sp->type != C_RE)
@@ -1001,7 +1029,23 @@ bi_gsub(CELL * sp)
 	cast1_to_s(&sc);
 
     repl_cnt = 0;
-    tc.ptr = (PTR) gsub(sp->ptr, sp + 1, string(&sc)->str, string(&sc)->len, 1);
+
+    stack_needs = (string(&sc)->len + 2);
+
+    if (stack_needs > gsub_max) {
+	if (gsub_max) {
+	    zfree(gsub_stk, gsub_max * sizeof(GSUB_STK));
+	}
+	gsub_stk = zmalloc(stack_needs * sizeof(GSUB_STK));
+	gsub_max = stack_needs;
+    }
+    ThisResult = 0;
+    ThisTarget = string(&sc)->str;
+    ThisEmptyOk = 1;
+    ThisTargetLen = string(&sc)->len;
+
+    tc.ptr = (PTR) gsub(sp->ptr, sp + 1, string(&sc)->str, string(&sc)->len,
+			1, 0);
 
     if (repl_cnt) {
 	tc.type = C_STRING;
