@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.131 2010/07/19 09:17:06 tom Exp $
+-- $MawkId: CHANGES,v 1.132 2010/07/19 09:37:10 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100718
+	+ (IN-PROGRESS) convert gsub() function from recursive, to
+	  non-recursive to lessen use of program stack (Debian #158481).
 	+ escape some dashes in manpage, to work with groff.
 	+ change section for Debian package to "interpreters" (Debian #442071).
 	+ fix printable token value for SC_MATCH in scan.c (report by Heiner
