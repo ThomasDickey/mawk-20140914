@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.41 2010/07/20 22:50:46 tom Exp $
+ * $MawkId: bi_funct.c,v 1.42 2010/07/20 23:23:42 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -897,7 +897,7 @@ typedef struct {
     char *target;
     size_t target_len;
     int empty_ok;
-    int branch_to;
+    GSUB_BT branch_to;
 } GSUB_STK;
 
 #define ThisGSUB       gsub_stk[level]
@@ -1015,7 +1015,7 @@ old_gsub(PTR re, int level)
 
 	/* put the three pieces together */
 	ThisResult = new_STRING0(front_len + string(&ThisReplace)->len + back->len);
-	TRACE((stderr, "%s front '%.*s', middle '%.*s', back '%.*s'\n",
+	TRACE((stderr, "old %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
 	       front_len, front,
 	       string(&ThisReplace)->len, string(&ThisReplace)->str,
@@ -1125,7 +1125,7 @@ new_gsub(PTR re, int level)
 
 	/* put the three pieces together */
 	ThisResult = new_STRING0(front_len + string(&ThisReplace)->len + back->len);
-	TRACE((stderr, "%s front '%.*s', middle '%.*s', back '%.*s'\n",
+	TRACE((stderr, "new %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
 	       front_len, front,
 	       string(&ThisReplace)->len, string(&ThisReplace)->str,
@@ -1173,6 +1173,10 @@ bi_gsub(CELL * sp)
     CELL *cp;			/* pts at the replacement target */
     CELL sc;			/* copy of replacement target */
     CELL tc;			/* build the result here */
+    STRING *result;
+#ifdef DEBUG_GSUB
+    STRING *resul2;
+#endif
     size_t stack_needs;
     int level = 0;
 
@@ -1186,8 +1190,6 @@ bi_gsub(CELL * sp)
     if (sc.type < C_STRING)
 	cast1_to_s(&sc);
 
-    repl_cnt = 0;
-
     stack_needs = (string(&sc)->len + 2) * 2;
 
     if (stack_needs > gsub_max) {
@@ -1197,6 +1199,23 @@ bi_gsub(CELL * sp)
 	gsub_stk = zmalloc(stack_needs * sizeof(GSUB_STK));
 	gsub_max = stack_needs;
     }
+#ifdef DEBUG_GSUB
+    {
+	STRING *target = new_STRING1(string(&sc)->str, string(&sc)->len);
+
+	ThisBranch = btFinish;
+	ThisEmptyOk = 1;
+	cellcpy(&ThisReplace, sp + 1);
+	ThisResult = 0;
+	ThisTarget = target->str;
+	ThisTargetLen = target->len;
+
+	resul2 = new_gsub(sp->ptr, 0);
+
+	TRACE((stderr, "NEW ->'%.*s'\n", resul2->len, resul2->str));
+	free_STRING(target);
+    }
+#endif
 
     ThisBranch = btFinish;
     ThisEmptyOk = 1;
@@ -1205,7 +1224,16 @@ bi_gsub(CELL * sp)
     ThisTarget = string(&sc)->str;
     ThisTargetLen = string(&sc)->len;
 
-    tc.ptr = (PTR) old_gsub(sp->ptr, 0);
+    repl_cnt = 0;
+
+    result = old_gsub(sp->ptr, 0);
+    tc.ptr = (PTR) result;
+
+#ifdef DEBUG_GSUB
+    TRACE((stderr, "OLD ->'%.*s'\n", result->len, result->str));
+    if (result->len != resul2->len || memcmp(result->str, resul2->str, result->len))
+	TRACE((stderr, "OOPS\n"));
+#endif
 
     if (repl_cnt) {
 	tc.type = C_STRING;
