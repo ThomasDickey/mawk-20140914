@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.43 2010/07/21 00:14:04 tom Exp $
+ * $MawkId: bi_funct.c,v 1.44 2010/07/21 09:04:02 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -895,8 +895,10 @@ typedef struct {
     STRING *result;
     CELL replace;
     char *front;
+    char *middle;
     char *target;
     size_t front_len;
+    size_t middle_len;
     size_t target_len;
     int empty_ok;
     GSUB_BT branch_to;
@@ -907,6 +909,8 @@ typedef struct {
 #define ThisEmptyOk    ThisGSUB.empty_ok
 #define ThisFront      ThisGSUB.front
 #define ThisFrontLen   ThisGSUB.front_len
+#define ThisMiddle     ThisGSUB.middle
+#define ThisMiddleLen  ThisGSUB.middle_len
 #define ThisReplace    ThisGSUB.replace
 #define ThisResult     ThisGSUB.result
 #define ThisTarget     ThisGSUB.target
@@ -917,6 +921,8 @@ typedef struct {
 #define NextEmptyOk    NextGSUB.empty_ok
 #define NextFront      NextGSUB.front
 #define NextFrontLen   NextGSUB.front_len
+#define NextMiddle     NextGSUB.middle
+#define NextMiddleLen  NextGSUB.middle_len
 #define NextReplace    NextGSUB.replace
 #define NextResult     NextGSUB.result
 #define NextTarget     NextGSUB.target
@@ -1056,9 +1062,7 @@ new_gsub(PTR re, int level)
 {
     char xbuff[2];
     char *in_sval;
-    char *middle;
     STRING *back;
-    size_t middle_len;
 
   loop:
     assert(level >= 0);
@@ -1066,10 +1070,10 @@ new_gsub(PTR re, int level)
 
     ThisFront = 0;
 
-    middle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &middle_len);
-    if (middle != 0) {
+    ThisMiddle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &ThisMiddleLen);
+    if (ThisMiddle != 0) {
 
-	if (!ThisEmptyOk && (middle_len == 0) && (middle == ThisTarget)) {
+	if (!ThisEmptyOk && (ThisMiddleLen == 0) && (ThisMiddle == ThisTarget)) {
 	    /* match at front that's not allowed */
 
 	    ThisFrontLen = 0;
@@ -1103,14 +1107,14 @@ new_gsub(PTR re, int level)
 	    repl_cnt++;
 
 	    ThisFront = ThisTarget;
-	    ThisFrontLen = (size_t) (middle - ThisTarget);
+	    ThisFrontLen = (size_t) (ThisMiddle - ThisTarget);
 
 	    if (ThisFrontLen == ThisTargetLen) {	/* matched back of target */
 		back = &null_str;
 		null_str.ref_cnt++;
 	    } else {
-		NextTarget = middle + middle_len;
-		NextTargetLen = ThisTargetLen - (ThisFrontLen + middle_len);
+		NextTarget = ThisMiddle + ThisMiddleLen;
+		NextTargetLen = ThisTargetLen - (ThisFrontLen + ThisMiddleLen);
 		NextEmptyOk = 0;
 		NextBranch = btNormal;
 		cellcpy(&NextReplace, &ThisReplace);
@@ -1124,7 +1128,7 @@ new_gsub(PTR re, int level)
 
 	    /* patch the &'s if needed */
 	    if (ThisReplace.type == C_REPLV) {
-		STRING *sval = new_STRING1(middle, middle_len);
+		STRING *sval = new_STRING1(ThisMiddle, ThisMiddleLen);
 
 		replv_to_repl(&ThisReplace, sval);
 		free_STRING(sval);
