@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.19 2010/05/07 22:01:59 tom Exp $
+ * $MawkId: mawk.h,v 1.20 2010/07/21 23:50:41 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -180,7 +180,7 @@ char *str_str(char *, size_t, char *, size_t);
 void parse(void);
 int yylex(void);
 int yyparse(void);
-void yyerror(char *);
+void yyerror(const char *);
 void scan_cleanup(void);
 
 void bozo(const char *) GCC_NORETURN;
