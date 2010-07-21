@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.44 2010/07/21 09:04:02 tom Exp $
+ * $MawkId: bi_funct.c,v 1.45 2010/07/21 09:22:37 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -956,6 +956,7 @@ indent(int level)
    empty_ok is set if, match of empty string at front is OK
 */
 
+#ifdef DEBUG_GSUB
 static STRING *
 old_gsub(PTR re, int level)
 {
@@ -1055,8 +1056,8 @@ old_gsub(PTR re, int level)
 
     return ThisResult;
 }
+#endif /* DEBUG_GSUB */
 
-#ifdef DEBUG_GSUB
 static STRING *
 new_gsub(PTR re, int level)
 {
@@ -1176,7 +1177,6 @@ new_gsub(PTR re, int level)
 
     return ThisResult;
 }
-#endif /* DEBUG_GSUB */
 
 /* set up for call to gsub() */
 CELL *
@@ -1222,9 +1222,9 @@ bi_gsub(CELL * sp)
 	ThisTarget = target->str;
 	ThisTargetLen = target->len;
 
-	resul2 = new_gsub(sp->ptr, 0);
+	resul2 = old_gsub(sp->ptr, 0);
 
-	TRACE((stderr, "NEW ->'%.*s'\n", resul2->len, resul2->str));
+	TRACE((stderr, "OLD ->'%.*s'\n", resul2->len, resul2->str));
 	free_STRING(target);
     }
 #endif
@@ -1238,11 +1238,11 @@ bi_gsub(CELL * sp)
 
     repl_cnt = 0;
 
-    result = old_gsub(sp->ptr, 0);
+    result = new_gsub(sp->ptr, 0);
     tc.ptr = (PTR) result;
 
 #ifdef DEBUG_GSUB
-    TRACE((stderr, "OLD ->'%.*s'\n", result->len, result->str));
+    TRACE((stderr, "NEW ->'%.*s'\n", result->len, result->str));
     if (result->len != resul2->len || memcmp(result->str, resul2->str, result->len))
 	TRACE((stderr, "OOPS\n"));
 #endif
