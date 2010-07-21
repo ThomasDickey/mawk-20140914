@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.11 2009/12/17 00:05:10 tom Exp $
+ * $MawkId: error.c,v 1.12 2010/07/21 23:50:52 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -143,7 +143,7 @@ missing(int c, const char *n, unsigned ln)
    off our back.
 */
 void
-yyerror(char *s GCC_UNUSED)
+yyerror(const char *s GCC_UNUSED)
 {
     const char *ss = 0;
     struct token_str *p;
