@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.42 2010/07/20 23:23:42 tom Exp $
+ * $MawkId: bi_funct.c,v 1.43 2010/07/21 00:14:04 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -894,7 +894,9 @@ typedef enum {
 typedef struct {
     STRING *result;
     CELL replace;
+    char *front;
     char *target;
+    size_t front_len;
     size_t target_len;
     int empty_ok;
     GSUB_BT branch_to;
@@ -902,18 +904,22 @@ typedef struct {
 
 #define ThisGSUB       gsub_stk[level]
 #define ThisBranch     ThisGSUB.branch_to
+#define ThisEmptyOk    ThisGSUB.empty_ok
+#define ThisFront      ThisGSUB.front
+#define ThisFrontLen   ThisGSUB.front_len
+#define ThisReplace    ThisGSUB.replace
 #define ThisResult     ThisGSUB.result
 #define ThisTarget     ThisGSUB.target
-#define ThisReplace    ThisGSUB.replace
-#define ThisEmptyOk    ThisGSUB.empty_ok
 #define ThisTargetLen  ThisGSUB.target_len
 
 #define NextGSUB       gsub_stk[level + 1]
 #define NextBranch     NextGSUB.branch_to
+#define NextEmptyOk    NextGSUB.empty_ok
+#define NextFront      NextGSUB.front
+#define NextFrontLen   NextGSUB.front_len
+#define NextReplace    NextGSUB.replace
 #define NextResult     NextGSUB.result
 #define NextTarget     NextGSUB.target
-#define NextReplace    NextGSUB.replace
-#define NextEmptyOk    NextGSUB.empty_ok
 #define NextTargetLen  NextGSUB.target_len
 
 /* #define DEBUG_GSUB 1 */
@@ -1050,13 +1056,15 @@ new_gsub(PTR re, int level)
 {
     char xbuff[2];
     char *in_sval;
-    char *front = 0, *middle;
+    char *middle;
     STRING *back;
-    size_t front_len, middle_len;
+    size_t middle_len;
 
   loop:
     assert(level >= 0);
     assert(level + 1 < (int) gsub_max);
+
+    ThisFront = 0;
 
     middle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &middle_len);
     if (middle != 0) {
@@ -1064,7 +1072,7 @@ new_gsub(PTR re, int level)
 	if (!ThisEmptyOk && (middle_len == 0) && (middle == ThisTarget)) {
 	    /* match at front that's not allowed */
 
-	    front_len = 0;
+	    ThisFrontLen = 0;
 
 	    if (ThisTargetLen == 0) {	/* target is empty string */
 		null_str.ref_cnt++;
@@ -1094,15 +1102,15 @@ new_gsub(PTR re, int level)
 	} else {		/* a match that counts */
 	    repl_cnt++;
 
-	    front = ThisTarget;
-	    front_len = (size_t) (middle - ThisTarget);
+	    ThisFront = ThisTarget;
+	    ThisFrontLen = (size_t) (middle - ThisTarget);
 
-	    if (front_len == ThisTargetLen) {	/* matched back of target */
+	    if (ThisFrontLen == ThisTargetLen) {	/* matched back of target */
 		back = &null_str;
 		null_str.ref_cnt++;
 	    } else {
 		NextTarget = middle + middle_len;
-		NextTargetLen = ThisTargetLen - (front_len + middle_len);
+		NextTargetLen = ThisTargetLen - (ThisFrontLen + middle_len);
 		NextEmptyOk = 0;
 		NextBranch = btNormal;
 		cellcpy(&NextReplace, &ThisReplace);
@@ -1124,17 +1132,17 @@ new_gsub(PTR re, int level)
 	}
 
 	/* put the three pieces together */
-	ThisResult = new_STRING0(front_len + string(&ThisReplace)->len + back->len);
+	ThisResult = new_STRING0(ThisFrontLen + string(&ThisReplace)->len + back->len);
 	TRACE((stderr, "new %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
-	       front_len, front,
+	       ThisFrontLen, ThisFront,
 	       string(&ThisReplace)->len, string(&ThisReplace)->str,
 	       back->len, back->str));
 	in_sval = ThisResult->str;
 
-	if (front_len) {
-	    memcpy(in_sval, front, front_len);
-	    in_sval += front_len;
+	if (ThisFrontLen) {
+	    memcpy(in_sval, ThisFront, ThisFrontLen);
+	    in_sval += ThisFrontLen;
 	}
 	if (string(&ThisReplace)->len) {
 	    memcpy(in_sval, string(&ThisReplace)->str, string(&ThisReplace)->len);
