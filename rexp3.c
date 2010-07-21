@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.25 2010/05/07 22:09:39 tom Exp $
+ * $MawkId: rexp3.c,v 1.26 2010/07/21 23:06:24 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -54,7 +54,7 @@ the GNU General Public License, version 2, 1991.
 		stackp = RE_new_run_stack() ;\
 	stackp->m = (mx); \
 	stackp->s = (sx); \
-	stackp->sp = (px) - RE_pos_stack_base; \
+	stackp->sp = (int) ((px) - RE_pos_stack_base); \
 	stackp->tp = (px)->prev_offset; \
 	stackp->ss = (ssx); \
 	stackp->u = (ux); \
