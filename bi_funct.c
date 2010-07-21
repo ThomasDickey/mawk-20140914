@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.45 2010/07/21 09:22:37 tom Exp $
+ * $MawkId: bi_funct.c,v 1.46 2010/07/21 22:27:50 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1158,6 +1158,7 @@ new_gsub(PTR re, int level)
 
 	/* cleanup, repl is freed by the caller */
 	free_STRING(back);
+	repl_destroy(&ThisReplace);
 
     } else {
 	/* no match */
@@ -1251,6 +1252,13 @@ bi_gsub(CELL * sp)
 	tc.type = C_STRING;
 	slow_cell_assign(cp, &tc);
     }
+#ifdef NO_LEAKS
+    if (gsub_stk != 0) {
+	zfree(gsub_stk, stack_needs * sizeof(GSUB_STK));
+	gsub_stk = 0;
+	gsub_max = 0;
+    }
+#endif
 
     /* cleanup */
     free_STRING(string(&sc));
