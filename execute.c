@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.16 2010/05/07 22:03:19 tom Exp $
+ * $MawkId: execute.c,v 1.17 2010/07/22 00:45:12 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -218,7 +218,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    old_stack_base = (CELL *) 0;
     }
 
-    while (1)
+    while (1) {
 	switch ((cdp++)->op) {
 
 /* HALT only used by the disassemble now ; this remains
@@ -1333,6 +1333,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	default:
 	    bozo("bad opcode");
 	}
+    }
 }
 
 /*

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.10 2010/05/07 08:15:08 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.11 2010/07/22 00:42:44 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -220,9 +220,9 @@ repl_destroy(CELL * cp)
     register STRING **p;
     VCount cnt;
 
-    if (cp->type == C_REPL)
+    if (cp->type == C_REPL) {
 	free_STRING(string(cp));
-    else {			/* an C_REPLV           */
+    } else {			/* an C_REPLV           */
 	p = (STRING **) cp->ptr;
 	for (cnt = cp->vcnt; cnt; cnt--) {
 	    if (*p) {
