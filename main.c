@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.8 2009/12/14 00:23:56 tom Exp $
+ * $MawkId: main.c,v 1.9 2010/07/22 09:45:26 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -81,6 +81,10 @@ main(int argc, char **argv)
 void
 mawk_exit(int x)
 {
+#ifdef NO_LEAKS
+    zmalloc_leaks();
+#endif
+
 #ifdef  HAVE_REAL_PIPES
     close_out_pipes();		/* no effect, if no out pipes */
 #else
