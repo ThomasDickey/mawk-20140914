@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.23 2010/07/18 10:30:07 tom Exp $
+ * $MawkId: scan.c,v 1.24 2010/07/22 00:07:06 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -146,7 +146,7 @@ scan_cleanup(void)
 {
     if (program_fd >= 0)
 	zfree(buffer, (size_t) (BUFFSZ + 1));
-    else
+    if (program_string)
 	free_STRING(program_string);
 
     if (program_fd > 0)
