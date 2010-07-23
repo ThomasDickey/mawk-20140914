@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.14 2010/07/23 08:08:23 tom Exp $
+ * $MawkId: zmalloc.c,v 1.15 2010/07/23 21:50:32 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -147,33 +147,34 @@ compare_ptr_data(const void *a, const void *b)
 static void
 record_ptr(PTR ptr, size_t size)
 {
-    PTR_DATA dummy;
     PTR_DATA *item;
-
-    dummy.ptr = ptr;
-    dummy.size = size;
-
-    TRACE((stderr, "record_ptr %p -> %p %lu\n", &dummy, ptr, size));
-    item = tfind(&dummy, &ptr_data, compare_ptr_data);
-    TRACE((stderr, "->%p\n", item));
-
-    assert(item == 0);
+    PTR_DATA **result;
 
     item = malloc(sizeof(PTR_DATA));
     item->ptr = ptr;
     item->size = size;
-    TRACE((stderr, "...record_ptr %p -> %p %lu\n", item, ptr, size));
-    item = tsearch(item, &ptr_data, compare_ptr_data);
-    TRACE((stderr, "->%p\n", item));
 
-    assert(item != 0);
+#if 0
+    TRACE((stderr, "record_ptr %p -> %p %lu\n", item, ptr, size));
+    result = tfind(item, &ptr_data, compare_ptr_data);
+    TRACE((stderr, "->%p\n", result));
+
+    assert(result == 0);
+#endif
+
+    TRACE((stderr, "...record_ptr %p -> %p %lu\n", item, ptr, size));
+    result = tsearch(item, &ptr_data, compare_ptr_data);
+    assert(result != 0);
+    assert(*result != 0);
+
+    TRACE((stderr, "->%p (%p %lu)\n", (*result), (*result)->ptr, (*result)->size));
 }
 
 static void
 finish_ptr(PTR ptr, size_t size)
 {
     PTR_DATA dummy;
-    PTR_DATA *item;
+    PTR_DATA **item;
 
     dummy.ptr = ptr;
     dummy.size = size;
@@ -182,12 +183,11 @@ finish_ptr(PTR ptr, size_t size)
     item = tfind(&dummy, &ptr_data, compare_ptr_data);
 
     assert(item != 0);
+    assert(*item != 0);
 
-    TRACE((stderr, " ptr -> %p %p\n", item->ptr, ptr));
-    TRACE((stderr, " size -> %lu %lu\n", item->size, size));
-    /* FIXME assert(item->size == size); */
+    TRACE((stderr, "... %p -> %p %lu\n", (*item), (*item)->ptr, (*item)->size));
 
-    tdelete(&dummy, &ptr_data, compare_ptr_data);
+    tdelete(item, &ptr_data, compare_ptr_data);
 }
 
 #define FinishPtr(ptr,size) finish_ptr(ptr,size)
