@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.17 2010/05/06 23:36:28 tom Exp $
+ * $MawkId: config_h.in,v 1.18 2010/07/23 08:19:48 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -54,6 +54,7 @@
 #undef TURN_OFF_FPE_TRAPS
 #undef TURN_ON_FPE_TRAPS
 #undef USE_IEEEFP_H
+#undef YY_NO_LEAKS
 #undef const
 
 #ifndef GCC_NORETURN

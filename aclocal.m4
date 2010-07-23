@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.52 2010/06/22 00:51:55 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.53 2010/07/23 08:23:06 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -368,7 +368,7 @@ AC_SUBST(SHOW_CC)
 AC_SUBST(ECHO_CC)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_DISABLE_LEAKS version: 5 updated: 2010/03/13 15:14:55
+dnl CF_DISABLE_LEAKS version: 6 updated: 2010/07/23 04:14:32
 dnl ----------------
 dnl Combine no-leak checks with the libraries or tools that are used for the
 dnl checks.
@@ -387,6 +387,7 @@ AC_MSG_RESULT($with_no_leaks)
 
 if test "$with_no_leaks" = yes ; then
 	AC_DEFINE(NO_LEAKS)
+	AC_DEFINE(YY_NO_LEAKS)
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
