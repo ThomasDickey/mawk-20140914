@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.13 2010/07/23 00:38:01 tom Exp $
+ * $MawkId: zmalloc.c,v 1.14 2010/07/23 08:08:23 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -49,7 +49,13 @@ the GNU General Public License, version 2, 1991.
 #include  "mawk.h"
 #include  "zmalloc.h"
 
-#if defined(NO_LEAKS)		/* FIXME - configure check for tsearch */
+#ifdef NO_LEAKS
+#if defined(HAVE_TDESTROY) && defined(HAVE_TSEARCH)
+#define USE_TSEARCH 1
+#endif
+#endif
+
+#ifdef USE_TSEARCH
 #include <search.h>
 #endif
 
@@ -57,12 +63,6 @@ the GNU General Public License, version 2, 1991.
 #define TRACE(params) fprintf params
 #else
 #define TRACE(params)		/* nothing */
-#endif
-
-#ifdef NO_LEAKS
-#define Malloc(n) calloc(1,n)
-#else
-#define Malloc(n) malloc(n)
 #endif
 
 #define ZSHIFT      3
@@ -104,11 +104,13 @@ the GNU General Public License, version 2, 1991.
 
 #ifdef DEBUG_ZMALLOC
 #define IsPoolable(blocks)  ((blocks) == 0)
+#define Malloc(n) calloc(1,n)
 #else
 #define IsPoolable(blocks)  ((blocks) <= POOLSZ)
+#define Malloc(n) malloc(n)
 #endif
 
-#if defined(NO_LEAKS)		/* FIXME - configure check for tsearch */
+#ifdef USE_TSEARCH
 
 typedef struct {
     PTR ptr;
@@ -298,7 +300,7 @@ zrealloc(PTR p, size_t old_size, size_t new_size)
 	if (!(q = realloc(p, new_size))) {
 	    out_of_mem();
 	}
-#ifdef NO_LEAKS
+#ifdef DEBUG_ZMALLOC
 	if (new_size > old_size) {
 	    memset((char *) p + old_size, 0, new_size - old_size);
 	}
@@ -315,7 +317,9 @@ zrealloc(PTR p, size_t old_size, size_t new_size)
 void
 zmalloc_leaks(void)
 {
+#ifdef USE_TSEARCH
     TRACE((stderr, "zmalloc_leaks\n"));
     tdestroy(ptr_data, free_ptr_data);
+#endif
 }
 #endif
