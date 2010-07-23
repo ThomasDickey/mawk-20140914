@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.132 2010/07/19 09:37:10 tom Exp $
+-- $MawkId: CHANGES,v 1.133 2010/07/23 08:22:20 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20100718
+	+ modify zmalloc.c to make it simpler to use the --disable-leaks
+	  configure script option to analyze memory leaks.  The memory pool
+	  which interferes with analysis can be disabled by defining
+	  DEBUG_ZMALLOC.
 	+ (IN-PROGRESS) convert gsub() function from recursive, to
 	  non-recursive to lessen use of program stack (Debian #158481).
 	+ escape some dashes in manpage, to work with groff.
