@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.18 2010/07/23 08:19:48 tom Exp $
+ * $MawkId: config_h.in,v 1.19 2010/07/23 08:24:31 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -24,6 +24,8 @@
 #undef HAVE_SIGINFO_H
 #undef HAVE_STRTOD_OVF_BUG
 #undef HAVE_SYS_WAIT_H
+#undef HAVE_TDESTROY
+#undef HAVE_TSEARCH
 #undef HAVE_UNISTD_H
 #undef HAVE_WAIT
 #undef LOCALE
