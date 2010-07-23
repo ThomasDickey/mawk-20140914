@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.12 2010/05/07 22:11:34 tom Exp $
+ * $MawkId: zmalloc.c,v 1.13 2010/07/23 00:38:01 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -49,6 +49,22 @@ the GNU General Public License, version 2, 1991.
 #include  "mawk.h"
 #include  "zmalloc.h"
 
+#if defined(NO_LEAKS)		/* FIXME - configure check for tsearch */
+#include <search.h>
+#endif
+
+#if 0
+#define TRACE(params) fprintf params
+#else
+#define TRACE(params)		/* nothing */
+#endif
+
+#ifdef NO_LEAKS
+#define Malloc(n) calloc(1,n)
+#else
+#define Malloc(n) malloc(n)
+#endif
+
 #define ZSHIFT      3
 #define ZBLOCKSZ    BlocksToBytes(1)
 
@@ -72,14 +88,123 @@ the GNU General Public License, version 2, 1991.
 #define	 CHUNK		256
  /* number of blocks to get from malloc */
 
+/*****************************************************************************/
+
+/*
+ * zmalloc() implements a scheme which makes it hard to use memory-checking
+ * tools such as valgrind to audit the program to find where there are leaks.
+ * That is due to its maintaining (for speed...) pools of memory chunks.
+ *
+ * Define DEBUG_ZMALLOC to build mawk with a simpler interface to the system
+ * malloc, which verifies whether the size-parameter passed to zfree() is
+ * consistent with the zmalloc() parameter.
+ */
+
+/* #define DEBUG_ZMALLOC 1 */
+
+#ifdef DEBUG_ZMALLOC
+#define IsPoolable(blocks)  ((blocks) == 0)
+#else
+#define IsPoolable(blocks)  ((blocks) <= POOLSZ)
+#endif
+
+#if defined(NO_LEAKS)		/* FIXME - configure check for tsearch */
+
+typedef struct {
+    PTR ptr;
+    size_t size;
+} PTR_DATA;
+
+static void *ptr_data;
+
+static void
+free_ptr_data(void *a)
+{
+    TRACE((stderr, "free_ptr_data %p\n", a));
+    free(a);
+}
+
+static int
+compare_ptr_data(const void *a, const void *b)
+{
+    const PTR_DATA *p = (const PTR_DATA *) a;
+    const PTR_DATA *q = (const PTR_DATA *) b;
+    int result;
+
+    TRACE((stderr, "compare %p->%p %p->%p\n", p, p->ptr, q, q->ptr));
+    if (p->ptr > q->ptr) {
+	result = 1;
+    } else if (p->ptr < q->ptr) {
+	result = -1;
+    } else {
+	result = 0;
+    }
+    return result;
+}
+
+static void
+record_ptr(PTR ptr, size_t size)
+{
+    PTR_DATA dummy;
+    PTR_DATA *item;
+
+    dummy.ptr = ptr;
+    dummy.size = size;
+
+    TRACE((stderr, "record_ptr %p -> %p %lu\n", &dummy, ptr, size));
+    item = tfind(&dummy, &ptr_data, compare_ptr_data);
+    TRACE((stderr, "->%p\n", item));
+
+    assert(item == 0);
+
+    item = malloc(sizeof(PTR_DATA));
+    item->ptr = ptr;
+    item->size = size;
+    TRACE((stderr, "...record_ptr %p -> %p %lu\n", item, ptr, size));
+    item = tsearch(item, &ptr_data, compare_ptr_data);
+    TRACE((stderr, "->%p\n", item));
+
+    assert(item != 0);
+}
+
+static void
+finish_ptr(PTR ptr, size_t size)
+{
+    PTR_DATA dummy;
+    PTR_DATA *item;
+
+    dummy.ptr = ptr;
+    dummy.size = size;
+
+    TRACE((stderr, "finish_ptr %p -> %p %lu\n", &dummy, ptr, size));
+    item = tfind(&dummy, &ptr_data, compare_ptr_data);
+
+    assert(item != 0);
+
+    TRACE((stderr, " ptr -> %p %p\n", item->ptr, ptr));
+    TRACE((stderr, " size -> %lu %lu\n", item->size, size));
+    /* FIXME assert(item->size == size); */
+
+    tdelete(&dummy, &ptr_data, compare_ptr_data);
+}
+
+#define FinishPtr(ptr,size) finish_ptr(ptr,size)
+#define RecordPtr(ptr,size) record_ptr(ptr,size)
+#else
+#define FinishPtr(ptr,size)	/* nothing */
+#define RecordPtr(ptr,size)	/* nothing */
+#endif
+
+/*****************************************************************************/
+
 static void
 out_of_mem(void)
 {
     static char out[] = "out of memory";
 
-    if (mawk_state == EXECUTION)
+    if (mawk_state == EXECUTION) {
 	rt_error(out);
-    else {
+    } else {
 	/* I don't think this will ever happen */
 	compile_error(out);
 	mawk_exit(2);
@@ -103,17 +228,19 @@ PTR
 zmalloc(size_t size)
 {
     unsigned blocks = BytesToBlocks(size);
+    size_t bytes = (size_t) BlocksToBytes(blocks);
     register ZBLOCK *p;
     static unsigned amt_avail;
     static ZBLOCK *avail;
 
-    if (blocks > POOLSZ) {
-	p = (ZBLOCK *) malloc((size_t) BlocksToBytes(blocks));
+    if (!IsPoolable(blocks)) {
+	p = (ZBLOCK *) Malloc(bytes);
 	if (!p)
 	    out_of_mem();
+	RecordPtr(p, size);
     } else {
 
-	if ((p = pool[blocks - 1])) {
+	if ((p = pool[blocks - 1]) != 0) {
 	    pool[blocks - 1] = p->link;
 	} else {
 
@@ -124,15 +251,18 @@ zmalloc(size_t size)
 		    pool[amt_avail] = avail;
 		}
 
-		if (!(avail = (ZBLOCK *) malloc((size_t) (CHUNK * ZBLOCKSZ)))) {
+		if (!(avail = (ZBLOCK *) Malloc((size_t) (CHUNK * ZBLOCKSZ)))) {
+		    RecordPtr(avail, CHUNK * ZBLOCKSZ);
 		    /* if we get here, almost out of memory */
 		    amt_avail = 0;
-		    p = (ZBLOCK *) malloc((size_t) BlocksToBytes(blocks));
+		    p = (ZBLOCK *) Malloc(bytes);
 		    if (!p)
 			out_of_mem();
+		    RecordPtr(p, bytes);
 		    return (PTR) p;
-		} else
+		} else {
 		    amt_avail = CHUNK;
+		}
 	    }
 
 	    /* get p from the avail pile */
@@ -149,9 +279,10 @@ zfree(PTR p, size_t size)
 {
     unsigned blocks = BytesToBlocks(size);
 
-    if (blocks > POOLSZ)
+    if (!IsPoolable(blocks)) {
 	free(p);
-    else {
+	FinishPtr(p, size);
+    } else {
 	((ZBLOCK *) p)->link = pool[--blocks];
 	pool[blocks] = (ZBLOCK *) p;
     }
@@ -164,8 +295,14 @@ zrealloc(PTR p, size_t old_size, size_t new_size)
 
     if (new_size > (BlocksToBytes(POOLSZ)) &&
 	old_size > (BlocksToBytes(POOLSZ))) {
-	if (!(q = realloc(p, new_size)))
+	if (!(q = realloc(p, new_size))) {
 	    out_of_mem();
+	}
+#ifdef NO_LEAKS
+	if (new_size > old_size) {
+	    memset((char *) p + old_size, 0, new_size - old_size);
+	}
+#endif
     } else {
 	q = zmalloc(new_size);
 	memcpy(q, p, old_size < new_size ? old_size : new_size);
@@ -173,3 +310,12 @@ zrealloc(PTR p, size_t old_size, size_t new_size)
     }
     return q;
 }
+
+#ifdef NO_LEAKS
+void
+zmalloc_leaks(void)
+{
+    TRACE((stderr, "zmalloc_leaks\n"));
+    tdestroy(ptr_data, free_ptr_data);
+}
+#endif
