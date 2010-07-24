@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.54 2010/07/24 11:47:24 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.55 2010/07/24 12:24:39 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -391,6 +391,8 @@ if test "$with_no_leaks" = yes ; then
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_ENABLE_TRACE version: 1 updated: 2010/07/24 08:23:48
+dnl ---------------
 AC_DEFUN([CF_ENABLE_TRACE],[
 AC_MSG_CHECKING(if you want to enable debugging trace)
 CF_ARG_ENABLE(trace,
