@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.13 2010/05/07 22:03:19 tom Exp $
+ * $MawkId: field.c,v 1.14 2010/07/24 14:50:59 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -662,3 +662,14 @@ set_binmode(int x)
 }
 
 #endif /* USE_BINMODE */
+
+#ifdef NO_LEAKS
+void
+field_leaks(void)
+{
+    free_STRING(string(CONVFMT));
+    free_STRING(string(FS));
+    free_STRING(string(OFMT));
+    free_STRING(string(RS));
+}
+#endif
