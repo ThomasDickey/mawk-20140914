@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.35 2010/07/23 00:45:18 tom Exp $
+dnl $MawkId: configure.in,v 1.36 2010/07/24 11:43:55 tom Exp $
 dnl configure.in for mawk
 dnl
 dnl @Log: configure.in,v @
@@ -72,6 +72,7 @@ CF_XOPEN_SOURCE
 CF_LARGEFILE
 
 CF_DISABLE_LEAKS 
+CF_ENABLE_TRACE
 
 CF_MAWK_FIND_SIZE_T
 CF_LOCALE
