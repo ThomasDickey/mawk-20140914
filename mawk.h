@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.20 2010/07/21 23:50:41 tom Exp $
+ * $MawkId: mawk.h,v 1.21 2010/07/24 11:14:23 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -62,6 +62,10 @@ the GNU General Public License, version 2, 1991.
 
 #ifndef GCC_NORETURN
 #define GCC_NORETURN		/* nothing */
+#endif
+
+#ifndef GCC_PRINTFLIKE
+#define  GCC_PRINTFLIKE(fmt,var)	/* nothing */
 #endif
 
 #ifndef GCC_UNUSED
@@ -147,53 +151,63 @@ extern unsigned rt_nr, rt_fnr;	/* ditto */
 
 /*  prototypes  */
 
-void cast1_to_s(CELL *);
-void cast1_to_d(CELL *);
-void cast2_to_s(CELL *);
-void cast2_to_d(CELL *);
-void cast_to_RE(CELL *);
-void cast_for_split(CELL *);
-void check_strnum(CELL *);
-void cast_to_REPL(CELL *);
-Int d_to_I(double);
-UInt d_to_U(double d);
+extern void cast1_to_s(CELL *);
+extern void cast1_to_d(CELL *);
+extern void cast2_to_s(CELL *);
+extern void cast2_to_d(CELL *);
+extern void cast_to_RE(CELL *);
+extern void cast_for_split(CELL *);
+extern void check_strnum(CELL *);
+extern void cast_to_REPL(CELL *);
+extern Int d_to_I(double);
+extern UInt d_to_U(double d);
 
 #define d_to_i(d)     ((int)d_to_I(d))
 
-int test(CELL *);		/* test for null non-null */
-CELL *cellcpy(CELL *, CELL *);
-CELL *repl_cpy(CELL *, CELL *);
-void DB_cell_destroy(CELL *);
-void overflow(const char *, unsigned);
-void rt_overflow(const char *, unsigned);
-void rt_error(const char *,...) GCC_NORETURN;
-void mawk_exit(int) GCC_NORETURN;
-void da(INST *, FILE *);
-char *rm_escape(char *, size_t *);
-char *re_pos_match(char *, size_t, PTR, size_t *);
-int binmode(void);
+extern int test(CELL *);	/* test for null non-null */
+extern CELL *cellcpy(CELL *, CELL *);
+extern CELL *repl_cpy(CELL *, CELL *);
+extern void DB_cell_destroy(CELL *);
+extern void overflow(const char *, unsigned);
+extern void rt_overflow(const char *, unsigned);
+extern void rt_error(const char *,...) GCC_NORETURN  GCC_PRINTFLIKE(1,2);
+extern void mawk_exit(int) GCC_NORETURN;
+extern void da(INST *, FILE *);
+extern char *rm_escape(char *, size_t *);
+extern char *re_pos_match(char *, size_t, PTR, size_t *);
+extern int binmode(void);
 
 #ifndef  REXP_H
-char *str_str(char *, size_t, char *, size_t);
+extern char *str_str(char *, size_t, char *, size_t);
 #endif
 
-void parse(void);
-int yylex(void);
-int yyparse(void);
-void yyerror(const char *);
-void scan_cleanup(void);
+extern void parse(void);
+extern int yylex(void);
+extern int yyparse(void);
+extern void yyerror(const char *);
+extern void scan_cleanup(void);
 
-void bozo(const char *) GCC_NORETURN;
-void errmsg(int, const char *,...);
-void compile_error(const char *,...);
+extern void bozo(const char *) GCC_NORETURN;
+extern void errmsg(int, const char *,...) GCC_PRINTFLIKE(2,3);
+extern void compile_error(const char *,...) GCC_PRINTFLIKE(1,2);
 
-void execute(INST *, CELL *, CELL *);
-const char *find_kw_str(int);
-void da_string(FILE *fp, const char *, size_t);
+extern void execute(INST *, CELL *, CELL *);
+extern const char *find_kw_str(int);
+extern void da_string(FILE *fp, const char *, size_t);
 
 #ifdef HAVE_STRTOD_OVF_BUG
-double strtod_with_ovf_bug(const char *, char **);
+extern double strtod_with_ovf_bug(const char *, char **);
 #define strtod  strtod_with_ovf_bug
+#endif
+
+#ifdef OPT_TRACE
+extern void Trace(const char *,...) GCC_PRINTFLIKE(1,2);
+#define TRACE(params) Trace params
+#ifdef NO_LEAKS
+extern void trace_leaks(void);
+#endif
+#else
+#define TRACE(params)		/* nothing */
 #endif
 
 #endif /* MAWK_H */
