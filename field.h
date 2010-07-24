@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.h,v 1.8 2010/05/07 22:03:31 tom Exp $
+ * $MawkId: field.h,v 1.9 2010/07/24 14:42:26 tom Exp $
  * @Log: field.h,v @
  * Revision 1.2  1995/06/18  19:42:16  mike
  * Remove some redundant declarations and add some prototypes
@@ -34,17 +34,17 @@ the GNU General Public License, version 2, 1991.
 #include "nstd.h"
 #include "types.h"
 
-void set_field0(char *, size_t);
-void split_field0(void);
-size_t space_split(char *, size_t);
-size_t re_split(STRING *, PTR);
-size_t null_split(char *, size_t);
-void field_assign(CELL *, CELL *);
-char *is_string_split(PTR, unsigned *);
-void slow_cell_assign(CELL *, CELL *);
-CELL *slow_field_ptr(int);
-int field_addr_to_index(CELL *);
-void set_binmode(int);
+extern void set_field0(char *, size_t);
+extern void split_field0(void);
+extern size_t space_split(char *, size_t);
+extern size_t re_split(STRING *, PTR);
+extern size_t null_split(char *, size_t);
+extern void field_assign(CELL *, CELL *);
+extern char *is_string_split(PTR, unsigned *);
+extern void slow_cell_assign(CELL *, CELL *);
+extern CELL *slow_field_ptr(int);
+extern int field_addr_to_index(CELL *);
+extern void set_binmode(int);
 
 #define  NUM_PFIELDS		5
 extern CELL field[FBANK_SZ + NUM_PFIELDS];
@@ -63,23 +63,23 @@ extern CELL *fbank[NUM_FBANK];	/* fbank[0] == field */
 #undef CONVFMT
 #undef OFMT
 
-/* the pseudo fields, assignment has side effects */
-#define  NF       (field + MAX_SPLIT + 1)	/* must be first */
-#define  RS       (field + MAX_SPLIT + 2)
-#define  FS       (field + MAX_SPLIT + 3)
-#define  CONVFMT  (field + MAX_SPLIT + 4)
-#define  OFMT     (field + MAX_SPLIT + 5)	/* must be last */
-
-#define  LAST_PFIELD	OFMT
-
 /* some compilers choke on (NF-field) in a case statement
    even though it's constant so ...
 */
-#define  NF_field    (MAX_SPLIT+1)
-#define  RS_field    (MAX_SPLIT+2)
-#define  FS_field    (MAX_SPLIT+3)
-#define  CONVFMT_field (MAX_SPLIT+4)
-#define  OFMT_field  (MAX_SPLIT+5)
+#define  NF_field      (MAX_SPLIT + 1)
+#define  RS_field      (MAX_SPLIT + 2)
+#define  FS_field      (MAX_SPLIT + 3)
+#define  CONVFMT_field (MAX_SPLIT + 4)
+#define  OFMT_field    (MAX_SPLIT + 5)
+
+/* the pseudo fields, assignment has side effects */
+#define  NF            (field + NF_field)	/* must be first */
+#define  RS            (field + RS_field)
+#define  FS            (field + FS_field)
+#define  CONVFMT       (field + CONVFMT_field)
+#define  OFMT          (field + OFMT_field)	/* must be last */
+
+#define  LAST_PFIELD	OFMT
 
 extern int nf;			/* shadows NF */
 
