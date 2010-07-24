@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.48 2010/07/24 12:18:28 tom Exp $
+ * $MawkId: bi_funct.c,v 1.49 2010/07/24 12:31:02 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1141,9 +1141,9 @@ new_gsub(PTR re, int level)
 	ThisResult = new_STRING0(ThisFrontLen + string(&ThisReplace)->len + back->len);
 	TRACE(("new %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
-	       ThisFrontLen, ThisFront,
-	       string(&ThisReplace)->len, string(&ThisReplace)->str,
-	       back->len, back->str));
+	       (int) ThisFrontLen, ThisFront,
+	       (int) string(&ThisReplace)->len, string(&ThisReplace)->str,
+	       (int) back->len, back->str));
 	in_sval = ThisResult->str;
 
 	if (ThisFrontLen) {
