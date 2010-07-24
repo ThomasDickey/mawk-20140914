@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.8 2010/07/24 00:43:31 tom Exp $
+ * $MawkId: hash.c,v 1.9 2010/07/24 00:50:18 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -266,7 +266,7 @@ hash_leaks(void)
 
     for (i = 0; i < HASH_PRIME; i++) {
 	while ((p = hash_table[i]) != 0) {
-	    free(delete(p->symtab.name));
+	    zfree(delete(p->symtab.name), sizeof(HASHNODE));
 	}
     }
 }
