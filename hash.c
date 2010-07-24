@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.7 2010/05/07 08:18:31 tom Exp $
+ * $MawkId: hash.c,v 1.8 2010/07/24 00:43:31 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -66,8 +66,6 @@ typedef struct hash {
     struct hash *link;
     SYMTAB symtab;
 } HASHNODE;
-
-static HASHNODE *delete(const char *);
 
 static HASHNODE *hash_table[HASH_PRIME];
 
@@ -258,3 +256,18 @@ reverse_find(int type, PTR ptr)
     }
     return uk;
 }
+
+#ifdef NO_LEAKS
+void
+hash_leaks(void)
+{
+    int i;
+    HASHNODE *p;
+
+    for (i = 0; i < HASH_PRIME; i++) {
+	while ((p = hash_table[i]) != 0) {
+	    free(delete(p->symtab.name));
+	}
+    }
+}
+#endif
