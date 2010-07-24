@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.h,v 1.9 2010/07/24 13:03:13 tom Exp $
+ * $MawkId: files.h,v 1.10 2010/07/24 14:30:55 tom Exp $
  * @Log: files.h,v @
  * Revision 1.3  1996/01/14  17:14:11  mike
  * flush_all_output()
@@ -46,33 +46,29 @@ the GNU General Public License, version 2, 1991.
 
 extern const char *shell;	/* for pipes and system() */
 
-PTR file_find(STRING *, int);
-int file_close(STRING *);
-int file_flush(STRING *);
-void flush_all_output(void);
-PTR get_pipe(char *, int, int *);
-int wait_for(int);
-void close_out_pipes(void);
+extern PTR file_find(STRING *, int);
+extern int file_close(STRING *);
+extern int file_flush(STRING *);
+extern void flush_all_output(void);
+extern PTR get_pipe(char *, int, int *);
+extern int wait_for(int);
+extern void close_out_pipes(void);
 
 #ifdef  HAVE_FAKE_PIPES
-void close_fake_pipes(void);
-int close_fake_outpipe(char *, int);
-char *tmp_file_name(int, char *);
+extern void close_fake_pipes(void);
+extern int close_fake_outpipe(char *, int);
+extern char *tmp_file_name(int, char *);
 #endif
 
 #ifdef MSDOS
-int DOSexec(char *);
-void enlarge_output_buffer(FILE *);
+extern int DOSexec(char *);
+extern void enlarge_output_buffer(FILE *);
 #endif
 
 #if USE_BINMODE
-int binmode(void);
-void set_binmode(int);
-void stdout_init(void);
-#endif
-
-#ifdef NO_LEAKS
-extern void files_leaks(void);
+extern int binmode(void);
+extern void set_binmode(int);
+extern void stdout_init(void);
 #endif
 
 #endif /* MAWK_FILES_H */
