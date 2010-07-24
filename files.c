@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.16 2010/06/25 21:56:01 tom Exp $
+ * $MawkId: files.c,v 1.17 2010/07/24 13:43:03 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -107,6 +107,31 @@ static FILE *tfopen(const char *, const char *);
 static void efflush(FILE *);
 static void close_error(FILE_NODE * p);
 
+static FILE_NODE *
+alloc_filenode(void)
+{
+    FILE_NODE *result;
+
+    result = ZMALLOC(FILE_NODE);
+
+#ifdef NO_LEAKS
+    result->name = 0;
+#endif
+
+    return result;
+}
+
+static void
+free_filenode(FILE_NODE * p)
+{
+#ifdef NO_LEAKS
+    if (p->name != 0) {
+	free_STRING(p->name);
+    }
+#endif
+    zfree(p, sizeof(FILE_NODE));
+}
+
 /* find a file on file_list */
 PTR
 file_find(STRING * sval, int type)
@@ -119,7 +144,7 @@ file_find(STRING * sval, int type)
     while (1) {
 	if (!p) {
 	    /* open a new one */
-	    p = ZMALLOC(FILE_NODE);
+	    p = alloc_filenode();
 
 	    switch (p->type = (short) type) {
 	    case F_TRUNC:
@@ -144,7 +169,7 @@ file_find(STRING * sval, int type)
 
 	    case F_IN:
 		if (!(p->ptr = (PTR) FINopen(name, 0))) {
-		    zfree(p, sizeof(FILE_NODE));
+		    free_filenode(p);
 		    return (PTR) 0;
 		}
 		break;
@@ -158,7 +183,7 @@ file_find(STRING * sval, int type)
 		    if (type == PIPE_OUT)
 			goto out_failure;
 		    else {
-			zfree(p, sizeof(FILE_NODE));
+			free_filenode(p);
 			return (PTR) 0;
 		    }
 		}
@@ -205,7 +230,7 @@ file_find(STRING * sval, int type)
     /* NOTREACHED */
 }
 
-/* Close a file and delete it's node from the file_list.
+/* Close a file and delete its node from the file_list.
    Walk the whole list, in case a name has two nodes,
    e.g. < "/dev/tty" and > "/dev/tty"
 */
@@ -237,15 +262,16 @@ file_close(STRING * sval)
 	    switch (p->type) {
 	    case F_TRUNC:
 	    case F_APPEND:
-		if (fclose((FILE *) p->ptr) != 0)
+		if (fclose((FILE *) p->ptr) != 0) {
 		    close_error(p);
+		}
 		retval = 0;
 		break;
 
 	    case PIPE_OUT:
-		if (fclose((FILE *) p->ptr) != 0)
+		if (fclose((FILE *) p->ptr) != 0) {
 		    close_error(p);
-
+		}
 #ifdef  HAVE_REAL_PIPES
 		retval = wait_for(p->pid);
 #endif
@@ -275,10 +301,9 @@ file_close(STRING * sval)
 		break;
 	    }
 
-	    free_STRING(p->name);
 	    hold = p;
 	    p = p->link;
-	    ZFREE(hold);
+	    free_filenode(hold);
 	} else {
 	    q = p;
 	    p = p->link;
@@ -352,9 +377,10 @@ efflush(FILE *fp)
 void
 close_out_pipes(void)
 {
-    register FILE_NODE *p = file_list;
+    FILE_NODE *p = file_list;
 
     while (p) {
+
 	if (IS_OUTPUT(p->type)) {
 	    if (fclose((FILE *) p->ptr) != 0) {
 		/* if another error occurs we do not want to be called
@@ -362,9 +388,9 @@ close_out_pipes(void)
 
 		file_list = p->link;
 		close_error(p);
-	    }
-	    if (p->type == PIPE_OUT)
+	    } else if (p->type == PIPE_OUT) {
 		wait_for(p->pid);
+	    }
 	}
 
 	p = p->link;
@@ -392,8 +418,9 @@ close_fake_pipes(void)
     p = file_list;
     while (p) {
 	if (p->type == PIPE_OUT) {
-	    if (fclose(p->ptr) != 0)
+	    if (fclose(p->ptr) != 0) {
 		close_error(p);
+	    }
 	    close_fake_outpipe(p->name->str, p->pid);
 	}
 	p = p->link;
@@ -549,13 +576,13 @@ set_stderr(void)		/* and stdout */
        needed because we want to output errors encountered on closing
        stdout. */
 
-    q = ZMALLOC(FILE_NODE);
+    q = alloc_filenode();
     q->link = (FILE_NODE *) 0;
     q->type = F_TRUNC;
     q->name = new_STRING("/dev/stderr");
     q->ptr = (PTR) stderr;
 
-    p = ZMALLOC(FILE_NODE);
+    p = alloc_filenode();
     p->link = q;
     p->type = F_TRUNC;
     p->name = new_STRING("/dev/stdout");
@@ -614,6 +641,19 @@ stdout_init(void)
 static void
 close_error(FILE_NODE * p)
 {
+    TRACE(("close_error(%s)\n", p->name->str));
     errmsg(errno, "close failed on file %s", p->name->str);
     mawk_exit(2);
 }
+
+#ifdef NO_LEAKS
+void
+files_leaks(void)
+{
+    while (file_list != 0) {
+	FILE_NODE *p = file_list;
+	file_list = p->link;
+	free_filenode(p);
+    }
+}
+#endif
