@@ -1,5 +1,5 @@
 /*
- * $MawkId: config_h.in,v 1.19 2010/07/23 08:24:31 tom Exp $
+ * $MawkId: config_h.in,v 1.20 2010/07/24 10:53:29 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -50,6 +50,7 @@
 #undef NO_TIME_H
 #undef NO_VFPRINTF
 #undef NO_VOID_STAR
+#undef OPT_TRACE
 #undef SIZE_T_STDDEF_H
 #undef SIZE_T_TYPES_H
 #undef SYSTEM_NAME
