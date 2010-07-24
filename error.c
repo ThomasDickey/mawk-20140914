@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.12 2010/07/21 23:50:52 tom Exp $
+ * $MawkId: error.c,v 1.13 2010/07/24 12:12:24 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -420,3 +420,34 @@ simple_vfprintf(FILE *fp, char *format, va_list argp)
 }
 
 #endif /* USE_SIMPLE_VFPRINTF */
+
+#ifdef OPT_TRACE
+static FILE *trace_fp;
+
+void
+Trace(const char *format,...)
+{
+    va_list args;
+
+    if (trace_fp == 0)
+	trace_fp = fopen("Trace.out", "w");
+
+    if (trace_fp == 0)
+	rt_error("cannot open Trace.out");
+
+    va_start(args, format);
+    vfprintf(trace_fp, format, args);
+    va_end(args);
+}
+
+#ifdef NO_LEAKS
+void
+trace_leaks(void)
+{
+    if (trace_fp != 0) {
+	fclose(trace_fp);
+	trace_fp = 0;
+    }
+}
+#endif
+#endif
