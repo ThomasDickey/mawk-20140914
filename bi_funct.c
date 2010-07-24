@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.46 2010/07/21 22:27:50 tom Exp $
+ * $MawkId: bi_funct.c,v 1.47 2010/07/24 11:53:34 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -930,20 +930,15 @@ typedef struct {
 
 /* #define DEBUG_GSUB 1 */
 
-#ifdef DEBUG_GSUB
-#define TRACE(params) fprintf params
-#else
-#define TRACE(params)		/* nothing */
-#endif
-
 static size_t gsub_max;
 static GSUB_STK *gsub_stk;
 static unsigned repl_cnt;	/* number of global replacements */
 
-#ifdef DEBUG_GSUB
+#ifdef OPT_TRACE
 static const char *
 indent(int level)
 {
+    /* FIXME - not deep enough? */
     static const char value[] = "-----------------";
     return value + (int) sizeof(value) - 1 - level;
 }
@@ -1028,7 +1023,7 @@ old_gsub(PTR re, int level)
 
 	/* put the three pieces together */
 	ThisResult = new_STRING0(front_len + string(&ThisReplace)->len + back->len);
-	TRACE((stderr, "old %s front '%.*s', middle '%.*s', back '%.*s'\n",
+	TRACE(("old %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
 	       front_len, front,
 	       string(&ThisReplace)->len, string(&ThisReplace)->str,
@@ -1138,7 +1133,7 @@ new_gsub(PTR re, int level)
 
 	/* put the three pieces together */
 	ThisResult = new_STRING0(ThisFrontLen + string(&ThisReplace)->len + back->len);
-	TRACE((stderr, "new %s front '%.*s', middle '%.*s', back '%.*s'\n",
+	TRACE(("new %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
 	       ThisFrontLen, ThisFront,
 	       string(&ThisReplace)->len, string(&ThisReplace)->str,
@@ -1225,7 +1220,7 @@ bi_gsub(CELL * sp)
 
 	resul2 = old_gsub(sp->ptr, 0);
 
-	TRACE((stderr, "OLD ->'%.*s'\n", resul2->len, resul2->str));
+	TRACE(("OLD ->'%.*s'\n", resul2->len, resul2->str));
 	free_STRING(target);
     }
 #endif
@@ -1243,9 +1238,9 @@ bi_gsub(CELL * sp)
     tc.ptr = (PTR) result;
 
 #ifdef DEBUG_GSUB
-    TRACE((stderr, "NEW ->'%.*s'\n", result->len, result->str));
+    TRACE(("NEW ->'%.*s'\n", result->len, result->str));
     if (result->len != resul2->len || memcmp(result->str, resul2->str, result->len))
-	TRACE((stderr, "OOPS\n"));
+	TRACE(("OOPS\n"));
 #endif
 
     if (repl_cnt) {

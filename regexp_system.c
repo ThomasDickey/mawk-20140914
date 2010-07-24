@@ -1,5 +1,5 @@
 /*
- * $MawkId: regexp_system.c,v 1.31 2010/06/25 20:43:03 tom Exp $
+ * $MawkId: regexp_system.c,v 1.32 2010/07/24 11:49:26 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -17,14 +17,6 @@ typedef struct {
 
 static mawk_re_t *last_used_regexp = NULL;
 static int err_code = 0;
-
-/*#define MAWK_EXTRACT_REGEXP_DEBUG*/
-
-#ifdef MAWK_EXTRACT_REGEXP_DEBUG
-#define TRACE(params) fprintf params
-#else
-#define TRACE(params)		/*nothing */
-#endif
 
 #define AT_LAST() ((size_t) (source - base) >= limit)
 #define MORE_CH() ((size_t) (source - base) < limit)
@@ -55,7 +47,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
     int value = 0;
     int added;
 
-    TRACE((stderr, "in : \"%s\"\n", base));
+    TRACE(("in : \"%s\"\n", base));
 
     while ((ch = LIMITED()) != 0) {
 	if (escape) {
@@ -279,7 +271,7 @@ prepare_regexp(char *regexp, const char *source, size_t limit)
 
     *tail = '\0';
 
-    TRACE((stderr, "out: \"%s\"\n", regexp));
+    TRACE(("out: \"%s\"\n", regexp));
     return tail;
 }
 
@@ -334,15 +326,15 @@ REtest(char *str, size_t str_len GCC_UNUSED, PTR q)
 {
     mawk_re_t *re = (mawk_re_t *) q;
 
-    TRACE((stderr, "REtest:  \"%s\" ~ /%s/", str, re->regexp));
+    TRACE(("REtest:  \"%s\" ~ /%s/", str, re->regexp));
 
     last_used_regexp = re;
 
     if (regexec(&re->re, str, (size_t) 0, NULL, 0)) {
-	TRACE((stderr, "=1\n"));
+	TRACE(("=1\n"));
 	return 0;
     } else {
-	TRACE((stderr, "=0\n"));
+	TRACE(("=0\n"));
 	return 1;
     }
 }
@@ -355,16 +347,16 @@ REmatch(char *str, size_t str_len GCC_UNUSED, PTR q, size_t *lenp)
     mawk_re_t *re = (mawk_re_t *) q;
     regmatch_t match[MAX_MATCHES];
 
-    TRACE((stderr, "REmatch:  \"%s\" ~ /%s/", str, re->regexp));
+    TRACE(("REmatch:  \"%s\" ~ /%s/", str, re->regexp));
 
     last_used_regexp = re;
 
     if (!regexec(&re->re, str, (size_t) MAX_MATCHES, match, 0)) {
 	*lenp = (size_t) (match[0].rm_eo - match[0].rm_so);
-	TRACE((stderr, "=%i/%lu\n", match[0].rm_so, (unsigned long) *lenp));
+	TRACE(("=%i/%lu\n", match[0].rm_so, (unsigned long) *lenp));
 	return str + match[0].rm_so;
     } else {
-	TRACE((stderr, "=0\n"));
+	TRACE(("=0\n"));
 	return NULL;
     }
 }

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.16 2010/07/24 00:47:12 tom Exp $
+ * $MawkId: zmalloc.c,v 1.17 2010/07/24 11:49:50 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -57,12 +57,6 @@ the GNU General Public License, version 2, 1991.
 
 #ifdef USE_TSEARCH
 #include <search.h>
-#endif
-
-#if 0
-#define TRACE(params) fprintf params
-#else
-#define TRACE(params)		/* nothing */
 #endif
 
 #define ZSHIFT      3
@@ -125,7 +119,7 @@ show_tsearch(const void *nodep, const VISIT which, const int depth)
 {
     const PTR_DATA *p = *(PTR_DATA * const *) nodep;
     if (which == postorder || which == leaf) {
-	TRACE((stderr, "show_data %d:%p ->%p %lu\n", depth, p, p->ptr, p->size));
+	TRACE(("show_data %d:%p ->%p %lu\n", depth, p, p->ptr, p->size));
     }
 }
 
@@ -143,7 +137,7 @@ show_ptr_data(void)
 static void
 free_ptr_data(void *a)
 {
-    TRACE((stderr, "free_ptr_data %p\n", a));
+    TRACE(("free_ptr_data %p\n", a));
     free(a);
 }
 
@@ -154,7 +148,7 @@ compare_ptr_data(const void *a, const void *b)
     const PTR_DATA *q = (const PTR_DATA *) b;
     int result;
 
-    TRACE((stderr, "compare %p->%p %p->%p\n", p, p->ptr, q, q->ptr));
+    TRACE(("compare %p->%p %p->%p\n", p, p->ptr, q, q->ptr));
     if (p->ptr > q->ptr) {
 	result = 1;
     } else if (p->ptr < q->ptr) {
@@ -175,12 +169,12 @@ record_ptr(PTR ptr, size_t size)
     item->ptr = ptr;
     item->size = size;
 
-    TRACE((stderr, "...record_ptr %p -> %p %lu\n", item, ptr, size));
+    TRACE(("...record_ptr %p -> %p %lu\n", item, ptr, size));
     result = tsearch(item, &ptr_data, compare_ptr_data);
     assert(result != 0);
     assert(*result != 0);
 
-    TRACE((stderr, "->%p (%p %lu)\n", (*result), (*result)->ptr, (*result)->size));
+    TRACE(("->%p (%p %lu)\n", (*result), (*result)->ptr, (*result)->size));
     ShowPtrData();
 }
 
@@ -193,13 +187,13 @@ finish_ptr(PTR ptr, size_t size)
     dummy.ptr = ptr;
     dummy.size = size;
 
-    TRACE((stderr, "finish_ptr %p -> %p %lu\n", &dummy, ptr, size));
+    TRACE(("finish_ptr %p -> %p %lu\n", &dummy, ptr, size));
     item = tfind(&dummy, &ptr_data, compare_ptr_data);
 
     assert(item != 0);
     assert(*item != 0);
 
-    TRACE((stderr, "... %p -> %p %lu\n", (*item), (*item)->ptr, (*item)->size));
+    TRACE(("... %p -> %p %lu\n", (*item), (*item)->ptr, (*item)->size));
 
     tdelete(item, &ptr_data, compare_ptr_data);
     ShowPtrData();
@@ -333,7 +327,7 @@ void
 zmalloc_leaks(void)
 {
 #ifdef USE_TSEARCH
-    TRACE((stderr, "zmalloc_leaks\n"));
+    TRACE(("zmalloc_leaks\n"));
     tdestroy(ptr_data, free_ptr_data);
 #endif
 }
