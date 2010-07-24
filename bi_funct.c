@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.47 2010/07/24 11:53:34 tom Exp $
+ * $MawkId: bi_funct.c,v 1.48 2010/07/24 12:18:28 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -938,9 +938,15 @@ static unsigned repl_cnt;	/* number of global replacements */
 static const char *
 indent(int level)
 {
-    /* FIXME - not deep enough? */
     static const char value[] = "-----------------";
-    return value + (int) sizeof(value) - 1 - level;
+    const char *result;
+    int limit = (int) sizeof(value) - 1;
+
+    if (level < limit)
+	result = value + limit - level;
+    else
+	result = "";
+    return result;
 }
 #endif
 
