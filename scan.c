@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.24 2010/07/22 00:07:06 tom Exp $
+ * $MawkId: scan.c,v 1.25 2010/07/24 10:52:33 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -960,7 +960,7 @@ collect_string(void)
 	case 0:		/* unterminated string */
 	    compile_error(
 			     "runaway string constant \"%.10s ...",
-			     string_buff, token_lineno);
+			     string_buff);
 	    mawk_exit(2);
 
 	case SC_ESCAPE:
@@ -1066,7 +1066,7 @@ collect_RE(void)
 	case 0:		/* unterminated re */
 	    compile_error(
 			     "runaway regular expression /%.10s ...",
-			     string_buff, token_lineno);
+			     string_buff);
 	    mawk_exit(2);
 
 	case SC_ESCAPE:
