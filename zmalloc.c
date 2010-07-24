@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.15 2010/07/23 21:50:32 tom Exp $
+ * $MawkId: zmalloc.c,v 1.16 2010/07/24 00:47:12 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -119,6 +119,27 @@ typedef struct {
 
 static void *ptr_data;
 
+#if 0
+static void
+show_tsearch(const void *nodep, const VISIT which, const int depth)
+{
+    const PTR_DATA *p = *(PTR_DATA * const *) nodep;
+    if (which == postorder || which == leaf) {
+	TRACE((stderr, "show_data %d:%p ->%p %lu\n", depth, p, p->ptr, p->size));
+    }
+}
+
+static void
+show_ptr_data(void)
+{
+    twalk(ptr_data, show_tsearch);
+}
+
+#define ShowPtrData() show_ptr_data()
+#else
+#define ShowPtrData()		/* nothing */
+#endif
+
 static void
 free_ptr_data(void *a)
 {
@@ -154,20 +175,13 @@ record_ptr(PTR ptr, size_t size)
     item->ptr = ptr;
     item->size = size;
 
-#if 0
-    TRACE((stderr, "record_ptr %p -> %p %lu\n", item, ptr, size));
-    result = tfind(item, &ptr_data, compare_ptr_data);
-    TRACE((stderr, "->%p\n", result));
-
-    assert(result == 0);
-#endif
-
     TRACE((stderr, "...record_ptr %p -> %p %lu\n", item, ptr, size));
     result = tsearch(item, &ptr_data, compare_ptr_data);
     assert(result != 0);
     assert(*result != 0);
 
     TRACE((stderr, "->%p (%p %lu)\n", (*result), (*result)->ptr, (*result)->size));
+    ShowPtrData();
 }
 
 static void
@@ -188,6 +202,7 @@ finish_ptr(PTR ptr, size_t size)
     TRACE((stderr, "... %p -> %p %lu\n", (*item), (*item)->ptr, (*item)->size));
 
     tdelete(item, &ptr_data, compare_ptr_data);
+    ShowPtrData();
 }
 
 #define FinishPtr(ptr,size) finish_ptr(ptr,size)
@@ -254,7 +269,6 @@ zmalloc(size_t size)
 		}
 
 		if (!(avail = (ZBLOCK *) Malloc((size_t) (CHUNK * ZBLOCKSZ)))) {
-		    RecordPtr(avail, CHUNK * ZBLOCKSZ);
 		    /* if we get here, almost out of memory */
 		    amt_avail = 0;
 		    p = (ZBLOCK *) Malloc(bytes);
@@ -263,6 +277,7 @@ zmalloc(size_t size)
 		    RecordPtr(p, bytes);
 		    return (PTR) p;
 		} else {
+		    RecordPtr(avail, CHUNK * ZBLOCKSZ);
 		    amt_avail = CHUNK;
 		}
 	    }
