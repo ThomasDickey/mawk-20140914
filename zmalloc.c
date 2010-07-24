@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.18 2010/07/24 12:18:04 tom Exp $
+ * $MawkId: zmalloc.c,v 1.19 2010/07/24 13:42:13 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -148,7 +148,7 @@ compare_ptr_data(const void *a, const void *b)
     const PTR_DATA *q = (const PTR_DATA *) b;
     int result;
 
-    TRACE(("compare %p->%p %p->%p\n", p, p->ptr, q, q->ptr));
+    TRACE2(("compare %p->%p %p->%p\n", p, p->ptr, q, q->ptr));
     if (p->ptr > q->ptr) {
 	result = 1;
     } else if (p->ptr < q->ptr) {
@@ -169,14 +169,14 @@ record_ptr(PTR ptr, size_t size)
     item->ptr = ptr;
     item->size = size;
 
-    TRACE(("...record_ptr %p -> %p %lu\n", item, ptr, (unsigned long) size));
+    TRACE(("record_ptr %p -> %p %lu\n", item, ptr, (unsigned long) size));
     result = tsearch(item, &ptr_data, compare_ptr_data);
     assert(result != 0);
     assert(*result != 0);
 
-    TRACE(("->%p (%p %lu)\n",
-	   (*result), (*result)->ptr,
-	   (unsigned long) (*result)->size));
+    TRACE2(("->%p (%p %lu)\n",
+	    (*result), (*result)->ptr,
+	    (unsigned long) (*result)->size));
     ShowPtrData();
 }
 
@@ -195,10 +195,10 @@ finish_ptr(PTR ptr, size_t size)
     assert(item != 0);
     assert(*item != 0);
 
-    TRACE(("... %p -> %p %lu\n",
-	   (*item),
-	   (*item)->ptr,
-	   (unsigned long) (*item)->size));
+    TRACE2(("... %p -> %p %lu\n",
+	    (*item),
+	    (*item)->ptr,
+	    (unsigned long) (*item)->size));
 
     tdelete(item, &ptr_data, compare_ptr_data);
     ShowPtrData();
