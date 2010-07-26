@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.5 2010/05/07 09:47:06 tom Exp $
+ * $MawkId: code.c,v 1.6 2010/07/26 10:48:06 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -242,3 +242,19 @@ be_setup(int scope)
 	active_code = *end_code_p;
     }
 }
+
+#ifdef NO_LEAKS
+void
+code_leaks(void)
+{
+    if (main_start != 0) {
+	zfree(main_start, main_size);
+	main_start = 0;
+	main_size = 0;
+    } else if (code_base != 0) {
+	zfree(code_base, INST_BYTES(code_limit - code_base));
+	code_base = 0;
+	code_limit = 0;
+    }
+}
+#endif

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.25 2010/07/24 10:52:33 tom Exp $
+ * $MawkId: scan.c,v 1.26 2010/07/26 10:52:28 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -313,6 +313,10 @@ yylex(void)
     register int c;
 
     token_lineno = lineno;
+
+#ifdef NO_LEAKS
+    memset(&yylval, 0, sizeof(yylval));
+#endif
 
   reswitch:
 
@@ -1098,3 +1102,14 @@ collect_RE(void)
     free_STRING(sval);
     return RE;
 }
+
+#ifdef NO_LEAKS
+void
+scan_leaks(void)
+{
+    if (yylval.ptr) {
+	free(yylval.ptr);
+	yylval.ptr = 0;
+    }
+}
+#endif
