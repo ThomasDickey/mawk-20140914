@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.17 2010/07/22 00:45:12 tom Exp $
+ * $MawkId: execute.c,v 1.18 2010/07/27 00:31:29 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -261,9 +261,9 @@ execute(INST * cdp,		/* code ptr, start execution here */
 			 SAMESEG(cp, field) &&
 #endif
 			 cp >= NF && cp <= LAST_PFIELD)) {
-		    /* its a real field $1, $2 ...
-		       If its greater than $NF, we have to
-		       make sure its set to ""  so that
+		    /* it is a real field $1, $2 ...
+		       If it is greater than $NF, we have to
+		       make sure it is set to ""  so that
 		       (++|--) and g?sub() work right
 		     */
 		    t = field_addr_to_index(cp);
