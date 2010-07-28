@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.49 2010/07/24 12:31:02 tom Exp $
+ * $MawkId: bi_funct.c,v 1.50 2010/07/28 23:05:53 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -934,7 +934,7 @@ static size_t gsub_max;
 static GSUB_STK *gsub_stk;
 static unsigned repl_cnt;	/* number of global replacements */
 
-#ifdef OPT_TRACE
+#if OPT_TRACE > 0
 static const char *
 indent(int level)
 {
@@ -1164,6 +1164,7 @@ new_gsub(PTR re, int level)
     } else {
 	/* no match */
 	ThisResult = new_STRING1(ThisTarget, ThisTargetLen);
+	repl_destroy(&ThisReplace);
     }
 
     switch (ThisBranch) {
