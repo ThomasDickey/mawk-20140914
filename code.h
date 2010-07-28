@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.h,v 1.4 2010/05/07 09:49:46 tom Exp $
+ * $MawkId: code.h,v 1.5 2010/07/28 01:03:52 tom Exp $
  * @Log: code.h,v @
  * Revision 1.5  1995/06/18  19:42:15  mike
  * Remove some redundant declarations and add some prototypes
@@ -97,94 +97,96 @@ void dump_code(void);
 /* to avoid confusion with a ptr FE_PUSHA must have op code 0 */
 /* unfortunately enums are less portable than defines */
 
-#define FE_PUSHA       0
-#define FE_PUSHI       1
-#define F_PUSHA        2
-#define F_PUSHI        3
-#define NF_PUSHI       4
-#define _HALT          5
-#define _STOP          6
-#define _PUSHC         7
-#define _PUSHD         8
-#define _PUSHS         9
-#define _PUSHINT       10
-#define _PUSHA         11
-#define _PUSHI         12
-#define L_PUSHA        13
-#define L_PUSHI        14
-#define AE_PUSHA       15
-#define AE_PUSHI       16
-#define A_PUSHA        17
-#define LAE_PUSHA      18
-#define LAE_PUSHI      19
-#define LA_PUSHA       20
-#define _POP           21
-#define _ADD           22
-#define _SUB           23
-#define _MUL           24
-#define _DIV           25
-#define _MOD           26
-#define _POW           27
-#define _NOT           28
-#define _TEST          29
-#define A_TEST         30
-#define A_DEL          31
-#define ALOOP          32
-#define A_CAT          33
-#define _UMINUS        34
-#define _UPLUS         35
-#define _ASSIGN        36
-#define _ADD_ASG       37
-#define _SUB_ASG       38
-#define _MUL_ASG       39
-#define _DIV_ASG       40
-#define _MOD_ASG       41
-#define _POW_ASG       42
-#define F_ASSIGN       43
-#define F_ADD_ASG      44
-#define F_SUB_ASG      45
-#define F_MUL_ASG      46
-#define F_DIV_ASG      47
-#define F_MOD_ASG      48
-#define F_POW_ASG      49
-#define _CAT           50
-#define _BUILTIN       51
-#define _PRINT         52
-#define _POST_INC      53
-#define _POST_DEC      54
-#define _PRE_INC       55
-#define _PRE_DEC       56
-#define F_POST_INC     57
-#define F_POST_DEC     58
-#define F_PRE_INC      59
-#define F_PRE_DEC      60
-#define _JMP           61
-#define _JNZ           62
-#define _JZ            63
-#define _LJZ           64
-#define _LJNZ          65
-#define _EQ            66
-#define _NEQ           67
-#define _LT            68
-#define _LTE           69
-#define _GT            70
-#define _GTE           71
-#define _MATCH0        72
-#define _MATCH1        73
-#define _MATCH2        74
-#define _EXIT          75
-#define _EXIT0         76
-#define _NEXT          77
-#define _RANGE         78
-#define _CALL          79
-#define _RET           80
-#define _RET0          81
-#define SET_ALOOP      82
-#define POP_AL	       83
-#define OL_GL          84
-#define OL_GL_NR       85
-#define _OMAIN         86
-#define _JMAIN         87
-#define DEL_A          88
+typedef enum {
+    FE_PUSHA = 0
+    ,FE_PUSHI
+    ,F_PUSHA
+    ,F_PUSHI
+    ,NF_PUSHI
+    ,_HALT
+    ,_STOP
+    ,_PUSHC
+    ,_PUSHD
+    ,_PUSHS
+    ,_PUSHINT
+    ,_PUSHA
+    ,_PUSHI
+    ,L_PUSHA
+    ,L_PUSHI
+    ,AE_PUSHA
+    ,AE_PUSHI
+    ,A_PUSHA
+    ,LAE_PUSHA
+    ,LAE_PUSHI
+    ,LA_PUSHA
+    ,_POP
+    ,_ADD
+    ,_SUB
+    ,_MUL
+    ,_DIV
+    ,_MOD
+    ,_POW
+    ,_NOT
+    ,_TEST
+    ,A_TEST
+    ,A_DEL
+    ,ALOOP
+    ,A_CAT
+    ,_UMINUS
+    ,_UPLUS
+    ,_ASSIGN
+    ,_ADD_ASG
+    ,_SUB_ASG
+    ,_MUL_ASG
+    ,_DIV_ASG
+    ,_MOD_ASG
+    ,_POW_ASG
+    ,F_ASSIGN
+    ,F_ADD_ASG
+    ,F_SUB_ASG
+    ,F_MUL_ASG
+    ,F_DIV_ASG
+    ,F_MOD_ASG
+    ,F_POW_ASG
+    ,_CAT
+    ,_BUILTIN
+    ,_PRINT
+    ,_POST_INC
+    ,_POST_DEC
+    ,_PRE_INC
+    ,_PRE_DEC
+    ,F_POST_INC
+    ,F_POST_DEC
+    ,F_PRE_INC
+    ,F_PRE_DEC
+    ,_JMP
+    ,_JNZ
+    ,_JZ
+    ,_LJZ
+    ,_LJNZ
+    ,_EQ
+    ,_NEQ
+    ,_LT
+    ,_LTE
+    ,_GT
+    ,_GTE
+    ,_MATCH0
+    ,_MATCH1
+    ,_MATCH2
+    ,_EXIT
+    ,_EXIT0
+    ,_NEXT
+    ,_RANGE
+    ,_CALL
+    ,_RET
+    ,_RET0
+    ,SET_ALOOP
+    ,POP_AL
+    ,OL_GL
+    ,OL_GL_NR
+    ,_OMAIN
+    ,_JMAIN
+    ,DEL_A
+} MAWK_OPCODES;
 
 #endif /* MAWK_CODE_H */

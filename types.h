@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: types.h,v 1.7 2010/05/07 00:52:42 tom Exp $
+ * $MawkId: types.h,v 1.8 2010/07/28 01:04:09 tom Exp $
  * @Log: types.h,v @
  * Revision 1.3  1993/07/15  23:56:18  mike
  * general cleanup
@@ -33,22 +33,19 @@ the GNU General Public License, version 2, 1991.
 
 /*  CELL  types  */
 
-#define  C_NOINIT                0
-#define  C_DOUBLE                1
-#define  C_STRING                2
-#define  C_STRNUM                3
-#define  C_MBSTRN                4
-	/*could be STRNUM, has not been checked */
-#define  C_RE                    5
-#define  C_SPACE                 6
-	/* split on space */
-#define  C_SNULL                 7
-	/* split on the empty string  */
-#define  C_REPL                  8
-	/* a replacement string   '\&' changed to &  */
-#define  C_REPLV                 9
-	/* a vector replacement -- broken on &  */
-#define  NUM_CELL_TYPES         10
+typedef enum {
+    C_NOINIT
+    ,C_DOUBLE
+    ,C_STRING
+    ,C_STRNUM
+    ,C_MBSTRN			/*could be STRNUM, has not been checked */
+    ,C_RE
+    ,C_SPACE			/* split on space */
+    ,C_SNULL			/* split on the empty string  */
+    ,C_REPL			/* a replacement string   '\&' changed to &  */
+    ,C_REPLV			/* a vector replacement -- broken on &  */
+    ,NUM_CELL_TYPES
+} MAWK_CELL_TYPES;
 
 /* these defines are used to check types for two
    CELLs which are adjacent in memory */
