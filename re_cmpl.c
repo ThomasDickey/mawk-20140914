@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.11 2010/07/22 00:42:44 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.12 2010/07/28 10:41:21 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -47,8 +47,8 @@ the GNU General Public License, version 2, 1991.
 #include "repl.h"
 
 typedef struct re_node {
+    RE_DATA re;			/* keep this first, for re_destroy() */
     STRING *sval;
-    RE_DATA re;
     struct re_node *link;
 } RE_NODE;
 
@@ -132,6 +132,16 @@ re_uncompile(PTR m)
 #else
     return NULL;
 #endif
+}
+
+void
+re_destroy(CELL * cp)
+{
+    if (cp->type == C_RE) {
+	RE_NODE *p = (RE_NODE *) (cp->ptr);
+	free_STRING(p->sval);
+	REdestroy(p->re.compiled);
+    }
 }
 
 /*=================================================*/
