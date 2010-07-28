@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.10 2009/09/13 22:43:29 tom Exp $
+ * $MawkId: rexp.c,v 1.11 2010/07/28 09:48:51 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -213,6 +213,12 @@ REcompile(char *re, size_t len)
 
 	t = RE_lex(m_ptr + 1);
     }
+}
+
+void
+REdestroy(PTR ptr)
+{
+    free(ptr);
 }
 
 /* getting here means a logic flaw or unforeseen case */
