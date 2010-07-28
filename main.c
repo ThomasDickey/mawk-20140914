@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.16 2010/07/26 10:44:44 tom Exp $
+ * $MawkId: main.c,v 1.17 2010/07/28 22:58:17 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -83,8 +83,10 @@ main(int argc, char **argv)
 static void
 array_leaks(void)
 {
-    array_clear(Argv);
-    ZFREE(Argv);
+    if (Argv != 0) {
+	array_clear(Argv);
+	ZFREE(Argv);
+    }
 }
 #endif
 
