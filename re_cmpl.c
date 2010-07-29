@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.12 2010/07/28 10:41:21 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.13 2010/07/29 10:47:00 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -207,13 +207,16 @@ REPL_compile(STRING * sval)
     if (count == 1 && split_buff[0]) {
 	cp->type = C_REPL;
 	cp->ptr = (PTR) split_buff[0];
+	USED_SPLIT_BUFF(0);
     } else {
 	STRING **sp = (STRING **)
 	(cp->ptr = zmalloc(sizeof(STRING *) * count));
 	VCount j = 0;
 
-	while (j < count)
+	while (j < count) {
 	    *sp++ = split_buff[j++];
+	    USED_SPLIT_BUFF(j - 1);
+	}
 
 	cp->type = C_REPLV;
 	cp->vcnt = count;
