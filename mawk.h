@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.26 2010/07/27 23:33:58 tom Exp $
+ * $MawkId: mawk.h,v 1.27 2010/07/29 10:49:13 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -226,6 +226,16 @@ extern void rexp_leaks(void);
 extern void scan_leaks(void);
 extern void trace_leaks(void);
 extern void zmalloc_leaks(void);
+#endif
+
+/*
+ * Sometimes split_buff[] pointers are moved rather than copied.
+ * Optimize-out the assignment to clear the pointer in the array.
+ */
+#ifdef NO_LEAKS
+#define USED_SPLIT_BUFF(n) split_buff[n] = 0
+#else
+#define USED_SPLIT_BUFF(n)	/* nothing */
 #endif
 
 #endif /* MAWK_H */
