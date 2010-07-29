@@ -219,6 +219,7 @@ void array_load(
    for(i=0;i < cnt; i++) {
       cells[i].type = C_MBSTRN ;
       cells[i].ptr = split_buff[i] ;
+      USED_SPLIT_BUFF(i) ;
    }
 }
 
