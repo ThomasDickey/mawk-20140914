@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.19 2010/07/24 13:42:13 tom Exp $
+ * $MawkId: zmalloc.c,v 1.20 2010/07/29 10:49:13 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -195,10 +195,10 @@ finish_ptr(PTR ptr, size_t size)
     assert(item != 0);
     assert(*item != 0);
 
-    TRACE2(("... %p -> %p %lu\n",
-	    (*item),
-	    (*item)->ptr,
-	    (unsigned long) (*item)->size));
+    TRACE(("... %p -> %p %lu\n",
+	   (*item),
+	   (*item)->ptr,
+	   (unsigned long) (*item)->size));
 
     tdelete(item, &ptr_data, compare_ptr_data);
     ShowPtrData();
@@ -309,14 +309,17 @@ zrealloc(PTR p, size_t old_size, size_t new_size)
 {
     register PTR q;
 
+    TRACE(("zrealloc %p %lu ->%lu\n", p, old_size, new_size));
     if (new_size > (BlocksToBytes(POOLSZ)) &&
 	old_size > (BlocksToBytes(POOLSZ))) {
 	if (!(q = realloc(p, new_size))) {
 	    out_of_mem();
 	}
+	FinishPtr(p, old_size);
+	RecordPtr(q, new_size);
 #ifdef DEBUG_ZMALLOC
 	if (new_size > old_size) {
-	    memset((char *) p + old_size, 0, new_size - old_size);
+	    memset((char *) q + old_size, 0, new_size - old_size);
 	}
 #endif
     } else {
