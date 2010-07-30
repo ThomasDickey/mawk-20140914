@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.12 2010/05/07 22:05:40 tom Exp $
+ * $MawkId: rexp1.c,v 1.13 2010/07/30 08:44:14 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup
@@ -124,7 +124,7 @@ RE_cat(MACHINE * mp, MACHINE * np)
     mp->start = (STATE *) RE_realloc(mp->start, sz * STATESZ);
     mp->stop = mp->start + (sz - 1);
     memcpy(mp->start + sz1, np->start, sz2 * STATESZ);
-    free(np->start);
+    RE_free(np->start);
 }
 
  /*  replace m by a machine that recognizes m|n  */
@@ -140,13 +140,13 @@ RE_or(MACHINE * mp, MACHINE * np)
 
     p = (STATE *) RE_malloc((szm + szn + 1) * STATESZ);
     memcpy(p + 1, mp->start, szm * STATESZ);
-    free(mp->start);
+    RE_free(mp->start);
     mp->start = p;
     (mp->stop = p + szm + szn)->s_type = M_ACCEPT;
     p->s_type = M_2JA;
     p->s_data.jump = (int) (szm + 1);
     memcpy(p + szm + 1, np->start, szn * STATESZ);
-    free(np->start);
+    RE_free(np->start);
     (p += szm)->s_type = M_1J;
     p->s_data.jump = (int) szn;
 }
@@ -173,7 +173,7 @@ RE_close(MACHINE * mp)
     sz = (unsigned) (mp->stop - mp->start + 1);
     p = (STATE *) RE_malloc((sz + 3) * STATESZ);
     memcpy(p + 2, mp->start, sz * STATESZ);
-    free(mp->start);
+    RE_free(mp->start);
     mp->start = p;
     mp->stop = p + (sz + 2);
     p->s_type = M_2JA;
@@ -202,7 +202,7 @@ RE_poscl(MACHINE * mp)
     sz = (unsigned) (mp->stop - mp->start + 1);
     p = (STATE *) RE_malloc((sz + 2) * STATESZ);
     memcpy(p + 1, mp->start, sz * STATESZ);
-    free(mp->start);
+    RE_free(mp->start);
     mp->start = p;
     mp->stop = p + (sz + 1);
     p++->s_type = M_SAVE_POS;
@@ -223,7 +223,7 @@ RE_01(MACHINE * mp)
     sz = (unsigned) (mp->stop - mp->start + 1);
     p = (STATE *) RE_malloc((sz + 1) * STATESZ);
     memcpy(p + 1, mp->start, sz * STATESZ);
-    free(mp->start);
+    RE_free(mp->start);
     mp->start = p;
     mp->stop = p + sz;
     p->s_type = M_2JB;
@@ -237,9 +237,11 @@ MEMORY	ALLOCATION
 PTR
 RE_malloc(size_t sz)
 {
-    register PTR p;
+    PTR p;
 
-    if (!(p = malloc(sz)))
+    p = malloc(sz);
+    TRACE(("RE_malloc(%lu) ->%p\n", (unsigned long) sz, p));
+    if (p == 0)
 	RE_error_trap(MEMORY_FAILURE);
     return p;
 }
@@ -247,7 +249,20 @@ RE_malloc(size_t sz)
 PTR
 RE_realloc(PTR p, size_t sz)
 {
-    if (!(p = realloc(p, sz)))
+    PTR q;
+
+    q = realloc(p, sz);
+    TRACE(("RE_realloc(%p, %lu) ->%p\n", p, (unsigned long) sz, q));
+    if (q == 0)
 	RE_error_trap(MEMORY_FAILURE);
-    return p;
+    return q;
 }
+
+#ifdef NO_LEAKS
+void
+RE_free(PTR p)
+{
+    TRACE(("RE_free(%p)\n", p));
+    free(p);
+}
+#endif

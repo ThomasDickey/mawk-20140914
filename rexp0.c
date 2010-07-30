@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.23 2010/05/07 22:18:57 tom Exp $
+ * $MawkId: rexp0.c,v 1.24 2010/07/30 08:43:45 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -721,7 +721,7 @@ store_bvp(
 	bv_next++;
     } else {
 	/* we already have it */
-	free(bvp);
+	RE_free(bvp);
     }
 
     return *p;
