@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.h,v 1.3 2009/12/13 19:43:23 Jonathan.Nieder Exp $
+ * $MawkId: scan.h,v 1.4 2010/07/30 22:18:26 tom Exp $
  * @Log: scan.h,v @
  * Revision 1.3  1995/06/18  19:42:26  mike
  * Remove some redundant declarations and add some prototypes
@@ -37,10 +37,13 @@ the GNU General Public License, version 2, 1991.
 #include  "symtype.h"
 #include  "parse.h"
 
-void eat_nl(void);
+extern double double_zero;
+extern double double_one;
+
+extern void eat_nl(void);
 
 /* in error.c */
-void unexpected_char(void);
+extern void unexpected_char(void);
 
 #define  ct_ret(x)  return current_token = (x)
 

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.11 2010/07/30 22:12:16 tom Exp $
+ * $MawkId: code.c,v 1.12 2010/07/30 22:19:32 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -55,6 +55,7 @@ the GNU General Public License, version 2, 1991.
 
 #ifdef NO_LEAKS
 #include "repl.h"
+#include "scan.h"
 #endif
 
 static CODEBLOCK *new_code(void);
@@ -313,11 +314,16 @@ free_codes(INST * base, size_t size)
 	case _BUILTIN:
 	case _PRINT:
 	case _PUSHA:
-	case _PUSHD:
 	case _PUSHI:
 	case _PUSHINT:
 	    ++cdp;		/* skip value */
 	    TRACE(("\tparam %p\n", cdp->ptr));
+	    break;
+	case _PUSHD:
+	    ++cdp;		/* skip value */
+	    TRACE(("\tparam %p\n", cdp->ptr));
+	    if (cdp->ptr != &double_one && cdp->ptr != &double_zero)
+		zfree(cdp->ptr, sizeof(double));
 	    break;
 	case _PUSHS:
 	    ++cdp;		/* skip value */

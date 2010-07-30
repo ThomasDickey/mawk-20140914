@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.26 2010/07/26 10:52:28 tom Exp $
+ * $MawkId: scan.c,v 1.27 2010/07/30 22:17:45 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -75,6 +75,9 @@ the GNU General Public License, version 2, 1991.
 #endif
 
 #include  "files.h"
+
+double double_zero = 0.0;
+double double_one = 1.0;
 
 /* static functions */
 static void scan_fillbuff(void);
@@ -572,8 +575,6 @@ yylex(void)
 	{
 	    double d;
 	    int flag;
-	    static double double_zero = 0.0;
-	    static double double_one = 1.0;
 
 	    if ((d = collect_decimal(c, &flag)) == 0.0) {
 		if (flag)
