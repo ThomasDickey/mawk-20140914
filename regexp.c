@@ -1,5 +1,6 @@
-/* $MawkId* */
+/* $MawkId: regexp.c,v 1.3 2010/07/30 08:18:29 tom Exp $ */
 #ifdef LOCAL_REGEXP
+#		include "mawk.h"
 #		include "rexp.c"
 #		include "rexp0.c"
 #		include "rexp1.c"
