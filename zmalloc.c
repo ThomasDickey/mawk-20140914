@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.20 2010/07/29 10:49:13 tom Exp $
+ * $MawkId: zmalloc.c,v 1.21 2010/07/30 09:23:48 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -189,13 +189,13 @@ finish_ptr(PTR ptr, size_t size)
     dummy.ptr = ptr;
     dummy.size = size;
 
-    TRACE(("finish_ptr %p -> %p %lu\n", &dummy, ptr, (unsigned long) size));
+    TRACE2(("finish_ptr (%p) -> %p %lu\n", &dummy, ptr, (unsigned long) size));
     item = tfind(&dummy, &ptr_data, compare_ptr_data);
 
     assert(item != 0);
     assert(*item != 0);
 
-    TRACE(("... %p -> %p %lu\n",
+    TRACE(("finish_ptr %p -> %p %lu\n",
 	   (*item),
 	   (*item)->ptr,
 	   (unsigned long) (*item)->size));
