@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.12 2010/07/30 22:19:32 tom Exp $
+ * $MawkId: code.c,v 1.13 2010/07/30 23:59:04 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -296,7 +296,6 @@ free_codes(INST * base, size_t size)
 	case ALOOP:
 	case A_CAT:
 	case F_PUSHA:
-	case F_PUSHI:
 	case LAE_PUSHA:
 	case LAE_PUSHI:
 	case LA_PUSHA:
@@ -324,6 +323,13 @@ free_codes(INST * base, size_t size)
 	    TRACE(("\tparam %p\n", cdp->ptr));
 	    if (cdp->ptr != &double_one && cdp->ptr != &double_zero)
 		zfree(cdp->ptr, sizeof(double));
+	    break;
+	case F_PUSHI:
+	    ++cdp;		/* skip pointer */
+	    cp = (CELL *) (cdp->ptr);
+	    TRACE(("\tparam %p type %d\n", cp, cp->type));
+	    free_cell_data(cp);
+	    ++cdp;		/* skip integer */
 	    break;
 	case _PUSHS:
 	    ++cdp;		/* skip value */
