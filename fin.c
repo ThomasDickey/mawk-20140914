@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.27 2010/06/25 21:53:18 tom Exp $
+ * $MawkId: fin.c,v 1.28 2010/07/30 00:02:43 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -442,6 +442,7 @@ static FIN *
 next_main(int open_flag)	/* called by open_main() if on */
 {
     register CELL *cp;
+    CELL *cp0;
     CELL argc;			/* copy of ARGC */
     CELL c_argi;		/* cell copy of argi */
     CELL argval;		/* copy of ARGV[c_argi] */
@@ -462,21 +463,27 @@ next_main(int open_flag)	/* called by open_main() if on */
 	c_argi.dval = argi;
 	argi += 1.0;
 
-	if (!(cp = array_find(Argv, &c_argi, NO_CREATE)))
+	if (!(cp0 = array_find(Argv, &c_argi, NO_CREATE)))
 	    continue;		/* its deleted */
 
 	/* make a copy so we can cast w/o side effect */
 	cell_destroy(&argval);
-	cp = cellcpy(&argval, cp);
+	cp = cellcpy(&argval, cp0);
+	cell_destroy(cp0);
+
 	if (cp->type < C_STRING)
 	    cast1_to_s(cp);
-	if (string(cp)->len == 0)
+	if (string(cp)->len == 0) {
+	    /* file argument is "" */
+	    cell_destroy(cp);
 	    continue;
-	/* file argument is "" */
+	}
 
 	/* it might be a command line assignment */
-	if (is_cmdline_assign(string(cp)->str))
+	if (is_cmdline_assign(string(cp)->str)) {
+	    cell_destroy(cp);
 	    continue;
+	}
 
 	/* try to open it -- we used to continue on failure,
 	   but posix says we should quit */
@@ -488,7 +495,7 @@ next_main(int open_flag)	/* called by open_main() if on */
 	/* success -- set FILENAME and FNR */
 	cell_destroy(FILENAME);
 	cellcpy(FILENAME, cp);
-	free_STRING(string(cp));
+	cell_destroy(cp);
 	cell_destroy(FNR);
 	FNR->type = C_DOUBLE;
 	FNR->dval = 0.0;
