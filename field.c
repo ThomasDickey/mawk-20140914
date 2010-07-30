@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.17 2010/07/29 23:01:11 tom Exp $
+ * $MawkId: field.c,v 1.18 2010/07/30 00:37:40 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -675,8 +675,22 @@ field_leaks(void)
     free_STRING(string(OFMT));
     free_STRING(string(RS));
     cell_destroy(&field[0]);
+
     for (n = 1; n < nf; ++n) {
 	cell_destroy(&field[n]);
+    }
+
+    switch (fs_shadow.type) {
+    case C_RE:
+	re_destroy(&fs_shadow);
+	break;
+    case C_STRING:
+    case C_STRNUM:
+    case C_MBSTRN:
+	cell_destroy(&fs_shadow);
+	break;
+    default:
+	break;
     }
 }
 #endif
