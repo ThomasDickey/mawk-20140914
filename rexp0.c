@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.24 2010/07/30 08:43:45 tom Exp $
+ * $MawkId: rexp0.c,v 1.25 2010/07/31 00:15:35 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -684,13 +684,12 @@ do_class(char **start, MACHINE * mp)
 
 #define		BV_GROWTH	6
 
-static BV *
-store_bvp(
-	     BV * bvp)
-{
-    static BV **bv_base, **bv_limit;
-    static BV **bv_next;	/* next empty slot in the array */
+static BV **bv_base, **bv_limit;
+static BV **bv_next;		/* next empty slot in the array */
 
+static BV *
+store_bvp(BV * bvp)
+{
     register BV **p;
     unsigned t;
 
