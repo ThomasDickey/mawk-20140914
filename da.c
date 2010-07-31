@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.8 2010/05/07 00:56:51 tom Exp $
+ * $MawkId: da.c,v 1.9 2010/07/31 13:30:31 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -55,13 +55,14 @@ the GNU General Public License, version 2, 1991.
 #include  "repl.h"
 #include  "field.h"
 
+typedef struct {
+    char op;
+    const char *name;
+} OP_NAME;
+
 static const char *find_bi_name(PF_CP);
 /* *INDENT-OFF* */
-static struct sc
-{
-   char op ; 
-   const char *name ;
-} simple_code[] =
+static OP_NAME simple_code[] =
 
 {
    {_STOP,      "stop"},
@@ -368,7 +369,7 @@ da(INST * start, FILE *fp)
 	    break;
 	default:
 	    {
-		struct sc *q = simple_code;
+		OP_NAME *q = simple_code;
 		int k = (p - 1)->op;
 
 		while (q->op != _HALT && q->op != k)
@@ -447,3 +448,74 @@ fdump(void)
 	ZFREE(p);
     }
 }
+
+#ifdef NO_LEAKS
+/* *INDENT-OFF* */
+static OP_NAME other_codes[] = {
+    { AE_PUSHA,   "ae_pusha" },
+    { AE_PUSHI,   "ae_pushi" },
+    { ALOOP,      "aloop" },
+    { A_CAT,      "a_cat" },
+    { A_PUSHA,    "a_pusha" },
+    { F_PUSHA,    "f_pusha" },
+    { F_PUSHI,    "f_pushi" },
+    { LAE_PUSHA,  "lae_pusha" },
+    { LAE_PUSHI,  "lae_pushi" },
+    { LA_PUSHA,   "la_pusha" },
+    { L_PUSHA,    "l_pusha" },
+    { L_PUSHI,    "l_pushi" },
+    { SET_ALOOP,  "set_al" },
+    { _JMP,       "jmp" },
+    { _JNZ,       "jnz" },
+    { _JZ,        "jz" },
+    { _LJNZ,      "ljnz" },
+    { _LJZ,       "ljz" },
+    { _MATCH0,    "match0" },
+    { _MATCH1,    "match1" },
+    { _PUSHA,     "pusha" },
+    { _PUSHC,     "pushc" },
+    { _PUSHD,     "pushd" },
+    { _PUSHI,     "pushi" },
+    { _PUSHINT,   "pushint" },
+    { _PUSHS,     "pushs" },
+    { _RANGE,     "range" },
+    { _HALT,      0 },
+};
+/* *INDENT-ON* */
+
+const char *
+da_op_name(INST * cdp)
+{
+    int n;
+    const char *result = 0;
+
+    if (cdp->op == _BUILTIN) {
+	result = find_bi_name((PF_CP) cdp->ptr);
+    } else if (cdp->op == _PRINT) {
+	result = ((PF_CP) cdp->ptr == bi_printf
+		  ? "printf"
+		  : "print");
+    } else if (cdp->op == _HALT) {
+	result = "halt";
+    } else {
+	for (n = 0; simple_code[n].op != _HALT; ++n) {
+	    if (simple_code[n].op == cdp->op) {
+		result = simple_code[n].name;
+		break;
+	    }
+	}
+	if (result == 0) {
+	    for (n = 0; other_codes[n].op != _HALT; ++n) {
+		if (other_codes[n].op == cdp->op) {
+		    result = other_codes[n].name;
+		    break;
+		}
+	    }
+	}
+	if (result == 0) {
+	    result = "unknown";
+	}
+    }
+    return result;
+}
+#endif
