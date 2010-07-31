@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.13 2010/07/30 23:59:04 tom Exp $
+ * $MawkId: code.c,v 1.14 2010/07/31 13:40:58 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -65,7 +65,7 @@ CODEBLOCK active_code;
 CODEBLOCK *main_code_p, *begin_code_p, *end_code_p;
 
 INST *begin_start, *main_start, *end_start;
-size_t begin_size, main_size;
+size_t begin_size, main_size, end_size;
 
 INST *execution_start = 0;
 
@@ -172,12 +172,10 @@ set_code(void)
 
     /* set the END code */
     if (end_code_p) {
-	size_t dummy;
-
 	active_code = *end_code_p;
 	code2op(_EXIT0, _HALT);
 	*end_code_p = active_code;
-	end_start = code_shrink(end_code_p, &dummy);
+	end_start = code_shrink(end_code_p, &end_size);
     }
 
     /* set the BEGIN code */
@@ -281,15 +279,20 @@ free_cell_data(CELL * cp)
 }
 
 static void
-free_codes(INST * base, size_t size)
+free_codes(const char *tag, INST * base, size_t size)
 {
     INST *cdp;
     INST *last = base + (size / sizeof(*last));
     CELL *cp;
 
-    TRACE(("free_codes base %p, size %lu\n", base, size));
+    TRACE(("free_codes(%s) base %p, size %lu\n", tag, base, size));
     for (cdp = base; cdp < last; ++cdp) {
-	TRACE(("code %d:%d (%#x)\n", (int) (cdp - base), cdp->op, cdp->op));
+	TRACE(("code %03d:%s (%d %#x)\n",
+	       (int) (cdp - base),
+	       da_op_name(cdp),
+	       cdp->op,
+	       cdp->op));
+
 	switch ((MAWK_OPCODES) (cdp->op)) {
 	case AE_PUSHA:
 	case AE_PUSHI:
@@ -340,6 +343,7 @@ free_codes(INST * base, size_t size)
 	    cdp += 4;		/* PAT1 */
 	    break;
 	case _CALL:
+	    TRACE(("\tskipping %d\n", 1 + cdp[1].op));
 	    cdp += 1 + cdp[1].op;
 	    break;
 	case A_DEL:
@@ -418,14 +422,20 @@ free_codes(INST * base, size_t size)
 void
 code_leaks(void)
 {
-    if (main_start != 0) {
-	free_codes(main_start, main_size);
-	main_start = 0;
-	main_size = 0;
-    } else if (begin_start != 0) {
-	free_codes(begin_start, begin_size);
+    if (begin_start != 0) {
+	free_codes("BEGIN", begin_start, begin_size);
 	begin_start = 0;
 	begin_size = 0;
+    }
+    if (end_start != 0) {
+	free_codes("END", end_start, end_size);
+	end_start = 0;
+	end_size = 0;
+    }
+    if (main_start != 0) {
+	free_codes("MAIN", main_start, main_size);
+	main_start = 0;
+	main_size = 0;
     }
 }
 #endif
