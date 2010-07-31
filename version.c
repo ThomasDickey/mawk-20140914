@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.9 2010/06/21 21:44:34 tom Exp $
+ * $MawkId: version.c,v 1.10 2010/07/31 01:05:40 tom Exp $
  *
  * @Log: version.c,v @
  * Revision 1.10  1996/07/28 21:47:07  mike
@@ -147,5 +147,5 @@ print_version(void)
     fprintf(stderr, fmt, "max NF", (long) MAX_FIELD);
     fprintf(stderr, fmt, "sprintf buffer", (long) SPRINTF_SZ);
     print_aux_limits();
-    exit(0);
+    mawk_exit(0);
 }
