@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.19 2010/08/01 23:05:22 tom Exp $
+ * $MawkId: code.c,v 1.20 2010/08/01 23:19:05 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -297,7 +297,6 @@ free_codes(const char *tag, INST * base, size_t size)
 	case AE_PUSHA:
 	case AE_PUSHI:
 	case A_CAT:
-	case F_PUSHA:
 	case LAE_PUSHA:
 	case LAE_PUSHI:
 	case _MATCH0:
@@ -365,6 +364,7 @@ free_codes(const char *tag, INST * base, size_t size)
 	case F_POW_ASG:
 	case F_PRE_DEC:
 	case F_PRE_INC:
+	case F_PUSHA:
 	case F_SUB_ASG:
 	case NF_PUSHI:
 	case OL_GL:
