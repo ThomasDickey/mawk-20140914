@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.18 2010/07/27 00:31:29 tom Exp $
+ * $MawkId: execute.c,v 1.19 2010/08/01 23:10:46 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -200,6 +200,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 #ifdef	DEBUG
     CELL *entry_sp = sp;
 #endif
+    int force_exit = (end_start == 0);
 
     if (fp) {
 	/* we are a function call, check for deep recursion */
@@ -1126,11 +1127,11 @@ execute(INST * cdp,		/* code ptr, start execution here */
 
 	case _EXIT0:
 
-	    if (!end_start)
+	    if (force_exit)
 		mawk_exit(exit_code);
 
 	    cdp = end_start;
-	    end_start = (INST *) 0;	/* makes sure next exit exits */
+	    force_exit = 1;	/* makes sure next exit exits */
 
 	    if (begin_start)
 		zfree(begin_start, begin_size);
@@ -1165,12 +1166,13 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		size_t len;
 
 		if (!(p = FINgets(main_fin, &len))) {
-		    if (!end_start)
+		    if (force_exit)
 			mawk_exit(0);
 
 		    cdp = end_start;
 		    zfree(main_start, main_size);
-		    main_start = end_start = (INST *) 0;
+		    main_start = (INST *) 0;
+		    force_exit = 1;
 		} else {
 		    set_field0(p, len);
 		    cdp = restart_label;
@@ -1188,12 +1190,13 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		size_t len;
 
 		if (!(p = FINgets(main_fin, &len))) {
-		    if (!end_start)
+		    if (force_exit)
 			mawk_exit(0);
 
 		    cdp = end_start;
 		    zfree(main_start, main_size);
-		    main_start = end_start = (INST *) 0;
+		    main_start = (INST *) 0;
+		    force_exit = 1;
 		} else {
 		    set_field0(p, len);
 		    cdp = restart_label;
