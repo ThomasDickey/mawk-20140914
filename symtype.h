@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.9 2010/07/24 14:52:39 tom Exp $
+ * $MawkId: symtype.h,v 1.10 2010/08/01 00:52:34 tom Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme
@@ -96,6 +96,7 @@ typedef struct {
 typedef struct fblock {
     const char *name;
     INST *code;
+    size_t size;
     unsigned short nargs;
     char *typev;		/* array of size nargs holding types */
 } FBLOCK;			/* function block */
