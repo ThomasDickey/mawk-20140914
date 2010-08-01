@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.28 2010/08/01 17:07:39 tom Exp $
+ * $MawkId: scan.c,v 1.29 2010/08/01 20:12:39 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -1109,6 +1109,7 @@ collect_RE(void)
 void
 scan_leaks(void)
 {
+    TRACE(("scan_leaks\n"));
     if (yylval.ptr) {
 	free(yylval.ptr);
 	yylval.ptr = 0;

@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.17 2010/08/01 19:32:48 tom Exp $
+ * $MawkId: code.c,v 1.18 2010/08/01 20:11:39 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -426,6 +426,7 @@ free_codes(const char *tag, INST * base, size_t size)
 void
 code_leaks(void)
 {
+    TRACE(("code_leaks\n"));
     if (begin_start != 0) {
 	free_codes("BEGIN", begin_start, begin_size);
 	begin_start = 0;
