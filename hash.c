@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.9 2010/07/24 00:50:18 tom Exp $
+ * $MawkId: hash.c,v 1.10 2010/08/01 00:38:52 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -264,9 +264,17 @@ hash_leaks(void)
     int i;
     HASHNODE *p;
 
+    TRACE(("hash_leaks\n"));
     for (i = 0; i < HASH_PRIME; i++) {
 	while ((p = hash_table[i]) != 0) {
-	    zfree(delete(p->symtab.name), sizeof(HASHNODE));
+	    TRACE(("...deleting hash %s %d\n", p->symtab.name, p->symtab.type));
+	    p = delete(p->symtab.name);
+	    switch (p->symtab.type) {
+	    case ST_FUNCT:
+		zfree(p->symtab.stval.fbp, sizeof(FBLOCK));
+		break;
+	    }
+	    zfree(p, sizeof(HASHNODE));
 	}
     }
 }
