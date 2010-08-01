@@ -2,13 +2,10 @@
 static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #endif
 
-#include <stdlib.h>
-#include <string.h>
-
 #define YYBYACC 1
 #define YYMAJOR 1
 #define YYMINOR 9
-#define YYPATCH 20100216
+#define YYPATCH 20100610
 
 #define YYEMPTY        (-1)
 #define yyclearin      (yychar = YYEMPTY)
@@ -17,19 +14,7 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 
 #define YYPREFIX "yy"
 
-/* compatibility with bison */
-#ifdef YYPARSE_PARAM
-/* compatibility with FreeBSD */
-#ifdef YYPARSE_PARAM_TYPE
-#define YYPARSE_DECL() yyparse(YYPARSE_PARAM_TYPE YYPARSE_PARAM)
-#else
-#define YYPARSE_DECL() yyparse(void *YYPARSE_PARAM)
-#endif
-#else
-#define YYPARSE_DECL() yyparse(void)
-#endif /* YYPARSE_PARAM */
-
-extern int YYPARSE_DECL();
+#define YYPURE 0
 
 #line 81 "parse.y"
 #include <stdio.h>
@@ -87,7 +72,31 @@ CA_REC   *ca_p  ;
 int   ival ;
 PTR   ptr ;
 } YYSTYPE;
-#line 90 "y.tab.c"
+#line 75 "y.tab.c"
+/* compatibility with bison */
+#ifdef YYPARSE_PARAM
+/* compatibility with FreeBSD */
+# ifdef YYPARSE_PARAM_TYPE
+#  define YYPARSE_DECL() yyparse(YYPARSE_PARAM_TYPE YYPARSE_PARAM)
+# else
+#  define YYPARSE_DECL() yyparse(void *YYPARSE_PARAM)
+# endif
+#else
+# define YYPARSE_DECL() yyparse(void)
+#endif
+
+/* Parameters sent to lex. */
+#ifdef YYLEX_PARAM
+# define YYLEX_DECL() yylex(void *YYLEX_PARAM)
+# define YYLEX yylex(YYLEX_PARAM)
+#else
+# define YYLEX_DECL() yylex(void)
+# define YYLEX yylex()
+#endif
+
+extern int YYPARSE_DECL();
+extern int YYLEX_DECL();
+
 #define UNEXPECTED 257
 #define BAD_DECIMAL 258
 #define NL 259
@@ -1113,10 +1122,6 @@ static const char *yyrule[] = {
 
 };
 #endif
-#if YYDEBUG
-#include <stdio.h>
-#endif
-
 /* define the initial stack-sizes */
 #ifdef YYSTACKSIZE
 #undef YYMAXDEPTH
@@ -1143,9 +1148,6 @@ typedef struct {
     YYSTYPE  *l_base;
     YYSTYPE  *l_mark;
 } YYSTACKDATA;
-
-#define YYPURE 0
-
 int      yyerrflag;
 int      yychar;
 YYSTYPE  yyval;
@@ -1161,13 +1163,12 @@ static void
 resize_fblock(FBLOCK *fbp)
 {
     CODEBLOCK *p = ZMALLOC(CODEBLOCK) ;
-    size_t dummy ;
 
     code2op(_RET0, _HALT) ;
     /* make sure there is always a return */
 
     *p = active_code ;
-    fbp->code = code_shrink(p, &dummy) ;
+    fbp->code = code_shrink(p, &fbp->size) ;
     /* code_shrink() zfrees p */
 
     if ( dump_code_flag )
@@ -1391,7 +1392,15 @@ parse(void)
    if ( compile_error_count != 0 ) mawk_exit(2) ;
    if ( dump_code_flag ) { dump_code() ; mawk_exit(0) ; }
 }
-#line 1394 "y.tab.c"
+#line 1395 "y.tab.c"
+
+#if YYDEBUG
+#include <stdio.h>		/* needed for printf */
+#endif
+
+#include <stdlib.h>	/* needed for malloc, etc */
+#include <string.h>	/* needed for memset */
+
 /* allocate initial stack or double stack size, up to YYMAXDEPTH */
 static int yygrowstack(YYSTACKDATA *data)
 {
@@ -1407,14 +1416,14 @@ static int yygrowstack(YYSTACKDATA *data)
     else if ((newsize *= 2) > YYMAXDEPTH)
         newsize = YYMAXDEPTH;
 
-    i = (int) (data->s_mark - data->s_base);
+    i = data->s_mark - data->s_base;
     newss = (data->s_base != 0)
           ? (short *)realloc(data->s_base, newsize * sizeof(*newss))
           : (short *)malloc(newsize * sizeof(*newss));
     if (newss == 0)
         return -1;
 
-    data->s_base  = newss;
+    data->s_base = newss;
     data->s_mark = newss + i;
 
     newvs = (data->l_base != 0)
@@ -1481,7 +1490,7 @@ yyloop:
     if ((yyn = yydefred[yystate]) != 0) goto yyreduce;
     if (yychar < 0)
     {
-        if ((yychar = yylex()) < 0) yychar = 0;
+        if ((yychar = YYLEX) < 0) yychar = 0;
 #if YYDEBUG
         if (yydebug)
         {
@@ -2643,7 +2652,7 @@ case 171:
                 code_call_id(yyval.ca_p, yystack.l_mark[-1].stp) ;
               }
 break;
-#line 2646 "y.tab.c"
+#line 2655 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
@@ -2661,7 +2670,7 @@ break;
         *++yystack.l_mark = yyval;
         if (yychar < 0)
         {
-            if ((yychar = yylex()) < 0) yychar = 0;
+            if ((yychar = YYLEX) < 0) yychar = 0;
 #if YYDEBUG
             if (yydebug)
             {

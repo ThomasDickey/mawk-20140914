@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.9 2010/05/07 10:51:08 tom Exp $
+ * $MawkId: parse.y,v 1.10 2010/08/01 17:15:59 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -1152,13 +1152,12 @@ static void
 resize_fblock(FBLOCK *fbp)
 {
     CODEBLOCK *p = ZMALLOC(CODEBLOCK) ;
-    size_t dummy ;
 
     code2op(_RET0, _HALT) ;
     /* make sure there is always a return */
 
     *p = active_code ;
-    fbp->code = code_shrink(p, &dummy) ;
+    fbp->code = code_shrink(p, &fbp->size) ;
     /* code_shrink() zfrees p */
 
     if ( dump_code_flag )
