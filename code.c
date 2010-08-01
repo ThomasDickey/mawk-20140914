@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.16 2010/08/01 15:28:03 tom Exp $
+ * $MawkId: code.c,v 1.17 2010/08/01 19:32:48 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -271,7 +271,7 @@ free_cell_data(CELL * cp)
     case C_MBSTRN:
     case C_STRING:
     case C_STRNUM:
-	if (cp >= (field + nf) || (cp < field)) {
+	if (cp >= (field + (nf < 1 ? 1 : nf)) || (cp < field)) {
 	    cell_destroy(cp);
 	}
 	break;
