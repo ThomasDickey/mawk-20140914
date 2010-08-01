@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.10 2010/08/01 00:38:52 tom Exp $
+ * $MawkId: hash.c,v 1.11 2010/08/01 17:17:52 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -271,6 +271,14 @@ hash_leaks(void)
 	    p = delete(p->symtab.name);
 	    switch (p->symtab.type) {
 	    case ST_FUNCT:
+#if 0
+		free_codes(p->symtab.name,
+			   p->symtab.stval.fbp->code,
+			   p->symtab.stval.fbp->size);
+#else
+		zfree(p->symtab.stval.fbp->code,
+		      p->symtab.stval.fbp->size);
+#endif
 		zfree(p->symtab.stval.fbp, sizeof(FBLOCK));
 		break;
 	    }
