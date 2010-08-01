@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.27 2010/07/30 22:17:45 tom Exp $
+ * $MawkId: scan.c,v 1.28 2010/08/01 17:07:39 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -649,6 +649,7 @@ yylex(void)
 			zmalloc(sizeof(FBLOCK));
 		    stp->stval.fbp->name = stp->name;
 		    stp->stval.fbp->code = (INST *) 0;
+		    stp->stval.fbp->size = 0;
 		    yylval.fbp = stp->stval.fbp;
 		    current_token = FUNCT_ID;
 		} else {
