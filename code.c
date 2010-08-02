@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.21 2010/08/01 23:49:50 tom Exp $
+ * $MawkId: code.c,v 1.22 2010/08/02 00:07:06 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -300,7 +300,6 @@ free_codes(const char *tag, INST * base, size_t size)
 	case LAE_PUSHA:
 	case _MATCH0:
 	case _MATCH1:
-	case _PUSHC:
 	    ++cdp;		/* skip pointer */
 	    cp = (CELL *) (cdp->ptr);
 	    if (cp != 0) {
@@ -322,6 +321,7 @@ free_codes(const char *tag, INST * base, size_t size)
 	    ++cdp;		/* skip value */
 	    TRACE(("\tparam %p\n", cdp->ptr));
 	    break;
+	case _PUSHC:
 	case _PUSHD:
 	    ++cdp;		/* skip value */
 	    TRACE(("\tparam %p\n", cdp->ptr));
