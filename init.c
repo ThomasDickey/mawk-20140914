@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.24 2010/07/18 13:21:22 tom Exp $
+ * $MawkId: init.c,v 1.25 2010/08/02 09:15:21 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -461,6 +461,7 @@ set_ARGV(int argc, char **argv, int i)
     st_p = insert("ARGV");
     st_p->type = ST_ARRAY;
     Argv = st_p->stval.array = new_ARRAY();
+    no_leaks_array(Argv);
     argi.type = C_DOUBLE;
     argi.dval = 0.0;
     cp = array_find(st_p->stval.array, &argi, CREATE);
@@ -516,3 +517,34 @@ load_environ(ARRAY ENV)
 	p++;
     }
 }
+
+#ifdef NO_LEAKS
+typedef struct _all_arrays {
+    struct _all_arrays *next;
+    ARRAY a;
+} ALL_ARRAYS;
+
+static ALL_ARRAYS *all_arrays;
+
+void
+array_leaks(void)
+{
+    while (all_arrays != 0) {
+	ALL_ARRAYS *next = all_arrays->next;
+	array_clear(all_arrays->a);
+	ZFREE(all_arrays->a);
+	free(all_arrays);
+	all_arrays = next;
+    }
+}
+
+/* use this to identify array leaks */
+void
+no_leaks_array(ARRAY a)
+{
+    ALL_ARRAYS *p = calloc(1, sizeof(ALL_ARRAYS));
+    p->next = all_arrays;
+    p->a = a;
+    all_arrays = p;
+}
+#endif
