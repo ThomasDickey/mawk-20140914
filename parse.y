@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.10 2010/08/01 17:15:59 tom Exp $
+ * $MawkId: parse.y,v 1.11 2010/08/02 08:56:20 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -1243,6 +1243,7 @@ check_array(SYMTAB *p)
     case ST_NONE :  /* a new array */
 	p->type = ST_ARRAY ;
 	p->stval.array = new_ARRAY() ;
+	no_leaks_array(p->stval.array);
 	break ;
 
     case ST_ARRAY :
