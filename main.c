@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.18 2010/08/01 17:50:51 tom Exp $
+ * $MawkId: main.c,v 1.19 2010/08/02 09:13:28 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -78,17 +78,6 @@ main(int argc, char **argv)
     /* never returns */
     return 0;
 }
-
-#ifdef NO_LEAKS
-static void
-array_leaks(void)
-{
-    if (Argv != 0) {
-	array_clear(Argv);
-	ZFREE(Argv);
-    }
-}
-#endif
 
 void
 mawk_exit(int x)
