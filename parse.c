@@ -1254,6 +1254,7 @@ check_array(SYMTAB *p)
     case ST_NONE :  /* a new array */
 	p->type = ST_ARRAY ;
 	p->stval.array = new_ARRAY() ;
+	no_leaks_array(p->stval.array);
 	break ;
 
     case ST_ARRAY :
@@ -1392,7 +1393,7 @@ parse(void)
    if ( compile_error_count != 0 ) mawk_exit(2) ;
    if ( dump_code_flag ) { dump_code() ; mawk_exit(0) ; }
 }
-#line 1395 "y.tab.c"
+#line 1396 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -2652,7 +2653,7 @@ case 171:
                 code_call_id(yyval.ca_p, yystack.l_mark[-1].stp) ;
               }
 break;
-#line 2655 "y.tab.c"
+#line 2656 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
