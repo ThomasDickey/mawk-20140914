@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.23 2010/08/03 00:32:17 tom Exp $
+ * $MawkId: code.c,v 1.24 2010/08/03 22:30:54 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -249,7 +249,7 @@ be_setup(int scope)
 }
 
 #ifdef NO_LEAKS
-static void
+void
 free_cell_data(CELL * cp)
 {
     switch (cp->type) {
