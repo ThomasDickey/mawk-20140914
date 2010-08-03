@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.30 2010/08/02 09:15:33 tom Exp $
+ * $MawkId: mawk.h,v 1.31 2010/08/03 22:56:25 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -218,6 +218,7 @@ extern void Trace(const char *,...) GCC_PRINTFLIKE(1,2);
 
 #ifdef NO_LEAKS
 extern const char *da_op_name(INST *);
+extern void free_cell_data(CELL *);
 extern void free_codes(const char *, INST *, size_t);
 extern void array_leaks(void);
 extern void bi_vars_leaks(void);
