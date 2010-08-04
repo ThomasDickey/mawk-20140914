@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.15 2010/07/30 21:36:19 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.16 2010/08/04 09:17:25 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -135,25 +135,23 @@ re_uncompile(PTR m)
 }
 
 void
-re_destroy(CELL * cp)
+re_destroy(PTR m)
 {
-    if (cp->type == C_RE) {
-	RE_NODE *p = (RE_NODE *) (cp->ptr);
-	RE_NODE *q;
-	RE_NODE *r;
+    RE_NODE *p = (RE_NODE *) m;
+    RE_NODE *q;
+    RE_NODE *r;
 
-	if (p != 0) {
-	    free_STRING(p->sval);
-	    REdestroy(p->re.compiled);
-	    for (q = re_list, r = 0; q != 0; r = q, q = q->link) {
-		if (q == p) {
-		    if (r != 0)
-			r->link = q->link;
-		    else
-			re_list = q->link;
-		    free(q);
-		    break;
-		}
+    if (p != 0) {
+	free_STRING(p->sval);
+	REdestroy(p->re.compiled);
+	for (q = re_list, r = 0; q != 0; r = q, q = q->link) {
+	    if (q == p) {
+		if (r != 0)
+		    r->link = q->link;
+		else
+		    re_list = q->link;
+		free(q);
+		break;
 	    }
 	}
     }
