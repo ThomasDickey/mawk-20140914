@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.31 2010/08/03 22:56:25 tom Exp $
+ * $MawkId: mawk.h,v 1.32 2010/08/04 23:02:20 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -231,6 +231,7 @@ extern void scan_leaks(void);
 extern void trace_leaks(void);
 extern void zmalloc_leaks(void);
 #else
+#define free_codes(tag, base, size) zfree(base, size)
 #endif
 
 /*
