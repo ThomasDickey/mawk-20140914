@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.24 2010/08/03 22:30:54 tom Exp $
+ * $MawkId: code.c,v 1.25 2010/08/04 08:51:08 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -255,7 +255,7 @@ free_cell_data(CELL * cp)
     switch (cp->type) {
     case C_RE:
 	TRACE(("\t... C_RE\n"));
-	re_destroy(cp);
+	re_destroy(cp->ptr);
 	zfree(cp, sizeof(CELL));
 	break;
     case C_REPL:

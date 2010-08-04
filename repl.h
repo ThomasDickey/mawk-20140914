@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: repl.h,v 1.5 2010/07/28 10:39:37 tom Exp $
+ * $MawkId: repl.h,v 1.6 2010/08/04 08:53:16 tom Exp $
  * @Log: repl.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs
@@ -44,7 +44,7 @@ char *re_uncompile(PTR);
 
 CELL *repl_compile(STRING *);
 char *repl_uncompile(CELL *);
-void re_destroy(CELL *);
+void re_destroy(PTR);
 void repl_destroy(CELL *);
 CELL *replv_cpy(CELL *, CELL *);
 CELL *replv_to_repl(CELL *, STRING *);
