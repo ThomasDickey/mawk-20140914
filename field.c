@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.21 2010/08/04 23:35:07 tom Exp $
+ * $MawkId: field.c,v 1.22 2010/08/05 21:04:34 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -201,11 +201,22 @@ field_init(void)
     string(OFMT)->ref_cnt++;
 }
 
+static void
+destroy_field0(void)
+{
+    cell_destroy(&field[0]);
+    while (nf > 0) {
+	cell_destroy(field + nf);
+	USED_SPLIT_BUFF(nf);
+	--nf;
+    }
+    nf = -1;
+}
+
 void
 set_field0(char *s, size_t len)
 {
-    cell_destroy(&field[0]);
-    nf = -1;
+    destroy_field0();
 
     if (len) {
 	field[0].type = C_MBSTRN;
@@ -259,11 +270,11 @@ split_field0(void)
     if (nf > MAX_SPLIT) {
 	cnt = MAX_SPLIT;
 	load_field_ov();
-    } else
+    } else {
 	cnt = nf;
+    }
 
     while (cnt > 0) {
-	cell_destroy(field + cnt);
 	field[cnt].ptr = (PTR) split_buff[cnt - 1];
 	USED_SPLIT_BUFF(cnt - 1);
 	field[cnt--].type = C_MBSTRN;
@@ -287,9 +298,8 @@ field_assign(CELL * fp, CELL * cp)
 
     /* the most common case first */
     if (fp == field) {
-	cell_destroy(field);
+	destroy_field0();
 	cellcpy(fp, cp);
-	nf = -1;
 	return;
     }
 
@@ -670,6 +680,8 @@ field_leaks(void)
 {
     int n;
 
+    TRACE(("field_leaks\n"));
+
     free_STRING(string(CONVFMT));
     free_STRING(string(FS));
     free_STRING(string(OFMT));
@@ -678,6 +690,9 @@ field_leaks(void)
 
     for (n = 1; n <= nf; ++n) {
 	cell_destroy(&field[n]);
+	if (split_buff[n]) {
+	    free_STRING(split_buff[n]);
+	}
     }
 
     switch (fs_shadow.type) {
