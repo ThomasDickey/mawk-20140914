@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.25 2010/08/04 08:51:08 tom Exp $
+ * $MawkId: code.c,v 1.26 2010/08/05 00:17:08 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -331,7 +331,6 @@ free_codes(const char *tag, INST * base, size_t size)
 	    ++cdp;		/* skip pointer */
 	    cp = (CELL *) (cdp->ptr);
 	    TRACE(("\tparam %p type %d\n", cp, cp->type));
-	    free_cell_data(cp);
 	    ++cdp;		/* skip integer */
 	    break;
 	case _PUSHS:
