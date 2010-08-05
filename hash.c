@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.12 2010/08/02 00:26:32 tom Exp $
+ * $MawkId: hash.c,v 1.13 2010/08/05 08:48:22 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -31,6 +31,10 @@ the GNU General Public License, version 2, 1991.
 #include "mawk.h"
 #include "memory.h"
 #include "symtype.h"
+
+#ifdef NO_LEAKS
+#include "bi_vars.h"
+#endif
 
 /*                                                                              
  * FNV-1 hash function
@@ -263,6 +267,7 @@ hash_leaks(void)
 {
     int i;
     HASHNODE *p;
+    CELL *cp;
 
     TRACE(("hash_leaks\n"));
     for (i = 0; i < HASH_PRIME; i++) {
@@ -275,6 +280,20 @@ hash_leaks(void)
 			   p->symtab.stval.fbp->code,
 			   p->symtab.stval.fbp->size);
 		zfree(p->symtab.stval.fbp, sizeof(FBLOCK));
+		break;
+	    case ST_VAR:
+		cp = p->symtab.stval.cp;
+		if (cp != 0
+		    && (cp < bi_vars || cp > bi_vars + NUM_BI_VAR)) {
+		    switch (cp->type) {
+		    case C_STRING:
+		    case C_STRNUM:
+		    case C_MBSTRN:
+			free_STRING(string(cp));
+			break;
+		    }
+		    zfree(cp, sizeof(CELL));
+		}
 		break;
 	    }
 	    zfree(p, sizeof(HASHNODE));
