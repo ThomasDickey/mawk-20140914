@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.17 2010/07/24 13:43:03 tom Exp $
+ * $MawkId: files.c,v 1.18 2010/08/06 08:31:52 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -136,7 +136,7 @@ free_filenode(FILE_NODE * p)
 PTR
 file_find(STRING * sval, int type)
 {
-    register FILE_NODE *p = file_list;
+    FILE_NODE *p = file_list;
     FILE_NODE *q = (FILE_NODE *) 0;
     char *name = sval->str;
     const char *ostr;
@@ -239,7 +239,7 @@ int
 file_close(STRING * sval)
 {
     FILE_NODE dummy;
-    register FILE_NODE *p;
+    FILE_NODE *p;
     FILE_NODE *q = &dummy;	/* trails p */
     FILE_NODE *hold;
     char *name = sval->str;
@@ -321,7 +321,7 @@ int
 file_flush(STRING * sval)
 {
     int ret = -1;
-    register FILE_NODE *p = file_list;
+    FILE_NODE *p = file_list;
     size_t len = sval->len;
     char *str = sval->str;
 
@@ -378,6 +378,7 @@ void
 close_out_pipes(void)
 {
     FILE_NODE *p = file_list;
+    FILE_NODE *q = 0;
 
     while (p) {
 
@@ -386,13 +387,17 @@ close_out_pipes(void)
 		/* if another error occurs we do not want to be called
 		   for the same file again */
 
-		file_list = p->link;
+		if (q != 0)
+		    q->link = p->link;
+		else
+		    file_list = p->link;
 		close_error(p);
 	    } else if (p->type == PIPE_OUT) {
 		wait_for(p->pid);
 	    }
 	}
 
+	q = p;
 	p = p->link;
     }
 }
@@ -403,7 +408,7 @@ close_out_pipes(void)
 void
 close_fake_pipes(void)
 {
-    register FILE_NODE *p = file_list;
+    FILE_NODE *p = file_list;
     char xbuff[100];
 
     /* close input pipes first to free descriptors for children */
@@ -491,7 +496,7 @@ static struct child {
 static void
 add_to_child_list(int pid, int exit_status)
 {
-    register struct child *p = ZMALLOC(struct child);
+    struct child *p = ZMALLOC(struct child);
 
     p->pid = pid;
     p->exit_status = exit_status;
@@ -503,7 +508,7 @@ static struct child *
 remove_from_child_list(int pid)
 {
     struct child dummy;
-    register struct child *p;
+    struct child *p;
     struct child *q = &dummy;
 
     dummy.link = p = child_list;
@@ -643,6 +648,9 @@ close_error(FILE_NODE * p)
 {
     TRACE(("close_error(%s)\n", p->name->str));
     errmsg(errno, "close failed on file %s", p->name->str);
+#ifdef NO_LEAKS
+    free_filenode(p);
+#endif
     mawk_exit(2);
 }
 
@@ -650,6 +658,7 @@ close_error(FILE_NODE * p)
 void
 files_leaks(void)
 {
+    TRACE(("files_leaks\n"));
     while (file_list != 0) {
 	FILE_NODE *p = file_list;
 	file_list = p->link;
