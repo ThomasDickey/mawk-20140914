@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.18 2010/08/06 08:31:52 tom Exp $
+ * $MawkId: files.c,v 1.19 2010/08/06 08:48:09 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -476,8 +476,9 @@ get_pipe(char *name, int type, int *pid_ptr)
 	break;
     }
 
-    return type == PIPE_IN ? (PTR) FINdopen(local_fd, 0) :
-	(PTR) fdopen(local_fd, "w");
+    return ((type == PIPE_IN)
+	    ? (PTR) FINdopen(local_fd, 0)
+	    : (PTR) fdopen(local_fd, "w"));
 }
 
 /*------------ children ------------------*/
