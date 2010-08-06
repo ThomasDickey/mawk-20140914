@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.28 2010/07/30 00:02:43 tom Exp $
+ * $MawkId: fin.c,v 1.29 2010/08/06 09:15:53 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -91,13 +91,20 @@ static FIN *next_main(int);
 static char *enlarge_fin_buffer(FIN *);
 int is_cmdline_assign(char *);	/* also used by init */
 
+static void
+free_fin_data(FIN * fin)
+{
+    zfree(fin->buff, (size_t) (fin->nbuffs * BUFFSZ + 1));
+    ZFREE(fin);
+}
+
 /* convert file-descriptor to FIN*.
    It's the main stream if main_flag is set
 */
 FIN *
 FINdopen(int fd, int main_flag)
 {
-    register FIN *fin = ZMALLOC(FIN);
+    FIN *fin = ZMALLOC(FIN);
 
     fin->fd = fd;
     fin->flags = main_flag ? (MAIN_FLAG | START_FLAG) : START_FLAG;
@@ -109,14 +116,16 @@ FINdopen(int fd, int main_flag)
     if ((isatty(fd) && rs_shadow.type == SEP_CHAR && rs_shadow.c == '\n')
 	|| interactive_flag) {
 	/* interactive, i.e., line buffer this file */
-	if (fd == 0)
+	if (fd == 0) {
 	    fin->fp = stdin;
-	else if (!(fin->fp = fdopen(fd, "r"))) {
+	} else if (!(fin->fp = fdopen(fd, "r"))) {
 	    errmsg(errno, "fdopen failed");
+	    free_fin_data(fin);
 	    mawk_exit(2);
 	}
-    } else
+    } else {
 	fin->fp = (FILE *) 0;
+    }
 
     return fin;
 }
@@ -129,6 +138,7 @@ FINdopen(int fd, int main_flag)
 FIN *
 FINopen(char *filename, int main_flag)
 {
+    FIN *result = 0;
     int fd;
     int oflag = O_RDONLY;
 
@@ -143,13 +153,11 @@ FINopen(char *filename, int main_flag)
 	if (bm)
 	    setmode(0, O_BINARY);
 #endif
-	return FINdopen(0, main_flag);
+	result = FINdopen(0, main_flag);
+    } else if ((fd = open(filename, oflag, 0)) != -1) {
+	result = FINdopen(fd, main_flag);
     }
-
-    if ((fd = open(filename, oflag, 0)) == -1)
-	return (FIN *) 0;
-    else
-	return FINdopen(fd, main_flag);
+    return result;
 }
 
 /* frees the buffer and fd, but leaves FIN structure until
@@ -161,7 +169,7 @@ FINsemi_close(FIN * fin)
     static char dead = 0;
 
     if (fin->buff != &dead) {
-	zfree(fin->buff, (size_t) (fin->nbuffs * BUFFSZ + 1));
+	free_fin_data(fin);
 
 	if (fin->fd) {
 	    if (fin->fp)
@@ -450,8 +458,10 @@ next_main(int open_flag)	/* called by open_main() if on */
     argval.type = C_NOINIT;
     c_argi.type = C_DOUBLE;
 
-    if (main_fin)
+    if (main_fin) {
 	FINclose(main_fin);
+	main_fin = 0;
+    }
     /* FILENAME and FNR don't change unless we really open
        a new file */
 
@@ -590,3 +600,15 @@ is_cmdline_assign(char *s)
     }
     return 1;
 }
+
+#ifdef NO_LEAKS
+void
+fin_leaks(void)
+{
+    TRACE(("fin_leaks\n"));
+    if (main_fin) {
+	free_fin_data(main_fin);
+	main_fin = 0;
+    }
+}
+#endif
