@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.29 2010/08/06 09:15:53 tom Exp $
+ * $MawkId: fin.c,v 1.30 2010/08/06 20:52:20 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -91,11 +91,19 @@ static FIN *next_main(int);
 static char *enlarge_fin_buffer(FIN *);
 int is_cmdline_assign(char *);	/* also used by init */
 
+/* this is how we mark EOF on main_fin  */
+static char dead_buff = 0;
+static FIN dead_main =
+{0, (FILE *) 0, &dead_buff, &dead_buff, &dead_buff,
+ 1, EOF_FLAG};
+
 static void
 free_fin_data(FIN * fin)
 {
-    zfree(fin->buff, (size_t) (fin->nbuffs * BUFFSZ + 1));
-    ZFREE(fin);
+    if (fin != &dead_main) {
+	zfree(fin->buff, (size_t) (fin->nbuffs * BUFFSZ + 1));
+	ZFREE(fin);
+    }
 }
 
 /* convert file-descriptor to FIN*.
@@ -108,7 +116,7 @@ FINdopen(int fd, int main_flag)
 
     fin->fd = fd;
     fin->flags = main_flag ? (MAIN_FLAG | START_FLAG) : START_FLAG;
-    fin->buffp = fin->buff = (char *) zmalloc((size_t) (BUFFSZ + 1));
+    fin->buffp = fin->buff = (char *) zmalloc((size_t) BUFFSZ + 1);
     fin->limit = fin->buffp;
     fin->nbuffs = 1;
     fin->buff[0] = 0;
@@ -169,7 +177,7 @@ FINsemi_close(FIN * fin)
     static char dead = 0;
 
     if (fin->buff != &dead) {
-	free_fin_data(fin);
+	zfree(fin->buff, (size_t) (fin->nbuffs * BUFFSZ + 1));
 
 	if (fin->fd) {
 	    if (fin->fp)
@@ -522,17 +530,8 @@ next_main(int open_flag)	/* called by open_main() if on */
 	return main_fin;
     }
 
-    /* real failure */
-    {
-	/* this is how we mark EOF on main_fin  */
-	static char dead_buff = 0;
-	static FIN dead_main =
-	{0, (FILE *) 0, &dead_buff, &dead_buff, &dead_buff,
-	 1, EOF_FLAG};
-
-	return main_fin = &dead_main;
-	/* since MAIN_FLAG is not set, FINgets won't call next_main() */
-    }
+    return main_fin = &dead_main;
+    /* since MAIN_FLAG is not set, FINgets won't call next_main() */
 }
 
 int
