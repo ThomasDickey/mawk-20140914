@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.16 2010/08/04 09:17:25 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.17 2010/08/06 00:32:21 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -95,6 +95,8 @@ re_compile(STRING * sval)
     sval->ref_cnt++;
     p->re.anchored = (*s == '^');
     if (!(p->re.compiled = REcompile(s, sval->len))) {
+	ZFREE(p);
+	sval->ref_cnt--;
 	if (mawk_state == EXECUTION)
 	    rt_error(efmt, REerror(), s);
 	else {			/* compiling */
