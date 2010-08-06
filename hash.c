@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.14 2010/08/05 09:13:01 tom Exp $
+ * $MawkId: hash.c,v 1.15 2010/08/06 23:49:37 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -72,6 +72,12 @@ typedef struct hash {
 } HASHNODE;
 
 static HASHNODE *hash_table[HASH_PRIME];
+
+#ifdef NO_LEAKS
+static void free_hashnode(HASHNODE *);
+#else
+#define free_hashnode(p) zfree(delete(p->symtab.name), sizeof(HASHNODE))
+#endif
 
 /*
 insert a string in the symbol table.
@@ -191,7 +197,7 @@ save_id(const char *s)
     return &q->symtab;
 }
 
-/* restore all global indentifiers */
+/* restore all global identifiers */
 void
 restore_ids(void)
 {
@@ -203,7 +209,7 @@ restore_ids(void)
     while (q) {
 	p = q;
 	q = q->link;
-	zfree(delete(p->symtab.name), sizeof(HASHNODE));
+	free_hashnode(p);
 	p->link = hash_table[h = last_hash];
 	hash_table[h] = p;
     }
@@ -262,42 +268,61 @@ reverse_find(int type, PTR ptr)
 }
 
 #ifdef NO_LEAKS
+static void
+free_symtab_name(HASHNODE * p)
+{
+    zfree((PTR) (p->symtab.name), strlen(p->symtab.name) + 1);
+}
+
+static void
+free_hashnode(HASHNODE * p)
+{
+    CELL *cp;
+
+    TRACE(("...deleting hash %p (%p) %s %d\n", p, &(p->symtab),
+	   p->symtab.name, p->symtab.type));
+    p = delete(p->symtab.name);
+    switch (p->symtab.type) {
+    case ST_FUNCT:
+	free_codes(p->symtab.name,
+		   p->symtab.stval.fbp->code,
+		   p->symtab.stval.fbp->size);
+	zfree(p->symtab.stval.fbp, sizeof(FBLOCK));
+	break;
+    case ST_NONE:
+	free_symtab_name(p);
+	break;
+    case ST_VAR:
+	cp = p->symtab.stval.cp;
+	if (cp != 0
+	    && (cp < bi_vars || cp > bi_vars + NUM_BI_VAR)) {
+	    switch (cp->type) {
+	    case C_STRING:
+	    case C_STRNUM:
+	    case C_MBSTRN:
+		free_STRING(string(cp));
+		break;
+	    }
+	    free_symtab_name(p);
+	    zfree(cp, sizeof(CELL));
+	}
+	break;
+    default:
+	break;
+    }
+    zfree(p, sizeof(HASHNODE));
+}
+
 void
 hash_leaks(void)
 {
     int i;
     HASHNODE *p;
-    CELL *cp;
 
     TRACE(("hash_leaks\n"));
     for (i = 0; i < HASH_PRIME; i++) {
 	while ((p = hash_table[i]) != 0) {
-	    TRACE(("...deleting hash %s %d\n", p->symtab.name, p->symtab.type));
-	    p = delete(p->symtab.name);
-	    switch (p->symtab.type) {
-	    case ST_FUNCT:
-		free_codes(p->symtab.name,
-			   p->symtab.stval.fbp->code,
-			   p->symtab.stval.fbp->size);
-		zfree(p->symtab.stval.fbp, sizeof(FBLOCK));
-		break;
-	    case ST_VAR:
-		cp = p->symtab.stval.cp;
-		if (cp != 0
-		    && (cp < bi_vars || cp > bi_vars + NUM_BI_VAR)) {
-		    switch (cp->type) {
-		    case C_STRING:
-		    case C_STRNUM:
-		    case C_MBSTRN:
-			free_STRING(string(cp));
-			break;
-		    }
-		    zfree((PTR) (p->symtab.name), strlen(p->symtab.name) + 1);
-		    zfree(cp, sizeof(CELL));
-		}
-		break;
-	    }
-	    zfree(p, sizeof(HASHNODE));
+	    free_hashnode(p);
 	}
     }
 }
