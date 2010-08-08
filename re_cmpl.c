@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.17 2010/08/06 00:32:21 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.18 2010/08/08 23:08:38 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -421,3 +421,36 @@ replv_to_repl(CELL * cp, STRING * sval)
     zfree(sblock, vcnt * sizeof(STRING *));
     return cp;
 }
+
+#ifdef NO_LEAKS
+typedef struct _all_ptrs {
+    struct _all_ptrs *next;
+    PTR m;
+} ALL_PTRS;
+
+static ALL_PTRS *all_ptrs;
+/*
+ * Some regular expressions are parsed, and the pointer stored in the byte-code
+ * where we cannot distinguish it from other constants.  Keep a list here, to
+ * free on exit for auditing.
+ */
+void
+no_leaks_re_ptr(PTR m)
+{
+    ALL_PTRS *p = calloc(1, sizeof(ALL_PTRS));
+    p->next = all_ptrs;
+    p->m = m;
+    all_ptrs = p;
+}
+
+void
+re_leaks(void)
+{
+    while (all_ptrs != 0) {
+	ALL_PTRS *next = all_ptrs->next;
+	re_destroy(all_ptrs->m);
+	free(all_ptrs);
+	all_ptrs = next;
+    }
+}
+#endif
