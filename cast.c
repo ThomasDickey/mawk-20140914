@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.11 2010/08/08 23:44:04 tom Exp $
+ * $MawkId: cast.c,v 1.12 2010/08/09 09:08:35 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -446,6 +446,7 @@ d_to_U(double d)
 #ifdef NO_LEAKS
 typedef struct _all_cells {
     struct _all_cells *next;
+    char ptr;
     CELL *cp;
 } ALL_CELLS;
 
@@ -461,6 +462,17 @@ no_leaks_cell(CELL * cp)
     ALL_CELLS *p = calloc(1, sizeof(ALL_CELLS));
     p->next = all_cells;
     p->cp = cp;
+    p->ptr = 0;
+    all_cells = p;
+}
+
+void
+no_leaks_cell_ptr(CELL * cp)
+{
+    ALL_CELLS *p = calloc(1, sizeof(ALL_CELLS));
+    p->next = all_cells;
+    p->cp = cp;
+    p->ptr = 1;
     all_cells = p;
 }
 
@@ -469,7 +481,11 @@ cell_leaks(void)
 {
     while (all_cells != 0) {
 	ALL_CELLS *next = all_cells->next;
-	free_cell_data(all_cells->cp);
+	if (all_cells->ptr) {
+	    zfree(all_cells->cp, sizeof(CELL));
+	} else {
+	    free_cell_data(all_cells->cp);
+	}
 	free(all_cells);
 	all_cells = next;
     }
