@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.34 2010/08/08 23:16:49 tom Exp $
+ * $MawkId: mawk.h,v 1.35 2010/08/09 09:01:53 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -222,6 +222,7 @@ extern const char *da_op_name(INST *);
 extern void free_cell_data(CELL *);
 extern void free_codes(const char *, INST *, size_t);
 extern void no_leaks_cell(CELL *);
+extern void no_leaks_cell_ptr(CELL *);
 extern void no_leaks_re_ptr(PTR);
 
 extern void array_leaks(void);
@@ -242,6 +243,7 @@ extern void zmalloc_leaks(void);
 
 #define free_codes(tag, base, size) zfree(base, size)
 #define no_leaks_cell(ptr)	/* nothing */
+#define no_leaks_cell_ptr(ptr)	/* nothing */
 #define no_leaks_re_ptr(ptr)	/* nothing */
 
 #endif
