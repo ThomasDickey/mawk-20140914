@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.12 2010/08/09 09:08:35 tom Exp $
+ * $MawkId: cast.c,v 1.13 2010/08/13 21:55:06 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -408,6 +408,7 @@ cast_to_REPL(CELL * cp)
     sval = (STRING *) cp->ptr;
 
     cellcpy(cp, repl_compile(sval));
+    no_leaks_re_ptr(cp->ptr);
     free_STRING(sval);
 }
 
