@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp0.c,v 1.25 2010/07/31 00:15:35 tom Exp $
+ * $MawkId: rexp0.c,v 1.26 2010/08/13 22:53:06 tom Exp $
  * @Log: rexp0.c,v @
  * Revision 1.5  1996/11/08 15:39:27  mike
  * While cleaning up block_on, I introduced a bug. Now fixed.
@@ -413,6 +413,18 @@ lookup_cclass(char **start)
     size_t size;
     size_t item;
 
+#ifdef NO_LEAKS
+    if (start == 0) {
+	for (item = 0; item < sizeof(cclass_table) /
+	     sizeof(cclass_table[0]); ++item) {
+	    if (cclass_table[item].data) {
+		free(cclass_table[item].data);
+		cclass_table[item].data = 0;
+	    }
+	}
+	return 0;
+    }
+#endif
     name = (*start += 2);	/* point past "[:" */
     colon = strchr(name, ':');
     if (colon == 0 || colon[1] != ']')
