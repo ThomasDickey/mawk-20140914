@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.12 2010/08/08 23:35:13 tom Exp $
+ * $MawkId: parse.y,v 1.13 2010/08/13 00:00:56 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -399,7 +399,10 @@ p_expr  :   DOUBLE
       ;
 
 p_expr  :   RE
-            { $$ = code_offset ; code2(_MATCH0, $1) ; }
+            { $$ = code_offset ;
+	      code2(_MATCH0, $1) ;
+	      no_leaks_re_ptr($1);
+	    }
         ;
 
 p_expr  :   p_expr  PLUS   p_expr { code1(_ADD) ; }
@@ -1343,7 +1346,7 @@ static void RE_as_arg(void)
     cp->type = C_RE ;
     cp->ptr = code_ptr[1].ptr ;
     code2(_PUSHC, cp) ;
-    /* FIXME - no_leaks_cell(cp); */
+    no_leaks_cell_ptr(cp);
 }
 
 /* reset the active_code back to the MAIN block */
