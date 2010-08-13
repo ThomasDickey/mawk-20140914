@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.27 2010/08/07 00:14:18 tom Exp $
+ * $MawkId: code.c,v 1.28 2010/08/13 23:56:19 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -284,6 +284,8 @@ free_codes(const char *tag, INST * base, size_t size)
     INST *cdp;
     INST *last = base + (size / sizeof(*last));
     CELL *cp;
+
+    (void) tag;
 
     TRACE(("free_codes(%s) base %p, size %lu\n", tag, base, size));
     for (cdp = base; cdp < last; ++cdp) {
