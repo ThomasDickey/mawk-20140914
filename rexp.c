@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.14 2010/08/04 00:23:35 tom Exp $
+ * $MawkId: rexp.c,v 1.15 2010/08/13 00:15:43 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -248,7 +248,7 @@ void
 RE_panic(const char *s)
 {
     fprintf(stderr, "REcompile() - panic:  %s\n", s);
-    exit(100);
+    mawk_exit(100);
 }
 
 /* getting regexp error message */

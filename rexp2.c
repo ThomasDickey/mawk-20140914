@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.19 2010/07/21 23:05:59 tom Exp $
+ * $MawkId: rexp2.c,v 1.20 2010/08/13 00:15:16 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -128,7 +128,7 @@ RE_new_run_stack(void)
 	/* this is pretty unusual, I've only seen it happen on
 	   weird input to REmatch() under 16bit DOS , the same
 	   situation worked easily on 32bit machine.  */
-	exit(100);
+	mawk_exit(100);
     }
 
     RE_run_stack_limit = RE_run_stack_base + newsize;
@@ -152,7 +152,7 @@ RE_new_pos_stack(void)
 
     if (!RE_pos_stack_base) {
 	fprintf(stderr, "out of memory for RE string position stack\n");
-	exit(100);
+	mawk_exit(100);
     }
 
     RE_pos_stack_limit = RE_pos_stack_base + newsize;
