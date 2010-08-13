@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.16 2010/08/13 09:57:44 tom Exp $
+ * $MawkId: hash.c,v 1.17 2010/08/13 10:52:42 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -295,6 +295,8 @@ free_hashnode(HASHNODE * p)
 	free_codes(p->symtab.name,
 		   p->symtab.stval.fbp->code,
 		   p->symtab.stval.fbp->size);
+	if (p->symtab.stval.fbp->nargs)
+	    zfree(p->symtab.stval.fbp->typev, p->symtab.stval.fbp->nargs);
 	zfree(p->symtab.stval.fbp, sizeof(FBLOCK));
 	break;
     case ST_NONE:
