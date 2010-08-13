@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.11 2010/08/02 09:16:19 tom Exp $
+ * $MawkId: symtype.h,v 1.12 2010/08/13 09:55:03 tom Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme
@@ -128,6 +128,9 @@ typedef struct {
     const char *name;
     char type;
     unsigned char offset;	/* offset in stack frame for local vars */
+#ifdef NO_LEAKS
+    char free_name;
+#endif
     union {
 	CELL *cp;
 	int kw;

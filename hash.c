@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.15 2010/08/06 23:49:37 tom Exp $
+ * $MawkId: hash.c,v 1.16 2010/08/13 09:57:44 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -93,6 +93,9 @@ insert(const char *s)
 
     p->link = hash_table[h = hash(s) % HASH_PRIME];
     p->symtab.name = s;
+#ifdef NO_LEAKS
+    p->symtab.free_name = 0;
+#endif
     hash_table[h] = p;
     return &p->symtab;
 }
@@ -114,6 +117,9 @@ find(const char *s)
 	    p = ZMALLOC(HASHNODE);
 	    p->symtab.type = ST_NONE;
 	    p->symtab.name = strcpy(zmalloc(strlen(s) + 1), s);
+#ifdef NO_LEAKS
+	    p->symtab.free_name = 1;
+#endif
 	    break;
 	}
 
@@ -271,7 +277,9 @@ reverse_find(int type, PTR ptr)
 static void
 free_symtab_name(HASHNODE * p)
 {
-    zfree((PTR) (p->symtab.name), strlen(p->symtab.name) + 1);
+    if (p->symtab.free_name) {
+	zfree((PTR) (p->symtab.name), strlen(p->symtab.name) + 1);
+    }
 }
 
 static void
@@ -290,7 +298,6 @@ free_hashnode(HASHNODE * p)
 	zfree(p->symtab.stval.fbp, sizeof(FBLOCK));
 	break;
     case ST_NONE:
-	free_symtab_name(p);
 	break;
     case ST_VAR:
 	cp = p->symtab.stval.cp;
@@ -303,13 +310,13 @@ free_hashnode(HASHNODE * p)
 		free_STRING(string(cp));
 		break;
 	    }
-	    free_symtab_name(p);
 	    zfree(cp, sizeof(CELL));
 	}
 	break;
     default:
 	break;
     }
+    free_symtab_name(p);
     zfree(p, sizeof(HASHNODE));
 }
 
