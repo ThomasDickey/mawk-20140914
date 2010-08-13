@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.20 2010/08/04 23:02:35 tom Exp $
+ * $MawkId: execute.c,v 1.21 2010/08/13 22:10:50 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -1081,6 +1081,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		       cast_to_re((sp + 1)->ptr));
 
 	    free_STRING(string(sp));
+	    no_leaks_re_ptr((sp + 1)->ptr);
 	    sp->type = C_DOUBLE;
 	    sp->dval = t ? 1.0 : 0.0;
 	    break;
