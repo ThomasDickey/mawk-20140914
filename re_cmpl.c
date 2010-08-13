@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.19 2010/08/13 00:00:48 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.20 2010/08/13 21:54:40 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -451,6 +451,14 @@ re_leaks(void)
 	re_destroy(all_ptrs->m);
 	free(all_ptrs);
 	all_ptrs = next;
+    }
+
+    while (repl_list != 0) {
+	REPL_NODE *p = repl_list->link;
+	free_STRING(repl_list->sval);
+	free_cell_data(repl_list->cp);
+	ZFREE(repl_list);
+	repl_list = p;
     }
 }
 #endif
