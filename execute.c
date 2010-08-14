@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.21 2010/08/13 22:10:50 tom Exp $
+ * $MawkId: execute.c,v 1.22 2010/08/14 00:54:57 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -269,7 +269,6 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		     */
 		    t = field_addr_to_index(cp);
 		    if (t > nf) {
-			cell_destroy(cp);
 			cp->type = C_STRING;
 			cp->ptr = (PTR) & null_str;
 			null_str.ref_cnt++;
