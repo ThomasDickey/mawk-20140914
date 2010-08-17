@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.21 2010/07/30 09:23:48 tom Exp $
+ * $MawkId: zmalloc.c,v 1.22 2010/08/17 09:58:24 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -92,9 +92,13 @@ the GNU General Public License, version 2, 1991.
  * Define DEBUG_ZMALLOC to build mawk with a simpler interface to the system
  * malloc, which verifies whether the size-parameter passed to zfree() is
  * consistent with the zmalloc() parameter.
+ *
+ * The NO_LEAKS code relies upon this simpler interface.
  */
 
-/* #define DEBUG_ZMALLOC 1 */
+#if !defined(DEBUG_ZMALLOC) && defined(NO_LEAKS)
+#define DEBUG_ZMALLOC 1
+#endif
 
 #ifdef DEBUG_ZMALLOC
 #define IsPoolable(blocks)  ((blocks) == 0)
