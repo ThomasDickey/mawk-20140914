@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.23 2010/08/14 00:48:01 tom Exp $
+ * $MawkId: field.c,v 1.24 2010/08/17 08:56:01 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -201,37 +201,11 @@ field_init(void)
     string(OFMT)->ref_cnt++;
 }
 
-static void
-destroy_field0(void)
-{
-    cell_destroy(&field[0]);
-
-    while (nf > 0) {
-	CELL *cp = field + nf;
-	int count;
-
-	switch (cp->type) {
-	case C_STRING:
-	case C_STRNUM:
-	case C_MBSTRN:
-	    if ((count = string(cp)->ref_cnt) != 0) {
-		cell_destroy(cp);
-		if (count == 1) {
-		    cp->type = C_NOINIT;
-		}
-	    }
-	    break;
-	}
-	USED_SPLIT_BUFF(nf);
-	--nf;
-    }
-    nf = -1;
-}
-
 void
 set_field0(char *s, size_t len)
 {
-    destroy_field0();
+    cell_destroy(&field[0]);
+    nf = -1;
 
     if (len) {
 	field[0].type = C_MBSTRN;
@@ -285,11 +259,11 @@ split_field0(void)
     if (nf > MAX_SPLIT) {
 	cnt = MAX_SPLIT;
 	load_field_ov();
-    } else {
+    } else
 	cnt = nf;
-    }
 
     while (cnt > 0) {
+	cell_destroy(field + cnt);
 	field[cnt].ptr = (PTR) split_buff[cnt - 1];
 	USED_SPLIT_BUFF(cnt - 1);
 	field[cnt--].type = C_MBSTRN;
@@ -299,18 +273,6 @@ split_field0(void)
 	free_STRING(string(cp));
     }
 }
-
-#define destroy_field(n) \
-	cp = field_ptr(n); \
-	switch (cp->type) { \
-	case C_STRING: \
-	case C_STRNUM: \
-	case C_MBSTRN: \
-	    if (string(cp) != &null_str) { \
-		cell_destroy(cp); \
-	    } \
-	    break; \
-	}
 
 /*
   assign CELL *cp to field or pseudo field
@@ -325,8 +287,9 @@ field_assign(CELL * fp, CELL * cp)
 
     /* the most common case first */
     if (fp == field) {
-	destroy_field0();
+	cell_destroy(field);
 	cellcpy(fp, cp);
+	nf = -1;
 	return;
     }
 
@@ -356,7 +319,8 @@ field_assign(CELL * fp, CELL * cp)
 
 	if (j > nf)
 	    for (i = nf + 1; i <= j; i++) {
-		destroy_field(i);
+		cp = field_ptr(i);
+		cell_destroy(cp);
 		cp->type = C_STRING;
 		cp->ptr = (PTR) & null_str;
 		null_str.ref_cnt++;
@@ -419,7 +383,8 @@ field_assign(CELL * fp, CELL * cp)
 
 	if (i > nf) {
 	    for (j = nf + 1; j < i; j++) {
-		destroy_field(j);
+		cp = field_ptr(j);
+		cell_destroy(cp);
 		cp->type = C_STRING;
 		cp->ptr = (PTR) & null_str;
 		null_str.ref_cnt++;
@@ -705,8 +670,6 @@ field_leaks(void)
 {
     int n;
 
-    TRACE(("field_leaks\n"));
-
     free_STRING(string(CONVFMT));
     free_STRING(string(FS));
     free_STRING(string(OFMT));
@@ -715,9 +678,6 @@ field_leaks(void)
 
     for (n = 1; n <= nf; ++n) {
 	cell_destroy(&field[n]);
-	if (split_buff[n]) {
-	    free_STRING(split_buff[n]);
-	}
     }
 
     switch (fs_shadow.type) {
