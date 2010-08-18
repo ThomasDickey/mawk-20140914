@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.30 2010/08/06 20:52:20 tom Exp $
+ * $MawkId: fin.c,v 1.31 2010/08/18 16:41:35 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -487,7 +487,9 @@ next_main(int open_flag)	/* called by open_main() if on */
 	/* make a copy so we can cast w/o side effect */
 	cell_destroy(&argval);
 	cp = cellcpy(&argval, cp0);
+#ifndef NO_LEAKS
 	cell_destroy(cp0);
+#endif
 
 	if (cp->type < C_STRING)
 	    cast1_to_s(cp);
