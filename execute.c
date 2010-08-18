@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.22 2010/08/14 00:54:57 tom Exp $
+ * $MawkId: execute.c,v 1.23 2010/08/18 17:09:02 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -1482,8 +1482,7 @@ DB_cell_destroy(CELL * cp)
     case C_MBSTRN:
     case C_STRING:
     case C_STRNUM:
-	if (--string(cp)->ref_cnt == 0)
-	    zfree(string(cp), string(cp)->len + STRING_OH);
+	free_STRING(string(cp));
 	break;
 
     case C_RE:
