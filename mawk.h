@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.35 2010/08/09 09:01:53 tom Exp $
+ * $MawkId: mawk.h,v 1.36 2010/08/18 17:01:04 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -144,8 +144,9 @@ extern unsigned rt_nr, rt_fnr;	/* ditto */
 #define cell_destroy(cp) \
 	do { \
 	    if ( (cp)->type >= C_STRING && \
-	       -- string(cp)->ref_cnt == 0 ) \
-	    zfree(string(cp),string(cp)->len+STRING_OH); \
+	         (cp)->type <= C_MBSTRN ) { \
+		free_STRING(string(cp));  \
+	    } \
 	} while (0)
 #endif
 

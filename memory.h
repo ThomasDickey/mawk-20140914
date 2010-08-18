@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.h,v 1.7 2010/05/07 00:41:27 tom Exp $
+ * $MawkId: memory.h,v 1.8 2010/08/18 17:02:12 tom Exp $
  * @Log: memory.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:17  mike
  * move source to cvs
@@ -44,8 +44,9 @@ void DB_free_STRING(STRING *);
 
 #define  free_STRING(sval) \
 	    do { \
-		if ( -- (sval)->ref_cnt == 0 ) \
-		    zfree(sval, (sval)->len+STRING_OH) ; \
+		if ( -- (sval)->ref_cnt == 0 && \
+		    sval != &null_str ) \
+		    zfree(sval, (sval)->len + STRING_OH) ; \
 	    } while (0)
 #endif
 
