@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.30 2010/08/18 13:55:51 tom Exp $
+ * $MawkId: code.c,v 1.31 2010/08/18 15:27:22 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -317,7 +317,7 @@ free_codes(const char *tag, INST * base, size_t size)
 	    case LA_PUSHA:
 	    case A_CAT:
 		++cdp;		/* skip value */
-		TRACE(("\tparam %p\n", cdp->op));
+		TRACE(("\tparam %d\n", cdp->op));
 		break;
 	    case A_PUSHA:
 	    case L_PUSHA:
