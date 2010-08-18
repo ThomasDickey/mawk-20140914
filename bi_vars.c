@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_vars.c,v 1.8 2010/07/24 14:25:42 tom Exp $
+ * $MawkId: bi_vars.c,v 1.9 2010/08/18 16:34:06 tom Exp $
  * @Log: bi_vars.c,v @
  * Revision 1.1.1.1  1993/07/03  18:58:09  mike
  * move source to cvs
@@ -102,6 +102,8 @@ bi_vars_leaks(void)
     for (n = 0; n < NUM_BI_VAR; ++n) {
 	switch (bi_vars[n].type) {
 	case C_STRING:
+	case C_STRNUM:
+	case C_MBSTRN:
 	    free_STRING(string(&bi_vars[n]));
 	    break;
 	}
