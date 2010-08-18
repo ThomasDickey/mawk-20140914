@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.29 2010/08/18 12:39:30 tom Exp $
+ * $MawkId: code.c,v 1.30 2010/08/18 13:55:51 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -299,8 +299,6 @@ free_codes(const char *tag, INST * base, size_t size)
 	    switch ((MAWK_OPCODES) (cdp->op)) {
 	    case AE_PUSHA:
 	    case AE_PUSHI:
-	    case A_CAT:
-	    case LAE_PUSHA:
 		++cdp;		/* skip pointer */
 		cp = (CELL *) (cdp->ptr);
 		if (cp != 0) {
@@ -315,10 +313,15 @@ free_codes(const char *tag, INST * base, size_t size)
 		++cdp;		/* skip pointer */
 		re_destroy(cdp->ptr);
 		break;
+	    case LAE_PUSHA:
+	    case LA_PUSHA:
+	    case A_CAT:
+		++cdp;		/* skip value */
+		TRACE(("\tparam %p\n", cdp->op));
+		break;
 	    case A_PUSHA:
 	    case L_PUSHA:
 	    case L_PUSHI:
-	    case LA_PUSHA:
 	    case _BUILTIN:
 	    case _PRINT:
 	    case _PUSHA:
