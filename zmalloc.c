@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.22 2010/08/17 09:58:24 tom Exp $
+ * $MawkId: zmalloc.c,v 1.23 2010/08/18 23:16:40 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -141,7 +141,7 @@ show_ptr_data(void)
 static void
 free_ptr_data(void *a)
 {
-    TRACE(("free_ptr_data %p\n", a));
+    TRACE(("free_ptr_data %p -> %p\n", a, ((PTR_DATA *) (a))->ptr));
     free(a);
 }
 
@@ -188,7 +188,9 @@ static void
 finish_ptr(PTR ptr, size_t size)
 {
     PTR_DATA dummy;
+    PTR_DATA *later;
     PTR_DATA **item;
+    void *check;
 
     dummy.ptr = ptr;
     dummy.size = size;
@@ -204,7 +206,12 @@ finish_ptr(PTR ptr, size_t size)
 	   (*item)->ptr,
 	   (unsigned long) (*item)->size));
 
-    tdelete(item, &ptr_data, compare_ptr_data);
+    later = *item;
+    check = tdelete(&dummy, &ptr_data, compare_ptr_data);
+    if (check) {
+	free(later);
+    }
+
     ShowPtrData();
 }
 
