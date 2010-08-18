@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.20 2010/08/13 21:54:40 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.21 2010/08/18 18:00:53 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -114,7 +114,7 @@ re_compile(STRING * sval)
 
 #ifdef DEBUG
     if (dump_RE)
-	REmprint(refRE_DATA(p->re), stderr);
+	REmprint(p->re.compiled, stderr);
 #endif
     return refRE_DATA(p->re);
 }
