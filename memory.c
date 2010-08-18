@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.c,v 1.6 2010/05/07 00:41:10 tom Exp $
+ * $MawkId: memory.c,v 1.7 2010/08/18 17:10:01 tom Exp $
  * @Log: memory.c,v @
  * Revision 1.2  1993/07/17  13:23:08  mike
  * indent and general code cleanup
@@ -97,8 +97,10 @@ new_STRING(const char *s)
 void
 DB_free_STRING(STRING * sval)
 {
-    if (--sval->ref_cnt == 0)
+    if (--sval->ref_cnt == 0 &&
+	sval != &null_str) {
 	zfree(sval, sval->len + STRING_OH);
+    }
 }
 
 #endif
