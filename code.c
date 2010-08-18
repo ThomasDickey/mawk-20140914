@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.28 2010/08/13 23:56:19 tom Exp $
+ * $MawkId: code.c,v 1.29 2010/08/18 12:39:30 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -288,143 +288,145 @@ free_codes(const char *tag, INST * base, size_t size)
     (void) tag;
 
     TRACE(("free_codes(%s) base %p, size %lu\n", tag, base, size));
-    for (cdp = base; cdp < last; ++cdp) {
-	TRACE(("code %03d:%s (%d %#x)\n",
-	       (int) (cdp - base),
-	       da_op_name(cdp),
-	       cdp->op,
-	       cdp->op));
+    if (base != 0 && size != 0) {
+	for (cdp = base; cdp < last; ++cdp) {
+	    TRACE(("code %03d:%s (%d %#x)\n",
+		   (int) (cdp - base),
+		   da_op_name(cdp),
+		   cdp->op,
+		   cdp->op));
 
-	switch ((MAWK_OPCODES) (cdp->op)) {
-	case AE_PUSHA:
-	case AE_PUSHI:
-	case A_CAT:
-	case LAE_PUSHA:
-	    ++cdp;		/* skip pointer */
-	    cp = (CELL *) (cdp->ptr);
-	    if (cp != 0) {
+	    switch ((MAWK_OPCODES) (cdp->op)) {
+	    case AE_PUSHA:
+	    case AE_PUSHI:
+	    case A_CAT:
+	    case LAE_PUSHA:
+		++cdp;		/* skip pointer */
+		cp = (CELL *) (cdp->ptr);
+		if (cp != 0) {
+		    TRACE(("\tparam %p type %d\n", cp, cp->type));
+		    free_cell_data(cp);
+		} else {
+		    TRACE(("\tparam %p type ??\n", cp));
+		}
+		break;
+	    case _MATCH0:
+	    case _MATCH1:
+		++cdp;		/* skip pointer */
+		re_destroy(cdp->ptr);
+		break;
+	    case A_PUSHA:
+	    case L_PUSHA:
+	    case L_PUSHI:
+	    case LA_PUSHA:
+	    case _BUILTIN:
+	    case _PRINT:
+	    case _PUSHA:
+	    case _PUSHI:
+	    case _PUSHINT:
+		++cdp;		/* skip value */
+		TRACE(("\tparam %p\n", cdp->ptr));
+		break;
+	    case _PUSHD:
+		++cdp;		/* skip value */
+		TRACE(("\tparam %p\n", cdp->ptr));
+		if (cdp->ptr != &double_one && cdp->ptr != &double_zero)
+		    zfree(cdp->ptr, sizeof(double));
+		break;
+	    case F_PUSHI:
+		++cdp;		/* skip pointer */
+		cp = (CELL *) (cdp->ptr);
 		TRACE(("\tparam %p type %d\n", cp, cp->type));
-		free_cell_data(cp);
-	    } else {
-		TRACE(("\tparam %p type ??\n", cp));
+		++cdp;		/* skip integer */
+		break;
+	    case _PUSHS:
+		++cdp;		/* skip value */
+		TRACE(("\tparam %p\n", cdp->ptr));
+		free_STRING((STRING *) (cdp->ptr));
+		break;
+	    case _RANGE:
+		cdp += 4;	/* PAT1 */
+		break;
+	    case _CALL:
+		TRACE(("\tskipping %d\n", 1 + cdp[2].op));
+		cdp += 1 + cdp[2].op;
+		break;
+	    case A_DEL:
+	    case A_TEST:
+	    case DEL_A:
+	    case FE_PUSHA:
+	    case FE_PUSHI:
+	    case F_ADD_ASG:
+	    case F_ASSIGN:
+	    case F_DIV_ASG:
+	    case F_MOD_ASG:
+	    case F_MUL_ASG:
+	    case F_POST_DEC:
+	    case F_POST_INC:
+	    case F_POW_ASG:
+	    case F_PRE_DEC:
+	    case F_PRE_INC:
+	    case F_PUSHA:
+	    case F_SUB_ASG:
+	    case NF_PUSHI:
+	    case OL_GL:
+	    case OL_GL_NR:
+	    case POP_AL:
+	    case _ADD:
+	    case _ADD_ASG:
+	    case _ASSIGN:
+	    case _CAT:
+	    case _DIV:
+	    case _DIV_ASG:
+	    case _EQ:
+	    case _EXIT0:	/* this does free memory... */
+	    case _EXIT:
+	    case _GT:
+	    case _GTE:
+	    case _HALT:
+	    case _JMAIN:
+	    case _LT:
+	    case _LTE:
+	    case _MATCH2:
+	    case _MOD:
+	    case _MOD_ASG:
+	    case _MUL:
+	    case _MUL_ASG:
+	    case _NEQ:
+	    case _NEXT:
+	    case _NOT:
+	    case _OMAIN:
+	    case _POP:
+	    case _POST_DEC:
+	    case _POST_INC:
+	    case _POW:
+	    case _POW_ASG:
+	    case _PRE_DEC:
+	    case _PRE_INC:
+	    case _RET0:
+	    case _RET:
+	    case _STOP:
+	    case _SUB:
+	    case _SUB_ASG:
+	    case _TEST:
+	    case _UMINUS:
+	    case _UPLUS:
+		break;
+	    case _JNZ:
+	    case _JZ:
+	    case _LJZ:
+	    case _LJNZ:
+	    case _JMP:
+	    case _PUSHC:
+	    case ALOOP:
+	    case LAE_PUSHI:
+	    case SET_ALOOP:
+		++cdp;		/* cdp->op is literal param */
+		break;
 	    }
-	    break;
-	case _MATCH0:
-	case _MATCH1:
-	    ++cdp;		/* skip pointer */
-	    re_destroy(cdp->ptr);
-	    break;
-	case A_PUSHA:
-	case L_PUSHA:
-	case L_PUSHI:
-	case LA_PUSHA:
-	case _BUILTIN:
-	case _PRINT:
-	case _PUSHA:
-	case _PUSHI:
-	case _PUSHINT:
-	    ++cdp;		/* skip value */
-	    TRACE(("\tparam %p\n", cdp->ptr));
-	    break;
-	case _PUSHD:
-	    ++cdp;		/* skip value */
-	    TRACE(("\tparam %p\n", cdp->ptr));
-	    if (cdp->ptr != &double_one && cdp->ptr != &double_zero)
-		zfree(cdp->ptr, sizeof(double));
-	    break;
-	case F_PUSHI:
-	    ++cdp;		/* skip pointer */
-	    cp = (CELL *) (cdp->ptr);
-	    TRACE(("\tparam %p type %d\n", cp, cp->type));
-	    ++cdp;		/* skip integer */
-	    break;
-	case _PUSHS:
-	    ++cdp;		/* skip value */
-	    TRACE(("\tparam %p\n", cdp->ptr));
-	    free_STRING((STRING *) (cdp->ptr));
-	    break;
-	case _RANGE:
-	    cdp += 4;		/* PAT1 */
-	    break;
-	case _CALL:
-	    TRACE(("\tskipping %d\n", 1 + cdp[2].op));
-	    cdp += 1 + cdp[2].op;
-	    break;
-	case A_DEL:
-	case A_TEST:
-	case DEL_A:
-	case FE_PUSHA:
-	case FE_PUSHI:
-	case F_ADD_ASG:
-	case F_ASSIGN:
-	case F_DIV_ASG:
-	case F_MOD_ASG:
-	case F_MUL_ASG:
-	case F_POST_DEC:
-	case F_POST_INC:
-	case F_POW_ASG:
-	case F_PRE_DEC:
-	case F_PRE_INC:
-	case F_PUSHA:
-	case F_SUB_ASG:
-	case NF_PUSHI:
-	case OL_GL:
-	case OL_GL_NR:
-	case POP_AL:
-	case _ADD:
-	case _ADD_ASG:
-	case _ASSIGN:
-	case _CAT:
-	case _DIV:
-	case _DIV_ASG:
-	case _EQ:
-	case _EXIT0:		/* this does free memory... */
-	case _EXIT:
-	case _GT:
-	case _GTE:
-	case _HALT:
-	case _JMAIN:
-	case _LT:
-	case _LTE:
-	case _MATCH2:
-	case _MOD:
-	case _MOD_ASG:
-	case _MUL:
-	case _MUL_ASG:
-	case _NEQ:
-	case _NEXT:
-	case _NOT:
-	case _OMAIN:
-	case _POP:
-	case _POST_DEC:
-	case _POST_INC:
-	case _POW:
-	case _POW_ASG:
-	case _PRE_DEC:
-	case _PRE_INC:
-	case _RET0:
-	case _RET:
-	case _STOP:
-	case _SUB:
-	case _SUB_ASG:
-	case _TEST:
-	case _UMINUS:
-	case _UPLUS:
-	    break;
-	case _JNZ:
-	case _JZ:
-	case _LJZ:
-	case _LJNZ:
-	case _JMP:
-	case _PUSHC:
-	case ALOOP:
-	case LAE_PUSHI:
-	case SET_ALOOP:
-	    ++cdp;		/* cdp->op is literal param */
-	    break;
 	}
+	zfree(base, size);
     }
-    zfree(base, size);
 }
 
 void
