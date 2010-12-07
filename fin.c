@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.31 2010/08/18 16:41:35 tom Exp $
+ * $MawkId: fin.c,v 1.32 2010/12/07 13:55:54 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -501,7 +501,6 @@ next_main(int open_flag)	/* called by open_main() if on */
 
 	/* it might be a command line assignment */
 	if (is_cmdline_assign(string(cp)->str)) {
-	    cell_destroy(cp);
 	    continue;
 	}
 
