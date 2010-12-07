@@ -1,8 +1,8 @@
--- $MawkId: CHANGES,v 1.135 2010/08/18 17:15:43 tom Exp $
+-- $MawkId: CHANGES,v 1.136 2010/12/07 13:58:48 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20100818
+20101207
 	+ add configure --enable-trace, to consolidate various debugging
 	  traces which were written to stderr.  This writes to Trace.out.
 	+ modify zmalloc.c to make it simpler to use the --disable-leaks
