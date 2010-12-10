@@ -1,6 +1,7 @@
 /********************************************
 rexp1.c
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991,1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp1.c,v 1.13 2010/07/30 08:44:14 tom Exp $
+ * $MawkId: rexp1.c,v 1.14 2010/12/10 17:00:00 tom Exp $
  * @Log: rexp1.c,v @
  * Revision 1.3  1993/07/24  17:55:10  mike
  * more cleanup

@@ -1,6 +1,7 @@
 /********************************************
 jmp.c
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: jmp.c,v 1.5 2010/05/07 10:59:46 tom Exp $
+ * $MawkId: jmp.c,v 1.6 2010/12/10 17:00:00 tom Exp $
  * @Log: jmp.c,v @
  * Revision 1.4  1995/06/18  19:42:19  mike
  * Remove some redundant declarations and add some prototypes

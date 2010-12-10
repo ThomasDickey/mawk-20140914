@@ -1,6 +1,7 @@
 /********************************************
 zmalloc.h
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991,1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.h,v 1.6 2010/07/24 14:32:48 tom Exp $
+ * $MawkId: zmalloc.h,v 1.7 2010/12/10 17:00:00 tom Exp $
  * @Log: zmalloc.h,v @
  * Revision 1.2  1993/07/04  12:52:22  mike
  * start on autoconfig changes

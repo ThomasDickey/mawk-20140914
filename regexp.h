@@ -1,6 +1,8 @@
 /********************************************
 regexp.h
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 2005, Aleksey Cheusov
+copyright 1991,1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: regexp.h,v 1.10 2010/07/28 09:44:18 tom Exp $
+ * $MawkId: regexp.h,v 1.11 2010/12/10 17:00:00 tom Exp $
  * @Log: regexp.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs

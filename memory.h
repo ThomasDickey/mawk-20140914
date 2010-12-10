@@ -1,6 +1,7 @@
 /********************************************
 memory.h
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991,1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.h,v 1.8 2010/08/18 17:02:12 tom Exp $
+ * $MawkId: memory.h,v 1.9 2010/12/10 17:00:00 tom Exp $
  * @Log: memory.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:17  mike
  * move source to cvs

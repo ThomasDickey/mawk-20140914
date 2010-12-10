@@ -1,4 +1,17 @@
 echo off
+rem $MawkId: fpe_test.bat,v 1.2 2010/12/10 17:00:00 tom Exp $
+rem vile:rs=lf
+rem
+rem  ##########################################################################
+rem  copyright 1996, Michael D. Brennan
+rem 
+rem  This is a source file for mawk, an implementation of
+rem  the AWK programming language.
+rem 
+rem  Mawk is distributed without warranty under the terms of
+rem  the GNU General Public License, version 2, 1991.
+rem  ##########################################################################
+rem
 rem  tests if mawk has been compiled to correctly handle
 rem  floating point exceptions
 

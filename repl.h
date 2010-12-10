@@ -1,6 +1,7 @@
 /********************************************
 repl.h
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991,1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: repl.h,v 1.6 2010/08/04 08:53:16 tom Exp $
+ * $MawkId: repl.h,v 1.7 2010/12/10 17:00:00 tom Exp $
  * @Log: repl.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs

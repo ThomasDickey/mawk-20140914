@@ -1,5 +1,6 @@
 /********************************************
 makescan.c
+copyright 2009-2010, Thomas E. Dickey
 copyright 1991, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: makescan.c,v 1.9 2010/01/31 20:48:36 tom Exp $
+ * $MawkId: makescan.c,v 1.10 2010/12/10 17:00:00 tom Exp $
  * @Log: makescan.c,v @
  * Revision 1.3  1993/07/17  13:23:01  mike
  * indent and general code cleanup

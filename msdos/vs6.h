@@ -1,6 +1,7 @@
 /********************************************
-msc.h
-copyright 1994, Michael D. Brennan
+vs6.h
+copyright 2010, Thomas E. Dickey
+copyright 1994-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -12,7 +13,7 @@ the GNU General Public License, version 2, 1991.
 /* Microsoft C 6.0A under MSDOS */
 
 /*
- * $MawkId: vs6.h,v 1.1 2010/02/21 16:13:36 tom Exp $
+ * $MawkId: vs6.h,v 1.2 2010/12/10 17:00:00 tom Exp $
  *
  * @Log: msc.h,v @
  * Revision 1.6  1996/07/28 21:46:16  mike

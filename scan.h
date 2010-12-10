@@ -1,6 +1,8 @@
 /********************************************
 scan.h
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 2009, Jonathan Nieder
+copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.h,v 1.4 2010/07/30 22:18:26 tom Exp $
+ * $MawkId: scan.h,v 1.5 2010/12/10 17:00:00 tom Exp $
  * @Log: scan.h,v @
  * Revision 1.3  1995/06/18  19:42:26  mike
  * Remove some redundant declarations and add some prototypes

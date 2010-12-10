@@ -1,6 +1,6 @@
 /********************************************
 fpe_check.c
-copyright 2008-2009,2010 Thomas E. Dickey
+copyright 2008-2009, Thomas E. Dickey
 copyright 1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -15,7 +15,7 @@ the GNU General Public License, version 2, 1991.
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.15 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: fpe_check.c,v 1.14 2010/12/10 17:00:00 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for

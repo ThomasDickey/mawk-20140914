@@ -1,6 +1,7 @@
 /********************************************
-dosexec.h
-copyright 1991, Michael D. Brennan
+dosexec.c
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: dosexec.c,v 1.3 2010/02/21 16:01:36 tom Exp $
+ * $MawkId: dosexec.c,v 1.4 2010/12/10 17:00:00 tom Exp $
  *
  * @Log: dosexec.c,v @
  * Revision 1.3  1995/08/20  16:37:22  mike
@@ -150,7 +151,7 @@ get_pipe(char *command,
     return retval;
 }
 
-/* closing a fake pipes involves running the out pipe 
+/* closing a fake pipes involves running the out pipe
    command
 */
 

@@ -1,6 +1,7 @@
 /********************************************
 memory.c
-copyright 1991, 1992  Michael D. Brennan
+copyright 2009,2010  Thomas E. Dickey
+copyright 1991-1992,1993  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: memory.c,v 1.7 2010/08/18 17:10:01 tom Exp $
+ * $MawkId: memory.c,v 1.8 2010/12/10 17:00:00 tom Exp $
  * @Log: memory.c,v @
  * Revision 1.2  1993/07/17  13:23:08  mike
  * indent and general code cleanup

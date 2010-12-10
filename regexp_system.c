@@ -1,5 +1,17 @@
 /*
- * $MawkId: regexp_system.c,v 1.34 2010/08/01 17:34:35 tom Exp $
+regexp_system.c
+copyright 2009,2010, Thomas E. Dickey
+copyright 2005, Aleksey Cheusov
+
+This is a source file for mawk, an implementation of
+the AWK programming language.
+
+Mawk is distributed without warranty under the terms of
+the GNU General Public License, version 2, 1991.
+ */
+
+/*
+ * $MawkId: regexp_system.c,v 1.35 2010/12/10 17:00:00 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
