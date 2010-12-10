@@ -1,9 +1,21 @@
+/********************************************
+fpe_check.c
+copyright 2008-2009,2010 Thomas E. Dickey
+copyright 1996, Michael D. Brennan
+
+This is a source file for mawk, an implementation of
+the AWK programming language.
+
+Mawk is distributed without warranty under the terms of
+the GNU General Public License, version 2, 1991.
+********************************************/
+
 /* This code attempts to figure out what the default
    floating point exception handling does.
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.13 2009/12/20 17:33:18 tom Exp $
+ * $MawkId: fpe_check.c,v 1.15 2010/12/10 17:00:00 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
