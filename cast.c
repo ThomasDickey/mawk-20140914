@@ -1,6 +1,7 @@
 /********************************************
 cast.c
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.14 2010/08/13 22:21:50 tom Exp $
+ * $MawkId: cast.c,v 1.15 2010/12/10 17:00:00 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")

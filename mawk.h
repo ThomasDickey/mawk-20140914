@@ -1,6 +1,7 @@
 /********************************************
 mawk.h
-copyright 1991-94, Michael D. Brennan
+copyright 2008-2009,2010 Thomas E. Dickey
+copyright 1991-1995,1996 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.36 2010/08/18 17:01:04 tom Exp $
+ * $MawkId: mawk.h,v 1.37 2010/12/10 17:00:00 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.

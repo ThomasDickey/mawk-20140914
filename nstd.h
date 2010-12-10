@@ -1,4 +1,14 @@
-/* nstd.h */
+/********************************************
+nstd.h
+copyright 2009, Thomas E. Dickey
+copyright 1995, Michael D. Brennan
+
+This is a source file for mawk, an implementation of
+the AWK programming language.
+
+Mawk is distributed without warranty under the terms of
+the GNU General Public License, version 2, 1991.
+********************************************/
 
 /* Never Standard.h
 
@@ -8,7 +18,7 @@
 */
 
 /*
- * $MawkId: nstd.h,v 1.7 2009/12/14 00:37:25 tom Exp $
+ * $MawkId: nstd.h,v 1.8 2010/12/10 17:00:00 tom Exp $
  * @Log: nstd.h,v @
  * Revision 1.6  1995/06/18  19:42:22  mike
  * Remove some redundant declarations and add some prototypes

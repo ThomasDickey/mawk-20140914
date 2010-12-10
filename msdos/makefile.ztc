@@ -1,4 +1,14 @@
+# $MawkId: makefile.ztc,v 1.2 2010/12/10 17:00:00 tom Exp $
 # Makefile for Zortech C
+###############################################################################
+# copyright 1993, Michael D. Brennan
+#
+# This is a source file for mawk, an implementation of
+# the AWK programming language.
+#
+# Mawk is distributed without warranty under the terms of
+# the GNU General Public License, version 2, 1991.
+###############################################################################
 
 OBJ1=parse.obj scan.obj memory.obj main.obj hash.obj execute.obj code.obj\
   da.obj error.obj init.obj bi_vars.obj cast.obj print.obj bi_funct.obj\

@@ -1,6 +1,7 @@
 /********************************************
 error.c
-copyright 1991, 1992 Michael D. Brennan
+copyright 2008-2009,2010 Thomas E. Dickey
+copyright 1991-1994,1995 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.14 2010/07/28 23:05:21 tom Exp $
+ * $MawkId: error.c,v 1.15 2010/12/10 17:00:00 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -137,7 +138,7 @@ missing(int c, const char *n, unsigned ln)
     errmsg(0, "%s%sline %u: missing %c near %s", s0, s1, ln, c, n);
 }
 
-/* we won't use s as input 
+/* we won't use s as input
    (yacc and bison force this).
    We will use s for storage to keep lint or the compiler
    off our back.
@@ -206,7 +207,7 @@ yyerror(const char *s GCC_UNUSED)
 	mawk_exit(2);
 }
 
-/* generic error message with a hook into the system error 
+/* generic error message with a hook into the system error
    messages if errnum > 0 */
 
 void

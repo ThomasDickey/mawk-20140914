@@ -1,6 +1,7 @@
 /********************************************
 version.c
-copyright 1991-95.  Michael D. Brennan
+copyright 2008-2009,2010.  Thomas E. Dickey
+copyright 1991-1995,1996.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.10 2010/07/31 01:05:40 tom Exp $
+ * $MawkId: version.c,v 1.11 2010/12/10 17:00:00 tom Exp $
  *
  * @Log: version.c,v @
  * Revision 1.10  1996/07/28 21:47:07  mike

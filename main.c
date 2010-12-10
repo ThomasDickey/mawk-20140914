@@ -1,6 +1,7 @@
 /********************************************
 main.c
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.22 2010/08/08 23:15:32 tom Exp $
+ * $MawkId: main.c,v 1.23 2010/12/10 17:00:00 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error

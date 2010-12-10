@@ -1,6 +1,7 @@
 /********************************************
 parse.y
-copyright 1991-94, Michael D. Brennan
+copyright 2008-2009,2010, Thomas E. Dickey
+copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.13 2010/08/13 00:00:56 tom Exp $
+ * $MawkId: parse.y,v 1.14 2010/12/10 17:00:00 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)

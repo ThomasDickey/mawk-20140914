@@ -1,6 +1,7 @@
 /********************************************
 print.c
-copyright 1991-1993.  Michael D. Brennan
+copyright 2008-2009,2010.  Thomas E. Dickey
+copyright 1991-1995,1996.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.21 2010/05/07 22:01:46 tom Exp $
+ * $MawkId: print.c,v 1.22 2010/12/10 17:00:00 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -427,7 +428,7 @@ puts_sfmt(PTR target,
     return target;
 }
 
-/* 
+/*
  * Note: caller must do CELL cleanup.
  * The format parameter is modified, but restored.
  *

@@ -1,6 +1,17 @@
 @echo off
-rem $MawkId: mawktest.bat,v 1.6 2010/02/21 18:52:54 tom Exp $
+rem $MawkId: mawktest.bat,v 1.7 2010/12/10 17:00:00 tom Exp $
 rem vile:rs=lf
+rem
+rem  ##########################################################################
+rem  copyright 2009,2010, Thomas E. Dickey
+rem  copyright 1996, Michael D. Brennan
+rem 
+rem  This is a source file for mawk, an implementation of
+rem  the AWK programming language.
+rem 
+rem  Mawk is distributed without warranty under the terms of
+rem  the GNU General Public License, version 2, 1991.
+rem  ##########################################################################
 rem
 rem  This is a simple test that a new-made mawk seems to
 rem  be working OK.

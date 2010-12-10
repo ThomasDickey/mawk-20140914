@@ -1,6 +1,7 @@
 /********************************************
 code.h
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.h,v 1.5 2010/07/28 01:03:52 tom Exp $
+ * $MawkId: code.h,v 1.6 2010/12/10 17:00:00 tom Exp $
  * @Log: code.h,v @
  * Revision 1.5  1995/06/18  19:42:15  mike
  * Remove some redundant declarations and add some prototypes

@@ -1,6 +1,7 @@
 /********************************************
 field.c
-copyright 1991, Michael D. Brennan
+copyright 2008-2010, Thomas E. Dickey
+copyright 1991-1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.24 2010/08/17 08:56:01 tom Exp $
+ * $MawkId: field.c,v 1.25 2010/12/10 17:00:00 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines

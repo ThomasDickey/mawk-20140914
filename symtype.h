@@ -1,5 +1,6 @@
 /********************************************
 symtype.h
+copyright 2009,2010, Thomas E. Dickey
 copyright 1991, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.12 2010/08/13 09:55:03 tom Exp $
+ * $MawkId: symtype.h,v 1.13 2010/12/10 17:00:00 tom Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme

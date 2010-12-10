@@ -1,6 +1,7 @@
 /********************************************
 code.c
-copyright 1991-93, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.31 2010/08/18 15:27:22 tom Exp $
+ * $MawkId: code.c,v 1.32 2010/12/10 17:00:00 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes

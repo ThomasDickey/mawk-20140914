@@ -1,6 +1,7 @@
 /********************************************
 bi_funct.c
-copyright 1991, Michael D. Brennan
+copyright 2008-2009,2010, Thomas E. Dickey
+copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.50 2010/07/28 23:05:53 tom Exp $
+ * $MawkId: bi_funct.c,v 1.51 2010/12/10 17:00:00 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()

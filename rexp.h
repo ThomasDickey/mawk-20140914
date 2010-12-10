@@ -1,5 +1,7 @@
 /********************************************
 rexp.h
+copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2010, Jonathan Nieder
 copyright 1991, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -10,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.23 2010/07/30 08:21:09 tom Exp $
+ * $MawkId: rexp.h,v 1.24 2010/12/10 17:00:00 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -23,28 +25,28 @@ the GNU General Public License, version 2, 1991.
  *
  * Revision 3.5  91/10/29  10:53:55  brennan
  * SIZE_T
- * 
+ *
  * Revision 3.4  91/08/13  09:10:02  brennan
  * VERSION .9994
- * 
+ *
  * Revision 3.3  91/06/15  09:40:25  brennan
  * gcc defines __STDC__ but might not have stdlib.h
- * 
+ *
  * Revision 3.2  91/06/10  16:18:19  brennan
  * changes for V7
- * 
+ *
  * Revision 3.1  91/06/07  10:33:18  brennan
  * VERSION 0.995
- * 
+ *
  * Revision 1.3  91/06/05  08:57:57  brennan
  * removed RE_xmalloc()
- * 
+ *
  * Revision 1.2  91/06/03  07:23:26  brennan
  * changed type of RE_error_trap
- * 
+ *
  * Revision 1.1  91/06/03  07:05:41  brennan
  * Initial revision
- * 
+ *
  */
 
 #ifndef  REXP_H

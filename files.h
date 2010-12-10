@@ -1,6 +1,7 @@
 /********************************************
 files.h
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1994,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.h,v 1.10 2010/07/24 14:30:55 tom Exp $
+ * $MawkId: files.h,v 1.11 2010/12/10 17:00:00 tom Exp $
  * @Log: files.h,v @
  * Revision 1.3  1996/01/14  17:14:11  mike
  * flush_all_output()

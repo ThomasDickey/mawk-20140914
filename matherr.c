@@ -1,5 +1,6 @@
 /********************************************
 matherr.c
+copyright 2009-2010, Thomas E. Dickey
 copyright 1991, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.23 2010/02/21 15:37:21 tom Exp $
+ * $MawkId: matherr.c,v 1.24 2010/12/10 17:00:00 tom Exp $
  *
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike

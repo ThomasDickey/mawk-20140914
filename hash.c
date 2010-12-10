@@ -1,6 +1,7 @@
 /********************************************
 hash.c
-copyright 1991, Michael D. Brennan
+copyright 2008-2009,2010, Thomas E. Dickey
+copyright 1991-1993,1994, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.17 2010/08/13 10:52:42 tom Exp $
+ * $MawkId: hash.c,v 1.18 2010/12/10 17:00:00 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -36,7 +37,7 @@ the GNU General Public License, version 2, 1991.
 #include "bi_vars.h"
 #endif
 
-/*                                                                              
+/*
  * FNV-1 hash function
  * http://www.isthe.com/chongo/tech/comp/fnv/index.html
  */

@@ -1,7 +1,17 @@
-/* missing.c */
+/********************************************
+missing.c
+copyright 2009, Thomas E. Dickey
+copyright 1995, Michael D. Brennan
+
+This is a source file for mawk, an implementation of
+the AWK programming language.
+
+Mawk is distributed without warranty under the terms of
+the GNU General Public License, version 2, 1991.
+********************************************/
 
 /*
- * $MawkId: missing.c,v 1.3 2009/12/13 19:43:23 Jonathan.Nieder Exp $
+ * $MawkId: missing.c,v 1.4 2010/12/10 17:00:00 tom Exp $
  * @Log: missing.c,v @
  * Revision 1.2  1995/06/03  09:31:11  mike
  * handle strchr(s,0) correctly

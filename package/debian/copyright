@@ -4,7 +4,10 @@ Current maintainer: Thomas Dickey <dickey@invisible-island.net>
 
 -------------------------------------------------------------------------------
 
-mawk 1.3.4 Dec 2009, Copyright Thomas E. Dickey
+mawk 1.3.4 and updates, Copyright 2008-2010 by Thomas E. Dickey
+	mawk 1.3.4 includes substantial work by others:
+	Copyright 2009-2010 by Jonathan Nieder
+	Copyright 2005 by Aleksey Cheusov
 mawk 1.3.3 Nov 1996, Copyright (C) Michael D. Brennan
 
 Mawk is distributed without warranty under the terms of

@@ -1,6 +1,7 @@
 /********************************************
 kw.c
-copyright 1991, Michael D. Brennan
+copyright 2008-2009, Thomas E. Dickey
+copyright 1991-1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: kw.c,v 1.4 2009/07/27 15:33:28 tom Exp $
+ * $MawkId: kw.c,v 1.5 2010/12/10 17:00:00 tom Exp $
  * @Log: kw.c,v @
  * Revision 1.2  1993/07/17  13:22:59  mike
  * indent and general code cleanup

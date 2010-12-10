@@ -1,6 +1,7 @@
 /********************************************
 fcall.c
-copyright 1991, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fcall.c,v 1.7 2010/05/07 09:30:33 tom Exp $
+ * $MawkId: fcall.c,v 1.8 2010/12/10 17:00:00 tom Exp $
  * @Log: fcall.c,v @
  * Revision 1.7  1995/08/27  15:46:47  mike
  * change some errmsgs to compile_errors

@@ -1,5 +1,18 @@
-# $MawkId: Makefile.in,v 1.38 2010/06/22 23:10:31 tom Exp $
+# $MawkId: Makefile.in,v 1.39 2010/12/10 17:00:00 tom Exp $
 # Makefile-template for MAWK
+###############################################################################
+# copyright 2009,2010, Thomas E. Dickey
+# copyright 2010, Guido Berhoerster
+# copyright 2009, Jonathan Nieder
+# copyright 2005, Aleksey Cheusov
+# copyright 1996, Michael D. Brennan
+#
+# This is a source file for mawk, an implementation of
+# the AWK programming language.
+#
+# Mawk is distributed without warranty under the terms of
+# the GNU General Public License, version 2, 1991.
+###############################################################################
 
 SHELL=/bin/sh
 

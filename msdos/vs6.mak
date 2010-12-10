@@ -1,5 +1,15 @@
-# Microsoft C makefile for mawk,
+# $MawkId: vs6.mak,v 1.3 2010/12/10 17:00:00 tom Exp $
+###############################################################################
+# copyright 2010, Thomas E. Dickey
+#
+# This is a source file for mawk, an implementation of
+# the AWK programming language.
+#
+# Mawk is distributed without warranty under the terms of
+# the GNU General Public License, version 2, 1991.
+###############################################################################
 # 
+# Microsoft C makefile for mawk,
 # Tested with Microsoft Visual Studio 6 using nmake.
 
 !include <ntwin32.mak>
