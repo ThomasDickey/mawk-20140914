@@ -1,6 +1,6 @@
 /********************************************
 bi_vars.h
-copyright 2009, Thomas E. Dickey
+copyright 2010, Thomas E. Dickey
 copyright 1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_vars.h,v 1.7 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: bi_vars.h,v 1.8 2010/12/10 17:00:00 tom Exp $
  * @Log: bi_vars.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:09  mike
  * move source to cvs
