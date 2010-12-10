@@ -1,6 +1,9 @@
--- $MawkId: CHANGES,v 1.136 2010/12/07 13:58:48 tom Exp $
+-- $MawkId: CHANGES,v 1.137 2010/12/10 17:00:00 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20101210
+	+ update copyright notices to reflect changes made starting 20080909.
 
 20101207
 	+ add configure --enable-trace, to consolidate various debugging
