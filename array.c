@@ -3,7 +3,8 @@ array.c
 
 @MawkId: array.w,v 1.14 2010/06/25 22:31:42 tom Exp @
 
-copyright 1991-96, Michael D. Brennan
+copyright 2009,2010, Thomas E. Dickey
+copyright 1991-1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -219,7 +220,6 @@ void array_load(
    for(i=0;i < cnt; i++) {
       cells[i].type = C_MBSTRN ;
       cells[i].ptr = split_buff[i] ;
-      USED_SPLIT_BUFF(i) ;
    }
 }
 
