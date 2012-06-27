@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.15 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: cast.c,v 1.16 2012/06/27 21:54:40 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -147,7 +147,8 @@ cast2_to_d(CELL * cp)
     }
     cp->type = C_DOUBLE;
 
-  two:cp++;
+  two:
+    cp++;
 
     switch (cp->type) {
     case C_NOINIT:
@@ -386,15 +387,21 @@ check_strnum(CELL * cp)
 	cp->dval = strtod((char *) s, &temp);
 	/* make overflow pure string */
 	if (errno && cp->dval != 0.0)
-	    return;
+	    break;
 #else
 	cp->dval = strtod((char *) s, &temp);
 #endif
+#ifdef ERANGE
+	if (errno == ERANGE)
+	    break;
+#endif
 
-	if ((char *) q <= temp)
+	if ((char *) q <= temp) {
 	    cp->type = C_STRNUM;
-	/*  <= instead of == , for some buggy strtod
-	   e.g. Apple Unix */
+	    /*  <= instead of == , for some buggy strtod
+	       e.g. Apple Unix */
+	}
+	break;
     }
 }
 
