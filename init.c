@@ -1,6 +1,6 @@
 /********************************************
 init.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.26 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: init.c,v 1.27 2012/06/27 17:57:14 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -135,7 +135,7 @@ initialize(int argc, char **argv)
 
     code_init();
     fpe_init();
-    set_stderr();
+    set_stdio();
 
 #if USE_BINMODE
     stdout_init();

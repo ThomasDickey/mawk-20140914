@@ -1,6 +1,6 @@
 /********************************************
 init.h
-copyright 2009, Thomas E. Dickey
+copyright 2009-2010,2012, Thomas E. Dickey
 copyright 1991, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.h,v 1.4 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: init.h,v 1.5 2012/06/27 17:57:24 tom Exp $
  * @Log: init.h,v @
  * Revision 1.2  1995/06/18  19:42:18  mike
  * Remove some redundant declarations and add some prototypes
@@ -55,7 +55,7 @@ void kw_init(void);
 void field_init(void);
 void fpe_init(void);
 void load_environ(ARRAY);
-void set_stderr(void);
+void set_stdio(void);
 
 void print_version(void);
 int is_cmdline_assign(char *);

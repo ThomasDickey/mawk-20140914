@@ -1,6 +1,6 @@
 /********************************************
 files.c
-copyright 2008-2009,2010.  Thomas E. Dickey
+copyright 2008-2010,2012.  Thomas E. Dickey
 copyright 1991-1994,1996.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.20 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: files.c,v 1.21 2012/06/27 17:57:36 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -574,10 +574,13 @@ wait_for(int pid)
 
 #endif /* HAVE_REAL_PIPES */
 
+/*
+ * Create names by which the standard streams can be referenced in a script.
+ */
 void
-set_stderr(void)		/* and stdout */
+set_stdio(void)
 {
-    FILE_NODE *p, *q;
+    FILE_NODE *p, *q, *r;
 
     /* We insert stderr first to get it at the end of the list. This is
        needed because we want to output errors encountered on closing
@@ -595,7 +598,13 @@ set_stderr(void)		/* and stdout */
     p->name = new_STRING("/dev/stdout");
     p->ptr = (PTR) stdout;
 
-    file_list = p;
+    r = alloc_filenode();
+    r->link = p;
+    r->type = F_IN;
+    r->name = new_STRING("/dev/stdin");
+    r->ptr = (PTR) stdin;
+
+    file_list = r;
 }
 
 /* fopen() but no buffering to ttys */

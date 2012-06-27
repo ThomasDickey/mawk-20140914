@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.141 2012/06/27 17:20:56 tom Exp $
+-- $MawkId: CHANGES,v 1.142 2012/06/27 17:59:33 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20120627
+	+ add "/dev/stdin" name for stdin for consistency with other
+	  implementations of awk (suggested by Aharon Robbins).
 	+ improve overflow check in check_strnum() (Ubuntu #485574).
 	+ implement gawk extension "nextfile".
 	+ updates for configure macros CF_ANSI_CC_CHECK, CF_ENABLE_TRACE,
