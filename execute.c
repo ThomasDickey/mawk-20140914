@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.24 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: execute.c,v 1.25 2012/06/27 12:20:45 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -92,6 +92,7 @@ the GNU General Public License, version 2, 1991.
 */
 
 #include "mawk.h"
+#include "files.h"
 #include "code.h"
 #include "memory.h"
 #include "symtype.h"
@@ -1168,6 +1169,13 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    cdp = next_label;
 	    break;
 
+	case _NEXTFILE:
+	    /* nextfile might be inside an aloop -- clear stack */
+	    CLEAR_ALOOP_STACK();
+	    FINsemi_close(main_fin);
+	    cdp = next_label;
+	    break;
+
 	case OL_GL:
 	    {
 		char *p;
@@ -1230,13 +1238,13 @@ execute(INST * cdp,		/* code ptr, start execution here */
        cdp[4] -- start of pat1 code
 */
 
-#define FLAG	cdp[0].op
-#define PAT2	cdp[1].op
-#define ACTION	  cdp[2].op
-#define FOLLOW	  cdp[3].op
-#define PAT1	  4
+#define FLAG      cdp[0].op
+#define PAT2      cdp[1].op
+#define ACTION    cdp[2].op
+#define FOLLOW    cdp[3].op
+#define PAT1      4
 
-	    if (FLAG)		/* test again pat1 */
+	    if (FLAG)		/* test against pat1 */
 	    {
 		execute(cdp + PAT1, sp, fp);
 		t = test(sp + 1);
