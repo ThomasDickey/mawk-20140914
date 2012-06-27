@@ -1,6 +1,6 @@
-.\" $MawkId: mawk.1,v 1.9 2010/12/10 17:00:00 tom Exp $
+.\" $MawkId: mawk.1,v 1.10 2012/06/27 13:33:34 tom Exp $
 .\" ###########################################################################
-.\" # copyright 2008-2009,2010, Thomas E. Dickey
+.\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
 .\" #
 .\" # This is a source file for mawk, an implementation of
@@ -12,6 +12,10 @@
 .TH MAWK 1  "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
+.\" Bulleted paragraph
+.de bP
+.IP \(bu 4
+..
 .SH NAME
 mawk \- pattern scanning and text processing language
 .SH SYNOPSIS
@@ -1061,8 +1065,8 @@ records on
 .BR RS .
 .PP
 Split(\fIexpr,\|A,\|sep\fR) works as follows:
-.RS
-.TP
+.RS 3
+.TP 5
 (1) 
 If
 .I sep
@@ -1355,10 +1359,12 @@ level can be changed with the
 .nf
 .sp
 	\fBnext
+	\fBnextfile
 	\fBexit  \fIopt_expr\fR
 .sp
 .fi
-statements.
+statements:
+.bP
 A
 .B next
 statement
@@ -1366,6 +1372,13 @@ causes the next input record to be read and pattern testing
 to restart with the first 
 .I "pattern {action}"
 pair in the program.
+.bP
+A
+.B nextfile
+statement tells mawk to stop processing the current input file.
+It then updates FILENAME to the next file listed on the command line,
+and resets FNR to 1.
+.bP
 An
 .B  exit
 statement
@@ -1445,17 +1458,17 @@ every record based on the first field.
 The Posix 1003.2(draft 11.3) definition of the AWK language
 is AWK as described in the AWK book with a few extensions
 that appeared in SystemVR4 nawk. The extensions are:
-.sp
-.RS
+.RS 3
+.bP
 New functions: toupper() and tolower().
-
+.bP
 New variables: ENVIRON[\|] and CONVFMT.
-
+.bP
 ANSI C conversion specifications for printf() and sprintf().
-
+.bP
 New command options:  \-v var=value, multiple \-f options and
 implementation options as arguments to \-W.
-
+.bP
 For systems (MS-DOS or Windows) which provide a \fIsetmode\fP function,
 an environment variable MAWKBINMODE and a built-in variable BINMODE.
 The bits of the BINMODE value tell \fImawk\fP how to modify the
@@ -1580,6 +1593,10 @@ Posix explicitly leaves the behavior of
 a possible interpretation, but currently this use is not portable
 across implementations.
 .PP
+.B Nextfile
+is a \fBgawk\fP extension (also implemented by BWK awk),
+is not part of the posix standard.
+.PP
 Finally, here is how 
 .B mawk
 handles exceptional cases not discussed in the
@@ -1587,27 +1604,28 @@ AWK book or the Posix draft.  It is unsafe to assume
 consistency across awks and safe to skip to
 the next section.
 .PP
-.RS
+.RS 3
+.bP
 substr(s, i, n) returns the characters of s in the intersection
 of the closed interval [1, length(s)] and the half-open interval
 [i, i+n).  When this intersection is empty, the empty string is
 returned; so substr("ABC", 1, 0) = "" and
 substr("ABC", \-4, 6) = "A".
-.PP
+.bP
 Every string, including the empty string, matches the empty string
 at the
 front so, s ~ // and s ~ "", are always 1 as is match(s, //) and
 match(s, "").  The last two set 
 .B RLENGTH 
 to 0.
-.PP
+.bP
 index(s, t) is always the same as match(s, t1) where t1 is the
 same as t with metacharacters escaped.  Hence consistency
 with match requires that
 index(s, "") always returns 1.
 Also the condition, index(s,t) != 0 if and only t is a substring
 of s, requires index("","") = 1.
-.PP
+.bP
 If getline encounters end of file, getline var, leaves var
 unchanged.  Similarly, on entry to the 
 .B END
