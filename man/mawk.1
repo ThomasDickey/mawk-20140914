@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.10 2012/06/27 13:33:34 tom Exp $
+.\" $MawkId: mawk.1,v 1.11 2012/06/27 18:05:06 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -918,11 +918,19 @@ or
 only once, subsequent redirections append to the already open stream.
 By convention, 
 .B mawk
-associates the filename "/dev/stderr" with stderr which allows
+associates the filename
+.RS 3
+.bP
+"/dev/stderr" with stderr,
+.bP
+"/dev/stdout" with stdout,
+.bP
+"\-" and "/dev/stdin" with stdin.
+.RE
+.PP
+The association with stderr is especially useful because it allows
 print and printf to be redirected to stderr.
-.B mawk
-also associates "\-" and "/dev/stdout" with stdin and stdout which
-allows these streams to be passed to functions.
+These names can also be passed to functions.
 .PP
 The input function
 .B getline
