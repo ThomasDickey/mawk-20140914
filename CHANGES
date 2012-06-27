@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.140 2012/06/27 14:19:06 tom Exp $
+-- $MawkId: CHANGES,v 1.141 2012/06/27 17:20:56 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20120627
+	+ improve overflow check in check_strnum() (Ubuntu #485574).
 	+ implement gawk extension "nextfile".
 	+ updates for configure macros CF_ANSI_CC_CHECK, CF_ENABLE_TRACE,
 	  CF_GCC_ATTRIBUTES, CF_GCC_WARNINGS, CF_MAKE_TAGS, CF_MSG_LOG,
