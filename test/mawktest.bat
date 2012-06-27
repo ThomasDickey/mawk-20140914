@@ -1,9 +1,9 @@
 @echo off
-rem $MawkId: mawktest.bat,v 1.7 2010/12/10 17:00:00 tom Exp $
+rem $MawkId: mawktest.bat,v 1.8 2012/06/27 13:57:24 tom Exp $
 rem vile:rs=lf
 rem
 rem  ##########################################################################
-rem  copyright 2009,2010, Thomas E. Dickey
+rem  copyright 2010,2012, Thomas E. Dickey
 rem  copyright 1996, Michael D. Brennan
 rem 
 rem  This is a source file for mawk, an implementation of
@@ -92,6 +92,12 @@ rem ######################################
 	call :begin testing arrays and flow of control
 	%PROG% -f wfrq0.awk %dat% > %STDOUT%
 	call :compare "array-test" %STDOUT% wfrq-awk.out
+
+rem ######################################
+
+	call :begin testing nextfile
+	%PROG% -f nextfile.awk full-awk.dat %dat% > %STDOUT%
+	call :compare "nextfile-test" %STDOUT% nextfile.out
 
 rem ################################
 
