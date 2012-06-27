@@ -1,6 +1,6 @@
 /********************************************
 fin.c
-copyright 2008-2009,2010.  Thomas E. Dickey
+copyright 2008-2010,2012.  Thomas E. Dickey
 copyright 1991-1995,1996.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.33 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: fin.c,v 1.34 2012/06/27 12:14:13 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -463,6 +463,7 @@ next_main(int open_flag)	/* called by open_main() if on */
     CELL argc;			/* copy of ARGC */
     CELL c_argi;		/* cell copy of argi */
     CELL argval;		/* copy of ARGV[c_argi] */
+    int failed = 1;
 
     argval.type = C_NOINIT;
     c_argi.type = C_DOUBLE;
@@ -521,19 +522,23 @@ next_main(int open_flag)	/* called by open_main() if on */
 	FNR->dval = 0.0;
 	rt_fnr = 0;
 
-	return main_fin;
-    }
-    /* failure */
-    cell_destroy(&argval);
-
-    if (open_flag) {
-	/* all arguments were null or assignment */
-	set_main_to_stdin();
-	return main_fin;
+	failed = 0;
+	break;
     }
 
-    return main_fin = &dead_main;
-    /* since MAIN_FLAG is not set, FINgets won't call next_main() */
+    if (failed) {
+	cell_destroy(&argval);
+
+	if (open_flag) {
+	    /* all arguments were null or assignment */
+	    set_main_to_stdin();
+	} else {
+	    main_fin = &dead_main;
+	    /* since MAIN_FLAG is not set, FINgets won't call next_main() */
+	}
+    }
+
+    return main_fin;
 }
 
 int
