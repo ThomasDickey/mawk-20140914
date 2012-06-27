@@ -1,6 +1,6 @@
 /********************************************
 code.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.32 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: code.c,v 1.33 2012/06/27 09:20:58 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -398,6 +398,7 @@ free_codes(const char *tag, INST * base, size_t size)
 	    case _MUL_ASG:
 	    case _NEQ:
 	    case _NEXT:
+	    case _NEXTFILE:
 	    case _NOT:
 	    case _OMAIN:
 	    case _POP:

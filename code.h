@@ -1,6 +1,6 @@
 /********************************************
 code.h
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.h,v 1.6 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: code.h,v 1.7 2012/06/27 09:18:52 tom Exp $
  * @Log: code.h,v @
  * Revision 1.5  1995/06/18  19:42:15  mike
  * Remove some redundant declarations and add some prototypes
@@ -177,6 +177,7 @@ typedef enum {
     ,_EXIT
     ,_EXIT0
     ,_NEXT
+    ,_NEXTFILE
     ,_RANGE
     ,_CALL
     ,_RET

@@ -1,12 +1,18 @@
--- $MawkId: CHANGES,v 1.138 2010/12/10 17:00:00 tom Exp $
+-- $MawkId: CHANGES,v 1.139 2012/06/27 09:27:57 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20120627
+	+ implement gawk extension "nextfile".
 
 20101210
 	+ update copyright notices to reflect changes made starting 20080909.
 	  This commit was made in May 2012, updates only copyright notices
 	  needed for project registration on Savannah as discussed in Debian
-	  #554167.
+	  #554167.  However, since current policy on Savannah discriminates
+	  against GPLv2, it will be hosted elsewhere.  See
+		http://invisible-island.net/mawk/
+		http://github.com/ThomasDickey
 
 20101207
 	+ add configure --enable-trace, to consolidate various debugging

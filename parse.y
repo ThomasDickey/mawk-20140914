@@ -1,6 +1,6 @@
 /********************************************
 parse.y
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.14 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: parse.y,v 1.15 2012/06/27 09:19:17 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -175,7 +175,7 @@ PTR   ptr ;
 %token  PRINT PRINTF SPLIT MATCH_FUNC SUB GSUB
 /* keywords */
 %token  DO WHILE FOR BREAK CONTINUE IF ELSE  IN
-%token  DELETE  BEGIN  END  EXIT NEXT RETURN  FUNCTION
+%token  DELETE  BEGIN  END  EXIT NEXT NEXTFILE RETURN  FUNCTION
 
 %type <start>  block  block_or_separator
 %type <start>  statement_list statement mark
@@ -309,6 +309,12 @@ statement :  block
                    compile_error( "improper use of next" ) ;
                 $$ = code_offset ;
                 code1(_NEXT) ;
+              }
+          |  NEXTFILE  separator
+              { if ( scope != SCOPE_MAIN )
+                   compile_error( "improper use of nextfile" ) ;
+                $$ = code_offset ;
+                code1(_NEXTFILE) ;
               }
           ;
 

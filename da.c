@@ -1,6 +1,6 @@
 /********************************************
 da.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.11 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: da.c,v 1.12 2012/06/27 09:21:13 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -118,6 +118,7 @@ static OP_NAME simple_code[] =
    {_EXIT,      "exit"},
    {_EXIT0,     "exit0"},
    {_NEXT,      "next"},
+   {_NEXTFILE,  "nextfile"},
    {_RET,       "ret"},
    {_RET0,      "ret0"},
    {_OMAIN,     "omain"},

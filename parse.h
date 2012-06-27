@@ -70,8 +70,9 @@
 #define END 326
 #define EXIT 327
 #define NEXT 328
-#define RETURN 329
-#define FUNCTION 330
+#define NEXTFILE 329
+#define RETURN 330
+#define FUNCTION 331
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1

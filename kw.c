@@ -1,6 +1,6 @@
 /********************************************
 kw.c
-copyright 2008-2009, Thomas E. Dickey
+copyright 2008-2009,2012, Thomas E. Dickey
 copyright 1991-1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: kw.c,v 1.5 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: kw.c,v 1.6 2012/06/27 09:19:43 tom Exp $
  * @Log: kw.c,v @
  * Revision 1.2  1993/07/17  13:22:59  mike
  * indent and general code cleanup
@@ -55,6 +55,7 @@ keywords[] =
     { "END",      END },
     { "exit",     EXIT },
     { "next",     NEXT },
+    { "nextfile", NEXTFILE },
     { "return",   RETURN },
     { "getline",  GETLINE },
     { "sub",      SUB },
