@@ -1,0 +1,12 @@
+full-awk.dat(1):This has to be a small file to check if mawk handles write errors correctly 
+full-awk.dat(2):even on a full disk. It has to be smaller than the write buffer of the 
+mawktest.dat(1):
+mawktest.dat(2):#include  <zmalloc.h>
+mawktest.dat(3):
+mawktest.dat(4):extern unsigned hash() ;
+mawktest.dat(5):
+mawktest.dat(6):/* An array A is a pointer to an array of struct array,
+mawktest.dat(7):   which is two hash tables in one.  One for strings
+mawktest.dat(8):   and one for doubles.
+mawktest.dat(9):
+mawktest.dat(10):   each array is of size A_HASH_PRIME.
