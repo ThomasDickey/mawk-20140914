@@ -1,6 +1,6 @@
 /********************************************
 rexp.h
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
 copyright 1991, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.24 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: rexp.h,v 1.25 2012/06/27 09:08:10 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -107,8 +107,9 @@ typedef struct {
 } MACHINE;
 
 /*  tokens   */
+#define  T_NONE   0		/* no token */
 #define  T_OR     1		/* | */
-#define  T_CAT    2
+#define  T_CAT    2		/* binary operator */
 #define  T_STAR   3		/* * */
 #define  T_PLUS   4		/* + */
 #define  T_Q      5		/* ? */
@@ -120,7 +121,7 @@ typedef struct {
 #define  T_CLASS 11		/* starts with [ */
 #define  T_SLASH 12		/*  \  */
 #define  T_CHAR  13		/* all the rest */
-#define  T_STR   14
+#define  T_STR   14		/* string built of other tokens */
 #define  T_U     15
 
 /*  precedences and error codes  */
