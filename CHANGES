@@ -1,6 +1,9 @@
--- $MawkId: CHANGES,v 1.143 2012/06/27 18:15:05 tom Exp $
+-- $MawkId: CHANGES,v 1.144 2012/09/01 13:42:05 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20120901
+	+ add icons for webpage artwork
 
 20120627
 	+ add "/dev/stdin" name for stdin for consistency with other
