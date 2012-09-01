@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.11 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: version.c,v 1.12 2012/09/01 13:50:17 tom Exp $
  *
  * @Log: version.c,v @
  * Revision 1.10  1996/07/28 21:47:07  mike
@@ -34,7 +34,7 @@ the GNU General Public License, version 2, 1991.
 
 #define	 VERSION_STRING	 \
   "mawk %d.%d%s%s %s\n\
-Copyright 2010, Thomas E. Dickey\n\
+Copyright 2012, Thomas E. Dickey\n\
 Copyright 1996, Michael D. Brennan\n\n"
 
 /* If use different command line syntax for MSDOS
