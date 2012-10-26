@@ -1,7 +1,7 @@
-# $MawkId: Makefile.in,v 1.39 2010/12/10 17:00:00 tom Exp $
+# $MawkId: Makefile.in,v 1.40 2012/10/26 00:59:21 tom Exp $
 # Makefile-template for MAWK
 ###############################################################################
-# copyright 2009,2010, Thomas E. Dickey
+# copyright 2009-2010,2012 Thomas E. Dickey
 # copyright 2010, Guido Berhoerster
 # copyright 2009, Jonathan Nieder
 # copyright 2005, Aleksey Cheusov
@@ -27,6 +27,7 @@ o               = .@OBJEXT@
 
 prefix          = @prefix@
 exec_prefix     = @exec_prefix@
+datarootdir     = @datarootdir@
 
 srcdir		= @srcdir@
 
