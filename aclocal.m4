@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.57 2012/10/26 00:29:40 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.58 2012/10/26 00:43:14 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -128,6 +128,14 @@ dnl
 dnl $1 = library to add, without the "-l"
 dnl $2 = variable to update (default $LIBS)
 AC_DEFUN([CF_ADD_LIB],[CF_ADD_LIBS(-l$1,ifelse($2,,LIBS,[$2]))])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_ADD_LIBS version: 1 updated: 2010/06/02 05:03:05
+dnl -----------
+dnl Add one or more libraries, used to enforce consistency.
+dnl
+dnl $1 = libraries to add, with the "-l", etc.
+dnl $2 = variable to update (default $LIBS)
+AC_DEFUN([CF_ADD_LIBS],[ifelse($2,,LIBS,[$2])="$1 [$]ifelse($2,,LIBS,[$2])"])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_ANSI_CC_CHECK version: 13 updated: 2012/10/06 11:17:15
 dnl ----------------
@@ -920,7 +928,7 @@ AC_DEFUN([CF_MAWK_CHECK_LIMITS_MSG],
 [AC_MSG_ERROR(C program to compute maxint and maxlong failed.
 Please send bug report to CF_MAWK_MAINTAINER.)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_SIZE_T version: 2 updated: 2009/07/23 05:15:39
+dnl CF_MAWK_CHECK_SIZE_T version: 3 updated: 2012/10/25 20:41:47
 dnl --------------------
 dnl Check if size_t is found in the given header file, unless we have already
 dnl found it.
@@ -940,7 +948,7 @@ AC_CACHE_VAL(cf_cv_size_t_$2,[
 	fi
 ])
 	if test "x$cf_cv_size_t_$2" = xyes ; then
-		AC_DEFINE_UNQUOTED($2,1)
+		AC_DEFINE_UNQUOTED($2,1,[Define to 1 if we have $1 header])
 		cf_mawk_check_size_t=yes
 	fi
 fi
@@ -996,7 +1004,7 @@ AC_DEFUN([CF_MAWK_FIND_SIZE_T],
 [CF_MAWK_CHECK_SIZE_T(stddef.h,SIZE_T_STDDEF_H)
 CF_MAWK_CHECK_SIZE_T(sys/types.h,SIZE_T_TYPES_H)])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_FPE_SIGINFO version: 7 updated: 2009/12/18 05:50:47
+dnl CF_MAWK_FPE_SIGINFO version: 8 updated: 2012/10/25 20:41:47
 dnl -------------------
 dnl SYSv and Solaris FPE checks
 AC_DEFUN([CF_MAWK_FPE_SIGINFO],
@@ -1009,7 +1017,7 @@ then
 	:
     else
 	dnl FIXME - look for sigprocmask if we have sigaction
-	AC_DEFINE(NOINFO_SIGFPE)
+	AC_DEFINE(NOINFO_SIGFPE,1,[Define to 1 if we cannot use SYSv siginfo])
    fi
 fi])
 dnl ---------------------------------------------------------------------------
@@ -1062,7 +1070,7 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 11 updated: 2009/12/20 12:50:49
+dnl CF_MAWK_RUN_FPE_TESTS version: 12 updated: 2012/10/25 20:41:47
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
@@ -1095,7 +1103,7 @@ then
 fi
 ])
 
-test "$cf_cv_use_sa_sigaction" = yes && AC_DEFINE(HAVE_SIGACTION_SA_SIGACTION)
+test "$cf_cv_use_sa_sigaction" = yes && AC_DEFINE(HAVE_SIGACTION_SA_SIGACTION,1,[Define to 1 if we should use sigaction.sa_sigaction,cf_cv_use_sa_sigaction])
 
 cf_FPE_DEFS="$CPPFLAGS"
 cf_FPE_LIBS="$LIBS"
@@ -1131,7 +1139,7 @@ echo "FPE_CHECK status=$cf_status" >&AC_FD_CC
 case $cf_status in
    0)  ;;  # good news do nothing
    3)      # reasonably good news
-    AC_DEFINE(FPE_TRAPS_ON)
+    AC_DEFINE(FPE_TRAPS_ON,1,[Define to 1 if floating-point exception traps are enabled])
     CF_MAWK_FPE_SIGINFO ;;
 
    1|2|4)   # bad news have to turn off traps
@@ -1141,11 +1149,13 @@ case $cf_status in
 
     if test "$cf_have_ieeefp_h" = 1 && test "$cf_have_fpsetmask" = 1 ; then
 	AC_DEFINE(FPE_TRAPS_ON)
-	AC_DEFINE(USE_IEEEFP_H)
+	AC_DEFINE(USE_IEEEFP_H,1,[Define to 1 we should include ieeefp.h])
 	AC_DEFINE_UNQUOTED([TURN_ON_FPE_TRAPS],
-	    [fpsetmask(fpgetmask() | (FP_X_DZ|FP_X_OFL))])
+	    [fpsetmask(fpgetmask() | (FP_X_DZ|FP_X_OFL))],
+		[Define to expression for turning on FPE traps])
 	AC_DEFINE_UNQUOTED([TURN_OFF_FPE_TRAPS],
-	    [fpsetmask(fpgetmask() & ~(FP_X_DZ|FP_X_OFL))])
+	    [fpsetmask(fpgetmask() & ~(FP_X_DZ|FP_X_OFL))],
+		[Define to expression for turning off FPE traps])
 
 	CF_MAWK_FPE_SIGINFO
 
@@ -1166,7 +1176,7 @@ CF_EOF
 	       AC_MSG_RESULT([no bug])
 	    else
 	       AC_MSG_RESULT([buggy -- will use work around])
-	       AC_DEFINE_UNQUOTED([HAVE_STRTOD_OVF_BUG],1)
+	       AC_DEFINE_UNQUOTED(HAVE_STRTOD_OVF_BUG,1,[Define to 1 if strtod has overflow bug])
 	    fi
 	else
 		AC_MSG_RESULT([$cf_FPE_SRCS failed to compile])
