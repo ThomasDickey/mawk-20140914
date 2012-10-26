@@ -1,15 +1,14 @@
--- $MawkId: CHANGES,v 1.146 2012/10/26 00:58:30 tom Exp $
+-- $MawkId: CHANGES,v 1.147 2012/10/26 23:49:41 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121025
+20121026
+	+ correct logic for "/dev/stdin" special device (GenToo #424137).
 	+ updates for configure script macros:
 	  + support --datarootdir option.
 	  + add 3rd parameter to AC_DEFINE's to allow autoheader to run.
 	  + remove unused macros.
 	+ update config.guess and config.sub
-
-20120901
 	+ add icons for webpage artwork
 
 20120627
