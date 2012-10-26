@@ -1,8 +1,8 @@
-dnl $MawkId: configure.in,v 1.38 2012/10/26 00:35:07 tom Exp $
+dnl $MawkId: configure.in,v 1.39 2012/10/26 00:46:44 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
-dnl copyright 2008-2009,2010, Thomas E. Dickey
+dnl copyright 2008-2010,2012, Thomas E. Dickey
 dnl copyright 1991-1994,1995, Michael D. Brennan
 dnl
 dnl This is a source file for mawk, an implementation of
@@ -42,6 +42,7 @@ dnl fpe check stuff
 dnl
 dnl
 dnl
+AC_PREREQ(2.52.20011201)
 AC_INIT(mawk.h)
 
 AC_CONFIG_HEADER(config.h:config_h.in)
@@ -49,7 +50,7 @@ CF_CHECK_CACHE
 
 AC_ARG_PROGRAM
 
-AC_PROG_CC
+CF_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_CPP
 AC_PROG_INSTALL
