@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.34 2012/06/27 12:14:13 tom Exp $
+ * $MawkId: fin.c,v 1.35 2012/10/26 23:46:01 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -157,7 +157,9 @@ FINopen(char *filename, int main_flag)
 	oflag |= O_BINARY;
 #endif
 
-    if (filename[0] == '-' && filename[1] == 0) {
+    TRACE(("FINopen(%s)\n", filename));
+    if ((filename[0] == '-' && filename[1] == 0) ||
+	(filename[0] == '/' && !strcmp(filename, "/dev/stdin"))) {
 #if USE_BINMODE
 	if (bm)
 	    setmode(0, O_BINARY);
