@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.37 2010/12/10 17:00:00 tom Exp $
+dnl $MawkId: configure.in,v 1.38 2012/10/26 00:35:07 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -93,7 +93,7 @@ AC_CHECK_FUNCS(fork pipe tdestroy tsearch wait)
 test "$ac_cv_func_fork" = yes && \
 test "$ac_cv_func_pipe" = yes && \
 test "$ac_cv_func_wait" = yes && \
-AC_DEFINE(HAVE_REAL_PIPES)
+AC_DEFINE(HAVE_REAL_PIPES,1,[Define to 1 if we have functions needed to setup Unix pipes])
 
 AC_CHECK_HEADERS(unistd.h sys/wait.h)
 
