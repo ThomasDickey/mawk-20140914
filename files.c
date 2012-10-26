@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.21 2012/06/27 17:57:36 tom Exp $
+ * $MawkId: files.c,v 1.22 2012/10/26 22:21:55 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -119,6 +119,7 @@ alloc_filenode(void)
     result->name = 0;
 #endif
 
+    result->ptr = 0;
     return result;
 }
 
@@ -133,102 +134,105 @@ free_filenode(FILE_NODE * p)
     zfree(p, sizeof(FILE_NODE));
 }
 
-/* find a file on file_list */
+static void
+output_failed(const char *name)
+{
+    errmsg(errno, "cannot open \"%s\" for output", name);
+    mawk_exit(2);
+    /* NOTREACHED */
+}
+
+#if USE_BINMODE
+#define BinMode2(t,f) ((binmode() & 2) ? (t) : (f))
+#else
+#define BinMode2(t,f) (f)
+#endif
+
+/*
+ * Find a file on file_list.  Outputs return a FILE*, while inputs return FIN*.
+ */
 PTR
 file_find(STRING * sval, int type)
 {
-    FILE_NODE *p = file_list;
-    FILE_NODE *q = (FILE_NODE *) 0;
+    PTR result = 0;
+    FILE_NODE *p;
+    FILE_NODE *q;
     char *name = sval->str;
-    const char *ostr;
 
-    while (1) {
-	if (!p) {
-	    /* open a new one */
-	    p = alloc_filenode();
-
-	    switch (p->type = (short) type) {
-	    case F_TRUNC:
-#if USE_BINMODE
-		ostr = (binmode() & 2) ? "wb" : "w";
-#else
-		ostr = "w";
-#endif
-		if (!(p->ptr = (PTR) tfopen(name, ostr)))
-		    goto out_failure;
-		break;
-
-	    case F_APPEND:
-#if USE_BINMODE
-		ostr = (binmode() & 2) ? "ab" : "a";
-#else
-		ostr = "a";
-#endif
-		if (!(p->ptr = (PTR) tfopen(name, ostr)))
-		    goto out_failure;
-		break;
-
-	    case F_IN:
-		if (!(p->ptr = (PTR) FINopen(name, 0))) {
-		    free_filenode(p);
-		    return (PTR) 0;
-		}
-		break;
-
-	    case PIPE_OUT:
-	    case PIPE_IN:
-
-#if    defined(HAVE_REAL_PIPES) || defined(HAVE_FAKE_PIPES)
-
-		if (!(p->ptr = get_pipe(name, type, &p->pid))) {
-		    if (type == PIPE_OUT)
-			goto out_failure;
-		    else {
-			free_filenode(p);
-			return (PTR) 0;
-		    }
-		}
-#else
-		rt_error("pipes not supported");
-#endif
-		break;
-
-#ifdef	DEBUG
-	    default:
-		bozo("bad file type");
-#endif
-	    }
-	    /* successful open */
-	    p->name = sval;
-	    sval->ref_cnt++;
-	    break;		/* while loop */
-	}
-
+    TRACE(("file_find(%s, %d)\n", name, type));
+    for (q = 0, p = file_list; p != 0; q = p, p = p->link) {
 	/* search is by name and type */
 	if (strcmp(name, p->name->str) == 0 &&
 	    (p->type == type ||
 	/* no distinction between F_APPEND and F_TRUNC here */
 	     (p->type >= F_APPEND && type >= F_APPEND))) {
-	    /* found */
-	    if (!q)		/*at front of list */
-		return p->ptr;
-	    /* delete from list for move to front */
-	    q->link = p->link;
+	    if (q != 0) {
+		/* delete from list for move to front */
+		q->link = p->link;
+	    }
 	    break;		/* while loop */
 	}
+    }
 
-	q = p;
-	p = p->link;
-    }				/* end while loop */
+    if (!p) {
+	/* open a new one */
+	p = alloc_filenode();
+
+	switch (p->type = (short) type) {
+	case F_TRUNC:
+	    if (!(p->ptr = (PTR) tfopen(name, BinMode2("wb", "w"))))
+		output_failed(name);
+	    break;
+
+	case F_APPEND:
+	    if (!(p->ptr = (PTR) tfopen(name, BinMode2("ab", "a"))))
+		output_failed(name);
+	    break;
+
+	case F_IN:
+	    p->ptr = (PTR) FINopen(name, 0);
+	    break;
+
+	case PIPE_OUT:
+	case PIPE_IN:
+
+#if    defined(HAVE_REAL_PIPES) || defined(HAVE_FAKE_PIPES)
+
+	    if (!(p->ptr = get_pipe(name, type, &p->pid))) {
+		if (type == PIPE_OUT)
+		    output_failed(name);
+	    }
+#else
+	    rt_error("pipes not supported");
+#endif
+	    break;
+
+#ifdef	DEBUG
+	default:
+	    bozo("bad file type");
+#endif
+	}
+    } else if (p->ptr == 0 && type == F_IN) {
+	p->ptr = (PTR) FINopen(name, 0);
+    }
 
     /* put p at the front of the list */
-    p->link = file_list;
-    return (PTR) (file_list = p)->ptr;
-
-  out_failure:
-    errmsg(errno, "cannot open \"%s\" for output", name);
-    mawk_exit(2);
-    /* NOTREACHED */
+    if (p != 0) {
+	if (p->ptr == 0) {
+	    free_filenode(p);
+	} else {
+	    if (p != file_list) {
+		p->link = file_list;
+		file_list = p;
+	    }
+	    /* successful open */
+	    p->name = sval;
+	    sval->ref_cnt++;
+	    TRACE(("-> %p\n", p->ptr));
+	    result = p->ptr;
+	}
+    }
+    return result;
 }
 
 /* Close a file and delete its node from the file_list.
@@ -602,7 +606,7 @@ set_stdio(void)
     r->link = p;
     r->type = F_IN;
     r->name = new_STRING("/dev/stdin");
-    r->ptr = (PTR) stdin;
+    /* Note: ptr is set in file_find() */
 
     file_list = r;
 }
