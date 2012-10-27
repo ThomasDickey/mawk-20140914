@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.39 2012/10/26 00:46:44 tom Exp $
+dnl $MawkId: configure.in,v 1.40 2012/10/27 00:47:21 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -79,7 +79,6 @@ fi
 AC_PROG_YACC
 CF_PROG_LINT
 CF_MAKE_TAGS
-CF_ANSI_CC_REQD
 CF_XOPEN_SOURCE
 CF_LARGEFILE
 
@@ -90,7 +89,7 @@ CF_MAWK_FIND_SIZE_T
 CF_LOCALE
 CF_CHECK_ENVIRON(environ)
 
-AC_CHECK_FUNCS(fork pipe tdestroy tsearch wait)
+AC_CHECK_FUNCS(fork pipe strftime tdestroy tsearch wait)
 test "$ac_cv_func_fork" = yes && \
 test "$ac_cv_func_pipe" = yes && \
 test "$ac_cv_func_wait" = yes && \
@@ -98,8 +97,8 @@ AC_DEFINE(HAVE_REAL_PIPES,1,[Define to 1 if we have functions needed to setup Un
 
 AC_CHECK_HEADERS(unistd.h sys/wait.h)
 
-CF_MAWK_CHECK_HEADERS(fcntl.h errno.h math.h time.h stdarg.h stdlib.h string.h)
-CF_MAWK_CHECK_FUNCS(memcpy strchr strerror vfprintf strtod fmod matherr)
+CF_MAWK_CHECK_HEADERS(fcntl.h errno.h)
+CF_MAWK_CHECK_FUNCS(vfprintf strtod fmod matherr)
 CF_MAWK_FIND_MAX_INT
 CF_MAWK_RUN_FPE_TESTS
 AC_OUTPUT(Makefile)

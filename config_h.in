@@ -1,6 +1,6 @@
 /********************************************
 config_h.in
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012 Thomas E. Dickey
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: config_h.in,v 1.22 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: config_h.in,v 1.23 2012/10/27 00:47:45 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -33,6 +33,7 @@ the GNU General Public License, version 2, 1991.
 #undef HAVE_SIGACTION
 #undef HAVE_SIGACTION_SA_SIGACTION
 #undef HAVE_SIGINFO_H
+#undef HAVE_STRFTIME
 #undef HAVE_STRTOD_OVF_BUG
 #undef HAVE_SYS_WAIT_H
 #undef HAVE_TDESTROY
@@ -49,16 +50,7 @@ the GNU General Public License, version 2, 1991.
 #undef NO_FMOD
 #undef NO_LEAKS
 #undef NO_MATHERR
-#undef NO_MATH_H
-#undef NO_MEMCPY
-#undef NO_PROTOS
-#undef NO_STDARG_H
-#undef NO_STDLIB_H
-#undef NO_STRCHR
-#undef NO_STRERROR
-#undef NO_STRING_H
 #undef NO_STRTOD
-#undef NO_TIME_H
 #undef NO_VFPRINTF
 #undef NO_VOID_STAR
 #undef SIZE_T_STDDEF_H

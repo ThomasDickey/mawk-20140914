@@ -1,10 +1,14 @@
--- $MawkId: CHANGES,v 1.147 2012/10/26 23:49:41 tom Exp $
+-- $MawkId: CHANGES,v 1.148 2012/10/27 00:46:05 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121026
+20121027
+	+ integrate patch by Dominic Letz for strtime function.
 	+ correct logic for "/dev/stdin" special device (GenToo #424137).
 	+ updates for configure script macros:
+	  + remove obsolete checks for some functions: memcpy, strchr, strerror
+	  + remove obsolete checks for some headers:  math.h, stdarg.h,
+	    stdlib.h, string.h time.h
 	  + support --datarootdir option.
 	  + add 3rd parameter to AC_DEFINE's to allow autoheader to run.
 	  + remove unused macros.

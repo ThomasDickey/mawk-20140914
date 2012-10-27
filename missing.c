@@ -11,103 +11,15 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: missing.c,v 1.4 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: missing.c,v 1.5 2012/10/27 00:46:36 tom Exp $
  * @Log: missing.c,v @
  * Revision 1.2  1995/06/03  09:31:11  mike
  * handle strchr(s,0) correctly
  *
  */
 
-#include "nstd.h"
-#include "scancode.h"
-
-#ifdef	NO_STRCHR
-#undef strchr
-char *
-strchr(const char *s, int c)
-{
-    if (c == 0)
-	return (char *) (s + strlen(s));
-
-    while (*s) {
-	if (*s == c)
-	    return (char *) s;
-	s++;
-    }
-    return (char *) 0;
-}
-
-char *
-strrchr(const char *s, int c)
-{
-    char *ret = (char *) 0;
-
-    if (c == 0)
-	return s + strlen(s);
-
-    while (*s) {
-	if (*s == c)
-	    ret = s;
-	s++;
-    }
-    return ret;
-}
-#endif /* NO_STRCHR */
-
-#ifdef	 NO_STRERROR
-extern int sys_nerr;
-extern char *sys_errlist[];
-char *
-strerror(int n)
-{
-    return n > 0 & n < sys_nerr ? sys_errlist[n] : "";
-}
-#endif
-
-#ifdef	NO_MEMCPY
-PTR
-memcpy(void *t, const void *s, size_t n)
-{
-    char *tt = t;
-    const char *ss = (const char *) s;
-
-    while (n > 0) {
-	n--;
-	*tt++ = *ss++;
-    }
-    return t;
-}
-
-int
-memcmp(const void *t, const void *s, size_t n)
-{
-    char *tt = t;
-    char *ss = s;
-
-    while (n > 0) {
-	if (*tt < *ss)
-	    return -1;
-	if (*tt > *ss)
-	    return 1;
-	tt++;
-	ss++;
-	n--;
-    }
-    return 0;
-}
-
-PTR
-memset(void *t, int c, size_t n)
-{
-    char *tt = (char *) t;
-
-    while (n > 0) {
-	n--;
-	*tt++ = c;
-    }
-    return t;
-}
-#endif /* NO_MEMCPY */
+#include <nstd.h>
+#include <scancode.h>
 
 #ifdef	NO_STRTOD
 
