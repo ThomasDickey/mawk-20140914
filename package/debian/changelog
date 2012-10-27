@@ -1,4 +1,4 @@
-mawk-cur (1.3.4-20121026) unstable; urgency=low
+mawk-cur (1.3.4-20121027) unstable; urgency=low
 
   * fix bug in "/dev/stdin" change
   * improved configure script
