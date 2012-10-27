@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.29 2012/10/27 12:40:57 tom Exp $
+ * $MawkId: init.c,v 1.30 2012/10/27 13:39:34 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -148,7 +148,13 @@ static void
 bad_option(char *s)
 {
     errmsg(0, "not an option: %s", s);
-    mawk_exit(2);
+    if (strcmp(s, "--lint") &&
+	strcmp(s, "--lint-old") &&
+	strcmp(s, "--posix") &&
+	strcmp(s, "--re-interval") &&
+	strcmp(s, "--traditional")) {
+	mawk_exit(2);
+    }
 }
 
 static void
