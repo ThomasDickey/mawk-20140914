@@ -1,6 +1,6 @@
 /********************************************
 error.c
-copyright 2008-2009,2010 Thomas E. Dickey
+copyright 2008-2010,2012 Thomas E. Dickey
 copyright 1991-1994,1995 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.15 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: error.c,v 1.16 2012/10/27 10:58:25 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -53,10 +53,6 @@ the GNU General Public License, version 2, 1991.
 #endif
 
 static void rt_where(void);
-
-#ifdef  NO_VFPRINTF
-#define  vfprintf  simple_vfprintf
-#endif
 
 /* for run time error messages only */
 unsigned rt_nr, rt_fnr;
@@ -346,81 +342,6 @@ type_error(SYMTAB * p)
     compile_error("illegal reference to %s %s",
 		  type_to_str(p->type), p->name);
 }
-
-#ifdef  NO_VFPRINTF
-
-/* a minimal vfprintf  */
-int
-simple_vfprintf(FILE *fp, char *format, va_list argp)
-{
-    char *q, *p, *t;
-    int l_flag;
-    char xbuff[64];
-
-    q = format;
-    xbuff[0] = '%';
-
-    while (*q != 0) {
-	if (*q != '%') {
-	    putc(*q, fp);
-	    q++;
-	    continue;
-	}
-
-	/* mark the start with p */
-	p = ++q;
-	t = xbuff + 1;
-
-	if (*q == '-')
-	    *t++ = *q++;
-	while (scan_code[*(unsigned char *) q] == SC_DIGIT)
-	    *t++ = *q++;
-	if (*q == '.') {
-	    *t++ = *q++;
-	    while (scan_code[*(unsigned char *) q] == SC_DIGIT)
-		*t++ = *q++;
-	}
-
-	if (*q == 'l') {
-	    l_flag = 1;
-	    *t++ = *q++;
-	} else
-	    l_flag = 0;
-
-	*t = *q++;
-	t[1] = 0;
-
-	switch (*t) {
-	case 'c':
-	case 'd':
-	case 'o':
-	case 'x':
-	case 'u':
-	    if (l_flag)
-		fprintf(fp, xbuff, va_arg(argp, long));
-	    else
-		fprintf(fp, xbuff, va_arg(argp, int));
-	    break;
-
-	case 's':
-	    fprintf(fp, xbuff, va_arg(argp, char *));
-	    break;
-
-	case 'g':
-	case 'f':
-	    fprintf(fp, xbuff, va_arg(argp, double));
-	    break;
-
-	default:
-	    putc('%', fp);
-	    q = p;
-	    break;
-	}
-    }
-    return 0;			/* shut up */
-}
-
-#endif /* USE_SIMPLE_VFPRINTF */
 
 #if OPT_TRACE > 0
 static FILE *trace_fp;

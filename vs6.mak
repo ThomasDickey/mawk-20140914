@@ -1,9 +1,9 @@
-# $MawkId: vs6.mak,v 1.2 2010/12/10 17:00:00 tom Exp $
+# $MawkId: vs6.mak,v 1.3 2012/10/27 10:55:58 tom Exp $
 # Microsoft C makefile for mawk,
 # 
 # Tested with Microsoft Visual Studio 6 using nmake.
 ###############################################################################
-# copyright 2010, Thomas E. Dickey
+# copyright 2010,2012 Thomas E. Dickey
 #
 # This is a source file for mawk, an implementation of
 # the AWK programming language.
@@ -105,7 +105,6 @@ main.obj : array.h code.h config.h files.h init.h mawk.h memory.h nstd.h sizes.h
 makescan.obj : config.h nstd.h scancode.h
 matherr.obj : array.h config.h init.h mawk.h nstd.h sizes.h symtype.h types.h
 memory.obj : config.h mawk.h memory.h nstd.h sizes.h types.h zmalloc.h
-missing.obj : config.h nstd.h scancode.h
 parse.obj : array.h bi_funct.h bi_vars.h code.h config.h field.h files.h jmp.h mawk.h memory.h nstd.h sizes.h symtype.h types.h zmalloc.h
 print.obj : array.h bi_funct.h bi_vars.h config.h field.h files.h mawk.h memory.h nstd.h parse.h scan.h scancode.h sizes.h symtype.h types.h zmalloc.h
 re_cmpl.obj : array.h config.h mawk.h memory.h nstd.h parse.h regexp.h repl.h scan.h scancode.h sizes.h symtype.h types.h zmalloc.h

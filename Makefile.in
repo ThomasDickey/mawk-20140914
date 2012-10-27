@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.40 2012/10/26 00:59:21 tom Exp $
+# $MawkId: Makefile.in,v 1.41 2012/10/27 10:55:34 tom Exp $
 # Makefile-template for MAWK
 ###############################################################################
 # copyright 2009-2010,2012 Thomas E. Dickey
@@ -73,8 +73,7 @@ PROG  = mawk$x
 OBJS = parse$o scan$o memory$o main$o hash$o execute$o code$o \
   da$o error$o init$o bi_vars$o cast$o print$o bi_funct$o \
   kw$o jmp$o array$o field$o split$o re_cmpl$o regexp$o zmalloc$o \
-  fin$o files$o scancode$o matherr$o fcall$o version$o \
-  missing$o
+  fin$o files$o scancode$o matherr$o fcall$o version$o
 
 .SUFFIXES: .c .i $o
 
@@ -185,7 +184,6 @@ main.o : array.h code.h config.h files.h init.h mawk.h memory.h nstd.h sizes.h s
 makescan.o : config.h nstd.h scancode.h
 matherr.o : array.h config.h init.h mawk.h nstd.h sizes.h symtype.h types.h
 memory.o : config.h mawk.h memory.h nstd.h sizes.h types.h zmalloc.h
-missing.o : config.h nstd.h scancode.h
 parse.o : array.h bi_funct.h bi_vars.h code.h config.h field.h files.h jmp.h mawk.h memory.h nstd.h sizes.h symtype.h types.h zmalloc.h
 print.o : array.h bi_funct.h bi_vars.h config.h field.h files.h mawk.h memory.h nstd.h parse.h scan.h scancode.h sizes.h symtype.h types.h zmalloc.h
 re_cmpl.o : array.h config.h mawk.h memory.h nstd.h parse.h regexp.h repl.h scan.h scancode.h sizes.h symtype.h types.h zmalloc.h

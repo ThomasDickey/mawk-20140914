@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: config_h.in,v 1.23 2012/10/27 00:47:45 tom Exp $
+ * $MawkId: config_h.in,v 1.24 2012/10/27 10:51:23 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -25,6 +25,8 @@ the GNU General Public License, version 2, 1991.
 #undef GCC_UNUSED
 #undef HAVE_FORK
 #undef HAVE_ISNAN
+#undef HAVE_MATHERR
+#undef HAVE_MKTIME
 #undef HAVE_PIPE
 #undef HAVE_REAL_PIPES
 #undef HAVE_REGEXPR_H_FUNCS
@@ -47,11 +49,7 @@ the GNU General Public License, version 2, 1991.
 #undef NOINFO_SIGFPE
 #undef NO_ERRNO_H
 #undef NO_FCNTL_H
-#undef NO_FMOD
 #undef NO_LEAKS
-#undef NO_MATHERR
-#undef NO_STRTOD
-#undef NO_VFPRINTF
 #undef NO_VOID_STAR
 #undef SIZE_T_STDDEF_H
 #undef SIZE_T_TYPES_H

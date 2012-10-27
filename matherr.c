@@ -1,6 +1,6 @@
 /********************************************
 matherr.c
-copyright 2009-2010, Thomas E. Dickey
+copyright 2009-2010,2012 Thomas E. Dickey
 copyright 1991, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.24 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: matherr.c,v 1.25 2012/10/27 10:58:31 tom Exp $
  *
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
@@ -166,7 +166,7 @@ fpe_init(void)
 }
 #endif
 
-#ifndef	 NO_MATHERR
+#ifdef	 HAVE_MATHERR
 
 #ifndef	 FPE_TRAPS_ON
 
