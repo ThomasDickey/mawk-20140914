@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.61 2012/10/27 10:49:47 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.62 2012/10/27 12:22:33 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -196,6 +196,98 @@ ifelse([$3],,[    :]dnl
   $4
 ])dnl
   ])])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_BUILD_CC version: 7 updated: 2012/10/06 15:31:55
+dnl -----------
+dnl If we're cross-compiling, allow the user to override the tools and their
+dnl options.  The configure script is oriented toward identifying the host
+dnl compiler, etc., but we need a build compiler to generate parts of the
+dnl source.
+dnl
+dnl $1 = default for $CPPFLAGS
+dnl $2 = default for $LIBS
+AC_DEFUN([CF_BUILD_CC],[
+CF_ACVERSION_CHECK(2.52,,
+	[AC_REQUIRE([CF_PROG_EXT])])
+if test "$cross_compiling" = yes ; then
+
+	# defaults that we might want to override
+	: ${BUILD_CFLAGS:=''}
+	: ${BUILD_CPPFLAGS:='ifelse([$1],,,[$1])'}
+	: ${BUILD_LDFLAGS:=''}
+	: ${BUILD_LIBS:='ifelse([$2],,,[$2])'}
+	: ${BUILD_EXEEXT:='$x'}
+	: ${BUILD_OBJEXT:='o'}
+
+	AC_ARG_WITH(build-cc,
+		[  --with-build-cc=XXX     the build C compiler ($BUILD_CC)],
+		[BUILD_CC="$withval"],
+		[AC_CHECK_PROGS(BUILD_CC, gcc cc cl)])
+	AC_MSG_CHECKING(for native build C compiler)
+	AC_MSG_RESULT($BUILD_CC)
+
+	AC_MSG_CHECKING(for native build C preprocessor)
+	AC_ARG_WITH(build-cpp,
+		[  --with-build-cpp=XXX    the build C preprocessor ($BUILD_CPP)],
+		[BUILD_CPP="$withval"],
+		[BUILD_CPP='${BUILD_CC} -E'])
+	AC_MSG_RESULT($BUILD_CPP)
+
+	AC_MSG_CHECKING(for native build C flags)
+	AC_ARG_WITH(build-cflags,
+		[  --with-build-cflags=XXX the build C compiler-flags ($BUILD_CFLAGS)],
+		[BUILD_CFLAGS="$withval"])
+	AC_MSG_RESULT($BUILD_CFLAGS)
+
+	AC_MSG_CHECKING(for native build C preprocessor-flags)
+	AC_ARG_WITH(build-cppflags,
+		[  --with-build-cppflags=XXX the build C preprocessor-flags ($BUILD_CPPFLAGS)],
+		[BUILD_CPPFLAGS="$withval"])
+	AC_MSG_RESULT($BUILD_CPPFLAGS)
+
+	AC_MSG_CHECKING(for native build linker-flags)
+	AC_ARG_WITH(build-ldflags,
+		[  --with-build-ldflags=XXX the build linker-flags ($BUILD_LDFLAGS)],
+		[BUILD_LDFLAGS="$withval"])
+	AC_MSG_RESULT($BUILD_LDFLAGS)
+
+	AC_MSG_CHECKING(for native build linker-libraries)
+	AC_ARG_WITH(build-libs,
+		[  --with-build-libs=XXX   the build libraries (${BUILD_LIBS})],
+		[BUILD_LIBS="$withval"])
+	AC_MSG_RESULT($BUILD_LIBS)
+
+	# this assumes we're on Unix.
+	BUILD_EXEEXT=
+	BUILD_OBJEXT=o
+
+	: ${BUILD_CC:='${CC}'}
+
+	if ( test "$BUILD_CC" = "$CC" || test "$BUILD_CC" = '${CC}' ) ; then
+		AC_MSG_ERROR([Cross-build requires two compilers.
+Use --with-build-cc to specify the native compiler.])
+	fi
+
+else
+	: ${BUILD_CC:='${CC}'}
+	: ${BUILD_CPP:='${CPP}'}
+	: ${BUILD_CFLAGS:='${CFLAGS}'}
+	: ${BUILD_CPPFLAGS:='${CPPFLAGS}'}
+	: ${BUILD_LDFLAGS:='${LDFLAGS}'}
+	: ${BUILD_LIBS:='${LIBS}'}
+	: ${BUILD_EXEEXT:='$x'}
+	: ${BUILD_OBJEXT:='o'}
+fi
+
+AC_SUBST(BUILD_CC)
+AC_SUBST(BUILD_CPP)
+AC_SUBST(BUILD_CFLAGS)
+AC_SUBST(BUILD_CPPFLAGS)
+AC_SUBST(BUILD_LDFLAGS)
+AC_SUBST(BUILD_LIBS)
+AC_SUBST(BUILD_EXEEXT)
+AC_SUBST(BUILD_OBJEXT)
+])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_CC_ENV_FLAGS version: 1 updated: 2012/10/03 05:25:49
 dnl ---------------
@@ -1006,7 +1098,7 @@ int main()
     return 0 ;
  }]])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_RUN_FPE_TESTS version: 12 updated: 2012/10/25 20:41:47
+dnl CF_MAWK_RUN_FPE_TESTS version: 13 updated: 2012/10/27 08:21:53
 dnl ---------------------
 dnl These are mawk's dreaded FPE tests.
 AC_DEFUN([CF_MAWK_RUN_FPE_TESTS],
@@ -1157,11 +1249,20 @@ fi
     ;;
 
   *)  # some sort of disaster
-    cat 1>&2 <<-'EOF'
-    The program `fpe_check' compiled from $cf_FPE_SRCS seems to have
+    if test "x$cross_compiling" = xno
+	then
+    cat 1>&2 <<-EOF
+    The program \`fpe_check' compiled from $cf_FPE_SRCS seems to have
     unexpectly blown up.  Please report this to CF_MAWK_MAINTAINER
 EOF
     # quit or not ???
+	else
+    cat 1>&2 <<-EOF
+    The program \`fpe_check' will not work for cross-compiling.
+    You can continue with the build and the resulting mawk will be
+    useable, but getting FPE_TRAPS_ON correct eventually is best.
+EOF
+	fi
     ;;
 esac
 
