@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.150 2012/10/27 11:02:43 tom Exp $
+-- $MawkId: CHANGES,v 1.151 2012/10/27 12:21:25 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -6,7 +6,8 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	+ integrate patch by Dominic Letz for strtime function.
 	+ correct logic for "/dev/stdin" special device (GenToo #424137).
 	+ updates for configure script macros:
-	  + remove Turbo C++ and Zortech C++ makefiles
+	  + modify configure script and makefile to support cross-compiles.
+	  + remove Turbo C++ and Zortech C++ makefiles.
 	  + remove obsolete function-checks: fmod, memcpy, strchr, strerror,
 	    strtod, vfprintf.
 	  + remove obsolete checks for some headers:  math.h, stdarg.h,
