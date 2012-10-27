@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.41 2012/10/27 10:55:34 tom Exp $
+# $MawkId: Makefile.in,v 1.42 2012/10/27 12:10:13 tom Exp $
 # Makefile-template for MAWK
 ###############################################################################
 # copyright 2009-2010,2012 Thomas E. Dickey
@@ -38,11 +38,19 @@ mandir		= @mandir@/man$(manext)
 CC              = @CC@
 CPP             = @CPP@
 
+BUILD_CC        = @BUILD_CC@
 CPPFLAGS	= -I. -I$(srcdir) -DHAVE_CONFIG_H @CPPFLAGS@
 EXTRA_CFLAGS	= @EXTRA_CFLAGS@
 CFLAGS          = @CFLAGS@ $(EXTRA_CFLAGS)
 LDFLAGS         = @CFLAGS@ @LDFLAGS@
 LIBS            = @LIBS@
+
+BUILD_CFLAGS	= @BUILD_CFLAGS@
+BUILD_CPPFLAGS	= -I. -I$(srcdir) -DHAVE_CONFIG_H @BUILD_CPPFLAGS@
+BUILD_LDFLAGS	= @BUILD_LDFLAGS@
+BUILD_LIBS	= @BUILD_LIBS@
+BUILD_EXEEXT	= @BUILD_EXEEXT@
+BUILD_OBJEXT	= @BUILD_OBJEXT@
 
 YACC            = @YACC@
 
@@ -118,10 +126,10 @@ array.h : array.w
 	notangle -R'"array.h"' array.w | $(NOIDENT) | cpif array.h
 
 scancode.c :  $(srcdir)/makescan.c  scancode.h nstd.h config.h
-	@ECHO_LD@$(CC) $(CFLAGS) $(CPPFLAGS) -o makescan.exe $(srcdir)/makescan.c
+	@ECHO_LD@$(BUILD_CC) $(BUILD_CFLAGS) $(BUILD_CPPFLAGS) -o makescan$x $(srcdir)/makescan.c
 	rm -f scancode.c
-	./makescan.exe > scancode.c
-	rm makescan.exe
+	./makescan$x > scancode.c
+	rm makescan$x
 
 MAWK_BIN = $(BINDIR)/$(binary_PROG)
 MAWK_MAN = $(MANDIR)/$(actual_PROG).$(manext)
@@ -135,7 +143,7 @@ uninstall :
 	rm -f $(MAWK_MAN)
 
 clean :
-	rm -f y.tab.c y.tab.h makescan.exe
+	rm -f y.tab.c y.tab.h makescan$x
 	rm -f *$o test/$(PROG) *core* test/*core* $(PROG)
 
 distclean :  clean
