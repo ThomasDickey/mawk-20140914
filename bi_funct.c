@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.52 2012/10/27 00:50:08 tom Exp $
+ * $MawkId: bi_funct.c,v 1.53 2012/10/27 01:00:47 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -391,12 +391,14 @@ bi_tolower(CELL * sp)
 CELL *
 bi_strftime(CELL * sp)
 {
-    char *format = "%c";
+    const char *format = "%c";
     time_t rawtime;
     struct tm *ptm;
     int n_args, len;
     int utc;
     STRING *sval = 0;		/* strftime(sval->str, timestamp, utc) */
+    char buff[128];
+    size_t result;
 
     n_args = sp->type;
     sp -= n_args;
@@ -434,8 +436,7 @@ bi_strftime(CELL * sp)
     else
 	ptm = localtime(&rawtime);
 
-    char buff[128];
-    size_t result = strftime(buff, sizeof(buff) / sizeof(buff[0]), format, ptm);
+    result = strftime(buff, sizeof(buff) / sizeof(buff[0]), format, ptm);
 
     if (sval)
 	free_STRING(sval);
