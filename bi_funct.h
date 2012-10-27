@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.h,v 1.3 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: bi_funct.h,v 1.4 2012/10/27 00:22:51 tom Exp $
  * @Log: bi_funct.h,v @
  * Revision 1.2  1994/12/11  22:10:15  mike
  * fflush
@@ -63,5 +63,6 @@ CELL *bi_rand(CELL *);
 CELL *bi_close(CELL *);
 CELL *bi_system(CELL *);
 CELL *bi_fflush(CELL *);
+CELL *bi_strftime(CELL *);
 
 #endif /* BI_FUNCT_H  */
