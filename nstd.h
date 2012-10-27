@@ -1,6 +1,6 @@
 /********************************************
 nstd.h
-copyright 2009, Thomas E. Dickey
+copyright 2009-2010,2012 Thomas E. Dickey
 copyright 1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -18,7 +18,7 @@ the GNU General Public License, version 2, 1991.
 */
 
 /*
- * $MawkId: nstd.h,v 1.8 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: nstd.h,v 1.9 2012/10/27 00:36:20 tom Exp $
  * @Log: nstd.h,v @
  * Revision 1.6  1995/06/18  19:42:22  mike
  * Remove some redundant declarations and add some prototypes
@@ -43,7 +43,7 @@ the GNU General Public License, version 2, 1991.
 #ifndef  NSTD_H
 #define  NSTD_H		1
 
-#include "config.h"
+#include <config.h>
 
 /* types */
 
@@ -59,47 +59,10 @@ typedef unsigned size_t;
 #endif
 #endif
 
-/* stdlib.h */
-#ifdef NO_STDLIB_H
-double strtod(const char *, char **);
-void free(void *);
-PTR malloc(size_t);
-PTR realloc(void *, size_t);
-void exit(int);
-char *getenv(const char *);
-#else
 #include <stdlib.h>
-#endif
-
-/* string.h */
-#ifdef NO_STRING_H
-int memcmp(const void *, const void *, size_t);
-PTR memcpy(void *, const void *, size_t);
-PTR memset(void *, int, size_t);
-char *strchr(const char *, int);
-int strcmp(const char *, const char *);
-char *strcpy(char *, const char *);
-size_t strlen(const char *);
-int strncmp(const char *, const char *, size_t);
-char *strncpy(char *, const char *, size_t);
-char *strrchr(const char *, int);
-char *strerror(int);
-#else
 #include <string.h>
-#endif
-
-#ifdef  NO_ERRNO_H
-extern int errno;
-#else
 #include <errno.h>
-#endif
-
-/* math.h */
-#ifdef NO_MATH_H
-double fmod(double, double);
-#else
 #include <math.h>
-#endif
 
 /* if have to diddle with errno to get errors from the math library */
 #ifndef STDC_MATHERR
