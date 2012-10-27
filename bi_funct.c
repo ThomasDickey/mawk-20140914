@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.53 2012/10/27 01:00:47 tom Exp $
+ * $MawkId: bi_funct.c,v 1.54 2012/10/27 15:13:26 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -101,6 +101,12 @@ BI_REC bi_funct[] =
    { "toupper",  bi_toupper,  1, 1 },
    { "tolower",  bi_tolower,  1, 1 },
    { "fflush",   bi_fflush,   0, 1 },
+
+   /* useful gawk extension (time functions) */
+   { "systime",  bi_systime,  0, 0 },
+#ifdef HAVE_MKTIME
+   { "mktime",   bi_mktime,   1, 1 },
+#endif
 #ifdef HAVE_STRFTIME
    { "strftime", bi_strftime, 0, 3 },
 #endif
@@ -381,6 +387,73 @@ bi_tolower(CELL * sp)
     return sp;
 }
 
+/*
+ * Like gawk...
+ */
+CELL *
+bi_systime(CELL * sp)
+{
+    time_t result;
+    time(&result);
+
+    sp->type = C_DOUBLE;
+    sp->dval = (double) result;
+    return sp;
+}
+
+#ifdef HAVE_MKTIME
+/*  mktime(datespec)
+    Turns datespec into a time stamp of the same form as returned by systime(). 
+    The datespec is a string of the form
+        YYYY MM DD HH MM SS [DST].
+*/
+CELL *
+bi_mktime(CELL * sp)
+{
+    time_t result;
+    struct tm my_tm;
+    STRING *sval = string(sp);
+    int error = 0;
+
+    memset(&my_tm, 0, sizeof(my_tm));
+    switch (sscanf(sval->str, "%d %d %d %d %d %d %d",
+		   &my_tm.tm_year,
+		   &my_tm.tm_mon,
+		   &my_tm.tm_mday,
+		   &my_tm.tm_hour,
+		   &my_tm.tm_min,
+		   &my_tm.tm_sec,
+		   &my_tm.tm_isdst)) {
+    case 7:
+	break;
+    case 6:
+	my_tm.tm_isdst = -1;	/* ask mktime to get timezone */
+	break;
+    default:
+	error = 1;		/* not enough data */
+	break;
+    }
+
+    if (error) {
+	result = -1;
+    } else {
+	time_t midnight = 0;
+	struct tm *check = localtime(&midnight);
+
+	my_tm.tm_year -= 1900;
+	my_tm.tm_mon -= 1;
+	my_tm.tm_hour -= (24 - check->tm_hour);
+	result = mktime(&my_tm);
+    }
+    TRACE(("bi_mktime(%s) ->%s", sval->str, ctime(&result)));
+
+    cell_destroy(sp);
+    sp->type = C_DOUBLE;
+    sp->dval = (double) result;
+    return sp;
+}
+#endif
+
 /*  strftime(format, timestamp, utc) 
     should be equal to gawk strftime. all parameters are optional:
         format: ansi c strftime format descriptor. default is "%c"
@@ -441,13 +514,7 @@ bi_strftime(CELL * sp)
     if (sval)
 	free_STRING(sval);
 
-    if (result == 0) {
-	sp->ptr = (PTR) & null_str;
-	null_str.ref_cnt++;
-    } else {			/* got something */
-	sp->ptr = (PTR) new_STRING0((size_t) result);
-	memcpy(string(sp)->str, buff, result);
-    }
+    sp->ptr = (PTR) new_STRING1(buff, result);
 
     while (n_args > 1) {
 	n_args--;
