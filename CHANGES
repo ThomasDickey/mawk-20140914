@@ -1,8 +1,15 @@
--- $MawkId: CHANGES,v 1.151 2012/10/27 12:21:25 tom Exp $
+-- $MawkId: CHANGES,v 1.152 2012/10/27 13:43:57 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20121027
+	+ when warning about unrecognized options, do not exit with error
+	  on these gawk options:
+		  --lint
+		  --lint-old
+		  --posix
+		  --re-interval
+		  --traditional
 	+ integrate patch by Dominic Letz for strtime function.
 	+ correct logic for "/dev/stdin" special device (GenToo #424137).
 	+ updates for configure script macros:
