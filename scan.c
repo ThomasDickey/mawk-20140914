@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.30 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: scan.c,v 1.31 2012/10/27 12:35:11 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -72,7 +72,7 @@ the GNU General Public License, version 2, 1991.
 #include  "repl.h"
 #include  "code.h"
 
-#ifndef	  NO_FCNTL_H
+#ifdef	  HAVE_FCNTL_H
 #include  <fcntl.h>
 #endif
 

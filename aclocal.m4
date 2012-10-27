@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.63 2012/10/27 12:26:56 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.64 2012/10/27 12:31:57 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -939,22 +939,6 @@ AC_SUBST(ETAGS)
 AC_SUBST(MAKE_UPPER_TAGS)
 AC_SUBST(MAKE_LOWER_TAGS)
 ])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_HEADER version: 4 updated: 2009/07/23 05:15:39
-dnl --------------------
-AC_DEFUN([CF_MAWK_CHECK_HEADER],[
-    AC_CHECK_HEADER($1,,[
-        CF_UPPER(cf_check_header,NO_$1)
-        AC_DEFINE($cf_check_header)])
-])dnl
-dnl ---------------------------------------------------------------------------
-dnl CF_MAWK_CHECK_HEADERS version: 3 updated: 2008/09/09 20:32:43
-dnl ---------------------
-AC_DEFUN([CF_MAWK_CHECK_HEADERS],[
-for cf_func in $1
-do
-    CF_MAWK_CHECK_HEADER(${cf_func})
-done])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_MAWK_CHECK_LIMITS_MSG version: 1 updated: 2008/09/09 19:18:22
 dnl ------------------------

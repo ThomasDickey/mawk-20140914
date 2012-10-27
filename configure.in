@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.43 2012/10/27 12:26:00 tom Exp $
+dnl $MawkId: configure.in,v 1.44 2012/10/27 12:32:01 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -100,9 +100,8 @@ test "$ac_cv_func_pipe" = yes && \
 test "$ac_cv_func_wait" = yes && \
 AC_DEFINE(HAVE_REAL_PIPES,1,[Define to 1 if we have functions needed to setup Unix pipes])
 
-AC_CHECK_HEADERS(unistd.h sys/wait.h)
+AC_CHECK_HEADERS(errno.h fcntl.h unistd.h sys/wait.h)
 
-CF_MAWK_CHECK_HEADERS(fcntl.h errno.h)
 CF_MAWK_FIND_MAX_INT
 CF_MAWK_RUN_FPE_TESTS
 AC_OUTPUT(Makefile)

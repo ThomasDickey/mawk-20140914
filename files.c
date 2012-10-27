@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.22 2012/10/26 22:21:55 tom Exp $
+ * $MawkId: files.c,v 1.23 2012/10/27 12:30:16 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -74,7 +74,7 @@ the GNU General Public License, version 2, 1991.
 #include  <sgtty.h>		/* defines FIOCLEX */
 #endif
 
-#ifndef	 NO_FCNTL_H
+#ifdef	 HAVE_FCNTL_H
 
 #include <fcntl.h>
 #define	 CLOSE_ON_EXEC(fd)    fcntl(fd, F_SETFD, 1)

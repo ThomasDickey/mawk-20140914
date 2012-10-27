@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.35 2012/10/26 23:46:01 tom Exp $
+ * $MawkId: fin.c,v 1.36 2012/10/27 12:30:16 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -79,7 +79,7 @@ the GNU General Public License, version 2, 1991.
 #include "symtype.h"
 #include "scan.h"
 
-#ifndef	  NO_FCNTL_H
+#ifdef	  HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
 
