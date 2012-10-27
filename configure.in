@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.41 2012/10/27 10:49:19 tom Exp $
+dnl $MawkId: configure.in,v 1.42 2012/10/27 12:01:05 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -54,6 +54,7 @@ CF_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_CPP
 AC_PROG_INSTALL
+CF_BUILD_CC
 
 CF_MAWK_MATHLIB
 
