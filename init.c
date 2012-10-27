@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.28 2012/10/27 12:30:57 tom Exp $
+ * $MawkId: init.c,v 1.29 2012/10/27 12:40:57 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -71,7 +71,6 @@ the GNU General Public License, version 2, 1991.
 #include <files.h>
 #include <field.h>
 
-//#include <stdlib.h>
 #include <ctype.h>
 
 typedef enum {
