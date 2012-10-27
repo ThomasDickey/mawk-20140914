@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.42 2012/10/27 12:01:05 tom Exp $
+dnl $MawkId: configure.in,v 1.43 2012/10/27 12:26:00 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -54,10 +54,13 @@ CF_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_CPP
 AC_PROG_INSTALL
+
+CF_HELP_MESSAGE(Cross-compiling)
 CF_BUILD_CC
 
 CF_MAWK_MATHLIB
 
+CF_HELP_MESSAGE(Miscellaneous options)
 CF_DISABLE_ECHO
 CF_ENABLE_WARNINGS
 
@@ -83,6 +86,7 @@ CF_MAKE_TAGS
 CF_XOPEN_SOURCE
 CF_LARGEFILE
 
+CF_HELP_MESSAGE(Testing-options)
 CF_DISABLE_LEAKS
 CF_ENABLE_TRACE
 
