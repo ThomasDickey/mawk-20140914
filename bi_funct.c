@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.51 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: bi_funct.c,v 1.52 2012/10/27 00:50:08 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -63,43 +63,47 @@ the GNU General Public License, version 2, 1991.
  * 1.1 pre-release
  */
 
-#include "mawk.h"
-#include "bi_funct.h"
-#include "bi_vars.h"
-#include "memory.h"
-#include "init.h"
-#include "files.h"
-#include "fin.h"
-#include "field.h"
-#include "regexp.h"
-#include "repl.h"
+#include <mawk.h>
+#include <bi_funct.h>
+#include <bi_vars.h>
+#include <memory.h>
+#include <init.h>
+#include <files.h>
+#include <fin.h>
+#include <field.h>
+#include <regexp.h>
+#include <repl.h>
 
 #include <ctype.h>
 #include <math.h>
+#include <time.h>
 
 /* global for the disassembler */
 /* *INDENT-OFF* */
 BI_REC bi_funct[] =
 {				/* info to load builtins */
 
-   { "length",   bi_length,  0, 1 },	/* special must come first */
-   { "index",    bi_index,   2, 2 },
-   { "substr",   bi_substr,  2, 3 },
-   { "sprintf",  bi_sprintf, 1, 255 },
-   { "sin",      bi_sin,     1, 1 },
-   { "cos",      bi_cos,     1, 1 },
-   { "atan2",    bi_atan2,   2, 2 },
-   { "exp",      bi_exp,     1, 1 },
-   { "log",      bi_log,     1, 1 },
-   { "int",      bi_int,     1, 1 },
-   { "sqrt",     bi_sqrt,    1, 1 },
-   { "rand",     bi_rand,    0, 0 },
-   { "srand",    bi_srand,   0, 1 },
-   { "close",    bi_close,   1, 1 },
-   { "system",   bi_system,  1, 1 },
-   { "toupper",  bi_toupper, 1, 1 },
-   { "tolower",  bi_tolower, 1, 1 },
-   { "fflush",   bi_fflush,  0, 1 },
+   { "length",   bi_length,   0, 1 },	/* special must come first */
+   { "index",    bi_index,    2, 2 },
+   { "substr",   bi_substr,   2, 3 },
+   { "sprintf",  bi_sprintf,  1, 255 },
+   { "sin",      bi_sin,      1, 1 },
+   { "cos",      bi_cos,      1, 1 },
+   { "atan2",    bi_atan2,    2, 2 },
+   { "exp",      bi_exp,      1, 1 },
+   { "log",      bi_log,      1, 1 },
+   { "int",      bi_int,      1, 1 },
+   { "sqrt",     bi_sqrt,     1, 1 },
+   { "rand",     bi_rand,     0, 0 },
+   { "srand",    bi_srand,    0, 1 },
+   { "close",    bi_close,    1, 1 },
+   { "system",   bi_system,   1, 1 },
+   { "toupper",  bi_toupper,  1, 1 },
+   { "tolower",  bi_tolower,  1, 1 },
+   { "fflush",   bi_fflush,   0, 1 },
+#ifdef HAVE_STRFTIME
+   { "strftime", bi_strftime, 0, 3 },
+#endif
 
    { (char *)    0, (PF_CP) 0, 0, 0 }
 };
@@ -377,8 +381,83 @@ bi_tolower(CELL * sp)
     return sp;
 }
 
+/*  strftime(format, timestamp, utc) 
+    should be equal to gawk strftime. all parameters are optional:
+        format: ansi c strftime format descriptor. default is "%c"
+        timestamp: seconds since unix epoch. default is now
+        utc: when set and != 0 date is utc otherwise local. default is 0
+*/
+#ifdef HAVE_STRFTIME
+CELL *
+bi_strftime(CELL * sp)
+{
+    char *format = "%c";
+    time_t rawtime;
+    struct tm *ptm;
+    int n_args, len;
+    int utc;
+    STRING *sval = 0;		/* strftime(sval->str, timestamp, utc) */
+
+    n_args = sp->type;
+    sp -= n_args;
+
+    if (n_args > 0) {
+	if (sp->type != C_STRING)
+	    cast1_to_s(sp);
+	/* don't use < C_STRING shortcut */
+	sval = string(sp);
+
+	if ((len = (int) sval->len) != 0)	/* strftime on valid format */
+	    format = sval->str;
+    } else {
+	sp->type = C_STRING;
+    }
+
+    if (n_args > 1) {
+	if (sp[1].type != C_DOUBLE)
+	    cast1_to_d(sp + 1);
+	rawtime = d_to_i(sp[1].dval);
+    } else {
+	time(&rawtime);
+    }
+
+    if (n_args > 2) {
+	if (sp[2].type != C_DOUBLE)
+	    cast1_to_d(sp + 2);
+	utc = d_to_i(sp[2].dval);
+    } else {
+	utc = 0;
+    }
+
+    if (utc == 0)
+	ptm = gmtime(&rawtime);
+    else
+	ptm = localtime(&rawtime);
+
+    char buff[128];
+    size_t result = strftime(buff, sizeof(buff) / sizeof(buff[0]), format, ptm);
+
+    if (sval)
+	free_STRING(sval);
+
+    if (result == 0) {
+	sp->ptr = (PTR) & null_str;
+	null_str.ref_cnt++;
+    } else {			/* got something */
+	sp->ptr = (PTR) new_STRING0((size_t) result);
+	memcpy(string(sp)->str, buff, result);
+    }
+
+    while (n_args > 1) {
+	n_args--;
+	cell_destroy(sp + n_args);
+    }
+    return sp;
+}
+#endif /* HAVE_STRFTIME */
+
 /************************************************
-  arithemetic builtins
+  arithmetic builtins
  ************************************************/
 
 #if STDC_MATHERR
@@ -527,12 +606,6 @@ bi_sqrt(CELL * sp)
 #endif
     return sp;
 }
-
-#ifndef NO_TIME_H
-#include <time.h>
-#else
-#include <sys/types.h>
-#endif
 
 /* For portability, we'll use our own random number generator , taken
    from:  Park, SK and Miller KW, "Random Number Generators:
