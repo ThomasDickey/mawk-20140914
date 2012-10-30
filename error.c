@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.16 2012/10/27 10:58:25 tom Exp $
+ * $MawkId: error.c,v 1.17 2012/10/30 21:43:40 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -42,17 +42,11 @@ the GNU General Public License, version 2, 1991.
  *
 */
 
-#include  "mawk.h"
-#include  "scan.h"
-#include  "bi_vars.h"
+#include <mawk.h>
+#include <scan.h>
+#include <bi_vars.h>
 
 #include <stdarg.h>
-
-#ifndef  EOF
-#define  EOF  (-1)
-#endif
-
-static void rt_where(void);
 
 /* for run time error messages only */
 unsigned rt_nr, rt_fnr;
@@ -114,11 +108,15 @@ static struct token_str {
 
 /* if paren_cnt >0 and we see one of these, we are missing a ')' */
 static int missing_rparen[] =
-{EOF, NL, SEMI_COLON, SC_FAKE_SEMI_COLON, RBRACE, 0};
+{
+    EOF, NL, SEMI_COLON, SC_FAKE_SEMI_COLON, RBRACE, 0
+};
 
 /* ditto for '}' */
 static int missing_rbrace[] =
-{EOF, BEGIN, END, 0};
+{
+    EOF, BEGIN, END, 0
+};
 
 static void
 missing(int c, const char *n, unsigned ln)
@@ -248,20 +246,6 @@ compile_error(const char *format,...)
 }
 
 void
-rt_error(const char *format,...)
-{
-    va_list args;
-
-    fprintf(stderr, "%s: run time error: ", progname);
-    va_start(args, format);
-    vfprintf(stderr, format, args);
-    va_end(args);
-    putc('\n', stderr);
-    rt_where();
-    mawk_exit(2);
-}
-
-void
 bozo(const char *s)
 {
     errmsg(0, "bozo: %s", s);
@@ -285,6 +269,20 @@ rt_where(void)
 
     fprintf(stderr, "\tFILENAME=\"%s\" FNR=%u NR=%u\n",
 	    string(FILENAME)->str, rt_fnr, rt_nr);
+}
+
+void
+rt_error(const char *format,...)
+{
+    va_list args;
+
+    fprintf(stderr, "%s: run time error: ", progname);
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    putc('\n', stderr);
+    rt_where();
+    mawk_exit(2);
 }
 
 /* run time */
@@ -342,34 +340,3 @@ type_error(SYMTAB * p)
     compile_error("illegal reference to %s %s",
 		  type_to_str(p->type), p->name);
 }
-
-#if OPT_TRACE > 0
-static FILE *trace_fp;
-
-void
-Trace(const char *format,...)
-{
-    va_list args;
-
-    if (trace_fp == 0)
-	trace_fp = fopen("Trace.out", "w");
-
-    if (trace_fp == 0)
-	rt_error("cannot open Trace.out");
-
-    va_start(args, format);
-    vfprintf(trace_fp, format, args);
-    va_end(args);
-}
-
-#ifdef NO_LEAKS
-void
-trace_leaks(void)
-{
-    if (trace_fp != 0) {
-	fclose(trace_fp);
-	trace_fp = 0;
-    }
-}
-#endif
-#endif
