@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.38 2012/10/30 21:46:21 tom Exp $
+ * $MawkId: mawk.h,v 1.39 2012/10/30 23:20:47 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -223,6 +223,13 @@ extern void TraceCell(CELL *);
 #define TRACE_CELL(cp) TraceCell(cp)
 #else
 #define TRACE_CELL(cp)		/* nothing */
+#endif
+
+#if OPT_TRACE > 0
+extern void TraceFunc(const char *, CELL *);
+#define TRACE_FUNC(name,cp) TraceFunc(name,cp)
+#else
+#define TRACE_FUNC(name,cp)	/* nothing */
 #endif
 
 #ifdef NO_LEAKS
