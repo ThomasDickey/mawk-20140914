@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.153 2012/10/31 00:36:26 tom Exp $
+-- $MawkId: CHANGES,v 1.154 2012/10/31 08:53:13 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121030
+20121031
+	+ extend --enable-trace configure option to show builtin functions.
 	+ add systime and mktime functions
 	+ when warning about unrecognized options, do not exit with error
 	  on these gawk options:
