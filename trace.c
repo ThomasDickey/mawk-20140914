@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: trace.c,v 1.2 2012/10/30 22:58:41 tom Exp $
+ * $MawkId: trace.c,v 1.3 2012/10/31 00:14:06 tom Exp $
  */
 #include <stdarg.h>
 
@@ -49,11 +49,13 @@ TraceCell(CELL * cp)
 	case C_MBSTRN:
 	case C_STRNUM:
 	case C_STRING:
+	    TRACE(("string "));
 	    if (string(cp)->len) {
-		TRACE(("string '%.*s'\n", (int) string(cp)->len, string(cp)->str));
+		TRACE(("'%.*s'", (int) string(cp)->len, string(cp)->str));
 	    } else {
-		TRACE(("string ''\n"));
+		TRACE(("''"));
 	    }
+	    TRACE((" (%d)\n", string(cp)->ref_cnt));
 	    break;
 	case C_SPACE:
 	    TRACE(("split on space\n"));
@@ -76,6 +78,19 @@ TraceCell(CELL * cp)
 	}
     } else {
 	TRACE(("no cell\n"));
+    }
+}
+
+void
+TraceFunc(const char *name, CELL * sp)
+{
+    int nargs = sp->type;
+    int n;
+
+    TRACE(("** %s <-%p\n", name, sp));
+    for (n = 0; n < nargs; ++n) {
+	TRACE(("...arg%d: ", n));
+	TraceCell(sp + n - nargs);
     }
 }
 
