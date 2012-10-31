@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.11 2012/06/27 18:05:06 tom Exp $
+.\" $MawkId: mawk.1,v 1.12 2012/10/31 01:06:16 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -831,6 +831,49 @@ Returns a copy of
 with all lower case characters converted to upper case.
 .RE
 .PP
+Time functions
+.PP
+These are available on systems which support the corresponding C
+\fBmktime\fP and \fBstrftime\fP functions:
+.RS
+.TP
+mktime(\fIspecification\fR)
+converts a date specification to a timestamp
+with the same units as \fBsystime\fP.
+The date specification is a string containing the components of the
+date as decimal integers:
+.RS
+.TP 3
+YYYY
+the year, e.g., 2012
+.TP 3
+MM
+the month of the year starting at 1
+.TP 3
+DD
+the day of the month starting at 1
+.TP 3
+HH
+hour (0-23)
+.TP 3
+MM
+minute (0-59)
+.TP 3
+SS
+seconds (0-59)
+.TP 3
+DST
+nonzero if 
+.RE
+.TP
+strftime(\fIs\fR)
+XXX
+.TP
+systime()
+returns the current time of day as the number of seconds
+since the Epoch (1970-01-01 00:00:00 UTC on POSIX systems).
+.RE
+.PP
 Arithmetic functions
 .RS
 .PP
@@ -1020,7 +1063,7 @@ Changes made to the
 array are not passed to commands executed with
 .B system
 or pipes.
-.SS \fB10. User defined functions
+.SS "\fB10. User defined functions"
 The syntax for a user defined function is
 .nf
 .sp
@@ -1582,7 +1625,7 @@ Posix explicitly declines to define the behavior which passively
 forces programs that must run under a variety of awks to use
 the more portable but less readable, double escape.
 .PP
-Posix AWK does not recognize "/dev/std{out,err}" or \ex hex escape
+Posix AWK does not recognize "/dev/std{in,out,err}" or \ex hex escape
 sequences in strings.  Unlike ANSI C,
 .B mawk
 limits the number of digits that follows \ex to two as the current
@@ -1603,7 +1646,12 @@ across implementations.
 .PP
 .B Nextfile
 is a \fBgawk\fP extension (also implemented by BWK awk),
-is not part of the posix standard.
+is not part of the posix standard (as of October 2012).
+.PP
+.BR Mktime ,
+.BR strftime \ and
+.BR systime
+are \fBgawk\fP extensions.
 .PP
 Finally, here is how 
 .B mawk
