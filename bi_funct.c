@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.55 2012/10/31 00:26:17 tom Exp $
+ * $MawkId: bi_funct.c,v 1.56 2012/10/31 00:31:30 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -462,12 +462,8 @@ bi_mktime(CELL * sp)
     if (error) {
 	result = -1;
     } else {
-	time_t midnight = 0;
-	struct tm *check = localtime(&midnight);
-
 	my_tm.tm_year -= 1900;
 	my_tm.tm_mon -= 1;
-	my_tm.tm_hour -= (24 - check->tm_hour);
 	result = mktime(&my_tm);
     }
     TRACE(("...bi_mktime(%s) ->%s", sval->str, ctime(&result)));
@@ -531,7 +527,7 @@ bi_strftime(CELL * sp)
 	utc = 0;
     }
 
-    if (utc == 0)
+    if (utc != 0)
 	ptm = gmtime(&rawtime);
     else
 	ptm = localtime(&rawtime);
