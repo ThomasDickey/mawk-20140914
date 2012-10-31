@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.44 2012/10/27 12:32:01 tom Exp $
+dnl $MawkId: configure.in,v 1.45 2012/10/31 00:09:29 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -88,7 +88,14 @@ CF_LARGEFILE
 
 CF_HELP_MESSAGE(Testing-options)
 CF_DISABLE_LEAKS
+
 CF_ENABLE_TRACE
+
+if test "x$with_trace" = xyes
+then
+	EXTRAOBJS="$EXTRAOBJS trace\$o"
+fi
+AC_SUBST(EXTRAOBJS)
 
 CF_MAWK_FIND_SIZE_T
 CF_LOCALE

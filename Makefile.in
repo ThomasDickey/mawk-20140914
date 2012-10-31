@@ -1,4 +1,4 @@
-# $MawkId: Makefile.in,v 1.42 2012/10/27 12:10:13 tom Exp $
+# $MawkId: Makefile.in,v 1.43 2012/10/31 00:07:50 tom Exp $
 # Makefile-template for MAWK
 ###############################################################################
 # copyright 2009-2010,2012 Thomas E. Dickey
@@ -81,7 +81,7 @@ PROG  = mawk$x
 OBJS = parse$o scan$o memory$o main$o hash$o execute$o code$o \
   da$o error$o init$o bi_vars$o cast$o print$o bi_funct$o \
   kw$o jmp$o array$o field$o split$o re_cmpl$o regexp$o zmalloc$o \
-  fin$o files$o scancode$o matherr$o fcall$o version$o
+  fin$o files$o scancode$o matherr$o fcall$o version$o @EXTRAOBJS@
 
 .SUFFIXES: .c .i $o
 
