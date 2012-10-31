@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.64 2012/10/27 12:31:57 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.65 2012/10/31 11:01:18 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -1519,6 +1519,124 @@ define([CF_REMOVE_DEFINE],
 $1=`echo "$2" | \
 	sed	-e 's/-[[UD]]'"$3"'\(=[[^ 	]]*\)\?[[ 	]]/ /g' \
 		-e 's/-[[UD]]'"$3"'\(=[[^ 	]]*\)\?[$]//g'`
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_SRAND version: 11 updated: 2012/10/31 07:00:16
+dnl --------
+dnl Check for functions similar to srand() and rand().  lrand48() and random()
+dnl return a 31-bit value, while rand() returns a value less than RAND_MAX
+dnl which usually is only 16-bits.
+dnl
+dnl On MirOS, use arc4random_push() and arc4random().
+dnl Some systems support an asymmetric variation of this interface.
+dnl
+dnl $1 = optional prefix for resulting shell variables.  The default "my_"
+dnl      gives $my_srand and $my_rand to the caller, as well as MY_RAND_MAX.
+dnl      These are all AC_SUBST'd and AC_DEFINE'd.
+AC_DEFUN([CF_SRAND],[
+AC_CACHE_CHECK(for random-integer functions, cf_cv_srand_func,[
+cf_cv_srand_func=unknown
+for cf_func in arc4random_push/arc4random arc4random_stir/arc4random srandom/random srand48/lrand48 srand/rand
+do
+	CF_SRAND_PARSE($cf_func,cf_srand_func,cf_rand_func)
+
+AC_TRY_LINK([
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#endif
+],[long seed = 1; $cf_srand_func(seed); seed = $cf_rand_func()],
+[cf_cv_srand_func=$cf_func
+ break])
+done
+])
+if test "$cf_cv_srand_func" != unknown ; then
+	AC_CACHE_CHECK(for range of random-integers, cf_cv_rand_max,[
+		case $cf_cv_srand_func in
+		srand/rand)
+			cf_cv_rand_max=RAND_MAX
+			cf_rand_max=16
+			;;
+		*/arc4random)
+			cf_cv_rand_max=0xFFFFFFFFUL
+			cf_rand_max=32
+			;;
+		*)
+			cf_cv_rand_max=INT_MAX
+			cf_rand_max=31
+			;;
+		esac
+		AC_TRY_COMPILE([
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#endif
+		],[long x = $cf_cv_rand_max],,
+		[cf_cv_rand_max="(1L<<$cf_rand_max)-1"])
+	])
+
+	case $cf_cv_srand_func in
+	*/arc4random)
+		AC_MSG_CHECKING(if <bsd/stdlib.h> should be included)
+		AC_TRY_COMPILE([#include <bsd/stdlib.h>],
+					   [void *arc4random(int);
+						void *x = arc4random(1)],
+					   [cf_bsd_stdlib_h=no],
+					   [AC_TRY_COMPILE([#include <bsd/stdlib.h>],
+									   [unsigned x = arc4random()],
+									   [cf_bsd_stdlib_h=yes],
+									   [cf_bsd_stdlib_h=no])])
+	    AC_MSG_RESULT($cf_bsd_stdlib_h)
+		if test "$cf_bsd_stdlib_h" = yes
+		then
+			AC_DEFINE(HAVE_BSD_STDLIB_H,1,[Define to 1 if bsd/stdlib.h header should be used])
+		else
+			AC_MSG_CHECKING(if <bsd/random.h> should be included)
+			AC_TRY_COMPILE([#include <bsd/random.h>],
+						   [void *arc4random(int);
+							void *x = arc4random(1)],
+						   [cf_bsd_random_h=no],
+						   [AC_TRY_COMPILE([#include <bsd/random.h>],
+										   [unsigned x = arc4random()],
+										   [cf_bsd_random_h=yes],
+										   [cf_bsd_random_h=no])])
+			AC_MSG_RESULT($cf_bsd_random_h)
+			if test "$cf_bsd_random_h" = yes
+			then
+				AC_DEFINE(HAVE_BSD_RANDOM_H,1,[Define to 1 if bsd/random.h header should be used])
+			else
+				AC_MSG_WARN(no header file found for arc4random)
+			fi
+		fi
+		;;
+	esac
+
+	CF_SRAND_PARSE($cf_func,cf_srand_func,cf_rand_func)
+
+	CF_UPPER(cf_rand_max,ifelse($1,,my_,$1)rand_max)
+	AC_DEFINE_UNQUOTED(ifelse($1,,my_,$1)srand,$cf_srand_func,[Define to the name for the srand function])
+	AC_DEFINE_UNQUOTED(ifelse($1,,my_,$1)rand, $cf_rand_func,[Define to the name for the rand function])
+	AC_DEFINE_UNQUOTED([$]cf_rand_max, $cf_cv_rand_max,[Define to the name for the RAND_MAX constant])
+fi
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_SRAND_PARSE version: 1 updated: 2007/04/22 12:01:07
+dnl --------------
+dnl Parse the loop variable for CF_SRAND, with a workaround for asymmetric
+dnl variations.
+define([CF_SRAND_PARSE],[
+	$2=`echo $1 | sed -e 's%/.*%%'`
+	$3=`echo $1 | sed -e 's%.*/%%'`
+
+	case [$]$2 in #(vi
+	arc4random_stir)
+		$2='(void)'
+		;;
+	esac
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_TRY_XOPEN_SOURCE version: 1 updated: 2011/10/30 17:09:50
