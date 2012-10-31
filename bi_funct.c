@@ -1,6 +1,6 @@
 /********************************************
 bi_funct.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.54 2012/10/27 15:13:26 tom Exp $
+ * $MawkId: bi_funct.c,v 1.55 2012/10/31 00:26:17 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -77,6 +77,14 @@ the GNU General Public License, version 2, 1991.
 #include <ctype.h>
 #include <math.h>
 #include <time.h>
+
+#if OPT_TRACE > 0
+#define return_CELL(func, cell) TRACE(("..." func " ->")); \
+				TRACE_CELL(cell); \
+				return cell
+#else
+#define return_CELL(func, cell) return cell
+#endif
 
 /* global for the disassembler */
 /* *INDENT-OFF* */
@@ -152,6 +160,8 @@ bi_length(CELL * sp)
 {
     size_t len;
 
+    TRACE_FUNC("bi_length", sp);
+
     if (sp->type == 0)
 	cellcpy(sp, field);
     else
@@ -165,7 +175,7 @@ bi_length(CELL * sp)
     sp->type = C_DOUBLE;
     sp->dval = (double) len;
 
-    return sp;
+    return_CELL("bi_length", sp);
 }
 
 char *
@@ -219,6 +229,8 @@ bi_index(CELL * sp)
     size_t len;
     const char *p;
 
+    TRACE_FUNC("bi_index", sp);
+
     sp--;
     if (TEST2(sp) != TWO_STRINGS)
 	cast2_to_s(sp);
@@ -238,7 +250,7 @@ bi_index(CELL * sp)
     free_STRING(string(sp + 1));
     sp->type = C_DOUBLE;
     sp->dval = (double) idx;
-    return sp;
+    return_CELL("bi_index", sp);
 }
 
 /*  substr(s, i, n)
@@ -251,6 +263,8 @@ bi_substr(CELL * sp)
     int n_args, len;
     register int i, n;
     STRING *sval;		/* substr(sval->str, i, n) */
+
+    TRACE_FUNC("bi_substr", sp);
 
     n_args = sp->type;
     sp -= n_args;
@@ -265,7 +279,7 @@ bi_substr(CELL * sp)
 	    cell_destroy(sp + 2);
 	}
 	cell_destroy(sp + 1);
-	return sp;
+	return_CELL("bi_substr", sp);
     }
 
     if (n_args == 2) {
@@ -301,7 +315,7 @@ bi_substr(CELL * sp)
     }
 
     free_STRING(sval);
-    return sp;
+    return_CELL("bi_substr", sp);
 }
 
 /*
@@ -314,6 +328,8 @@ bi_match(CELL * sp)
 {
     char *p;
     size_t length;
+
+    TRACE_FUNC("bi_match", sp);
 
     if (sp->type != C_RE)
 	cast_to_RE(sp);
@@ -340,7 +356,7 @@ bi_match(CELL * sp)
 
     RSTART->dval = sp->dval;
 
-    return sp;
+    return_CELL("bi_match", sp);
 }
 
 CELL *
@@ -348,6 +364,8 @@ bi_toupper(CELL * sp)
 {
     STRING *old;
     register char *p, *q;
+
+    TRACE_FUNC("bi_toupper", sp);
 
     if (sp->type != C_STRING)
 	cast1_to_s(sp);
@@ -362,7 +380,7 @@ bi_toupper(CELL * sp)
 	q++;
     }
     free_STRING(old);
-    return sp;
+    return_CELL("bi_toupper", sp);
 }
 
 CELL *
@@ -370,6 +388,8 @@ bi_tolower(CELL * sp)
 {
     STRING *old;
     register char *p, *q;
+
+    TRACE_FUNC("bi_tolower", sp);
 
     if (sp->type != C_STRING)
 	cast1_to_s(sp);
@@ -384,7 +404,7 @@ bi_tolower(CELL * sp)
 	q++;
     }
     free_STRING(old);
-    return sp;
+    return_CELL("bi_tolower", sp);
 }
 
 /*
@@ -396,9 +416,12 @@ bi_systime(CELL * sp)
     time_t result;
     time(&result);
 
+    TRACE_FUNC("bi_systime", sp);
+
+    sp++;
     sp->type = C_DOUBLE;
     sp->dval = (double) result;
-    return sp;
+    return_CELL("bi_systime", sp);
 }
 
 #ifdef HAVE_MKTIME
@@ -414,6 +437,8 @@ bi_mktime(CELL * sp)
     struct tm my_tm;
     STRING *sval = string(sp);
     int error = 0;
+
+    TRACE_FUNC("bi_mktime", sp);
 
     memset(&my_tm, 0, sizeof(my_tm));
     switch (sscanf(sval->str, "%d %d %d %d %d %d %d",
@@ -445,12 +470,12 @@ bi_mktime(CELL * sp)
 	my_tm.tm_hour -= (24 - check->tm_hour);
 	result = mktime(&my_tm);
     }
-    TRACE(("bi_mktime(%s) ->%s", sval->str, ctime(&result)));
+    TRACE(("...bi_mktime(%s) ->%s", sval->str, ctime(&result)));
 
     cell_destroy(sp);
     sp->type = C_DOUBLE;
     sp->dval = (double) result;
-    return sp;
+    return_CELL("bi_mktime", sp);
 }
 #endif
 
@@ -472,6 +497,8 @@ bi_strftime(CELL * sp)
     STRING *sval = 0;		/* strftime(sval->str, timestamp, utc) */
     char buff[128];
     size_t result;
+
+    TRACE_FUNC("bi_strftime", sp);
 
     n_args = sp->type;
     sp -= n_args;
@@ -510,6 +537,17 @@ bi_strftime(CELL * sp)
 	ptm = localtime(&rawtime);
 
     result = strftime(buff, sizeof(buff) / sizeof(buff[0]), format, ptm);
+    TRACE(("...bi_strftime (%s, \"%d.%d.%d %d.%d.%d %d\", %d) ->%s\n",
+	   format,
+	   ptm->tm_year,
+	   ptm->tm_mon,
+	   ptm->tm_mday,
+	   ptm->tm_hour,
+	   ptm->tm_min,
+	   ptm->tm_sec,
+	   ptm->tm_isdst,
+	   utc,
+	   buff));
 
     if (sval)
 	free_STRING(sval);
@@ -520,7 +558,7 @@ bi_strftime(CELL * sp)
 	n_args--;
 	cell_destroy(sp + n_args);
     }
-    return sp;
+    return_CELL("bi_strftime", sp);
 }
 #endif /* HAVE_STRFTIME */
 
@@ -542,137 +580,162 @@ fplib_err(
 CELL *
 bi_sin(CELL * sp)
 {
+    TRACE_FUNC("bi_sin", sp);
+
 #if ! STDC_MATHERR
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = sin(sp->dval);
 #else
-    double x;
+    {
+	double x;
 
-    errno = 0;
-    if (sp->type != C_DOUBLE)
-	cast1_to_d(sp);
-    x = sp->dval;
-    sp->dval = sin(sp->dval);
-    if (errno)
-	fplib_err("sin", x, "loss of precision");
+	errno = 0;
+	if (sp->type != C_DOUBLE)
+	    cast1_to_d(sp);
+	x = sp->dval;
+	sp->dval = sin(sp->dval);
+	if (errno)
+	    fplib_err("sin", x, "loss of precision");
+    }
 #endif
-    return sp;
+    return_CELL("bi_sin", sp);
 }
 
 CELL *
 bi_cos(CELL * sp)
 {
+    TRACE_FUNC("bi_cos", sp);
+
 #if ! STDC_MATHERR
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = cos(sp->dval);
 #else
-    double x;
+    {
+	double x;
 
-    errno = 0;
-    if (sp->type != C_DOUBLE)
-	cast1_to_d(sp);
-    x = sp->dval;
-    sp->dval = cos(sp->dval);
-    if (errno)
-	fplib_err("cos", x, "loss of precision");
+	errno = 0;
+	if (sp->type != C_DOUBLE)
+	    cast1_to_d(sp);
+	x = sp->dval;
+	sp->dval = cos(sp->dval);
+	if (errno)
+	    fplib_err("cos", x, "loss of precision");
+    }
 #endif
-    return sp;
+    return_CELL("bi_cos", sp);
 }
 
 CELL *
 bi_atan2(CELL * sp)
 {
+    TRACE_FUNC("bi_atan2", sp);
+
 #if  !	STDC_MATHERR
     sp--;
     if (TEST2(sp) != TWO_DOUBLES)
 	cast2_to_d(sp);
     sp->dval = atan2(sp->dval, (sp + 1)->dval);
 #else
-
-    errno = 0;
-    sp--;
-    if (TEST2(sp) != TWO_DOUBLES)
-	cast2_to_d(sp);
-    sp->dval = atan2(sp->dval, (sp + 1)->dval);
-    if (errno)
-	rt_error("atan2(0,0) : domain error");
+    {
+	errno = 0;
+	sp--;
+	if (TEST2(sp) != TWO_DOUBLES)
+	    cast2_to_d(sp);
+	sp->dval = atan2(sp->dval, (sp + 1)->dval);
+	if (errno)
+	    rt_error("atan2(0,0) : domain error");
+    }
 #endif
-    return sp;
+    return_CELL("bi_atan2", sp);
 }
 
 CELL *
 bi_log(CELL * sp)
 {
+    TRACE_FUNC("bi_log", sp);
+
 #if ! STDC_MATHERR
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = log(sp->dval);
 #else
-    double x;
+    {
+	double x;
 
-    errno = 0;
-    if (sp->type != C_DOUBLE)
-	cast1_to_d(sp);
-    x = sp->dval;
-    sp->dval = log(sp->dval);
-    if (errno)
-	fplib_err("log", x, "domain error");
+	errno = 0;
+	if (sp->type != C_DOUBLE)
+	    cast1_to_d(sp);
+	x = sp->dval;
+	sp->dval = log(sp->dval);
+	if (errno)
+	    fplib_err("log", x, "domain error");
+    }
 #endif
-    return sp;
+    return_CELL("bi_log", sp);
 }
 
 CELL *
 bi_exp(CELL * sp)
 {
+    TRACE_FUNC("bi_exp", sp);
+
 #if  ! STDC_MATHERR
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = exp(sp->dval);
 #else
-    double x;
+    {
+	double x;
 
-    errno = 0;
-    if (sp->type != C_DOUBLE)
-	cast1_to_d(sp);
-    x = sp->dval;
-    sp->dval = exp(sp->dval);
-    if (errno && sp->dval)
-	fplib_err("exp", x, "overflow");
-    /* on underflow sp->dval==0, ignore */
+	errno = 0;
+	if (sp->type != C_DOUBLE)
+	    cast1_to_d(sp);
+	x = sp->dval;
+	sp->dval = exp(sp->dval);
+	if (errno && sp->dval)
+	    fplib_err("exp", x, "overflow");
+	/* on underflow sp->dval==0, ignore */
+    }
 #endif
-    return sp;
+    return_CELL("bi_exp", sp);
 }
 
 CELL *
 bi_int(CELL * sp)
 {
+    TRACE_FUNC("bi_int", sp);
+
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = sp->dval >= 0.0 ? floor(sp->dval) : ceil(sp->dval);
-    return sp;
+    return_CELL("bi_int", sp);
 }
 
 CELL *
 bi_sqrt(CELL * sp)
 {
+    TRACE_FUNC("bi_sqrt", sp);
+
 #if  ! STDC_MATHERR
     if (sp->type != C_DOUBLE)
 	cast1_to_d(sp);
     sp->dval = sqrt(sp->dval);
 #else
-    double x;
+    {
+	double x;
 
-    errno = 0;
-    if (sp->type != C_DOUBLE)
-	cast1_to_d(sp);
-    x = sp->dval;
-    sp->dval = sqrt(sp->dval);
-    if (errno)
-	fplib_err("sqrt", x, "domain error");
+	errno = 0;
+	if (sp->type != C_DOUBLE)
+	    cast1_to_d(sp);
+	x = sp->dval;
+	sp->dval = sqrt(sp->dval);
+	if (errno)
+	    fplib_err("sqrt", x, "domain error");
+    }
 #endif
-    return sp;
+    return_CELL("bi_sqrt", sp);
 }
 
 /* For portability, we'll use our own random number generator , taken
@@ -705,6 +768,8 @@ CELL *
 bi_srand(CELL * sp)
 {
     CELL c;
+
+    TRACE_FUNC("bi_srand", sp);
 
     if (sp->type == 0)		/* seed off clock */
     {
@@ -740,18 +805,22 @@ bi_srand(CELL * sp)
        first result  */
     crank(seed);
 
-    return sp;
+    return_CELL("bi_srand", sp);
 }
 
 CELL *
 bi_rand(CELL * sp)
 {
+    TRACE_FUNC("bi_rand", sp);
+
     crank(seed);
     sp++;
     sp->type = C_DOUBLE;
     sp->dval = (double) seed / (double) M;
-    return sp;
+
+    return_CELL("bi_rand", sp);
 }
+
 #undef	 A
 #undef	 M
 #undef   MX
@@ -770,19 +839,24 @@ bi_close(CELL * sp)
 {
     int x;
 
+    TRACE_FUNC("bi_close", sp);
+
     if (sp->type < C_STRING)
 	cast1_to_s(sp);
     x = file_close((STRING *) sp->ptr);
     free_STRING(string(sp));
     sp->type = C_DOUBLE;
     sp->dval = (double) x;
-    return sp;
+
+    return_CELL("bi_close", sp);
 }
 
 CELL *
 bi_fflush(CELL * sp)
 {
     int ret = 0;
+
+    TRACE_FUNC("bi_fflush", sp);
 
     if (sp->type == 0)
 	fflush(stdout);
@@ -796,7 +870,8 @@ bi_fflush(CELL * sp)
 
     sp->type = C_DOUBLE;
     sp->dval = (double) ret;
-    return sp;
+
+    return_CELL("bi_fflush", sp);
 }
 
 CELL *
@@ -805,6 +880,8 @@ bi_system(CELL * sp GCC_UNUSED)
 #ifdef HAVE_REAL_PIPES
     int pid;
     unsigned ret_val;
+
+    TRACE_FUNC("bi_system", sp);
 
     if (sp->type < C_STRING)
 	cast1_to_s(sp);
@@ -832,7 +909,6 @@ bi_system(CELL * sp GCC_UNUSED)
     cell_destroy(sp);
     sp->type = C_DOUBLE;
     sp->dval = (double) ret_val;
-    return sp;
 #elif defined(MSDOS)
     int retval;
 
@@ -842,10 +918,10 @@ bi_system(CELL * sp GCC_UNUSED)
     free_STRING(string(sp));
     sp->type = C_DOUBLE;
     sp->dval = (double) retval;
-    return sp;
 #else
-    return 0;
+    sp = 0;
 #endif
+    return_CELL("bi_system", sp);
 }
 
 /*  getline()  */
@@ -864,6 +940,8 @@ bi_getline(CELL * sp)
     char *p = 0;
     size_t len;
     FIN *fin_p;
+
+    TRACE_FUNC("bi_getline", sp);
 
     switch (sp->type) {
     case 0:
@@ -949,8 +1027,10 @@ bi_getline(CELL * sp)
   eof:
     sp->dval = 0.0;		/* fall thru to done  */
 
-  done:sp->type = C_DOUBLE;
-    return sp;
+  done:
+    sp->type = C_DOUBLE;
+
+    return_CELL("bi_getline", sp);
 }
 
 /**********************************************
@@ -970,6 +1050,8 @@ bi_sub(CELL * sp)
     CELL sc;			/* copy of the target CELL */
     char *front, *middle, *back;	/* pieces */
     size_t front_len, middle_len, back_len;
+
+    TRACE_FUNC("bi_sub", sp);
 
     sp -= 2;
     if (sp->type != C_RE)
@@ -1024,7 +1106,8 @@ bi_sub(CELL * sp)
     repl_destroy(sp + 1);
     sp->type = C_DOUBLE;
     sp->dval = middle != (char *) 0 ? 1.0 : 0.0;
-    return sp;
+
+    return_CELL("bi_sub", sp);
 }
 
 typedef enum {
@@ -1337,6 +1420,8 @@ bi_gsub(CELL * sp)
     size_t stack_needs;
     int level = 0;
 
+    TRACE_FUNC("bi_gsub", sp);
+
     sp -= 2;
     if (sp->type != C_RE)
 	cast_to_RE(sp);
@@ -1411,5 +1496,6 @@ bi_gsub(CELL * sp)
 
     sp->type = C_DOUBLE;
     sp->dval = (double) repl_cnt;
-    return sp;
+
+    return_CELL("bi_gsub", sp);
 }
