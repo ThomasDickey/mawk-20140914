@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.154 2012/10/31 08:53:13 tom Exp $
+-- $MawkId: CHANGES,v 1.155 2012/10/31 10:51:47 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20121031
+	+ add configure option --enable-builtin-srand, use that to deprecate
+	  mawk's builtin srand/rand functions which generally are not as good
+	  as the system-provided functions (Debian #63843).
 	+ extend --enable-trace configure option to show builtin functions.
 	+ add systime and mktime functions
 	+ when warning about unrecognized options, do not exit with error
