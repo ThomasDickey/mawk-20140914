@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.56 2012/10/31 00:31:30 tom Exp $
+ * $MawkId: bi_funct.c,v 1.57 2012/10/31 22:43:11 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -141,13 +141,15 @@ bi_funct_init(void)
 	stp->stval.bip = p;
     }
 
+#ifndef mawk_srand
     /* seed rand() off the clock */
     {
 	CELL c;
 
-	c.type = 0;
+	c.type = C_NOINIT;
 	bi_srand(&c);
     }
+#endif
 
 }
 
@@ -734,6 +736,9 @@ bi_sqrt(CELL * sp)
     return_CELL("bi_sqrt", sp);
 }
 
+#if defined(mawk_srand) || defined(mawk_rand)
+#define USE_SYSTEM_SRAND
+#else
 /* For portability, we'll use our own random number generator , taken
    from:  Park, SK and Miller KW, "Random Number Generators:
    Good Ones are Hard to Find", CACM, 31, 1192-1201, 1988.
@@ -758,16 +763,25 @@ static CELL cseed;		/* argument of last call to srand() */
 			  if ( t >= M ) t = (t+M)&M ;\
 			  s = (long) t ;\
 			}
-#endif
+#endif /* M == MAX__LONG */
+#endif /* defined(mawk_srand) || defined(mawk_rand) */
 
 CELL *
 bi_srand(CELL * sp)
 {
+#ifdef USE_SYSTEM_SRAND
+    static long seed = 1;
+    static CELL cseed =
+    {
+	C_DOUBLE, 0, 0, 1.0
+    };
+#endif
+
     CELL c;
 
     TRACE_FUNC("bi_srand", sp);
 
-    if (sp->type == 0)		/* seed off clock */
+    if (sp->type == C_NOINIT)	/* seed off clock */
     {
 	time_t secs = time((time_t *) 0);
 	cellcpy(sp, &cseed);
@@ -782,6 +796,10 @@ bi_srand(CELL * sp)
 	cseed = c;
     }
 
+#ifdef USE_SYSTEM_SRAND
+    seed = d_to_i(cseed.dval);
+    mawk_srand(seed);
+#else
     /* The old seed is now in *sp ; move the value in cseed to
        seed in range [1,M) */
 
@@ -800,6 +818,7 @@ bi_srand(CELL * sp)
     /* crank it once so close seeds don't give a close
        first result  */
     crank(seed);
+#endif
 
     return_CELL("bi_srand", sp);
 }
@@ -809,10 +828,16 @@ bi_rand(CELL * sp)
 {
     TRACE_FUNC("bi_rand", sp);
 
+#ifdef USE_SYSTEM_SRAND
+    sp++;
+    sp->type = C_DOUBLE;
+    sp->dval = ((double) mawk_rand()) / RAND_MAX;
+#else
     crank(seed);
     sp++;
     sp->type = C_DOUBLE;
     sp->dval = (double) seed / (double) M;
+#endif
 
     return_CELL("bi_rand", sp);
 }
