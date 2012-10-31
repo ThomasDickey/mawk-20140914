@@ -1,6 +1,6 @@
 /********************************************
 print.c
-copyright 2008-2009,2010.  Thomas E. Dickey
+copyright 2008-2010,2012.  Thomas E. Dickey
 copyright 1991-1995,1996.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.22 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: print.c,v 1.23 2012/10/31 00:15:55 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -754,6 +754,8 @@ bi_printf(CELL * sp)
     register CELL *p;
     FILE *fp;
 
+    TRACE_FUNC("bi_printf", sp);
+
     k = sp->type;
     if (k < 0) {
 	/* k has redirection */
@@ -786,6 +788,8 @@ bi_sprintf(CELL * sp)
     CELL *p;
     int argcnt = sp->type;
     STRING *sval;
+
+    TRACE_FUNC("bi_sprintf", sp);
 
     sp -= argcnt;		/* sp points at the format string */
     argcnt--;
