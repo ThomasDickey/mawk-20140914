@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.45 2012/10/31 00:09:29 tom Exp $
+dnl $MawkId: configure.in,v 1.46 2012/10/31 20:45:28 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -64,6 +64,7 @@ CF_HELP_MESSAGE(Miscellaneous options)
 CF_DISABLE_ECHO
 CF_ENABLE_WARNINGS
 
+###############################################################################
 AC_MSG_CHECKING(if you want to use mawk's own regular-expressions engine)
 AC_ARG_WITH([builtin-regex],
 [  --with-builtin-regex    use mawk's own regular-expressions engine],
@@ -79,6 +80,23 @@ AC_MSG_RESULT($with_builtin_regex)
 if test "x${with_builtin_regex}" = xno; then
     CF_REGEX
 fi
+
+###############################################################################
+AC_MSG_CHECKING(if you want to use mawk's own srand/rand functions)
+CF_ARG_ENABLE([builtin-srand],
+[  --enable-builtin-srand  use mawk's own srand/rand functions],
+	[with_builtin_srand=yes],
+	[with_builtin_srand=no])
+if test "x${with_builtin_srand}" != xno; then
+	with_builtin_srand=yes
+    CFLAGS="$CFLAGS -DLOCAL_SRAND"
+fi
+AC_MSG_RESULT($with_builtin_srand)
+
+if test "x${with_builtin_srand}" = xno; then
+    CF_SRAND(mawk_)
+fi
+###############################################################################
 
 AC_PROG_YACC
 CF_PROG_LINT
