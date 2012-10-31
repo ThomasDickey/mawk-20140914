@@ -1,5 +1,6 @@
-mawk-cur (1.3.4-20121027) unstable; urgency=low
+mawk-cur (1.3.4-20121030) unstable; urgency=low
 
+  * add strftime and related functions
   * fix bug in "/dev/stdin" change
   * improved configure script
 
