@@ -176,8 +176,8 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
 
        To evaluate, _e_x_p_r1 rreell--oopp _e_x_p_r2, if both operands are numeric or number
        and string then the comparison is numeric; if both operands are  string
-       the  comparison  is  string;  if  one operand is string, the non-string
-       operand is converted and the  comparison  is  string.   The  result  is
+       the  comparison is string; if one operand is string, the non-string op-
+       erand is converted  and  the  comparison  is  string.   The  result  is
        numeric, 1 or 0.
 
        In boolean contexts such as, iiff ( _e_x_p_r ) _s_t_a_t_e_m_e_n_t, a string expression
@@ -327,8 +327,8 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
               _f_i_e_l_d               $
 
        Assignment, conditional and exponentiation associate right to left; the
-       other operators  associate  left  to  right.   Any  expression  can  be
-       parenthesized.
+       other operators associate left to right.  Any expression can be  paren-
+       thesized.
 
    66.. AArrrraayyss
        Awk  provides  one-dimensional arrays.  Array elements are expressed as
@@ -454,6 +454,62 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
               toupper(_s)
                      Returns  a  copy of _s with all lower case characters con-
                      verted to upper case.
+
+       Time functions
+
+       These are available on systems which support the corresponding C mmkkttiimmee
+       and ssttrrffttiimmee functions:
+
+              mktime(_s_p_e_c_i_f_i_c_a_t_i_o_n)
+                     converts  a  date  specification  to a timestamp with the
+                     same units as  ssyyssttiimmee.   The  date  specification  is  a
+                     string  containing  the components of the date as decimal
+                     integers:
+
+                     YYYY
+                        the year, e.g., 2012
+
+                     MM the month of the year starting at 1
+
+                     DD the day of the month starting at 1
+
+                     HH hour (0-23)
+
+                     MM minute (0-59)
+
+                     SS seconds (0-59)
+
+                     DST
+                        tells how to treat timezone  versus  daylight  savings
+                        time:
+
+                        positive
+                           DST is in effect
+
+                        zero (default)
+                           DST is not in effect
+
+                        negative
+                           mktime()  should (use timezone information and sys-
+                           tem databases to) attempt  to determine whether DST
+                           is in effect at the specified time.
+
+              strftime([_f_o_r_m_a_t [, _t_i_m_e_s_t_a_m_p [, _u_t_c ]]])
+                     formats  the  given timestamp using the format (passed to
+                     the C ssttrrffttiimmee function):
+
+                     +o   If the _f_o_r_m_a_t parameter is missing, "%c" is used.
+
+                     +o   If the _t_i_m_e_s_t_a_m_p parameter is  missing,  the  current
+                         value from ssyyssttiimmee is used.
+
+                     +o   If  the  _u_t_c  parameter  is  present and nonzero, the
+                         result is in UTC.  Otherwise local time is used.
+
+              systime()
+                     returns the current time of day as the number of  seconds
+                     since  the  Epoch  (1970-01-01 00:00:00 UTC on POSIX sys-
+                     tems).
 
        Arithmetic functions
 
@@ -640,25 +696,25 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
               For example, if a file is "a b\nc\n\n", RRSS = "\n\n+"  and  FFSS  =
               " ",  then  there  is one record "a b\nc" with three fields "a",
               "b" and "c".  Changing FFSS = "\n", gives two  fields  "a  b"  and
-              "c";  changing FFSS = "", gives one field identical to the record.
+              "c"; changing FFSS = "", gives one field identical to the record.
 
-       If you want lines with spaces or tabs to be considered blank, set RRSS  =
-       "\n([ \t]*\n)+".   For  compatibility  with other awks, setting RRSS = ""
-       has the same effect as if blank lines are stripped from the  front  and
-       back  of  files  and  then  records  are determined as if RRSS = "\n\n+".
-       Posix requires that "\n" always separates records when RRSS = ""  regard-
-       less  of  the  value  of  FFSS.   mmaawwkk  does not support this convention,
+       If  you want lines with spaces or tabs to be considered blank, set RRSS =
+       "\n([ \t]*\n)+".  For compatibility with other awks, setting  RRSS  =  ""
+       has  the  same effect as if blank lines are stripped from the front and
+       back of files and then records are  determined  as  if  RRSS  =  "\n\n+".
+       Posix  requires that "\n" always separates records when RRSS = "" regard-
+       less of the value of  FFSS.   mmaawwkk  does  not  support  this  convention,
        because defining "\n" as <SPACE> makes it unnecessary.
 
-       Most of the time when you change RRSS for multi-line  records,  you  will
+       Most  of  the  time when you change RRSS for multi-line records, you will
        also want to change OORRSS to "\n\n" so the record spacing is preserved on
        output.
 
    1133.. PPrrooggrraamm eexxeeccuuttiioonn
-       This section describes the order of program execution.  First  AARRGGCC  is
-       set  to the total number of command line arguments passed to the execu-
-       tion phase of the program.  AARRGGVV[[00]] is set the name of the  AWK  inter-
-       preter  and  AARRGGVV[[11]] ...  AARRGGVV[[AARRGGCC--11]] holds the remaining command line
+       This  section  describes the order of program execution.  First AARRGGCC is
+       set to the total number of command line arguments passed to the  execu-
+       tion  phase  of the program.  AARRGGVV[[00]] is set the name of the AWK inter-
+       preter and AARRGGVV[[11]] ...  AARRGGVV[[AARRGGCC--11]] holds the remaining  command  line
        arguments exclusive of options and program source.  For example with
 
             mawk  -f  prog  v=1  A  t=hello  B
@@ -666,39 +722,39 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
        AARRGGCC = 5 with AARRGGVV[[00]] = "mawk", AARRGGVV[[11]] = "v=1", AARRGGVV[[22]] = "A", AARRGGVV[[33]]
        = "t=hello" and AARRGGVV[[44]] = "B".
 
-       Next,  each  BBEEGGIINN block is executed in order.  If the program consists
-       entirely of BBEEGGIINN blocks, then  execution  terminates,  else  an  input
-       stream  is opened and execution continues.  If AARRGGCC equals 1, the input
-       stream is set to stdin, else  the command line  arguments  AARRGGVV[[11]]  ...
+       Next, each BBEEGGIINN block is executed in order.  If the  program  consists
+       entirely  of  BBEEGGIINN  blocks,  then  execution terminates, else an input
+       stream is opened and execution continues.  If AARRGGCC equals 1, the  input
+       stream  is  set  to stdin, else  the command line arguments AARRGGVV[[11]] ...
        AARRGGVV[[AARRGGCC--11]] are examined for a file argument.
 
-       The  command  line  arguments  divide  into three sets: file arguments,
-       assignment arguments and empty strings "".  An assignment has the  form
-       _v_a_r=_s_t_r_i_n_g.   When  an AARRGGVV[[ii]] is examined as a possible file argument,
-       if it is empty it is skipped; if it  is  an  assignment  argument,  the
-       assignment  to  _v_a_r  takes place and ii skips to the next argument; else
+       The command line arguments divide  into  three  sets:  file  arguments,
+       assignment  arguments and empty strings "".  An assignment has the form
+       _v_a_r=_s_t_r_i_n_g.  When an AARRGGVV[[ii]] is examined as a possible  file  argument,
+       if  it  is  empty  it  is skipped; if it is an assignment argument, the
+       assignment to _v_a_r takes place and ii skips to the  next  argument;  else
        AARRGGVV[[ii]] is opened for input.  If it fails to open, execution terminates
        with exit code 2.  If no command line argument is a file argument, then
        input comes from stdin.  Getline in a BBEEGGIINN action opens input.  "-" as
        a file argument denotes stdin.
 
-       Once  an input stream is open, each input record is tested against each
-       _p_a_t_t_e_r_n, and if it matches, the  associated  _a_c_t_i_o_n  is  executed.   An
-       expression  pattern  matches if it is boolean true (see the end of sec-
-       tion 2).  A BBEEGGIINN pattern matches before any input has been  read,  and
+       Once an input stream is open, each input record is tested against  each
+       _p_a_t_t_e_r_n,  and  if  it  matches,  the associated _a_c_t_i_o_n is executed.  An
+       expression pattern matches if it is boolean true (see the end  of  sec-
+       tion  2).   A BBEEGGIINN pattern matches before any input has been read, and
        an EENNDD pattern matches after all input has been read.  A range pattern,
-       _e_x_p_r1,_e_x_p_r2 , matches every record between the match of _e_x_p_r1  and  the
+       _e_x_p_r1,_e_x_p_r2  ,  matches every record between the match of _e_x_p_r1 and the
        match _e_x_p_r2 inclusively.
 
        When end of file occurs on the input stream, the remaining command line
-       arguments are examined for a file argument, and if there is one  it  is
-       opened,  else the EENNDD _p_a_t_t_e_r_n is considered matched and all EENNDD _a_c_t_i_o_n_s
+       arguments  are  examined for a file argument, and if there is one it is
+       opened, else the EENNDD _p_a_t_t_e_r_n is considered matched and all EENNDD  _a_c_t_i_o_n_s
        are executed.
 
-       In the example, the assignment v=1 takes place after the BBEEGGIINN  _a_c_t_i_o_n_s
-       are  executed,  and  the  data  placed in v is typed number and string.
-       Input is then read from file A.  On end of file A,  t  is  set  to  the
-       string  "hello",  and B is opened for input.  On end of file B, the EENNDD
+       In  the example, the assignment v=1 takes place after the BBEEGGIINN _a_c_t_i_o_n_s
+       are executed, and the data placed in v  is  typed  number  and  string.
+       Input  is  then  read  from  file A.  On end of file A, t is set to the
+       string "hello", and B is opened for input.  On end of file B,  the  EENNDD
        _a_c_t_i_o_n_s are executed.
 
        Program flow at the _p_a_t_t_e_r_n _{_a_c_t_i_o_n_} level can be changed with the
@@ -709,16 +765,16 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
 
        statements:
 
-       +o   A nneexxtt statement causes the next input record to be read  and  pat-
+       +o   A  nneexxtt  statement causes the next input record to be read and pat-
            tern testing to restart with the first _p_a_t_t_e_r_n _{_a_c_t_i_o_n_} pair in the
            program.
 
-       +o   A nneexxttffiillee statement tells mawk  to  stop  processing  the  current
-           input  file.   It  then updates FILENAME to the next file listed on
+       +o   A  nneexxttffiillee  statement  tells  mawk  to stop processing the current
+           input file.  It then updates FILENAME to the next  file  listed  on
            the command line, and resets FNR to 1.
 
-       +o   An eexxiitt statement causes immediate execution of the EENNDD actions  or
-           program  termination  if there are none or if the eexxiitt occurs in an
+       +o   An  eexxiitt statement causes immediate execution of the EENNDD actions or
+           program termination if there are none or if the eexxiitt occurs  in  an
            EENNDD action.  The _o_p_t___e_x_p_r sets the exit value of the program unless
            overridden by a later eexxiitt or subsequent error.
 
@@ -777,8 +833,8 @@ EEXXAAMMPPLLEESS
 
 
 CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
-       The  Posix  1003.2(draft 11.3) definition of the AWK language is AWK as
-       described in the AWK book with a few extensions that appeared  in  Sys-
+       The Posix 1003.2(draft 11.3) definition of the AWK language is  AWK  as
+       described  in  the AWK book with a few extensions that appeared in Sys-
        temVR4 nawk. The extensions are:
 
           +o   New functions: toupper() and tolower().
@@ -787,37 +843,37 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
 
           +o   ANSI C conversion specifications for printf() and sprintf().
 
-          +o   New  command  options:   -v  var=value,  multiple -f options and
+          +o   New command options:  -v  var=value,  multiple  -f  options  and
               implementation options as arguments to -W.
 
-          +o   For systems (MS-DOS or Windows) which provide  a  _s_e_t_m_o_d_e  func-
-              tion,  an  environment variable MAWKBINMODE and a built-in vari-
-              able BINMODE.  The bits of the BINMODE value tell  _m_a_w_k  how  to
+          +o   For  systems  (MS-DOS  or Windows) which provide a _s_e_t_m_o_d_e func-
+              tion, an environment variable MAWKBINMODE and a  built-in  vari-
+              able  BINMODE.   The  bits of the BINMODE value tell _m_a_w_k how to
               modify the RRSS and OORRSS variables:
 
-             0  set  standard input to binary mode, and if BIT-2 is unset, set
+             0  set standard input to binary mode, and if BIT-2 is unset,  set
                 RRSS to "\r\n" (CR/LF) rather than "\n" (LF).
 
              1  set standard output to binary mode, and if BIT-2 is unset, set
                 OORRSS to "\r\n" (CR/LF) rather than "\n" (LF).
 
              2  suppress the assignment to RRSS and OORRSS of CR/LF, making it pos-
-                sible to run scripts and generate output compatible with  Unix
+                sible  to run scripts and generate output compatible with Unix
                 line-endings.
 
-       Posix  AWK is oriented to operate on files a line at a time.  RRSS can be
-       changed from "\n" to another single character, but it is hard  to  find
-       any  use for this -- there are no examples in the AWK book.  By conven-
+       Posix AWK is oriented to operate on files a line at a time.  RRSS can  be
+       changed  from  "\n" to another single character, but it is hard to find
+       any use for this -- there are no examples in the AWK book.  By  conven-
        tion, RRSS = "", makes one or more blank lines separate records, allowing
-       multi-line  records.   When  RRSS  = "", "\n" is always a field separator
+       multi-line records.  When RRSS = "", "\n" is  always  a  field  separator
        regardless of the value in FFSS.
 
-       mmaawwkk, on the other hand, allows RRSS to be a  regular  expression.   When
-       "\n"  appears  in records, it is treated as space, and FFSS always deter-
+       mmaawwkk,  on  the  other hand, allows RRSS to be a regular expression.  When
+       "\n" appears in records, it is treated as space, and FFSS  always  deter-
        mines fields.
 
        Removing the line at a time paradigm can make some programs simpler and
-       can  often  improve  performance.   For example, redoing example 3 from
+       can often improve performance.  For example,  redoing  example  3  from
        above,
 
             BEGIN { RS = "[^A-Za-z]+" }
@@ -829,11 +885,11 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
               print cnt
             }
 
-       counts the number of unique words by making each  word  a  record.   On
-       moderate  size  files, mmaawwkk executes twice as fast, because of the sim-
+       counts  the  number  of  unique words by making each word a record.  On
+       moderate size files, mmaawwkk executes twice as fast, because of  the  sim-
        plified inner loop.
 
-       The following program replaces each comment by a single space  in  a  C
+       The  following  program  replaces each comment by a single space in a C
        program file,
 
             BEGIN {
@@ -847,26 +903,26 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
 
               END { printf "%s" , hold }
 
-       Buffering  one  record  is  needed to avoid terminating the last record
+       Buffering one record is needed to avoid  terminating  the  last  record
        with a space.
 
        With mmaawwkk, the following are all equivalent,
 
             x ~ /a\+b/    x ~ "a\+b"     x ~ "a\\+b"
 
-       The strings get scanned twice, once  as  string  and  once  as  regular
-       expression.   On the string scan, mmaawwkk ignores the escape on non-escape
-       characters while the AWK book advocates _\_c be  recognized  as  _c  which
-       necessitates  the double escaping of meta-characters in strings.  Posix
-       explicitly declines to define the behavior which passively forces  pro-
-       grams  that  must  run under a variety of awks to use the more portable
+       The  strings  get  scanned  twice,  once  as string and once as regular
+       expression.  On the string scan, mmaawwkk ignores the escape on  non-escape
+       characters  while  the  AWK  book advocates _\_c be recognized as _c which
+       necessitates the double escaping of meta-characters in strings.   Posix
+       explicitly  declines to define the behavior which passively forces pro-
+       grams that must run under a variety of awks to use  the  more  portable
        but less readable, double escape.
 
-       Posix AWK does not  recognize  "/dev/std{out,err}"  or  \x  hex  escape
-       sequences  in strings.  Unlike ANSI C, mmaawwkk limits the number of digits
-       that follows \x to two as the current implementation  only  supports  8
-       bit  characters.  The built-in fffflluusshh first appeared in a recent (1993)
-       AT&T awk released to netlib, and is not part  of  the  posix  standard.
+       Posix  AWK  does  not recognize "/dev/std{in,out,err}" or \x hex escape
+       sequences in strings.  Unlike ANSI C, mmaawwkk limits the number of  digits
+       that  follows  \x  to two as the current implementation only supports 8
+       bit characters.  The built-in fffflluusshh first appeared in a recent  (1993)
+       AT&T  awk  released  to  netlib, and is not part of the posix standard.
        Aggregate deletion with ddeelleettee _a_r_r_a_y is not part of the posix standard.
 
        Posix explicitly leaves the behavior of FFSS = "" undefined, and mentions
@@ -874,12 +930,13 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
        currently this use is not portable across implementations.
 
        NNeexxttffiillee is a ggaawwkk extension (also implemented by BWK awk), is not part
-       of the posix standard.
+       of the posix standard (as of October 2012).
+
+       MMkkttiimmee, ssttrrffttiimmee and ssyyssttiimmee are ggaawwkk extensions.
 
        Finally,  here  is  how mmaawwkk handles exceptional cases not discussed in
        the AWK book or the Posix draft.  It is unsafe  to  assume  consistency
        across awks and safe to skip to the next section.
-
 
           +o   substr(s,  i, n) returns the characters of s in the intersection
               of the closed interval [1, length(s)] and the half-open interval
@@ -931,4 +988,4 @@ AAUUTTHHOORR
 
 
 
-                                 USER COMMANDS                         MAWK(1)
+USER COMMANDS                     2012-10-31                           MAWK(1)
