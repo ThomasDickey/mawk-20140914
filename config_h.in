@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: config_h.in,v 1.25 2012/10/27 12:34:17 tom Exp $
+ * $MawkId: config_h.in,v 1.26 2012/10/31 11:00:55 tom Exp $
  * vile:cmode
  * template for config.h
  */
@@ -45,6 +45,7 @@ the GNU General Public License, version 2, 1991.
 #undef HAVE_UNISTD_H
 #undef HAVE_WAIT
 #undef LOCALE
+#undef MAWK_RAND_MAX
 #undef MAX__INT
 #undef MAX__LONG
 #undef MAX__UINT
@@ -58,6 +59,8 @@ the GNU General Public License, version 2, 1991.
 #undef USE_IEEEFP_H
 #undef YY_NO_LEAKS
 #undef const
+#undef mawk_rand
+#undef mawk_srand
 
 #ifndef GCC_NORETURN
 #define GCC_NORETURN /* nothing */
