@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.152 2012/10/27 13:43:57 tom Exp $
+-- $MawkId: CHANGES,v 1.153 2012/10/31 00:36:26 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121027
+20121030
+	+ add systime and mktime functions
 	+ when warning about unrecognized options, do not exit with error
 	  on these gawk options:
 		  --lint
