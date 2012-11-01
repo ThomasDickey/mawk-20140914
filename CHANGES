@@ -1,11 +1,14 @@
--- $MawkId: CHANGES,v 1.155 2012/10/31 10:51:47 tom Exp $
+-- $MawkId: CHANGES,v 1.156 2012/11/01 09:54:13 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121031
+20121101
+	+ add configure option --enable-init-srand to allow choice whether to
+	  initialize random numbers automatically at startup or not.  Not doing
+	  this makes programs more predictable (Debian #63843).
 	+ add configure option --enable-builtin-srand, use that to deprecate
 	  mawk's builtin srand/rand functions which generally are not as good
-	  as the system-provided functions (Debian #63843).
+	  as the system-provided functions.
 	+ extend --enable-trace configure option to show builtin functions.
 	+ add systime and mktime functions
 	+ when warning about unrecognized options, do not exit with error
