@@ -532,10 +532,12 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
               srand(_e_x_p_r)  srand()
                      Seeds the random number generator,  using  the  clock  if
                      _e_x_p_r  is  omitted,  and returns the value of the previous
-                     seed.  mmaawwkk seeds the random number  generator  from  the
-                     clock  at  startup  so  there  is  no  real  need to call
-                     srand().  Srand(_e_x_p_r) is useful for repeating pseudo ran-
-                     dom sequences.
+                     seed.  Srand(_e_x_p_r) is useful for repeating pseudo  random
+                     sequences.
+
+                     Note:  mmaawwkk  can  be configured to seed the random number
+                     generator from the clock at startup, making  it  unneces-
+                     sary to call srand().
 
    99.. IInnppuutt aanndd oouuttppuutt
        There are two output statements, pprriinntt and pprriinnttff.
@@ -833,6 +835,7 @@ EEXXAAMMPPLLEESS
 
 
 CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
+   MMAAWWKK 11..33..33 vveerrssuuss PPOOSSIIXX 11000033..22 DDrraafftt 1111..33
        The Posix 1003.2(draft 11.3) definition of the AWK language is  AWK  as
        described  in  the AWK book with a few extensions that appeared in Sys-
        temVR4 nawk. The extensions are:
@@ -918,65 +921,89 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
        grams that must run under a variety of awks to use  the  more  portable
        but less readable, double escape.
 
-       Posix  AWK  does  not recognize "/dev/std{in,out,err}" or \x hex escape
-       sequences in strings.  Unlike ANSI C, mmaawwkk limits the number of  digits
-       that  follows  \x  to two as the current implementation only supports 8
-       bit characters.  The built-in fffflluusshh first appeared in a recent  (1993)
-       AT&T  awk  released  to  netlib, and is not part of the posix standard.
-       Aggregate deletion with ddeelleettee _a_r_r_a_y is not part of the posix standard.
+       Posix AWK does not recognize "/dev/std{in,out,err}".  Some systems pro-
+       vide an actual device for this, allowing AWKs which  do  not  implement
+       the feature directly to support it.
+
+       Posix  AWK  does  not  recognize  \x  hex  escape sequences in strings.
+       Unlike ANSI C, mmaawwkk limits the number of digits that follows \x to  two
+       as  the  current  implementation  only  supports 8 bit characters.  The
+       built-in fffflluusshh first appeared in a recent (1993) AT&T awk released  to
+       netlib, and is not part of the posix standard.  Aggregate deletion with
+       ddeelleettee _a_r_r_a_y is not part of the posix standard.
 
        Posix explicitly leaves the behavior of FFSS = "" undefined, and mentions
        splitting  the record into characters as a possible interpretation, but
        currently this use is not portable across implementations.
 
-       NNeexxttffiillee is a ggaawwkk extension (also implemented by BWK awk), is not part
-       of the posix standard (as of October 2012).
+   RRaannddoomm nnuummbbeerrss
+       Posix does not prescribe a method for initializing  random  numbers  at
+       startup.
+
+       In practice, most implementations do nothing special, which makes ssrraanndd
+       and rraanndd follow the C runtime library, making the initial seed value 1.
+       Some  implementations  (Solaris XPG4 and Tru64) return 0 from the first
+       call to ssrraanndd, although the results from rraanndd behave as if the  initial
+       seed is 1.  Other implementations return 1.
+
+       While  mmaawwkk  can  call ssrraanndd at startup with no parameter (initializing
+       random numbers from the clock), this feature may  be  suppressed  using
+       conditional compilation.
+
+   EExxtteennssiioonnss aaddddeedd ffoorr ccoommppaattiibbiilliittyy ffoorr GGAAWWKK aanndd BBWWKK
+       NNeexxttffiillee  is a ggaawwkk extension (also implemented by BWK awk), is not yet
+       part of the posix standard (as of October 2012).
 
        MMkkttiimmee, ssttrrffttiimmee and ssyyssttiimmee are ggaawwkk extensions.
 
-       Finally,  here  is  how mmaawwkk handles exceptional cases not discussed in
-       the AWK book or the Posix draft.  It is unsafe  to  assume  consistency
+       The "/dev/stdin" feature was added to mmaawwkk after 1.3.4, for compatibil-
+       ity   with  ggaawwkk  and  BWK  awk.   The  corresponding  "-"  (alias  for
+       /dev/stdin) was present in mawk 1.3.3.
+
+   SSuubbttllee DDiiffffeerreenncceess nnoott iinn PPOOSSIIXX oorr tthhee AAWWKK BBooookk
+       Finally, here is how mmaawwkk handles exceptional cases  not  discussed  in
+       the  AWK  book  or the Posix draft.  It is unsafe to assume consistency
        across awks and safe to skip to the next section.
 
-          +o   substr(s,  i, n) returns the characters of s in the intersection
+          +o   substr(s, i, n) returns the characters of s in the  intersection
               of the closed interval [1, length(s)] and the half-open interval
-              [i,  i+n).  When this intersection is empty, the empty string is
+              [i, i+n).  When this intersection is empty, the empty string  is
               returned; so substr("ABC", 1, 0) = "" and substr("ABC", -4, 6) =
               "A".
 
-          +o   Every  string,  including  the  empty  string, matches the empty
-              string at the front so, s ~ // and s ~ "", are always  1  as  is
+          +o   Every string, including the  empty  string,  matches  the  empty
+              string  at  the  front so, s ~ // and s ~ "", are always 1 as is
               match(s, //) and match(s, "").  The last two set RRLLEENNGGTTHH to 0.
 
-          +o   index(s,  t)  is always the same as match(s, t1) where t1 is the
-              same as t with metacharacters escaped.  Hence  consistency  with
-              match  requires  that  index(s,  "") always returns 1.  Also the
-              condition, index(s,t) != 0 if and only t is a  substring  of  s,
+          +o   index(s, t) is always the same as match(s, t1) where t1  is  the
+              same  as  t with metacharacters escaped.  Hence consistency with
+              match requires that index(s, "") always  returns  1.   Also  the
+              condition,  index(s,t)  !=  0 if and only t is a substring of s,
               requires index("","") = 1.
 
-          +o   If  getline  encounters  end  of  file,  getline var, leaves var
-              unchanged.  Similarly, on entry to  the  EENNDD  actions,  $$00,  the
+          +o   If getline encounters end  of  file,  getline  var,  leaves  var
+              unchanged.   Similarly,  on  entry  to  the EENNDD actions, $$00, the
               fields and NNFF have their value unaltered from the last record.
 
 SSEEEE AALLSSOO
        _e_g_r_e_p(1)
 
-       Aho,  Kernighan  and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g _L_a_n_g_u_a_g_e, Addison-
-       Wesley Publishing, 1988, (the AWK book), defines the language,  opening
-       with  a  tutorial and advancing to many interesting programs that delve
-       into issues of software design and analysis relevant to programming  in
+       Aho, Kernighan and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g  _L_a_n_g_u_a_g_e,  Addison-
+       Wesley  Publishing, 1988, (the AWK book), defines the language, opening
+       with a tutorial and advancing to many interesting programs  that  delve
+       into  issues of software design and analysis relevant to programming in
        any language.
 
-       _T_h_e  _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial and
-       language reference that does not attempt the depth of the AWK book  and
-       assumes  the  reader  may  be  a novice programmer.  The section on AWK
+       _T_h_e _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial  and
+       language  reference that does not attempt the depth of the AWK book and
+       assumes the reader may be a novice  programmer.   The  section  on  AWK
        arrays is excellent.  It also discusses Posix requirements for AWK.
 
 BBUUGGSS
-       mmaawwkk implements printf() and sprintf() using the C  library  functions,
-       printf  and  sprintf,  so  full  ANSI  compatibility requires an ANSI C
-       library.  In practice this means the h conversion qualifier may not  be
-       available.   Also  mmaawwkk inherits any bugs or limitations of the library
+       mmaawwkk  implements  printf() and sprintf() using the C library functions,
+       printf and sprintf, so full  ANSI  compatibility  requires  an  ANSI  C
+       library.   In practice this means the h conversion qualifier may not be
+       available.  Also mmaawwkk inherits any bugs or limitations of  the  library
        functions.
 
        Implementors of the AWK language have shown a consistent lack of imagi-
@@ -988,4 +1015,4 @@ AAUUTTHHOORR
 
 
 
-USER COMMANDS                     2012-10-31                           MAWK(1)
+USER COMMANDS                     2012-11-01                           MAWK(1)
