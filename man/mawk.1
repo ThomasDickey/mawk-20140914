@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.13 2012/10/31 08:39:15 tom Exp $
+.\" $MawkId: mawk.1,v 1.14 2012/11/01 10:54:16 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -925,13 +925,15 @@ sqrt(\fIx\fR)		Returns square root of \fIx\fR.
 .fi
 .TP
 srand(\fIexpr\fR)  srand()
-Seeds the random number generator, using the clock if
-.I expr
-is omitted, and returns the value of the previous seed.
+Seeds the random number generator,
+using the clock if \fIexpr\fP is omitted,
+and returns the value of the previous seed.
+Srand(\fIexpr\fR) is useful for repeating pseudo random sequences.
+.IP
+Note:
 .B mawk
-seeds the random number generator from the clock at startup
-so there is no real need to call srand().  Srand(\fIexpr\fR)
-is useful for repeating pseudo random sequences.
+can be configured to seed the random number generator from the clock
+at startup, making it unnecessary to call srand().
 .RE
 .\"
 .SS "\fB9. Input and output"
@@ -1531,6 +1533,7 @@ every record based on the first field.
 
 .fi
 .SH  "COMPATIBILITY ISSUES"
+.SS "MAWK 1.3.3 versus POSIX 1003.2 Draft 11.3"
 The Posix 1003.2(draft 11.3) definition of the AWK language
 is AWK as described in the AWK book with a few extensions
 that appeared in SystemVR4 nawk. The extensions are:
@@ -1650,7 +1653,11 @@ Posix explicitly declines to define the behavior which passively
 forces programs that must run under a variety of awks to use
 the more portable but less readable, double escape.
 .PP
-Posix AWK does not recognize "/dev/std{in,out,err}" or \ex hex escape
+Posix AWK does not recognize "/dev/std{in,out,err}".
+Some systems provide an actual device for this,
+allowing AWKs which do not implement the feature directly to support it.
+.PP
+Posix AWK does not recognize \ex hex escape
 sequences in strings.  Unlike ANSI C,
 .B mawk
 limits the number of digits that follows \ex to two as the current
@@ -1668,15 +1675,40 @@ Posix explicitly leaves the behavior of
 = "" undefined, and mentions splitting the record into characters as
 a possible interpretation, but currently this use is not portable
 across implementations.
+.SS "Random numbers"
+.PP
+Posix does not prescribe a method for initializing random numbers at startup.
+.PP
+In practice, most implementations do nothing special,
+which makes \fBsrand\fP and \fBrand\fP follow the C runtime library,
+making the initial seed value 1.
+Some implementations (Solaris XPG4 and Tru64)
+return 0 from the first call to \fBsrand\fP,
+although the results from \fBrand\fP behave as if the initial seed is 1.
+Other implementations return 1.
+.PP
+While
+.B mawk
+can call \fBsrand\fP at startup with no parameter
+(initializing random numbers from the clock),
+this feature may be suppressed using conditional compilation. 
+.
+.SS "Extensions added for compatibility for GAWK and BWK"
 .PP
 .B Nextfile
 is a \fBgawk\fP extension (also implemented by BWK awk),
-is not part of the posix standard (as of October 2012).
+is not yet part of the posix standard (as of October 2012).
 .PP
 .BR Mktime ,
 .BR strftime \ and
 .BR systime
 are \fBgawk\fP extensions.
+.PP
+The "/dev/stdin" feature was added to \fBmawk\fP after 1.3.4,
+for compatibility with \fBgawk\fP and BWK awk.
+The corresponding "-" (alias for /dev/stdin) was present in mawk 1.3.3.
+.
+.SS "Subtle Differences not in POSIX or the AWK Book"
 .PP
 Finally, here is how 
 .B mawk
