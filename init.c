@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.30 2012/10/27 13:39:34 tom Exp $
+ * $MawkId: init.c,v 1.31 2012/11/02 09:50:27 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -75,6 +75,9 @@ the GNU General Public License, version 2, 1991.
 
 typedef enum {
     W_UNKNOWN = 0,
+#ifdef LOCALE
+    W_USE_LC_NUMERIC,
+#endif
 #if USE_BINMODE
     W_BINMODE,
 #endif
@@ -85,6 +88,8 @@ typedef enum {
     W_SPRINTF,
     W_POSIX_SPACE
 } W_OPTIONS;
+
+#define USE_LC_NUMERIC "use-lc-numeric"
 
 static void process_cmdline(int, char **);
 static void set_ARGV(int, char **, int);
@@ -209,11 +214,15 @@ static W_OPTIONS
 parse_w_opt(char *source, char **next)
 {
 #define DATA(name) { W_##name, #name }
+#define DATA2(name) { W_##name, name }
     static const struct {
 	W_OPTIONS code;
 	const char *name;
     } w_options[] = {
 	DATA(VERSION),
+#ifdef LOCALE
+	    DATA2(USE_LC_NUMERIC),
+#endif
 #if USE_BINMODE
 	    DATA(BINMODE),
 #endif
@@ -283,6 +292,7 @@ process_cmdline(int argc, char **argv)
 	 */
 	if (strlen(argv[i]) > 2 && !strncmp(argv[i], "--", (size_t) 2)) {
 	    char *env = getenv("MAWK_LONG_OPTIONS");
+	    int allow = 0;
 	    if (env != 0) {
 		switch (*env) {
 		default:
@@ -294,12 +304,17 @@ process_cmdline(int argc, char **argv)
 		    break;
 		case 'i':	/* ignore */
 		    break;
+		case 'a':	/* allow */
+		    allow = 1;
+		    break;
 		}
 	    } else {
 		bad_option(argv[i]);
 	    }
-	    nextarg = i + 1;
-	    continue;
+	    if (!allow) {
+		nextarg = i + 1;
+		continue;
+	    }
 	}
 
 	if (argv[i][2] == 0) {
@@ -326,6 +341,11 @@ process_cmdline(int argc, char **argv)
 		case W_VERSION:
 		    print_version();
 		    break;
+#ifdef LOCALE
+		case W_USE_LC_NUMERIC:
+		    use_lc_numeric = 1;
+		    break;
+#endif
 #if USE_BINMODE
 		case W_BINMODE:
 		    if (haveValue(optNext)) {
@@ -404,8 +424,15 @@ process_cmdline(int argc, char **argv)
 	    break;
 
 	case '-':
-	    if (argv[i][2] != 0)
+	    if (argv[i][2] != 0) {
+#ifdef LOCALE
+		if (!strcmp(argv[i] + 2, USE_LC_NUMERIC)) {
+		    use_lc_numeric = 1;
+		    break;
+		}
+#endif
 		bad_option(argv[i]);
+	    }
 	    i++;
 	    goto no_more_opts;
 
