@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.17 2012/11/02 20:51:52 tom Exp $
+.\" $MawkId: mawk.1,v 1.18 2012/11/02 22:02:53 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -115,29 +115,28 @@ Implementation specific options are prefaced with
 \fB\*n\fP
 provides these:
 .TP \w'\-\fBW'u+\w'\fRsprintf=\fInum\fR'u+2n
-\-\fBW \fRversion
-\fB\*n\fP
-writes its version and copyright
-to stdout and compiled limits to
-stderr and exits 0.
-.TP
 \-\fBW \fRdump
 writes an assembler like listing of the internal
 representation of the program to stdout and exits 0
 (on successful compilation).
+.TP
+\-\fBW \fRexec \fIfile
+Program text is read from
+.I file
+and this is the last option.
+It is useful on systems that support the
+.B #!
+"magic number" convention for executable scripts.
 .TP
 \-\fBW \fRinteractive
 sets unbuffered writes to stdout and line buffered reads from stdin.
 Records from stdin are lines regardless of the value of
 .BR RS .
 .TP
-\-\fBW \fRexec \fIfile
-Program text is read from
-.I file
-and this is the last option.
-Useful on systems that support the
-.B #!
-"magic number" convention for executable scripts.
+\-\fBW \fRposix_space
+forces
+\fB\*n\fP
+not to consider '\en' to be space.
 .TP
 \-\fBW \fRsprintf=\fInum\fR
 adjusts the size of
@@ -149,15 +148,15 @@ More than rare use of this option indicates
 \fB\*n\fP
 should be recompiled.
 .TP
-\-\fBW \fRposix_space
-forces
+\-\fBW \fRversion
 \fB\*n\fP
-not to consider '\en' to be space.
+writes its version and copyright
+to stdout and compiled limits to
+stderr and exits 0.
 .PP
-The short forms
-.BR \-W [vdiesp]
-are recognized and on some systems \fB\-W\fRe is mandatory to avoid
-command line length limitations.
+\fB\*n\fP accepts abbreviations for any of these options, e.g., 
+\*(``\-\fBW\ \fRv\*('' and \*(``\-\fBW\fRv\*(''
+both tell \fB\*n\fP to show its version.
 .PP
 \fB\*n\fP
 allows multiple \fB\-W\fP options to be combined by separating the options
