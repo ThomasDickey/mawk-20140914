@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.h,v 1.7 2012/06/27 09:18:52 tom Exp $
+ * $MawkId: code.h,v 1.8 2012/11/02 09:38:27 tom Exp $
  * @Log: code.h,v @
  * Revision 1.5  1995/06/18  19:42:15  mike
  * Remove some redundant declarations and add some prototypes
@@ -78,6 +78,10 @@ extern int dump_code_flag;
 #define code_offset CodeOffset(code_base)
 
 #define INST_BYTES(x) (sizeof(INST)*(unsigned)(x))
+
+#ifdef LOCALE
+extern int use_lc_numeric;
+#endif
 
 extern CELL eval_stack[];
 extern int exit_code;
