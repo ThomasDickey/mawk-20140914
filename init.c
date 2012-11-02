@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.31 2012/11/02 09:50:27 tom Exp $
+ * $MawkId: init.c,v 1.32 2012/11/02 22:46:24 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -89,7 +89,7 @@ typedef enum {
     W_POSIX_SPACE
 } W_OPTIONS;
 
-#define USE_LC_NUMERIC "use-lc-numeric"
+#define USE_LC_NUMERIC "USE-LC-NUMERIC"
 
 static void process_cmdline(int, char **);
 static void set_ARGV(int, char **, int);
@@ -210,6 +210,37 @@ haveValue(char *value)
     return result;
 }
 
+static int
+allow_long_options(char *arg)
+{
+    static int result = -1;
+
+    if (result < 0) {
+
+	char *env = getenv("MAWK_LONG_OPTIONS");
+	result = 0;
+	if (env != 0) {
+	    switch (*env) {
+	    default:
+	    case 'e':		/* error */
+		bad_option(arg);
+		break;
+	    case 'w':		/* warn */
+		errmsg(0, "ignored option: %s", arg);
+		break;
+	    case 'i':		/* ignore */
+		break;
+	    case 'a':		/* allow */
+		result = 1;
+		break;
+	    }
+	} else {
+	    bad_option(arg);
+	}
+    }
+    return result;
+}
+
 static W_OPTIONS
 parse_w_opt(char *source, char **next)
 {
@@ -291,27 +322,7 @@ process_cmdline(int argc, char **argv)
 	 * Check for "long" options and decide how to handle them.
 	 */
 	if (strlen(argv[i]) > 2 && !strncmp(argv[i], "--", (size_t) 2)) {
-	    char *env = getenv("MAWK_LONG_OPTIONS");
-	    int allow = 0;
-	    if (env != 0) {
-		switch (*env) {
-		default:
-		case 'e':	/* error */
-		    bad_option(argv[i]);
-		    break;
-		case 'w':	/* warn */
-		    errmsg(0, "ignored option: %s", argv[i]);
-		    break;
-		case 'i':	/* ignore */
-		    break;
-		case 'a':	/* allow */
-		    allow = 1;
-		    break;
-		}
-	    } else {
-		bad_option(argv[i]);
-	    }
-	    if (!allow) {
+	    if (!allow_long_options(argv[i])) {
 		nextarg = i + 1;
 		continue;
 	    }
