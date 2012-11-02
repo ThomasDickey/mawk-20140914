@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.18 2012/11/02 22:02:53 tom Exp $
+.\" $MawkId: mawk.1,v 1.19 2012/11/02 22:12:35 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -25,8 +25,10 @@
 .el       .ds `` ``
 .ie \n(.g .ds '' \(rq
 .el       .ds '' ''
+.\" **************************************************************************
 .SH NAME
 \*n \- pattern scanning and text processing language
+.\" **************************************************************************
 .SH SYNOPSIS
 \fB\*n\fP
 [\-\fBW
@@ -47,6 +49,7 @@
 [\-\fBf
 .IR program-file ]
 [\-\|\-] [file ...]
+.\" **************************************************************************
 .SH DESCRIPTION
 \fB\*n\fP
 is an interpreter for the AWK Programming Language.
@@ -86,6 +89,7 @@ Each record is compared against each
 and if it matches, the program text for
 .I "{action}"
 is executed.
+.\" **************************************************************************
 .SH OPTIONS
 .TP \w'\-\fBW'u+\w'\fRsprintf=\fInum\fR'u+2n
 \-\fBF \fIvalue\fP
@@ -148,6 +152,12 @@ More than rare use of this option indicates
 \fB\*n\fP
 should be recompiled.
 .TP
+\-\fBW \fRuse-lc-numeric
+This \fBgawk\fP extension tells \fB\*n\fP to set the LC_NUMERIC locale
+feature from the environment after reading the command-line.
+Depending on the locale settings,
+this may change the decimal point used to display floating numbers.
+.TP
 \-\fBW \fRversion
 \fB\*n\fP
 writes its version and copyright
@@ -161,6 +171,7 @@ both tell \fB\*n\fP to show its version.
 \fB\*n\fP
 allows multiple \fB\-W\fP options to be combined by separating the options
 with commas, e.g., \-Wsprint=2000,posix.
+.\" **************************************************************************
 .SH "THE AWK LANGUAGE"
 .SS "\fB1. Program structure"
 An AWK program is a sequence of
@@ -1509,6 +1520,7 @@ sets the exit value of the program unless overridden by
 a later
 .B exit
 or subsequent error.
+.\" **************************************************************************
 .SH EXAMPLES
 .nf
 1. emulate cat.
@@ -1567,6 +1579,7 @@ every record based on the first field.
 	}
 
 .fi
+.\" **************************************************************************
 .SH "COMPATIBILITY ISSUES"
 .SS "MAWK 1.3.3 versus POSIX 1003.2 Draft 11.3"
 The Posix 1003.2(draft 11.3) definition of the AWK language
@@ -1788,6 +1801,7 @@ actions,
 the fields and
 .B NF
 have their value unaltered from the last record.
+.\" **************************************************************************
 .SH ENVIRONMENT VARIABLES
 \fB\*N\fP recognizes these variables:
 .RS 3
@@ -1822,6 +1836,7 @@ This is an undocumented \fBgawk\fP feature.
 It tells \fB\*n\fP to sort array indices before it starts to iterate
 over the elements of an array.
 .RE
+.\" **************************************************************************
 .SH SEE ALSO
 .IR egrep (1)
 .PP
@@ -1840,6 +1855,7 @@ that does not attempt the depth of the AWK book
 and assumes the reader may be a novice programmer.
 The section on AWK arrays is excellent.
 It also discusses Posix requirements for AWK.
+.\" **************************************************************************
 .SH BUGS
 .PP
 \fB\*n\fP
@@ -1851,6 +1867,7 @@ Also \fB\*n\fP inherits any bugs or limitations of the library functions.
 .PP
 Implementors of the AWK language have shown a consistent lack
 of imagination when naming their programs.
+.\" **************************************************************************
 .SH AUTHOR
 Mike Brennan (brennan@whidbey.com).
 .br
