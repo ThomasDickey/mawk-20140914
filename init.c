@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.32 2012/11/02 22:46:24 tom Exp $
+ * $MawkId: init.c,v 1.33 2012/11/02 23:26:17 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -75,9 +75,6 @@ the GNU General Public License, version 2, 1991.
 
 typedef enum {
     W_UNKNOWN = 0,
-#ifdef LOCALE
-    W_USE_LC_NUMERIC,
-#endif
 #if USE_BINMODE
     W_BINMODE,
 #endif
@@ -88,8 +85,6 @@ typedef enum {
     W_SPRINTF,
     W_POSIX_SPACE
 } W_OPTIONS;
-
-#define USE_LC_NUMERIC "USE-LC-NUMERIC"
 
 static void process_cmdline(int, char **);
 static void set_ARGV(int, char **, int);
@@ -251,9 +246,6 @@ parse_w_opt(char *source, char **next)
 	const char *name;
     } w_options[] = {
 	DATA(VERSION),
-#ifdef LOCALE
-	    DATA2(USE_LC_NUMERIC),
-#endif
 #if USE_BINMODE
 	    DATA(BINMODE),
 #endif
@@ -352,11 +344,6 @@ process_cmdline(int argc, char **argv)
 		case W_VERSION:
 		    print_version();
 		    break;
-#ifdef LOCALE
-		case W_USE_LC_NUMERIC:
-		    use_lc_numeric = 1;
-		    break;
-#endif
 #if USE_BINMODE
 		case W_BINMODE:
 		    if (haveValue(optNext)) {
@@ -436,12 +423,6 @@ process_cmdline(int argc, char **argv)
 
 	case '-':
 	    if (argv[i][2] != 0) {
-#ifdef LOCALE
-		if (!strcmp(argv[i] + 2, USE_LC_NUMERIC)) {
-		    use_lc_numeric = 1;
-		    break;
-		}
-#endif
 		bad_option(argv[i]);
 	    }
 	    i++;

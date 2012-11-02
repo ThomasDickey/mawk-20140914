@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.24 2012/11/02 09:38:05 tom Exp $
+ * $MawkId: main.c,v 1.25 2012/11/02 23:23:34 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -52,7 +52,6 @@ the GNU General Public License, version 2, 1991.
 
 #ifdef LOCALE
 #include <locale.h>
-int use_lc_numeric;
 #endif
 
 short mawk_state;		/* 0 is compiling */
@@ -67,8 +66,7 @@ main(int argc, char **argv)
 #endif
     initialize(argc, argv);
 #ifdef LOCALE
-    if (use_lc_numeric)
-	setlocale(LC_NUMERIC, "");
+    setlocale(LC_NUMERIC, "");
 #endif
 
     parse();

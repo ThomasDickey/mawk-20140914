@@ -1,10 +1,12 @@
--- $MawkId: CHANGES,v 1.157 2012/11/02 10:51:30 tom Exp $
+-- $MawkId: CHANGES,v 1.158 2012/11/02 23:25:41 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20121102
-	+ support LC_NUMERIC, but limit this to the same conditions in which
-	  gawk would do so, e.g., if the use-lc-numeric option is selected.
+	+ support LC_NUMERIC, which will modify the displayed decimal point in
+	  some locales.  It does not modify the decimal point used for input,
+	  matching the behavior of nawk and BWK awk (prompted by request from
+	  Yechiel Bardov for thousands-separator).
 	+ add configure option --enable-init-srand to allow choice whether to
 	  initialize random numbers automatically at startup or not.  Not doing
 	  this makes programs more predictable (Debian #63843).
