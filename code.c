@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.33 2012/06/27 09:20:58 tom Exp $
+ * $MawkId: code.c,v 1.34 2012/11/02 00:39:52 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -101,7 +101,11 @@ code_shrink(CODEBLOCK * p, size_t *sizep)
     *sizep = newsize;
 
     retval = (INST *) zrealloc(p->base, oldsize, newsize);
-    TRACE(("code_shrink old %p %lu, new %p %lu\n", p->base, oldsize, retval, newsize));
+    TRACE(("code_shrink old %p %lu, new %p %lu\n",
+	   (void *) p->base,
+	   oldsize,
+	   (void *) retval,
+	   newsize));
     ZFREE(p);
     return retval;
 }
@@ -288,7 +292,7 @@ free_codes(const char *tag, INST * base, size_t size)
 
     (void) tag;
 
-    TRACE(("free_codes(%s) base %p, size %lu\n", tag, base, size));
+    TRACE(("free_codes(%s) base %p, size %lu\n", tag, (void *) base, size));
     if (base != 0 && size != 0) {
 	for (cdp = base; cdp < last; ++cdp) {
 	    TRACE(("code %03d:%s (%d %#x)\n",
@@ -303,10 +307,10 @@ free_codes(const char *tag, INST * base, size_t size)
 		++cdp;		/* skip pointer */
 		cp = (CELL *) (cdp->ptr);
 		if (cp != 0) {
-		    TRACE(("\tparam %p type %d\n", cp, cp->type));
+		    TRACE(("\tparam %p type %d\n", (void *) cp, cp->type));
 		    free_cell_data(cp);
 		} else {
-		    TRACE(("\tparam %p type ??\n", cp));
+		    TRACE(("\tparam %p type ??\n", (void *) cp));
 		}
 		break;
 	    case _MATCH0:
@@ -340,7 +344,7 @@ free_codes(const char *tag, INST * base, size_t size)
 	    case F_PUSHI:
 		++cdp;		/* skip pointer */
 		cp = (CELL *) (cdp->ptr);
-		TRACE(("\tparam %p type %d\n", cp, cp->type));
+		TRACE(("\tparam %p type %d\n", (void *) cp, cp->type));
 		++cdp;		/* skip integer */
 		break;
 	    case _PUSHS:

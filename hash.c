@@ -1,6 +1,6 @@
 /********************************************
 hash.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 1991-1993,1994, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: hash.c,v 1.18 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: hash.c,v 1.19 2012/11/02 00:39:27 tom Exp $
  * @Log: hash.c,v @
  * Revision 1.3  1994/10/08  19:15:43  mike
  * remove SM_DOS
@@ -288,7 +288,9 @@ free_hashnode(HASHNODE * p)
 {
     CELL *cp;
 
-    TRACE(("...deleting hash %p (%p) %s %d\n", p, &(p->symtab),
+    TRACE(("...deleting hash %p (%p) %s %d\n",
+	   (void *) p,
+	   (void *) &(p->symtab),
 	   p->symtab.name, p->symtab.type));
     p = delete(p->symtab.name);
     switch (p->symtab.type) {

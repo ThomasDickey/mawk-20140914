@@ -1,6 +1,6 @@
 /********************************************
 rexp.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 1991-1993,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.16 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: rexp.c,v 1.17 2012/11/02 00:39:09 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -223,7 +223,7 @@ REdestroy(PTR ptr)
     int n = 0;
     STATE *q = (STATE *) ptr;
 
-    TRACE(("REdestroy %p\n", q));
+    TRACE(("REdestroy %p\n", ptr));
     while (!done) {
 	TRACE(("...%d type %d\n", n, q->s_type));
 	switch (q->s_type) {

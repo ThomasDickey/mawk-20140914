@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.58 2012/11/01 09:50:28 tom Exp $
+ * $MawkId: bi_funct.c,v 1.59 2012/11/02 00:39:20 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -798,7 +798,7 @@ bi_srand(CELL * sp)
 
 #ifdef USE_SYSTEM_SRAND
     seed = d_to_i(cseed.dval);
-    mawk_srand(seed);
+    mawk_srand((unsigned) seed);
 #else
     /* The old seed is now in *sp ; move the value in cseed to
        seed in range [1,M) */
@@ -829,9 +829,12 @@ bi_rand(CELL * sp)
     TRACE_FUNC("bi_rand", sp);
 
 #ifdef USE_SYSTEM_SRAND
-    sp++;
-    sp->type = C_DOUBLE;
-    sp->dval = ((double) mawk_rand()) / RAND_MAX;
+    {
+	long value = (long) mawk_rand();
+	sp++;
+	sp->type = C_DOUBLE;
+	sp->dval = ((double) value) / RAND_MAX;
+    }
 #else
     crank(seed);
     sp++;

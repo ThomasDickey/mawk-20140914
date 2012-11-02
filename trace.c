@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: trace.c,v 1.4 2012/10/31 08:52:27 tom Exp $
+ * $MawkId: trace.c,v 1.5 2012/11/02 00:34:37 tom Exp $
  */
 #include <stdarg.h>
 
@@ -39,7 +39,7 @@ Trace(const char *format,...)
 void
 TraceCell(CELL * cp)
 {
-    TRACE(("cell %p ", cp));
+    TRACE(("cell %p ", (void *) cp));
     if (cp != 0) {
 	switch ((MAWK_CELL_TYPES) cp->type) {
 	case C_NOINIT:
@@ -85,7 +85,7 @@ TraceFunc(const char *name, CELL * sp)
     int nargs = sp->type;
     int n;
 
-    TRACE(("** %s <-%p\n", name, sp));
+    TRACE(("** %s <-%p\n", name, (void *) sp));
     for (n = 0; n < nargs; ++n) {
 	TRACE(("...arg%d: ", n));
 	TraceCell(sp + n - nargs);

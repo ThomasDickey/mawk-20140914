@@ -1,6 +1,6 @@
 /********************************************
 zmalloc.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.24 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: zmalloc.c,v 1.25 2012/11/02 00:39:09 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -174,7 +174,7 @@ record_ptr(PTR ptr, size_t size)
     item->ptr = ptr;
     item->size = size;
 
-    TRACE(("record_ptr %p -> %p %lu\n", item, ptr, (unsigned long) size));
+    TRACE(("record_ptr %p -> %p %lu\n", (void *) item, ptr, (unsigned long) size));
     result = tsearch(item, &ptr_data, compare_ptr_data);
     assert(result != 0);
     assert(*result != 0);
@@ -203,7 +203,7 @@ finish_ptr(PTR ptr, size_t size)
     assert(*item != 0);
 
     TRACE(("finish_ptr %p -> %p %lu\n",
-	   (*item),
+	   (void *) (*item),
 	   (*item)->ptr,
 	   (unsigned long) (*item)->size));
 
