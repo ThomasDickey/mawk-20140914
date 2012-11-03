@@ -1,6 +1,6 @@
 /********************************************
 symtype.h
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012, Thomas E. Dickey
 copyright 1991, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.13 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: symtype.h,v 1.14 2012/11/03 13:08:35 tom Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme
@@ -53,7 +53,7 @@ the GNU General Public License, version 2, 1991.
 #ifndef  SYMTYPE_H
 #define  SYMTYPE_H
 
-#include "types.h"
+#include <types.h>
 
 /* struct to hold info about builtins */
 typedef struct {
@@ -67,22 +67,9 @@ typedef struct {
    structures and types for arrays
  *--------------------------*/
 
-#include "array.h"
+#include <array.h>
 
 extern ARRAY Argv;
-
-#if 0
-/* struct to hold the state of an array loop */
-typedef struct al_state {
-    struct al_state *link;
-    CELL *var;
-    ARRAY A;
-    int index;			/* A[index]  */
-    ANODE *ptr;
-} ALOOP_STATE;
-
-extern int inc_aloop_state(ALOOP_STATE *);
-#endif
 
 /* for parsing  (i,j) in A  */
 typedef struct {
@@ -109,21 +96,24 @@ extern void fdump(void);
   elements of the symbol table
   -----------------------*/
 
-#define  ST_NONE 0
-#define  ST_VAR   1
-#define  ST_KEYWORD   2
-#define  ST_BUILTIN 3		/* a pointer to a builtin record */
-#define  ST_ARRAY   4		/* a void * ptr to a hash table */
-#define  ST_FIELD   5		/* a cell ptr to a field */
-#define  ST_FUNCT   6
-#define  ST_NR      7		/*  NR is special */
-#define  ST_ENV     8		/* and so is ENVIRON */
-#define  ST_LENGTH  9		/* ditto and bozo */
-#define  ST_LOCAL_NONE  10
-#define  ST_LOCAL_VAR   11
-#define  ST_LOCAL_ARRAY 12
+typedef enum {
+    ST_NONE
+    ,ST_VAR
+    ,ST_KEYWORD
+    ,ST_BUILTIN			/* a pointer to a builtin record */
+    ,ST_ARRAY			/* a void * ptr to a hash table */
+    ,ST_FIELD			/* a cell ptr to a field */
+    ,ST_FUNCT
+    ,ST_NR			/*  NR is special */
+    ,ST_ENV			/* and so is ENVIRON */
+    ,ST_LENGTH			/* ditto and bozo */
+    ,ST_LOCAL_NONE
+    ,ST_LOCAL_VAR
+    ,ST_LOCAL_ARRAY
+} SYMTAB_TYPES;
 
-#define  is_local(stp)   ((stp)->type>=ST_LOCAL_NONE)
+#define  is_array(stp)   ((stp)->type == ST_ARRAY || (stp)->type == ST_LOCAL_ARRAY)
+#define  is_local(stp)   ((stp)->type >= ST_LOCAL_NONE)
 
 typedef struct {
     const char *name;
