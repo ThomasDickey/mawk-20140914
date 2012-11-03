@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.47 2012/11/01 09:51:00 tom Exp $
+dnl $MawkId: configure.in,v 1.48 2012/11/03 00:22:45 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -73,7 +73,7 @@ AC_ARG_WITH([builtin-regex],
 ])
 if test "x${with_builtin_regex}" != xno; then
 	with_builtin_regex=yes
-    CFLAGS="$CFLAGS -DLOCAL_REGEXP"
+    CPPFLAGS="$CPPFLAGS -DLOCAL_REGEXP"
 fi
 AC_MSG_RESULT($with_builtin_regex)
 
@@ -104,7 +104,7 @@ CF_ARG_ENABLE([init-srand],
 if test "x${with_init_srand}" != xno; then
 	with_init_srand=yes
 else
-    CFLAGS="$CFLAGS -DNO_INIT_SRAND"
+    CPPFLAGS="$CPPFLAGS -DNO_INIT_SRAND"
 fi
 AC_MSG_RESULT($with_init_srand)
 
