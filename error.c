@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.17 2012/10/30 21:43:40 tom Exp $
+ * $MawkId: error.c,v 1.18 2012/11/03 00:32:58 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -236,6 +236,9 @@ compile_error(const char *format,...)
 	s0 = s1 = "";
     }
 
+#ifdef DEBUG
+    fflush(stdout);
+#endif
     fprintf(stderr, "%s: %s%sline %u: ", progname, s0, s1, token_lineno);
     va_start(args, format);
     vfprintf(stderr, format, args);
