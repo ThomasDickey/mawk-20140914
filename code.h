@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.h,v 1.9 2012/11/02 23:21:50 tom Exp $
+ * $MawkId: code.h,v 1.10 2012/11/03 13:36:38 tom Exp $
  * @Log: code.h,v @
  * Revision 1.5  1995/06/18  19:42:15  mike
  * Remove some redundant declarations and add some prototypes
@@ -129,6 +129,7 @@ typedef enum {
     ,_POW
     ,_NOT
     ,_TEST
+    ,A_LENGTH
     ,A_TEST
     ,A_DEL
     ,ALOOP

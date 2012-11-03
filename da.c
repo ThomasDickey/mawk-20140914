@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.12 2012/06/27 09:21:13 tom Exp $
+ * $MawkId: da.c,v 1.13 2012/11/03 13:36:38 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -69,6 +69,7 @@ static OP_NAME simple_code[] =
    {_STOP,      "stop"},
    {FE_PUSHA,   "fe_pusha"},
    {FE_PUSHI,   "fe_pushi"},
+   {A_LENGTH,   "a_length"},
    {A_TEST,     "a_test"},
    {A_DEL,      "a_del"},
    {DEL_A,      "del_a"},
