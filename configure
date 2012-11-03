@@ -2978,7 +2978,7 @@ if test "${with_builtin_regex+set}" = set; then
 fi;
 if test "x${with_builtin_regex}" != xno; then
 	with_builtin_regex=yes
-    CFLAGS="$CFLAGS -DLOCAL_REGEXP"
+    CPPFLAGS="$CPPFLAGS -DLOCAL_REGEXP"
 fi
 echo "$as_me:2983: result: $with_builtin_regex" >&5
 echo "${ECHO_T}$with_builtin_regex" >&6
@@ -3723,7 +3723,7 @@ fi;
 if test "x${with_init_srand}" != xno; then
 	with_init_srand=yes
 else
-    CFLAGS="$CFLAGS -DNO_INIT_SRAND"
+    CPPFLAGS="$CPPFLAGS -DNO_INIT_SRAND"
 fi
 echo "$as_me:3728: result: $with_init_srand" >&5
 echo "${ECHO_T}$with_init_srand" >&6
