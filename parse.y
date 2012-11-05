@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.15 2012/06/27 09:19:17 tom Exp $
+ * $MawkId: parse.y,v 1.16 2012/11/05 10:39:14 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -124,16 +124,16 @@ static FBLOCK *active_funct ;
 %}
 
 %union{
-CELL *cp ;
-SYMTAB *stp ;
-int  start ; /* code starting address as offset from code_base */
-PF_CP  fp ;  /* ptr to a (print/printf) or (sub/gsub) function */
-BI_REC *bip ; /* ptr to info about a builtin */
-FBLOCK  *fbp  ; /* ptr to a function block */
-ARG2_REC *arg2p ;
-CA_REC   *ca_p  ;
-int   ival ;
-PTR   ptr ;
+  CELL     *cp ;
+  SYMTAB   *stp ;
+  int      start ;   /* code starting address as offset from code_base */
+  PF_CP    fp ;      /* ptr to a (print/printf) or (sub/gsub) function */
+  BI_REC   *bip ;    /* ptr to info about a builtin */
+  FBLOCK   *fbp  ;   /* ptr to a function block */
+  ARG2_REC *arg2p ;
+  CA_REC   *ca_p  ;
+  int      ival ;
+  PTR      ptr ;
 }
 
 /*  two tokens to help with errors */
@@ -170,7 +170,7 @@ PTR   ptr ;
 %token  <stp> ID   D_ID
 %token  <fbp> FUNCT_ID
 %token  <bip> BUILTIN  LENGTH
-%token   <cp>  FIELD
+%token  <cp>  FIELD
 
 %token  PRINT PRINTF SPLIT MATCH_FUNC SUB GSUB
 /* keywords */
@@ -351,7 +351,7 @@ expr  :   cat_expr
                  cp->type = C_STRING ;
                  cp->ptr = p3[1].ptr ;
                  cast_to_RE(cp) ;
-		 no_leaks_re_ptr(cp->ptr) ;
+                 no_leaks_re_ptr(cp->ptr) ;
                  code_ptr -= 2 ;
                  code2(_MATCH1, cp->ptr) ;
                  ZFREE(cp) ;
@@ -395,10 +395,10 @@ p_expr  :   DOUBLE
           { $$ = code_offset ; code2(_PUSHS, $1) ; }
       |   ID   %prec AND /* anything less than IN */
           { check_var($1) ;
-            $$ = code_offset ;
-            if ( is_local($1) )
-            { code2op(L_PUSHI, $1->offset) ; }
-            else code2(_PUSHI, $1->stval.cp) ;
+	    $$ = code_offset ;
+	    if ( is_local($1) )
+	    { code2op(L_PUSHI, $1->offset) ; }
+	    else code2(_PUSHI, $1->stval.cp) ;
           }
 
       |   LPAREN   expr  RPAREN
@@ -407,9 +407,9 @@ p_expr  :   DOUBLE
 
 p_expr  :   RE
             { $$ = code_offset ;
-	      code2(_MATCH0, $1) ;
-	      no_leaks_re_ptr($1);
-	    }
+              code2(_MATCH0, $1) ;
+              no_leaks_re_ptr($1);
+            }
         ;
 
 p_expr  :   p_expr  PLUS   p_expr { code1(_ADD) ; }
@@ -473,7 +473,29 @@ args    :  expr        %prec  LPAREN
         ;
 
 builtin :
-        BUILTIN mark  LPAREN  arglist RPAREN
+        BUILTIN mark  LPAREN  ID RPAREN
+        { BI_REC *p = $1 ;
+          $$ = $2 ;
+          if ( (int)p->min_args > 1 || (int)p->max_args < 1 )
+            compile_error(
+            "wrong number of arguments in call to %s" ,
+            p->name ) ;
+          /* if we have length(array), emit a different code */
+          if ( p->fp == bi_length && is_array($4) ) {
+            code_array($4) ;
+            { code1(_PUSHINT) ;  code1(1) ; }
+            code1(A_LENGTH) ;
+          } else {
+            check_var($4);
+            if ( is_local($4) )
+            { code1(L_PUSHI); code1($4->offset) ; }
+            else { code2(_PUSHI, $4->stval.cp) ; }
+            if ( p->min_args != p->max_args ) /* variable args */
+                { code1(_PUSHINT) ;  code1(1) ; }
+            code2(_BUILTIN, p->fp) ;
+          }
+        }
+        | BUILTIN mark  LPAREN  arglist RPAREN
         { BI_REC *p = $1 ;
           $$ = $2 ;
           if ( (int)p->min_args > $4 || (int)p->max_args < $4 )
@@ -863,7 +885,7 @@ split_back  :   RPAREN
                       cast_for_split(cp) ;
                       code_ptr[-2].op = _PUSHC ;
                       code_ptr[-1].ptr = (PTR) cp ;
-		      no_leaks_cell(cp);
+                      no_leaks_cell(cp);
                     }
                   }
                 }
@@ -896,7 +918,7 @@ re_arg   :   expr
                    cast_to_RE(cp) ;
                    p1->op = _PUSHC ;
                    p1[1].ptr = (PTR) cp ;
-		   no_leaks_cell(cp);
+                   no_leaks_cell(cp);
                  }
                }
              }
@@ -979,7 +1001,7 @@ p_expr  :  sub_or_gsub LPAREN re_arg COMMA  expr  sub_back
                cast_to_REPL(cp) ;
                p5->op = _PUSHC ;
                p5[1].ptr = (PTR) cp ;
-	       no_leaks_cell(cp);
+               no_leaks_cell(cp);
              }
              code2(_BUILTIN, $1) ;
              $$ = $3 ;
@@ -1175,7 +1197,7 @@ resize_fblock(FBLOCK *fbp)
     /* code_shrink() zfrees p */
 
     if ( dump_code_flag )
-	add_to_fdump_list(fbp) ;
+      add_to_fdump_list(fbp) ;
 }
 
 
