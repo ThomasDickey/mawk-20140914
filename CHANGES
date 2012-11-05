@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.159 2012/11/03 00:09:53 tom Exp $
+-- $MawkId: CHANGES,v 1.160 2012/11/05 10:48:32 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121103
+20121105
+	+ support length(array), as done in gawk and BWK awk.
 	+ support LC_NUMERIC, which will modify the displayed decimal point in
 	  some locales.  It does not modify the decimal point used for input,
 	  matching the behavior of nawk and BWK awk (prompted by request from
