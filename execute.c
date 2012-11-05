@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.27 2012/10/27 00:32:33 tom Exp $
+ * $MawkId: execute.c,v 1.28 2012/11/05 01:45:41 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -1086,6 +1086,12 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    no_leaks_re_ptr((sp + 1)->ptr);
 	    sp->type = C_DOUBLE;
 	    sp->dval = t ? 1.0 : 0.0;
+	    break;
+
+	case A_LENGTH:
+	    sp--;
+	    sp->type = C_DOUBLE;
+	    sp->dval = ((ARRAY)((sp + 0)->ptr))->size;
 	    break;
 
 	case A_TEST:
