@@ -80,16 +80,16 @@
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 typedef union{
-CELL *cp ;
-SYMTAB *stp ;
-int  start ; /* code starting address as offset from code_base */
-PF_CP  fp ;  /* ptr to a (print/printf) or (sub/gsub) function */
-BI_REC *bip ; /* ptr to info about a builtin */
-FBLOCK  *fbp  ; /* ptr to a function block */
-ARG2_REC *arg2p ;
-CA_REC   *ca_p  ;
-int   ival ;
-PTR   ptr ;
+  CELL     *cp ;
+  SYMTAB   *stp ;
+  int      start ;   /* code starting address as offset from code_base */
+  PF_CP    fp ;      /* ptr to a (print/printf) or (sub/gsub) function */
+  BI_REC   *bip ;    /* ptr to info about a builtin */
+  FBLOCK   *fbp  ;   /* ptr to a function block */
+  ARG2_REC *arg2p ;
+  CA_REC   *ca_p  ;
+  int      ival ;
+  PTR      ptr ;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
 extern YYSTYPE yylval;
