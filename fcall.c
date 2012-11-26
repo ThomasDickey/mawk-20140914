@@ -1,6 +1,6 @@
 /********************************************
 fcall.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012 Thomas E. Dickey
 copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fcall.c,v 1.9 2012/11/26 11:58:27 tom Exp $
+ * $MawkId: fcall.c,v 1.10 2012/11/26 11:58:27 tom Exp $
  * @Log: fcall.c,v @
  * Revision 1.7  1995/08/27  15:46:47  mike
  * change some errmsgs to compile_errors
