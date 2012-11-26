@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fcall.c,v 1.8 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: fcall.c,v 1.9 2012/11/26 11:58:27 tom Exp $
  * @Log: fcall.c,v @
  * Revision 1.7  1995/08/27  15:46:47  mike
  * change some errmsgs to compile_errors
@@ -63,6 +63,22 @@ static int check_progress;
  /* flag that indicates call_arg_check() was able to type
     check some call arguments */
 
+#if OPT_TRACE
+static void
+trace_arg_list(CA_REC * arg_list)
+{
+    CA_REC *item;
+    int count = 0;
+    while ((item = arg_list) != 0) {
+	arg_list = item->link;
+	TRACE(("   arg[%d] is %s\n", count, type_to_str(item->type)));
+	++count;
+    }
+}
+#else
+#define trace_arg_list(arg_list)	/* nothing */
+#endif
+
 /* type checks a list of call arguments,
    returns a list of arguments whose type is still unknown
 */
@@ -74,6 +90,8 @@ call_arg_check(FBLOCK * callee,
     register CA_REC *q;
     CA_REC *exit_list = (CA_REC *) 0;
 
+    TRACE(("call_arg_check\n"));
+
     check_progress = 0;
 
     /* loop :
@@ -83,18 +101,22 @@ call_arg_check(FBLOCK * callee,
     while ((q = entry_list)) {
 	entry_list = q->link;
 
+	TRACE(("...arg is %s\n", type_to_str(q->type)));
 	if (q->type == ST_NONE) {
 	    /* try to infer the type */
 	    /* it might now be in symbol table */
 	    if (q->sym_p->type == ST_VAR) {
+		TRACE(("...use CA_EXPR\n"));
 		/* set type and patch */
 		q->type = CA_EXPR;
 		start[q->call_offset + 1].ptr = (PTR) q->sym_p->stval.cp;
 	    } else if (q->sym_p->type == ST_ARRAY) {
+		TRACE(("...use CA_ARRAY\n"));
 		q->type = CA_ARRAY;
 		start[q->call_offset].op = A_PUSHA;
 		start[q->call_offset + 1].ptr = (PTR) q->sym_p->stval.array;
 	    } else {		/* try to infer from callee */
+		TRACE(("...infer?\n"));
 		switch (callee->typev[q->arg_num]) {
 		case ST_LOCAL_VAR:
 		    q->type = CA_EXPR;
@@ -116,6 +138,7 @@ call_arg_check(FBLOCK * callee,
 		}
 	    }
 	} else if (q->type == ST_LOCAL_NONE) {
+	    TRACE(("...infer2?\n"));
 	    /* try to infer the type */
 	    if (*q->type_p == ST_LOCAL_VAR) {
 		/* set type , don't need to patch */
@@ -242,6 +265,8 @@ resolve_fcalls(void)
     register FCALL_REC *p, *old_list, *new_list;
     int progress;		/* a flag */
 
+    TRACE(("resolve_fcalls\n"));
+
     old_list = first_pass(resolve_list);
     new_list = (FCALL_REC *) 0;
     progress = 0;
@@ -290,7 +315,9 @@ check_fcall(
 {
     FCALL_REC *p;
 
+    TRACE(("check_fcall(%s)\n", callee->name));
     if (!callee->code) {
+	TRACE(("...forward reference\n"));
 	/* forward reference to a function to be defined later */
 	p = ZMALLOC(FCALL_REC);
 	p->callee = callee;
@@ -299,6 +326,7 @@ check_fcall(
 	p->call = call;
 	p->arg_list = arg_list;
 	p->arg_cnt_checked = 0;
+	trace_arg_list(arg_list);
 	/* add to resolve list */
 	p->link = resolve_list;
 	resolve_list = p;
