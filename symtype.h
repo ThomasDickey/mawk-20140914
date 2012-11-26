@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: symtype.h,v 1.14 2012/11/03 13:08:35 tom Exp $
+ * $MawkId: symtype.h,v 1.15 2012/11/26 11:53:31 tom Exp $
  * @Log: symtype.h,v @
  * Revision 1.6  1996/02/01  04:39:43  mike
  * dynamic array scheme
@@ -181,6 +181,7 @@ extern SYMTAB *save_id(const char *);
 extern void restore_ids(void);
 
 /* error.c */
+extern const char * type_to_str(int);
 extern void type_error(SYMTAB *);
 
 #ifdef NO_LEAKS

@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.18 2012/11/03 00:32:58 tom Exp $
+ * $MawkId: error.c,v 1.19 2012/11/26 11:53:10 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -309,7 +309,7 @@ unexpected_char(void)
 	fprintf(stderr, "unexpected character 0x%02x\n", c);
 }
 
-static const char *
+const char *
 type_to_str(int type)
 {
     const char *retval = 0;
