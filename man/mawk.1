@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.20 2012/11/02 23:19:18 tom Exp $
+.\" $MawkId: mawk.1,v 1.21 2012/11/28 10:52:01 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -789,7 +789,7 @@ The first character of
 is in position 1.
 .TP
 length(\fIs\fR)
-Returns the length of string
+Returns the length of string or array.
 .IR s .
 .TP
 match(\fIs,r\fR)
@@ -1160,6 +1160,10 @@ variables is conventional.
 Functions can be referenced before they are defined, but the
 function name and the '(' of the arguments must touch to
 avoid confusion with concatenation.
+.sp
+A function parameter is normally a scalar value (number or string).
+If there is a forward reference to a function using an array as a parameter, 
+the function's corresponding parameter will be treated as an array.
 .\"
 .SS "\fB11. Splitting strings, records and files"
 Awk programs use the same algorithm to
