@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.160 2012/11/05 10:48:32 tom Exp $
+-- $MawkId: CHANGES,v 1.161 2012/11/28 10:38:37 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121105
+20121128
+	+ add special case for forward reference to a function using an array
+	  parameter, updating the function's parameter type so that the array
+	  is passed properly.
 	+ support length(array), as done in gawk and BWK awk.
 	+ support LC_NUMERIC, which will modify the displayed decimal point in
 	  some locales.  It does not modify the decimal point used for input,
