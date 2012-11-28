@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.18 2012/11/28 10:35:08 tom Exp $
+ * $MawkId: parse.y,v 1.19 2012/11/28 10:43:56 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -1213,7 +1213,7 @@ improve_arglist(const char *name)
 				break;
 			    default:
 				p->type = p2->type;
-				p->sym_p->type = p2->type;
+				p->sym_p->type = (char) p2->type;
 				TRACE(("...set argument %d of %s to %s\n",
 				       p->arg_num,
 				       name,
@@ -1254,7 +1254,7 @@ save_arglist(const char *s)
 	}
 	saveit->link = 0;
 	saveit->type = ST_LOCAL_NONE;
-	saveit->arg_num = arg_num;
+	saveit->arg_num = (short) arg_num;
 	saveit->sym_p = result;
 	if (q != 0) {
 	    q->link = saveit;
