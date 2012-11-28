@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: parse.y,v 1.16 2012/11/05 10:39:14 tom Exp $
+ * $MawkId: parse.y,v 1.17 2012/11/28 10:23:08 tom Exp $
  * @Log: parse.y,v @
  * Revision 1.11  1995/06/11  22:40:09  mike
  * change if(dump_code) -> if(dump_code_flag)
@@ -93,19 +93,23 @@ the GNU General Public License, version 2, 1991.
 
 #define  YYMAXDEPTH	200
 
-
 extern void eat_nl (void) ;
-static void resize_fblock (FBLOCK *) ;
-static void switch_code_to_main (void) ;
+static SYMTAB *save_arglist (const char *) ;
+static int init_arglist (void) ;
+static void RE_as_arg (void) ;
+static void check_array (SYMTAB *) ;
+static void check_var (SYMTAB *) ;
 static void code_array (SYMTAB *) ;
 static void code_call_id (CA_REC *, SYMTAB *) ;
 static void field_A2I (void) ;
-static void check_var (SYMTAB *) ;
-static void check_array (SYMTAB *) ;
-static void RE_as_arg (void) ;
+static void free_arglist (void) ;
+static void improve_arglist (const char *) ;
+static void resize_fblock (FBLOCK *) ;
+static void switch_code_to_main (void) ;
 
 static int scope ;
 static FBLOCK *active_funct ;
+static CA_REC *active_arglist ;
       /* when scope is SCOPE_FUNCT  */
 
 #define  code_address(x)  if( is_local(x) ) \
@@ -482,6 +486,7 @@ builtin :
             p->name ) ;
           /* if we have length(array), emit a different code */
           if ( p->fp == bi_length && is_array($4) ) {
+            check_array($4) ;
             code_array($4) ;
             { code1(_PUSHINT) ;  code1(1) ; }
             code1(A_LENGTH) ;
@@ -1051,6 +1056,8 @@ funct_start   :  funct_head  LPAREN  f_arglist  RPAREN
                        (INST *) zmalloc(INST_BYTES(PAGESZ));
                    code_limit = code_base + PAGESZ ;
                    code_warn = code_limit - CODEWARN ;
+		   improve_arglist($1->name);
+		   free_arglist();
                  }
               ;
 
@@ -1084,13 +1091,13 @@ funct_head    :  FUNCTION  ID
                  }
               ;
 
-f_arglist  :  /* empty */ { $$ = 0 ; }
+f_arglist  :  /* empty */ { $$ = init_arglist() ; }
            |  f_args
            ;
 
 f_args     :  ID
-              { $1 = save_id($1->name) ;
-                $1->type = ST_LOCAL_NONE ;
+              { init_arglist();
+	        $1 = save_arglist($1->name) ;
                 $1->offset = 0 ;
                 $$ = 1 ;
               }
@@ -1099,8 +1106,7 @@ f_args     :  ID
                   compile_error("%s is duplicated in argument list",
                     $3->name) ;
                 else
-                { $3 = save_id($3->name) ;
-                  $3->type = ST_LOCAL_NONE ;
+                { $3 = save_arglist($3->name) ;
                   $3->offset = (unsigned char) $1 ;
                   $$ = $1 + 1 ;
                 }
@@ -1181,6 +1187,94 @@ ca_back    :  expr   RPAREN
            ;
 
 %%
+
+/*
+ * Check for special case where there is a forward reference to a newly
+ * declared function using an array parameter.  Because the parameter
+ * mechanism for arrays uses a different byte code, we would like to know
+ * if this is the case so that the function's contents can handle the array
+ * type.
+ */
+static void
+improve_arglist(const char *name)
+{
+    CA_REC *p, *p2;
+    FCALL_REC *q;
+
+    for (p = active_arglist; p != 0; p = p->link) {
+	if (p->type == ST_LOCAL_NONE) {
+	    for (q = resolve_list; q != 0; q = q->link) {
+		if (!strcmp(q->callee->name, name)) {
+		    for (p2 = q->arg_list; p2 != 0; p2 = p2->link) {
+			if (p2->arg_num == p->arg_num) {
+			    switch (p2->type) {
+			    case ST_NONE:
+			    case ST_LOCAL_NONE:
+				break;
+			    default:
+				p->type = p2->type;
+				p->sym_p->type = p2->type ;
+				TRACE(("...set argument %d of %s to %s\n",
+				    p->arg_num,
+				    name,
+				    type_to_str(p->type)));
+				break;
+			    }
+			}
+		    }
+		    if (p->type != ST_LOCAL_NONE)
+			break;
+		}
+	    }
+	    if (p->type != ST_LOCAL_NONE)
+		break;
+	}
+    }
+}
+
+/* maintain data for f_arglist to make it visible in funct_start */
+static int
+init_arglist(void)
+{
+    free_arglist();
+    return 0;
+}
+
+static SYMTAB *
+save_arglist(const char *s)
+{
+    SYMTAB *result = save_id(s) ;
+    CA_REC *saveit = ZMALLOC(CA_REC) ;
+    CA_REC *p, *q;
+
+    if (saveit != 0) {
+	int arg_num = 0;
+	for (p = active_arglist, q = 0; p != 0; q = p, p = p->link) {
+	    ++arg_num;
+	}
+	saveit->link = 0;
+	saveit->type = ST_LOCAL_NONE ;
+	saveit->arg_num = arg_num;
+	saveit->sym_p = result;
+	if (q != 0) {
+	    q->link = saveit;
+	} else {
+	    active_arglist = saveit;
+	}
+    }
+
+    return result;
+}
+
+static void
+free_arglist(void)
+{
+    while (active_arglist != 0) {
+	CA_REC *next = active_arglist->link;
+	ZFREE(active_arglist);
+	active_arglist = next;
+    }
+}
 
 /* resize the code for a user function */
 
