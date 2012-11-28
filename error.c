@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.19 2012/11/26 11:53:10 tom Exp $
+ * $MawkId: error.c,v 1.20 2012/11/28 09:55:29 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -315,17 +315,41 @@ type_to_str(int type)
     const char *retval = 0;
 
     switch (type) {
+    case ST_NONE:
+	retval = "untyped variable";
+	break;
     case ST_VAR:
 	retval = "variable";
+	break;
+    case ST_KEYWORD:
+	retval = "keyword";
+	break;
+    case ST_BUILTIN:
+	retval = "builtin";
 	break;
     case ST_ARRAY:
 	retval = "array";
 	break;
+    case ST_FIELD:
+	retval = "field";
+	break;
+    case ST_NR:
+	retval = "NR";
+	break;
+    case ST_ENV:
+	retval = "ENVIRON";
+	break;
     case ST_FUNCT:
 	retval = "function";
 	break;
+    case ST_LENGTH:
+	retval = "length";
+	break;
     case ST_LOCAL_VAR:
 	retval = "local variable";
+	break;
+    case ST_LOCAL_NONE:
+	retval = "local untyped variable";
 	break;
     case ST_LOCAL_ARRAY:
 	retval = "local array";
