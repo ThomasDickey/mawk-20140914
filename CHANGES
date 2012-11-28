@@ -1,8 +1,8 @@
--- $MawkId: CHANGES,v 1.161 2012/11/28 10:38:37 tom Exp $
+-- $MawkId: CHANGES,v 1.162 2012/11/28 20:44:12 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121128
+20121129
 	+ add special case for forward reference to a function using an array
 	  parameter, updating the function's parameter type so that the array
 	  is passed properly.
