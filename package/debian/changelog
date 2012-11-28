@@ -1,4 +1,4 @@
-mawk-cur (1.3.4-20121105) unstable; urgency=low
+mawk-cur (1.3.4-20121128) unstable; urgency=low
 
   * implement length(array)
   * make srand/rand more configurable
