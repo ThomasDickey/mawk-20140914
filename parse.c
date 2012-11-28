@@ -1222,7 +1222,7 @@ improve_arglist(const char *name)
 				break;
 			    default:
 				p->type = p2->type;
-				p->sym_p->type = p2->type;
+				p->sym_p->type = (char) p2->type;
 				TRACE(("...set argument %d of %s to %s\n",
 				       p->arg_num,
 				       name,
@@ -1263,7 +1263,7 @@ save_arglist(const char *s)
 	}
 	saveit->link = 0;
 	saveit->type = ST_LOCAL_NONE;
-	saveit->arg_num = arg_num;
+	saveit->arg_num = (short) arg_num;
 	saveit->sym_p = result;
 	if (q != 0) {
 	    q->link = saveit;
