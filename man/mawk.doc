@@ -417,7 +417,7 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
                      acter of _s is in position 1.
 
               length(_s)
-                     Returns the length of string _s.
+                     Returns the length of string or array.  _s.
 
               match(_s_,_r)
                      Returns  the  index of the first longest match of regular
@@ -643,56 +643,61 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
        the function name and the '(' of the arguments must touch to avoid con-
        fusion with concatenation.
 
+       A function parameter is normally a scalar value (number or string).  If
+       there  is a forward reference to a function using an array as a parame-
+       ter, the function's corresponding  parameter  will  be  treated  as  an
+       array.
+
    1111.. SSpplliittttiinngg ssttrriinnggss,, rreeccoorrddss aanndd ffiilleess
-       Awk programs use the same algorithm to split strings into  arrays  with
+       Awk  programs  use the same algorithm to split strings into arrays with
        split(), and records into fields on FFSS.  mmaawwkk uses essentially the same
        algorithm to split files into records on RRSS.
 
        Split(_e_x_p_r_,_A_,_s_e_p) works as follows:
 
           (1)  If _s_e_p is omitted, it is replaced by FFSS.  _S_e_p can be an expres-
-               sion  or  regular  expression.   If it is an expression of non-
+               sion or regular expression.  If it is  an  expression  of  non-
                string type, it is converted to string.
 
           (2)  If _s_e_p = " " (a single space), then <SPACE> is trimmed from the
-               front  and back of _e_x_p_r, and _s_e_p becomes <SPACE>.  mmaawwkk defines
+               front and back of _e_x_p_r, and _s_e_p becomes <SPACE>.  mmaawwkk  defines
                <SPACE> as the regular expression /[ \t\n]+/.  Otherwise _s_e_p is
-               treated  as  a  regular expression, except that meta-characters
-               are ignored for a string of length 1, e.g.,  split(x,  A,  "*")
+               treated as a regular expression,  except  that  meta-characters
+               are  ignored  for  a string of length 1, e.g., split(x, A, "*")
                and split(x, A, /\*/) are the same.
 
-          (3)  If  _e_x_p_r  is not string, it is converted to string.  If _e_x_p_r is
+          (3)  If _e_x_p_r is not string, it is converted to string.  If  _e_x_p_r  is
                then the empty string "", split() returns 0 and _A is set empty.
                Otherwise, all non-overlapping, non-null and longest matches of
                _s_e_p in _e_x_p_r, separate _e_x_p_r into fields which are loaded into _A.
-               The  fields  are  placed  in  A[1], A[2], ..., A[n] and split()
-               returns n, the number of fields which is the number of  matches
-               plus  one.  Data placed in _A that looks numeric is typed number
+               The fields are placed in A[1],  A[2],  ...,  A[n]  and  split()
+               returns  n, the number of fields which is the number of matches
+               plus one.  Data placed in _A that looks numeric is typed  number
                and string.
 
-       Splitting records into fields works the  same  except  the  pieces  are
+       Splitting  records  into  fields  works  the same except the pieces are
        loaded into $$11, $$22,..., $$NNFF.  If $$00 is empty, NNFF is set to 0 and all $$ii
        to "".
 
-       mmaawwkk splits files into records by the  same  algorithm,  but  with  the
-       slight  difference  that RRSS is really a terminator instead of a separa-
+       mmaawwkk  splits  files  into  records  by the same algorithm, but with the
+       slight difference that RRSS is really a terminator instead of  a  separa-
        tor.  (OORRSS is really a terminator too).
 
-              E.g., if FFSS = ":+" and $$00 = "a::b:" , then NNFF = 3 and $$11 =  "a",
+              E.g.,  if FFSS = ":+" and $$00 = "a::b:" , then NNFF = 3 and $$11 = "a",
               $$22 = "b" and $$33 = "", but if "a::b:" is the contents of an input
               file and RRSS = ":+", then there are two records "a" and "b".
 
        RRSS = " " is not special.
 
-       If FFSS = "", then mmaawwkk breaks the  record  into  individual  characters,
-       and,  similarly,  split(_s_,_A_,"")  places  the individual characters of _s
+       If  FFSS  =  "",  then mmaawwkk breaks the record into individual characters,
+       and, similarly, split(_s_,_A_,"") places the  individual  characters  of  _s
        into _A.
 
    1122.. MMuullttii--lliinnee rreeccoorrddss
-       Since mmaawwkk interprets RRSS as a regular  expression,  multi-line  records
+       Since  mmaawwkk  interprets  RRSS as a regular expression, multi-line records
        are easy.  Setting RRSS = "\n\n+", makes one or more blank lines separate
        records.  If FFSS = " " (the default), then single newlines, by the rules
-       for  <SPACE>  above, become space and single newlines are field separa-
+       for <SPACE> above, become space and single newlines are  field  separa-
        tors.
 
               For example, if
@@ -710,23 +715,23 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
 
               +o   changing FFSS = "", gives one field identical to the record.
 
-       If  you want lines with spaces or tabs to be considered blank, set RRSS =
-       "\n([ \t]*\n)+".  For compatibility with other awks, setting  RRSS  =  ""
-       has  the  same effect as if blank lines are stripped from the front and
-       back of files and then records are  determined  as  if  RRSS  =  "\n\n+".
-       Posix  requires that "\n" always separates records when RRSS = "" regard-
-       less of the value of  FFSS.   mmaawwkk  does  not  support  this  convention,
+       If you want lines with spaces or tabs to be considered blank, set RRSS  =
+       "\n([ \t]*\n)+".   For  compatibility  with other awks, setting RRSS = ""
+       has the same effect as if blank lines are stripped from the  front  and
+       back  of  files  and  then  records  are determined as if RRSS = "\n\n+".
+       Posix requires that "\n" always separates records when RRSS = ""  regard-
+       less  of  the  value  of  FFSS.   mmaawwkk  does not support this convention,
        because defining "\n" as <SPACE> makes it unnecessary.
 
-       Most  of  the  time when you change RRSS for multi-line records, you will
+       Most of the time when you change RRSS for multi-line  records,  you  will
        also want to change OORRSS to "\n\n" so the record spacing is preserved on
        output.
 
    1133.. PPrrooggrraamm eexxeeccuuttiioonn
-       This  section  describes the order of program execution.  First AARRGGCC is
-       set to the total number of command line arguments passed to the  execu-
-       tion  phase  of the program.  AARRGGVV[[00]] is set the name of the AWK inter-
-       preter and AARRGGVV[[11]] ...  AARRGGVV[[AARRGGCC--11]] holds the remaining  command  line
+       This section describes the order of program execution.  First  AARRGGCC  is
+       set  to the total number of command line arguments passed to the execu-
+       tion phase of the program.  AARRGGVV[[00]] is set the name of the  AWK  inter-
+       preter  and  AARRGGVV[[11]] ...  AARRGGVV[[AARRGGCC--11]] holds the remaining command line
        arguments exclusive of options and program source.  For example with
 
             mawk  -f  prog  v=1  A  t=hello  B
@@ -734,39 +739,39 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
        AARRGGCC = 5 with AARRGGVV[[00]] = "mawk", AARRGGVV[[11]] = "v=1", AARRGGVV[[22]] = "A", AARRGGVV[[33]]
        = "t=hello" and AARRGGVV[[44]] = "B".
 
-       Next, each BBEEGGIINN block is executed in order.  If the  program  consists
-       entirely  of  BBEEGGIINN  blocks,  then  execution terminates, else an input
-       stream is opened and execution continues.  If AARRGGCC equals 1, the  input
-       stream  is  set  to stdin, else  the command line arguments AARRGGVV[[11]] ...
+       Next,  each  BBEEGGIINN block is executed in order.  If the program consists
+       entirely of BBEEGGIINN blocks, then  execution  terminates,  else  an  input
+       stream  is opened and execution continues.  If AARRGGCC equals 1, the input
+       stream is set to stdin, else  the command line  arguments  AARRGGVV[[11]]  ...
        AARRGGVV[[AARRGGCC--11]] are examined for a file argument.
 
-       The command line arguments divide  into  three  sets:  file  arguments,
-       assignment  arguments and empty strings "".  An assignment has the form
-       _v_a_r=_s_t_r_i_n_g.  When an AARRGGVV[[ii]] is examined as a possible  file  argument,
-       if  it  is  empty  it  is skipped; if it is an assignment argument, the
-       assignment to _v_a_r takes place and ii skips to the  next  argument;  else
+       The  command  line  arguments  divide  into three sets: file arguments,
+       assignment arguments and empty strings "".  An assignment has the  form
+       _v_a_r=_s_t_r_i_n_g.   When  an AARRGGVV[[ii]] is examined as a possible file argument,
+       if it is empty it is skipped; if it  is  an  assignment  argument,  the
+       assignment  to  _v_a_r  takes place and ii skips to the next argument; else
        AARRGGVV[[ii]] is opened for input.  If it fails to open, execution terminates
        with exit code 2.  If no command line argument is a file argument, then
        input comes from stdin.  Getline in a BBEEGGIINN action opens input.  "-" as
        a file argument denotes stdin.
 
-       Once an input stream is open, each input record is tested against  each
-       _p_a_t_t_e_r_n,  and  if  it  matches,  the associated _a_c_t_i_o_n is executed.  An
-       expression pattern matches if it is boolean true (see the end  of  sec-
-       tion  2).   A BBEEGGIINN pattern matches before any input has been read, and
+       Once  an input stream is open, each input record is tested against each
+       _p_a_t_t_e_r_n, and if it matches, the  associated  _a_c_t_i_o_n  is  executed.   An
+       expression  pattern  matches if it is boolean true (see the end of sec-
+       tion 2).  A BBEEGGIINN pattern matches before any input has been  read,  and
        an EENNDD pattern matches after all input has been read.  A range pattern,
-       _e_x_p_r1,_e_x_p_r2  ,  matches every record between the match of _e_x_p_r1 and the
+       _e_x_p_r1,_e_x_p_r2 , matches every record between the match of _e_x_p_r1  and  the
        match _e_x_p_r2 inclusively.
 
        When end of file occurs on the input stream, the remaining command line
-       arguments  are  examined for a file argument, and if there is one it is
-       opened, else the EENNDD _p_a_t_t_e_r_n is considered matched and all EENNDD  _a_c_t_i_o_n_s
+       arguments are examined for a file argument, and if there is one  it  is
+       opened,  else the EENNDD _p_a_t_t_e_r_n is considered matched and all EENNDD _a_c_t_i_o_n_s
        are executed.
 
-       In  the example, the assignment v=1 takes place after the BBEEGGIINN _a_c_t_i_o_n_s
-       are executed, and the data placed in v  is  typed  number  and  string.
-       Input  is  then  read  from  file A.  On end of file A, t is set to the
-       string "hello", and B is opened for input.  On end of file B,  the  EENNDD
+       In the example, the assignment v=1 takes place after the BBEEGGIINN  _a_c_t_i_o_n_s
+       are  executed,  and  the  data  placed in v is typed number and string.
+       Input is then read from file A.  On end of file A,  t  is  set  to  the
+       string  "hello",  and B is opened for input.  On end of file B, the EENNDD
        _a_c_t_i_o_n_s are executed.
 
        Program flow at the _p_a_t_t_e_r_n _{_a_c_t_i_o_n_} level can be changed with the
@@ -777,16 +782,16 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
 
        statements:
 
-       +o   A  nneexxtt  statement causes the next input record to be read and pat-
+       +o   A nneexxtt statement causes the next input record to be read  and  pat-
            tern testing to restart with the first _p_a_t_t_e_r_n _{_a_c_t_i_o_n_} pair in the
            program.
 
-       +o   A  nneexxttffiillee  statement  tells  mmaawwkk  to stop processing the current
-           input file.  It then updates FILENAME to the next  file  listed  on
+       +o   A nneexxttffiillee statement tells mmaawwkk  to  stop  processing  the  current
+           input  file.   It  then updates FILENAME to the next file listed on
            the command line, and resets FNR to 1.
 
-       +o   An  eexxiitt statement causes immediate execution of the EENNDD actions or
-           program termination if there are none or if the eexxiitt occurs  in  an
+       +o   An eexxiitt statement causes immediate execution of the EENNDD actions  or
+           program  termination  if there are none or if the eexxiitt occurs in an
            EENNDD action.  The _o_p_t___e_x_p_r sets the exit value of the program unless
            overridden by a later eexxiitt or subsequent error.
 
@@ -846,8 +851,8 @@ EEXXAAMMPPLLEESS
 
 CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
    MMAAWWKK 11..33..33 vveerrssuuss PPOOSSIIXX 11000033..22 DDrraafftt 1111..33
-       The Posix 1003.2(draft 11.3) definition of the AWK language is  AWK  as
-       described  in  the AWK book with a few extensions that appeared in Sys-
+       The  Posix  1003.2(draft 11.3) definition of the AWK language is AWK as
+       described in the AWK book with a few extensions that appeared  in  Sys-
        temVR4 nawk.  The extensions are:
 
           +o   New functions: toupper() and tolower().
@@ -856,37 +861,37 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
 
           +o   ANSI C conversion specifications for printf() and sprintf().
 
-          +o   New command options:  -v  var=value,  multiple  -f  options  and
+          +o   New  command  options:   -v  var=value,  multiple -f options and
               implementation options as arguments to -W.
 
-          +o   For  systems  (MS-DOS  or Windows) which provide a _s_e_t_m_o_d_e func-
-              tion, an environment variable MAWKBINMODE and a  built-in  vari-
-              able  BINMODE.   The  bits of the BINMODE value tell _m_a_w_k how to
+          +o   For systems (MS-DOS or Windows) which provide  a  _s_e_t_m_o_d_e  func-
+              tion,  an  environment variable MAWKBINMODE and a built-in vari-
+              able BINMODE.  The bits of the BINMODE value tell  _m_a_w_k  how  to
               modify the RRSS and OORRSS variables:
 
-             0  set standard input to binary mode, and if BIT-2 is unset,  set
+             0  set  standard input to binary mode, and if BIT-2 is unset, set
                 RRSS to "\r\n" (CR/LF) rather than "\n" (LF).
 
              1  set standard output to binary mode, and if BIT-2 is unset, set
                 OORRSS to "\r\n" (CR/LF) rather than "\n" (LF).
 
              2  suppress the assignment to RRSS and OORRSS of CR/LF, making it pos-
-                sible  to run scripts and generate output compatible with Unix
+                sible to run scripts and generate output compatible with  Unix
                 line-endings.
 
-       Posix AWK is oriented to operate on files a line at a time.  RRSS can  be
-       changed  from  "\n" to another single character, but it is hard to find
-       any use for this -- there are no examples in the AWK book.  By  conven-
+       Posix  AWK is oriented to operate on files a line at a time.  RRSS can be
+       changed from "\n" to another single character, but it is hard  to  find
+       any  use for this -- there are no examples in the AWK book.  By conven-
        tion, RRSS = "", makes one or more blank lines separate records, allowing
-       multi-line records.  When RRSS = "", "\n" is  always  a  field  separator
+       multi-line  records.   When  RRSS  = "", "\n" is always a field separator
        regardless of the value in FFSS.
 
-       mmaawwkk,  on  the  other hand, allows RRSS to be a regular expression.  When
-       "\n" appears in records, it is treated as space, and FFSS  always  deter-
+       mmaawwkk, on the other hand, allows RRSS to be a  regular  expression.   When
+       "\n"  appears  in records, it is treated as space, and FFSS always deter-
        mines fields.
 
        Removing the line at a time paradigm can make some programs simpler and
-       can often improve performance.  For example,  redoing  example  3  from
+       can  often  improve  performance.   For example, redoing example 3 from
        above,
 
             BEGIN { RS = "[^A-Za-z]+" }
@@ -898,11 +903,11 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
               print cnt
             }
 
-       counts  the  number  of  unique words by making each word a record.  On
-       moderate size files, mmaawwkk executes twice as fast, because of  the  sim-
+       counts the number of unique words by making each  word  a  record.   On
+       moderate  size  files, mmaawwkk executes twice as fast, because of the sim-
        plified inner loop.
 
-       The  following  program  replaces each comment by a single space in a C
+       The following program replaces each comment by a single space  in  a  C
        program file,
 
             BEGIN {
@@ -916,83 +921,83 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
 
               END { printf "%s" , hold }
 
-       Buffering one record is needed to avoid  terminating  the  last  record
+       Buffering  one  record  is  needed to avoid terminating the last record
        with a space.
 
        With mmaawwkk, the following are all equivalent,
 
             x ~ /a\+b/    x ~ "a\+b"     x ~ "a\\+b"
 
-       The  strings  get  scanned  twice,  once  as string and once as regular
-       expression.  On the string scan, mmaawwkk ignores the escape on  non-escape
-       characters  while  the  AWK  book advocates _\_c be recognized as _c which
-       necessitates the double escaping of meta-characters in strings.   Posix
-       explicitly  declines to define the behavior which passively forces pro-
-       grams that must run under a variety of awks to use  the  more  portable
+       The strings get scanned twice, once  as  string  and  once  as  regular
+       expression.   On the string scan, mmaawwkk ignores the escape on non-escape
+       characters while the AWK book advocates _\_c be  recognized  as  _c  which
+       necessitates  the double escaping of meta-characters in strings.  Posix
+       explicitly declines to define the behavior which passively forces  pro-
+       grams  that  must  run under a variety of awks to use the more portable
        but less readable, double escape.
 
        Posix AWK does not recognize "/dev/std{in,out,err}".  Some systems pro-
-       vide an actual device for this, allowing AWKs which  do  not  implement
+       vide  an  actual  device for this, allowing AWKs which do not implement
        the feature directly to support it.
 
-       Posix  AWK  does  not  recognize  \x  hex  escape sequences in strings.
-       Unlike ANSI C, mmaawwkk limits the number of digits that follows \x to  two
-       as  the  current  implementation  only  supports 8 bit characters.  The
-       built-in fffflluusshh first appeared in a recent (1993) AT&T awk released  to
+       Posix AWK does not  recognize  \x  hex  escape  sequences  in  strings.
+       Unlike  ANSI C, mmaawwkk limits the number of digits that follows \x to two
+       as the current implementation only  supports  8  bit  characters.   The
+       built-in  fffflluusshh first appeared in a recent (1993) AT&T awk released to
        netlib, and is not part of the posix standard.  Aggregate deletion with
        ddeelleettee _a_r_r_a_y is not part of the posix standard.
 
        Posix explicitly leaves the behavior of FFSS = "" undefined, and mentions
-       splitting  the record into characters as a possible interpretation, but
+       splitting the record into characters as a possible interpretation,  but
        currently this use is not portable across implementations.
 
    RRaannddoomm nnuummbbeerrss
-       Posix does not prescribe a method for initializing  random  numbers  at
+       Posix  does  not  prescribe a method for initializing random numbers at
        startup.
 
        In practice, most implementations do nothing special, which makes ssrraanndd
        and rraanndd follow the C runtime library, making the initial seed value 1.
-       Some  implementations  (Solaris XPG4 and Tru64) return 0 from the first
-       call to ssrraanndd, although the results from rraanndd behave as if the  initial
+       Some implementations (Solaris XPG4 and Tru64) return 0 from  the  first
+       call  to ssrraanndd, although the results from rraanndd behave as if the initial
        seed is 1.  Other implementations return 1.
 
-       While  mmaawwkk  can  call ssrraanndd at startup with no parameter (initializing
-       random numbers from the clock), this feature may  be  suppressed  using
+       While mmaawwkk can call ssrraanndd at startup with  no  parameter  (initializing
+       random  numbers  from  the clock), this feature may be suppressed using
        conditional compilation.
 
    EExxtteennssiioonnss aaddddeedd ffoorr ccoommppaattiibbiilliittyy ffoorr GGAAWWKK aanndd BBWWKK
-       NNeexxttffiillee  is a ggaawwkk extension (also implemented by BWK awk), is not yet
+       NNeexxttffiillee is a ggaawwkk extension (also implemented by BWK awk), is not  yet
        part of the posix standard (as of October 2012).
 
        MMkkttiimmee, ssttrrffttiimmee and ssyyssttiimmee are ggaawwkk extensions.
 
        The "/dev/stdin" feature was added to mmaawwkk after 1.3.4, for compatibil-
-       ity   with  ggaawwkk  and  BWK  awk.   The  corresponding  "-"  (alias  for
+       ity  with  ggaawwkk  and  BWK  awk.   The  corresponding  "-"  (alias   for
        /dev/stdin) was present in mawk 1.3.3.
 
    SSuubbttllee DDiiffffeerreenncceess nnoott iinn PPOOSSIIXX oorr tthhee AAWWKK BBooookk
-       Finally, here is how mmaawwkk handles exceptional cases  not  discussed  in
-       the  AWK  book  or the Posix draft.  It is unsafe to assume consistency
+       Finally,  here  is  how mmaawwkk handles exceptional cases not discussed in
+       the AWK book or the Posix draft.  It is unsafe  to  assume  consistency
        across awks and safe to skip to the next section.
 
-          +o   substr(s, i, n) returns the characters of s in the  intersection
+          +o   substr(s,  i, n) returns the characters of s in the intersection
               of the closed interval [1, length(s)] and the half-open interval
-              [i, i+n).  When this intersection is empty, the empty string  is
+              [i,  i+n).  When this intersection is empty, the empty string is
               returned; so substr("ABC", 1, 0) = "" and substr("ABC", -4, 6) =
               "A".
 
-          +o   Every string, including the  empty  string,  matches  the  empty
-              string  at  the  front so, s ~ // and s ~ "", are always 1 as is
+          +o   Every  string,  including  the  empty  string, matches the empty
+              string at the front so, s ~ // and s ~ "", are always  1  as  is
               match(s, //) and match(s, "").  The last two set RRLLEENNGGTTHH to 0.
 
-          +o   index(s, t) is always the same as match(s, t1) where t1  is  the
-              same  as  t with metacharacters escaped.  Hence consistency with
-              match requires that index(s, "") always  returns  1.   Also  the
-              condition,  index(s,t)  !=  0 if and only t is a substring of s,
+          +o   index(s,  t)  is always the same as match(s, t1) where t1 is the
+              same as t with metacharacters escaped.  Hence  consistency  with
+              match  requires  that  index(s,  "") always returns 1.  Also the
+              condition, index(s,t) != 0 if and only t is a  substring  of  s,
               requires index("","") = 1.
 
-          +o   If getline encounters end  of  file,  getline  var,  leaves  var
-              unchanged.   Similarly,  on  entry  to  the EENNDD actions, $$00, the
+          +o   If  getline  encounters  end  of  file,  getline var, leaves var
+              unchanged.  Similarly, on entry to  the  EENNDD  actions,  $$00,  the
               fields and NNFF have their value unaltered from the last record.
 
 EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
@@ -1002,13 +1007,13 @@ EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
              (see CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS)
 
           MAWK_LONG_OPTIONS
-             If this is set, mmaawwkk uses its value to decide  what  to  do  with
+             If  this  is  set,  mmaawwkk uses its value to decide what to do with
              GNU-style long options:
 
-             allow  MMaawwkk  allows  the option to be checked against the (small)
+             allow  MMaawwkk allows the option to be checked against  the  (small)
                     set of long options it recognizes.
 
-             error  MMaawwkk prints an error  message  and  exits.   This  is  the
+             error  MMaawwkk  prints  an  error  message  and  exits.  This is the
                     default.
 
              ignore MMaawwkk ignores the option.
@@ -1018,29 +1023,29 @@ EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
              If the variable is unset, mmaawwkk prints an error message and exits.
 
           WHINY_USERS
-             This  is  an  undocumented  ggaawwkk  feature.  It tells mmaawwkk to sort
+             This is an undocumented ggaawwkk feature.   It  tells  mmaawwkk  to  sort
              array indices before it starts to iterate over the elements of an
              array.
 
 SSEEEE AALLSSOO
        _e_g_r_e_p(1)
 
-       Aho,  Kernighan  and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g _L_a_n_g_u_a_g_e, Addison-
-       Wesley Publishing, 1988, (the AWK book), defines the language,  opening
-       with  a  tutorial and advancing to many interesting programs that delve
-       into issues of software design and analysis relevant to programming  in
+       Aho, Kernighan and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g  _L_a_n_g_u_a_g_e,  Addison-
+       Wesley  Publishing, 1988, (the AWK book), defines the language, opening
+       with a tutorial and advancing to many interesting programs  that  delve
+       into  issues of software design and analysis relevant to programming in
        any language.
 
-       _T_h_e  _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial and
-       language reference that does not attempt the depth of the AWK book  and
-       assumes  the  reader  may  be  a novice programmer.  The section on AWK
+       _T_h_e _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial  and
+       language  reference that does not attempt the depth of the AWK book and
+       assumes the reader may be a novice  programmer.   The  section  on  AWK
        arrays is excellent.  It also discusses Posix requirements for AWK.
 
 BBUUGGSS
-       mmaawwkk implements printf() and sprintf() using the C  library  functions,
-       printf  and  sprintf,  so  full  ANSI  compatibility requires an ANSI C
-       library.  In practice this means the h conversion qualifier may not  be
-       available.   Also  mmaawwkk inherits any bugs or limitations of the library
+       mmaawwkk  implements  printf() and sprintf() using the C library functions,
+       printf and sprintf, so full  ANSI  compatibility  requires  an  ANSI  C
+       library.   In practice this means the h conversion qualifier may not be
+       available.  Also mmaawwkk inherits any bugs or limitations of  the  library
        functions.
 
        Implementors of the AWK language have shown a consistent lack of imagi-
@@ -1052,4 +1057,4 @@ AAUUTTHHOORR
 
 
 
-Version 1.3.4                     2012-11-02                           MAWK(1)
+Version 1.3.4                     2012-11-28                           MAWK(1)
