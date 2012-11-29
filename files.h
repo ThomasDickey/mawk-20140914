@@ -1,6 +1,6 @@
 /********************************************
 files.h
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012 Thomas E. Dickey
 copyright 1991-1994,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.h,v 1.11 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: files.h,v 1.12 2012/11/29 00:56:19 tom Exp $
  * @Log: files.h,v @
  * Revision 1.3  1996/01/14  17:14:11  mike
  * flush_all_output()
@@ -50,7 +50,7 @@ extern const char *shell;	/* for pipes and system() */
 extern PTR file_find(STRING *, int);
 extern int file_close(STRING *);
 extern int file_flush(STRING *);
-extern void flush_all_output(void);
+extern int flush_all_output(void);
 extern PTR get_pipe(char *, int, int *);
 extern int wait_for(int);
 extern void close_out_pipes(void);

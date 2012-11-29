@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.162 2012/11/28 20:44:12 tom Exp $
+-- $MawkId: CHANGES,v 1.163 2012/11/29 00:55:33 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20121129
+	+ change behavior if internal fflush call fails: rather than exiting
+	  with an error, propagate the return value to the script as -1, for
+	  consistency with gawk and BWK (discussion with Aharon Robbins and
+	  Nathan Weeks).
 	+ add special case for forward reference to a function using an array
 	  parameter, updating the function's parameter type so that the array
 	  is passed properly.
