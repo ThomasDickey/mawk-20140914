@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.23 2012/10/27 12:30:16 tom Exp $
+ * $MawkId: files.c,v 1.24 2012/11/29 00:44:53 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -105,7 +105,7 @@ static FILE_NODE *file_list;
 /* Prototypes for local functions */
 
 static FILE *tfopen(const char *, const char *);
-static void efflush(FILE *);
+static int efflush(FILE *);
 static void close_error(FILE_NODE * p);
 
 static FILE_NODE *
@@ -325,48 +325,54 @@ find an output file with name == sval and fflush it
 int
 file_flush(STRING * sval)
 {
-    int ret = -1;
+    int ret = 0;
     FILE_NODE *p = file_list;
     size_t len = sval->len;
     char *str = sval->str;
 
     if (len == 0) {
 	/* for consistency with gawk */
-	flush_all_output();
-	return 0;
-    }
-
-    while (p) {
-	if (IS_OUTPUT(p->type) &&
-	    len == p->name->len &&
-	    strcmp(str, p->name->str) == 0) {
-	    ret = 0;
-	    efflush((FILE *) p->ptr);
-	    /* it's possible for a command and a file to have the same
-	       name -- so keep looking */
+	ret = flush_all_output();
+    } else {
+	while (p) {
+	    if (IS_OUTPUT(p->type) &&
+		len == p->name->len &&
+		strcmp(str, p->name->str) == 0) {
+		if (efflush((FILE *) p->ptr) != 0)
+		    ret = -1;
+		/* it's possible for a command and a file to have the same
+		   name -- so keep looking */
+	    }
+	    p = p->link;
 	}
-	p = p->link;
     }
     return ret;
 }
 
-void
+int
 flush_all_output(void)
 {
+    int ret = 0;
     FILE_NODE *p;
 
-    for (p = file_list; p; p = p->link)
-	if (IS_OUTPUT(p->type))
-	    efflush((FILE *) p->ptr);
+    for (p = file_list; p; p = p->link) {
+	if (IS_OUTPUT(p->type)) {
+	    if (efflush((FILE *) p->ptr) != 0)
+		ret = -1;
+	}
+    }
+    return ret;
 }
 
-static void
+static int
 efflush(FILE *fp)
 {
-    if (fflush(fp) < 0) {
+    int ret;
+
+    if ((ret = fflush(fp)) < 0) {
 	errmsg(errno, "unexpected write error");
-	mawk_exit(2);
     }
+    return ret;
 }
 
 /* When we exit, we need to close and wait for all output pipes */
