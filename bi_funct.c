@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.59 2012/11/02 00:39:20 tom Exp $
+ * $MawkId: bi_funct.c,v 1.60 2012/11/29 09:21:06 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1239,7 +1239,7 @@ old_gsub(PTR re, int level)
 		xbuff[0] = *ThisTarget;
 		xbuff[1] = 0;
 		ThisReplace.type = C_REPL;
-		ThisReplace.ptr = (PTR) new_STRING1(xbuff, 1);
+		ThisReplace.ptr = (PTR) new_STRING1(xbuff, (size_t) 1);
 
 		NextTarget = ThisTarget + 1;
 		NextTargetLen = ThisTargetLen - 1;
@@ -1341,7 +1341,7 @@ new_gsub(PTR re, int level)
 		xbuff[0] = *ThisTarget;
 		xbuff[1] = 0;
 		ThisReplace.type = C_REPL;
-		ThisReplace.ptr = (PTR) new_STRING1(xbuff, 1);
+		ThisReplace.ptr = (PTR) new_STRING1(xbuff, (size_t) 1);
 
 		NextTarget = ThisTarget + 1;
 		NextTargetLen = ThisTargetLen - 1;

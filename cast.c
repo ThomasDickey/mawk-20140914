@@ -1,6 +1,6 @@
 /********************************************
 cast.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012 Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.16 2012/06/27 21:54:40 tom Exp $
+ * $MawkId: cast.c,v 1.17 2012/11/29 09:21:25 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -323,7 +323,7 @@ cast_for_split(CELL * cp)
 	    char temp[1];
 	    temp[0] = (char) c;
 	    free_STRING(string(cp));
-	    cp->ptr = (PTR) new_STRING1(temp, 1);
+	    cp->ptr = (PTR) new_STRING1(temp, (size_t) 1);
 #else
 	    /*
 	     * A null is not a meta character, but strchr will match it anyway.
@@ -334,7 +334,7 @@ cast_for_split(CELL * cp)
 	    char temp[2];
 	    temp[0] = (char) c;
 	    free_STRING(string(cp));
-	    cp->ptr = (PTR) new_STRING1(temp, 1);
+	    cp->ptr = (PTR) new_STRING1(temp, (size_t) 1);
 	    return;
 #endif
 	} else if (strchr(meta, c)) {
