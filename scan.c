@@ -1,6 +1,6 @@
 /********************************************
 scan.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2012, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
 copyright 1991-1995,1996, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.31 2012/10/27 12:35:11 tom Exp $
+ * $MawkId: scan.c,v 1.32 2012/12/06 10:10:14 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -742,12 +742,14 @@ collect_decimal(int c, int *flag)
     register UChar *p = (UChar *) string_buff + 1;
     UChar *endp;
     char *temp;
+    UChar *last_decimal = 0;
     double d;
 
     *flag = 0;
     string_buff[0] = (char) c;
 
     if (c == '.') {
+	last_decimal = p - 1;
 	if (scan_code[*p++ = (UChar) next()] != SC_DIGIT) {
 	    *flag = UNEXPECTED;
 	    yylval.ival = '.';
@@ -757,7 +759,9 @@ collect_decimal(int c, int *flag)
 	while (scan_code[*p++ = (UChar) next()] == SC_DIGIT) {
 	    ;			/* empty */
 	};
-	if (p[-1] != '.') {
+	if (p[-1] == '.') {
+	    last_decimal = p - 1;
+	} else {
 	    un_next();
 	    p--;
 	}
@@ -792,6 +796,10 @@ collect_decimal(int c, int *flag)
 	    un_next();
 	    *--p = 0;
 	}
+    }
+
+    if (last_decimal && decimal_dot) {
+	*last_decimal = decimal_dot;
     }
 
     errno = 0;			/* check for overflow/underflow */
