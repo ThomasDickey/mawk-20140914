@@ -1,6 +1,14 @@
--- $MawkId: CHANGES,v 1.163 2012/11/29 00:55:33 tom Exp $
+-- $MawkId: CHANGES,v 1.164 2012/12/06 10:22:17 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20121206
+	+ amend support for LC_NUMERIC by translating period to the local
+	  decimal separator as needed to work with strtod() which is used
+	  to validate decimal constants when scanning source files.  This
+	  fixes an infinite loop with
+		mawk 'BEGIN { print 1.0 }'
+	  (report by Jan Psota).
 
 20121129
 	+ change behavior if internal fflush call fails: rather than exiting
