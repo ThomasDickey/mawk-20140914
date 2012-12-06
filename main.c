@@ -1,6 +1,6 @@
 /********************************************
 main.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2012 Thomas E. Dickey
 copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.25 2012/11/02 23:23:34 tom Exp $
+ * $MawkId: main.c,v 1.26 2012/12/06 01:52:28 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -57,6 +57,10 @@ the GNU General Public License, version 2, 1991.
 short mawk_state;		/* 0 is compiling */
 int exit_code;
 
+#ifdef LOCALE
+int decimal_dot;
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -66,7 +70,23 @@ main(int argc, char **argv)
 #endif
     initialize(argc, argv);
 #ifdef LOCALE
-    setlocale(LC_NUMERIC, "");
+    {
+	struct lconv *data;
+
+	decimal_dot = 0;	/* only set to nonzero if not POSIX '.' */
+	setlocale(LC_NUMERIC, "");
+	data = localeconv();
+	if (data != 0
+	    && data->decimal_point != 0
+	    && strlen(data->decimal_point) == 1) {
+	    decimal_dot = data->decimal_point[0];
+	} else {
+	    /* back out of this if we cannot handle it */
+	    setlocale(LC_NUMERIC, "C");
+	}
+	if (decimal_dot == '.')
+	    decimal_dot = 0;
+    }
 #endif
 
     parse();
