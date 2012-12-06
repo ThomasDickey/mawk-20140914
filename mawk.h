@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.39 2012/10/30 23:20:47 tom Exp $
+ * $MawkId: mawk.h,v 1.40 2012/12/06 01:54:05 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -128,6 +128,10 @@ extern int brace_cnt;
 extern int print_flag, getline_flag;
 extern short mawk_state;
 #define EXECUTION       1	/* other state is 0 compiling */
+
+#ifdef LOCALE
+extern int decimal_dot;
+#endif
 
 extern char *progname;		/* for error messages */
 extern unsigned rt_nr, rt_fnr;	/* ditto */
