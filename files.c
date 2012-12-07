@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.25 2012/12/07 00:43:37 tom Exp $
+ * $MawkId: files.c,v 1.26 2012/12/07 02:02:02 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -481,7 +481,7 @@ get_pipe(char *name, int type, int *pid_ptr)
 	close(remote_fd);
 	/* we could deadlock if future child inherit the local fd ,
 	   set close on exec flag */
-	CLOSE_ON_EXEC(local_fd);
+	(void) CLOSE_ON_EXEC(local_fd);
 	break;
     }
 
