@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.27 2012/12/07 10:05:27 tom Exp $
+ * $MawkId: files.c,v 1.28 2012/12/07 10:29:26 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -241,14 +241,13 @@ file_find(STRING * sval, int type)
 int
 file_close(STRING * sval)
 {
-    FILE_NODE dummy;
     FILE_NODE *p;
-    FILE_NODE *q = &dummy;	/* trails p */
+    FILE_NODE *q = 0;		/* trails p */
     FILE_NODE *hold;
     char *name = sval->str;
     int retval = -1;
 
-    dummy.link = p = file_list;
+    p = file_list;
     while (p) {
 	if (strcmp(name, p->name->str) == 0) {
 	    /* found */
@@ -259,8 +258,10 @@ file_close(STRING * sval)
 	       Note that we don't have to consider the list corruption
 	       caused by a recursive call because it will never return. */
 
-	    q->link = p->link;
-	    file_list = dummy.link;	/* maybe it was the first file */
+	    if (q == 0)
+		file_list = p->link;
+	    else
+		q->link = p->link;
 
 	    switch (p->type) {
 	    case F_TRUNC:
