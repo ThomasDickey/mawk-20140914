@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.23 2012/10/31 00:15:55 tom Exp $
+ * $MawkId: print.c,v 1.24 2012/12/07 01:04:49 tom Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -525,6 +525,7 @@ do_printf(
 	    q++;
 
 	ast_cnt = 0;
+	ast[0] = 0;
 	if (*q == '*') {
 	    if (cp->type != C_DOUBLE)
 		cast1_to_d(cp);
