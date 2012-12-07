@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.26 2012/12/07 02:02:02 tom Exp $
+ * $MawkId: files.c,v 1.27 2012/12/07 10:05:27 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -455,8 +455,14 @@ get_pipe(char *name, int type, int *pid_ptr)
 
     if (pipe(the_pipe) == -1)
 	return (PTR) 0;
+
+    /*
+     * If this is an input-pipe then local_fd is reader, remote_fd is writer
+     * If this is an output-pipe then local_fd is writer, remote_fd is reader
+     */
     local_fd = the_pipe[type == PIPE_OUT];
     remote_fd = the_pipe[type == PIPE_IN];
+
     /* to keep output ordered correctly */
     fflush(stdout);
     fflush(stderr);
@@ -468,9 +474,18 @@ get_pipe(char *name, int type, int *pid_ptr)
 	return (PTR) 0;
 
     case 0:
+	/*
+	 * This is the child process.  Close the unused end of the pipe, i.e,
+	 * (local_fd) and then close the input/output file descriptor that
+	 * corresponds to the direction we want to read/write.
+	 *
+	 * The dup() call uses the first unused file descriptor, which happens
+	 * to be the one that we just closed, e.g., 0 or 1 for stdin and stdout
+	 * respectively.
+	 */
 	close(local_fd);
 	close(type == PIPE_IN);
-	dup(remote_fd);
+	(void) dup(remote_fd);
 	close(remote_fd);
 	execl(shell, shell, "-c", name, (char *) 0);
 	errmsg(errno, "failed to exec %s -c %s", shell, name);
