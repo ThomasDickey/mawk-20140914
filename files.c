@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.24 2012/11/29 00:44:53 tom Exp $
+ * $MawkId: files.c,v 1.25 2012/12/07 00:43:37 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -217,20 +217,18 @@ file_find(STRING * sval, int type)
     }
 
     /* put p at the front of the list */
-    if (p != 0) {
-	if (p->ptr == 0) {
-	    free_filenode(p);
-	} else {
-	    if (p != file_list) {
-		p->link = file_list;
-		file_list = p;
-	    }
-	    /* successful open */
-	    p->name = sval;
-	    sval->ref_cnt++;
-	    TRACE(("-> %p\n", p->ptr));
-	    result = p->ptr;
+    if (p->ptr == 0) {
+	free_filenode(p);
+    } else {
+	if (p != file_list) {
+	    p->link = file_list;
+	    file_list = p;
 	}
+	/* successful open */
+	p->name = sval;
+	sval->ref_cnt++;
+	TRACE(("-> %p\n", p->ptr));
+	result = p->ptr;
     }
     return result;
 }
