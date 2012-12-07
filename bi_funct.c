@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.63 2012/12/07 09:50:45 tom Exp $
+ * $MawkId: bi_funct.c,v 1.64 2012/12/07 10:14:17 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -295,6 +295,14 @@ bi_substr(CELL * sp)
 	n = d_to_i(sp[2].dval);
     }
     i = d_to_i(sp[1].dval) - 1;	/* i now indexes into string */
+
+    /*
+     * If the starting index is past the end of the string, there is nothing
+     * to extract other than an empty string.
+     */
+    if (i > len) {
+	n = 0;
+    }
 
     /*
      * Workaround in case someone's written a script that does substr(0,last-1)
