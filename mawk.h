@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.40 2012/12/06 01:54:05 tom Exp $
+ * $MawkId: mawk.h,v 1.41 2012/12/07 11:46:03 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -72,6 +72,13 @@ the GNU General Public License, version 2, 1991.
 #ifndef GCC_UNUSED
 #define GCC_UNUSED		/* nothing */
 #endif
+
+#if defined(__GNUC__) && defined(_FORTIFY_SOURCE)
+#define IGNORE_RC(func) ignore_unused = (int) func
+extern int ignore_unused;
+#else
+#define IGNORE_RC(func) (void) func
+#endif /* gcc workarounds */
 
 #ifdef   DEBUG
 #define  YYDEBUG  1

@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.26 2012/12/06 01:52:28 tom Exp $
+ * $MawkId: main.c,v 1.27 2012/12/07 11:45:47 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -56,6 +56,10 @@ the GNU General Public License, version 2, 1991.
 
 short mawk_state;		/* 0 is compiling */
 int exit_code;
+
+#if defined(__GNUC__) && defined(_FORTIFY_SOURCE)
+int ignore_unused;
+#endif
 
 #ifdef LOCALE
 int decimal_dot;

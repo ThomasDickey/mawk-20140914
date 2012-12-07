@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.28 2012/12/07 10:29:26 tom Exp $
+ * $MawkId: files.c,v 1.29 2012/12/07 11:44:38 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -486,7 +486,7 @@ get_pipe(char *name, int type, int *pid_ptr)
 	 */
 	close(local_fd);
 	close(type == PIPE_IN);
-	(void) dup(remote_fd);
+	IGNORE_RC(dup(remote_fd));
 	close(remote_fd);
 	execl(shell, shell, "-c", name, (char *) 0);
 	errmsg(errno, "failed to exec %s -c %s", shell, name);
