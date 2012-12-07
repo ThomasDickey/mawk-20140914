@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.61 2012/11/29 09:32:21 tom Exp $
+ * $MawkId: bi_funct.c,v 1.62 2012/12/07 00:40:12 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -286,8 +286,9 @@ bi_substr(CELL * sp)
 
     if (n_args == 2) {
 	n = MAX__INT;
-	if (sp[1].type != C_DOUBLE)
+	if (sp[1].type != C_DOUBLE) {
 	    cast1_to_d(sp + 1);
+	}
     } else {
 	if (TEST2(sp + 1) != TWO_DOUBLES)
 	    cast2_to_d(sp + 1);
@@ -305,6 +306,11 @@ bi_substr(CELL * sp)
     }
     if (n > len - i) {
 	n = len - i;
+    }
+    if ((n + i + 1) <= 0) {
+	n = 0;			/* length overflow */
+    } else if (((size_t) n + (size_t) i + 1) >= MAX__INT) {
+	n = MAX__INT - i - 1;
     }
 
     if (n <= 0)			/* the null string */
