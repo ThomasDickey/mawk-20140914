@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.36 2012/10/27 12:30:16 tom Exp $
+ * $MawkId: fin.c,v 1.37 2012/12/08 00:12:06 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -335,10 +335,17 @@ FINgets(FIN * fin, size_t *len_p)
 	/* move a partial line to front of buffer and try again */
 	size_t rr;
 	size_t amount = (size_t) (fin->limit - p);
+	size_t blocks = fin->nbuffs * BUFFSZ;
 
-	p = (char *) memmove(fin->buff, p, r = (size_t) (fin->limit - p));
+	r = amount;
+	if (blocks < r) {
+	    fin->flags |= EOF_FLAG;
+	    return 0;
+	}
+
+	p = (char *) memmove(fin->buff, p, r);
 	q = p + r;
-	rr = fin->nbuffs * BUFFSZ - r;
+	rr = blocks - r;
 
 	if ((r = fillbuff(fin->fd, q, rr)) < rr) {
 	    fin->flags |= EOF_FLAG;
