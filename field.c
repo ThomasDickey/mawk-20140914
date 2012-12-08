@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.25 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: field.c,v 1.26 2012/12/08 00:01:22 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -499,8 +499,12 @@ build_field0(void)
 	memcpy(p, tail->str, tail->len);
 
 	/* cleanup */
-	free_STRING(tail);
-	free_STRING(ofs);
+	if (tail == ofs) {
+	    free_STRING(tail);
+	} else {
+	    free_STRING(tail);
+	    free_STRING(ofs);
+	}
     }
 }
 
