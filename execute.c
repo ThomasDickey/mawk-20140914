@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.29 2012/11/05 10:53:43 tom Exp $
+ * $MawkId: execute.c,v 1.30 2012/12/08 14:58:49 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -223,6 +223,12 @@ execute(INST * cdp,		/* code ptr, start execution here */
     }
 
     while (1) {
+
+	TRACE(("execute %s sp(%ld:%s)\n",
+	       da_op_name(cdp),
+	       (long) (sp - stack_base),
+	       da_type_name(sp)));
+
 	switch ((cdp++)->op) {
 
 /* HALT only used by the disassemble now ; this remains

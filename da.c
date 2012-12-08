@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.13 2012/11/03 13:36:38 tom Exp $
+ * $MawkId: da.c,v 1.14 2012/12/08 15:00:11 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -453,7 +453,37 @@ fdump(void)
     }
 }
 
-#ifdef NO_LEAKS
+#if OPT_TRACE > 0
+/* *INDENT-OFF* */
+static OP_NAME type_names[] =
+{
+    {C_NOINIT,    "noinit"},
+    {C_DOUBLE,    "double"},
+    {C_STRING,    "string"},
+    {C_STRNUM,    "strnum"},
+    {C_MBSTRN,    "mbstrn"},
+    {C_RE,        "re"},
+    {C_SPACE,     "space"},
+    {C_SNULL,     "snull"},
+    {C_REPL,      "repl"},
+    {C_REPLV,     "replv"}
+};
+/* *INDENT-ON* */
+
+const char *
+da_type_name(CELL * cdp)
+{
+    int n;
+    const char *result = "?";
+
+    for (n = 0; n < (int) (sizeof(type_names) / sizeof(type_names[0])); ++n) {
+	if (cdp->type == (int) type_names[n].op) {
+	    result = type_names[n].name;
+	    break;
+	}
+    }
+    return result;
+}
 /* *INDENT-OFF* */
 static OP_NAME other_codes[] = {
     { AE_PUSHA,   "ae_pusha" },
