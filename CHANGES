@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.164 2012/12/06 10:22:17 tom Exp $
+-- $MawkId: CHANGES,v 1.165 2012/12/09 14:16:55 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20121206
+20121209
+	+ fix issues reported by Coverity scan.  These were all minor, most
+	  were addressed by modifying the source to allow Coverity to improve
+	  its analysis of the code.
 	+ amend support for LC_NUMERIC by translating period to the local
 	  decimal separator as needed to work with strtod() which is used
 	  to validate decimal constants when scanning source files.  This
