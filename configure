@@ -660,7 +660,7 @@ Cross-compiling
 Miscellaneous options
   --disable-echo          do not display "compiling" commands
   --enable-warnings       test: turn on gcc compiler warnings
-  --with-builtin-regex    use mawk's own regular-expressions engine
+  --without-builtin-regex do not use mawk's own regular-expressions engine
   --enable-builtin-srand  use mawk's own srand/rand functions
   --enable-init-srand     initialize random numbers automatically
   --disable-largefile     omit support for large files
