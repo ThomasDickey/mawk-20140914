@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.166 2012/12/09 14:20:44 tom Exp $
+-- $MawkId: CHANGES,v 1.167 2012/12/09 15:09:51 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20121209
+	+ fix a regression in fflush, ensuring that it returns an error if
+	  the argument does not match any output filename (report by Nathan
+	  Weeks).
 	+ modify wording of configure --help message to make it clear that
 	  the default for --with-builtin-regex uses the builtin regular
 	  expression engine of mawk.
