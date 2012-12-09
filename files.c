@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: files.c,v 1.29 2012/12/07 11:44:38 tom Exp $
+ * $MawkId: files.c,v 1.30 2012/12/09 15:07:58 tom Exp $
  *
  * @Log: files.c,v @
  * Revision 1.9  1996/01/14  17:14:10  mike
@@ -333,10 +333,12 @@ file_flush(STRING * sval)
 	/* for consistency with gawk */
 	ret = flush_all_output();
     } else {
+	int found = 0;
 	while (p) {
 	    if (IS_OUTPUT(p->type) &&
 		len == p->name->len &&
 		strcmp(str, p->name->str) == 0) {
+		found = 1;
 		if (efflush((FILE *) p->ptr) != 0)
 		    ret = -1;
 		/* it's possible for a command and a file to have the same
@@ -344,6 +346,8 @@ file_flush(STRING * sval)
 	    }
 	    p = p->link;
 	}
+	if (!found)
+	    ret = -1;
     }
     return ret;
 }
