@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.33 2012/12/06 10:29:21 tom Exp $
+ * $MawkId: scan.c,v 1.34 2012/12/09 23:26:47 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -798,9 +798,11 @@ collect_decimal(int c, int *flag)
 	}
     }
 
+#ifdef LOCALE
     if (last_decimal && decimal_dot) {
 	*last_decimal = (UChar) decimal_dot;
     }
+#endif
 
     errno = 0;			/* check for overflow/underflow */
     d = strtod(string_buff, &temp);
