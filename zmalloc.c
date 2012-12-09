@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.26 2012/12/09 11:53:06 tom Exp $
+ * $MawkId: zmalloc.c,v 1.27 2012/12/09 14:03:31 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -102,7 +102,7 @@ the GNU General Public License, version 2, 1991.
 #endif
 
 #ifdef DEBUG_ZMALLOC
-#define IsPoolable(blocks)  ((blocks) == 0)
+#define IsPoolable(blocks)  0
 #define Malloc(n) calloc(1,n)
 #else
 #define IsPoolable(blocks)  ((blocks) <= POOLSZ)
