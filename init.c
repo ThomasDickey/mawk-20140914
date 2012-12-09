@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.34 2012/12/08 01:24:34 tom Exp $
+ * $MawkId: init.c,v 1.35 2012/12/09 14:27:07 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -386,7 +386,8 @@ process_cmdline(int argc, char **argv)
 			if (x > (int) SPRINTF_SZ) {
 			    if (sprintf_buff != string_buff &&
 				sprintf_buff != 0) {
-				zfree(sprintf_buff, sprintf_limit - sprintf_buff);
+				zfree(sprintf_buff,
+				      (size_t) (sprintf_limit - sprintf_buff));
 			    }
 			    sprintf_buff = (char *) zmalloc((size_t) x);
 			    sprintf_limit = sprintf_buff + x;
