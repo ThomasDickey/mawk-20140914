@@ -1,4 +1,4 @@
--- $MawkId: CHANGES,v 1.169 2012/12/09 23:49:55 tom Exp $
+-- $MawkId: CHANGES,v 1.170 2012/12/09 23:51:38 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
@@ -10,9 +10,9 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	+ modify wording of configure --help message to make it clear that
 	  the default for --with-builtin-regex uses the builtin regular
 	  expression engine of mawk.
-	+ fix issues reported by Coverity scan.  These were all minor, most
-	  were addressed by modifying the source to allow Coverity to improve
-	  its analysis of the code.
+	+ fix issues reported by Coverity scan.  Most of these were minor,
+	  and were addressed by modifying the source to allow Coverity to
+	  improve its analysis of the code.
 	+ amend support for LC_NUMERIC by translating period to the local
 	  decimal separator as needed to work with strtod() which is used
 	  to validate decimal constants when scanning source files.  This
