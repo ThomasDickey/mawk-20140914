@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.25 2012/11/02 00:39:09 tom Exp $
+ * $MawkId: zmalloc.c,v 1.26 2012/12/09 11:53:06 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -308,8 +308,8 @@ zfree(PTR p, size_t size)
     unsigned blocks = BytesToBlocks(size);
 
     if (!IsPoolable(blocks)) {
-	free(p);
 	FinishPtr(p, size);
+	free(p);
     } else {
 	((ZBLOCK *) p)->link = pool[--blocks];
 	pool[blocks] = (ZBLOCK *) p;
