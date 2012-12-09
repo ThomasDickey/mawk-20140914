@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.165 2012/12/09 14:16:55 tom Exp $
+-- $MawkId: CHANGES,v 1.166 2012/12/09 14:20:44 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20121209
+	+ modify wording of configure --help message to make it clear that
+	  the default for --with-builtin-regex uses the builtin regular
+	  expression engine of mawk.
 	+ fix issues reported by Coverity scan.  These were all minor, most
 	  were addressed by modifying the source to allow Coverity to improve
 	  its analysis of the code.
