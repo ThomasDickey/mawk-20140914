@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: matherr.c,v 1.25 2012/10/27 10:58:31 tom Exp $
+ * $MawkId: matherr.c,v 1.26 2012/12/10 00:24:17 tom Exp $
  *
  * @Log: matherr.c,v @
  * Revision 1.9  1996/09/01 16:54:35  mike
@@ -56,20 +56,20 @@ the GNU General Public License, version 2, 1991.
 #define FPE_DECL		/* nothing */
 #endif
 
-/* Sets up NetBSD 1.0A for ieee floating point */
-#if defined(_LIB_VERSION_TYPE) && defined(_LIB_VERSION) && defined(_IEEE_)
-#ifdef _CONST
-_CONST				/* needed for cygwin */
-#endif
-_LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
-#endif
-
 #ifdef	USE_IEEEFP_H
 #include <ieeefp.h>
 #ifdef   HAVE_STRTOD_OVF_BUG
 static fp_except entry_mask;
 static fp_except working_mask;
 #endif
+#endif
+
+/* Sets up NetBSD 1.0A for ieee floating point */
+#if defined(_LIB_VERSION_TYPE) && defined(_LIB_VERSION) && defined(_IEEE_) && !defined(__CYGWIN__)
+#ifdef _CONST
+_CONST				/* needed for cygwin */
+#endif
+_LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
 #endif
 
 #ifndef	 TURN_OFF_FPE_TRAPS
