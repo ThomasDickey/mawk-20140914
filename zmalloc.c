@@ -1,6 +1,6 @@
 /********************************************
 zmalloc.c
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2013, Thomas E. Dickey
 copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.28 2013/02/19 11:53:50 tom Exp $
+ * $MawkId: zmalloc.c,v 1.29 2013/02/19 11:54:10 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
