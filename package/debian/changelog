@@ -1,3 +1,9 @@
+mawk-cur (1.3.4-20130219) unstable; urgency=low
+
+  * miscelleneous bug-fixes
+
+ -- Thomas E. Dickey <dickey@invisible-island.net>  Tue, 19 Feb 2013 06:45:33 -0500
+
 mawk-cur (1.3.4-20121209) unstable; urgency=low
 
   * fix regression with LC_NUMERIC feature
