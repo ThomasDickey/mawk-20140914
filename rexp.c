@@ -1,6 +1,6 @@
 /********************************************
 rexp.c
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2013, Thomas E. Dickey
 copyright 1991-1993,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.c,v 1.17 2012/11/02 00:39:09 tom Exp $
+ * $MawkId: rexp.c,v 1.18 2013/02/19 10:51:21 tom Exp $
  * @Log: rexp.c,v @
  * Revision 1.3  1996/09/02 18:47:36  mike
  * Make ^* and ^+ syntax errors.
@@ -80,6 +80,38 @@ static  short  table[8][8]  =  {
 
 static jmp_buf err_buf;		/*  used to trap on error */
 
+#if OPT_TRACE > 0
+static const char *
+token_name(int token)
+{
+    const char *result;
+#define CASE(name) case name: result = #name; break
+    switch (token) {
+	CASE(T_NONE);
+	CASE(T_OR);
+	CASE(T_CAT);
+	CASE(T_STAR);
+	CASE(T_PLUS);
+	CASE(T_Q);
+	CASE(T_LP);
+	CASE(T_RP);
+	CASE(T_START);
+	CASE(T_END);
+	CASE(T_ANY);
+	CASE(T_CLASS);
+	CASE(T_SLASH);
+	CASE(T_CHAR);
+	CASE(T_STR);
+	CASE(T_U);
+    default:
+	result = "?";
+	break;
+    }
+#undef CASE
+    return result;
+}
+#endif
+
 void
 RE_error_trap(int x)
 {
@@ -123,6 +155,7 @@ REcompile(char *re, size_t len)
     t = RE_lex(m_stack);
 
     while (1) {
+	TRACE(("RE_lex token %s\n", token_name(t)));
 	switch (t) {
 	case T_STR:
 	case T_ANY:
@@ -152,8 +185,15 @@ REcompile(char *re, size_t len)
 	    if ((op_ptr->prec = table[op_ptr->token][t]) == G) {
 		do {		/* op_pop   */
 
-		    if (op_ptr->token <= T_CAT)		/*binary op */
+		    if (op_ptr->token <= T_CAT) {	/*binary op */
+			if (m_ptr == m_stack
+			    && op_ptr->token == T_CAT) {
+			    TRACE(("...ignoring empty T_CAT\n"));
+			    op_ptr--;
+			    continue;
+			}
 			m_ptr--;
+		    }
 		    /* if not enough values on machine stack
 		       then we have a missing operand */
 		    if (m_ptr < m_stack)
