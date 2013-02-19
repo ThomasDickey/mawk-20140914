@@ -1,6 +1,11 @@
--- $MawkId: CHANGES,v 1.171 2012/12/10 00:35:00 tom Exp $
+-- $MawkId: CHANGES,v 1.172 2013/02/19 09:57:44 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20130219
+	+ revert in-progress change to gsub retain ifdef'd for additional
+	  development since it did not handle array as the second parameter
+	  (report by Arkadiusz Miskiewicz)
 
 20121209
 	+ build-fix for cygwin in matherr.c, which declares a different type
