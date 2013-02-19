@@ -1,6 +1,6 @@
 /********************************************
 bi_funct.c
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2013, Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.66 2013/02/19 10:12:58 tom Exp $
+ * $MawkId: bi_funct.c,v 1.67 2013/02/19 10:57:28 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
