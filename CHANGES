@@ -1,11 +1,14 @@
--- $MawkId: CHANGES,v 1.172 2013/02/19 09:57:44 tom Exp $
+-- $MawkId: CHANGES,v 1.173 2013/02/19 10:57:16 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20130219
+	+ modify missing-operand check in rexp.c to allow the case of empty
+	  "()", matching behavior of gawk and BWK (report by Arkadiusz
+	  Miskiewicz).
 	+ revert in-progress change to gsub retain ifdef'd for additional
 	  development since it did not handle array as the second parameter
-	  (report by Arkadiusz Miskiewicz)
+	  (report by Arkadiusz Miskiewicz).
 
 20121209
 	+ build-fix for cygwin in matherr.c, which declares a different type
