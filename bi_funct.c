@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.65 2013/02/19 09:53:16 tom Exp $
+ * $MawkId: bi_funct.c,v 1.66 2013/02/19 10:12:58 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1539,7 +1539,8 @@ bi_gsub(CELL * sp)
 
     return_CELL("bi_gsub", sp);
 }
-#else	/* GSUB uses stack... */
+
+#else /* GSUB uses stack... */
 static unsigned repl_cnt;	/* number of global replacements */
 
 /* recursive global subsitution
@@ -1646,6 +1647,8 @@ bi_gsub(CELL * sp)
     CELL sc;			/* copy of replacement target */
     CELL tc;			/* build the result here */
 
+    TRACE_FUNC("bi_gsub", sp);
+
     sp -= 2;
     if (sp->type != C_RE)
 	cast_to_RE(sp);
@@ -1671,6 +1674,7 @@ bi_gsub(CELL * sp)
 
     sp->type = C_DOUBLE;
     sp->dval = (double) repl_cnt;
-    return sp;
+
+    return_CELL("bi_gsub", sp);
 }
 #endif /* EXP_UNROLLED_GSUB */
