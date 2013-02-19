@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: zmalloc.c,v 1.27 2012/12/09 14:03:31 tom Exp $
+ * $MawkId: zmalloc.c,v 1.28 2013/02/19 11:53:50 tom Exp $
  * @Log: zmalloc.c,v @
  * Revision 1.6  1995/06/06  00:18:35  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -231,10 +231,10 @@ out_of_mem(void)
     static char out[] = "out of memory";
 
     if (mawk_state == EXECUTION) {
-	rt_error(out);
+	rt_error("%s", out);
     } else {
 	/* I don't think this will ever happen */
-	compile_error(out);
+	compile_error("%s", out);
 	mawk_exit(2);
     }
 }
