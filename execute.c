@@ -1,6 +1,6 @@
 /********************************************
 execute.c
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2013, Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.30 2012/12/08 14:58:49 tom Exp $
+ * $MawkId: execute.c,v 1.31 2013/08/03 14:15:22 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -185,8 +185,8 @@ static CELL tc;			/*useful temp */
 
 void
 execute(INST * cdp,		/* code ptr, start execution here */
-	CELL * sp,		/* eval_stack pointer */
-	CELL * fp)		/* frame ptr into eval_stack for
+	CELL *sp,		/* eval_stack pointer */
+	CELL *fp)		/* frame ptr into eval_stack for
 				   user defined functions */
 {
     /* some useful temporaries */
@@ -1328,7 +1328,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		    sp++;
 		    type_p++;
 		    sp->type = C_NOINIT;
-		    if (*type_p == ST_LOCAL_ARRAY)
+		    if ((type_p) != 0 && (*type_p == ST_LOCAL_ARRAY))
 			sp->ptr = (PTR) new_ARRAY();
 		}
 
@@ -1373,7 +1373,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
   return 0 if a string is "" else return non-zero
 */
 int
-test(CELL * cp)
+test(CELL *cp)
 {
   reswitch:
 
@@ -1398,7 +1398,7 @@ test(CELL * cp)
    frees STRINGs at those cells
 */
 static int
-compare(CELL * cp)
+compare(CELL *cp)
 {
     int result;
 
@@ -1460,7 +1460,7 @@ compare(CELL * cp)
    call to cell_destroy	 */
 
 CELL *
-cellcpy(CELL * target, CELL * source)
+cellcpy(CELL *target, CELL *source)
 {
     switch (target->type = source->type) {
     case C_NOINIT:
@@ -1500,7 +1500,7 @@ cellcpy(CELL * target, CELL * source)
 #ifdef	 DEBUG
 
 void
-DB_cell_destroy(CELL * cp)
+DB_cell_destroy(CELL *cp)
 {
     switch (cp->type) {
     case C_NOINIT:
