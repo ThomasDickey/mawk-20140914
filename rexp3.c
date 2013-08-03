@@ -1,6 +1,6 @@
 /********************************************
 rexp3.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2013, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
 copyright 1991-1992,1993, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.28 2013/08/03 14:04:00 tom Exp $
+ * $MawkId: rexp3.c,v 1.29 2013/08/03 14:04:00 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
