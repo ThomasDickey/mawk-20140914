@@ -1,6 +1,6 @@
 /********************************************
 mawk.h
-copyright 2008-2010,2012 Thomas E. Dickey
+copyright 2008-2012,2013 Thomas E. Dickey
 copyright 1991-1995,1996 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.43 2013/08/03 13:04:24 tom Exp $
+ * $MawkId: mawk.h,v 1.44 2013/08/03 13:04:24 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
