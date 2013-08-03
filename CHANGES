@@ -1,6 +1,11 @@
--- $MawkId: CHANGES,v 1.173 2013/02/19 10:57:16 tom Exp $
+-- $MawkId: CHANGES,v 1.174 2013/08/03 12:55:30 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20130803
+	+ add limit-checks, improve index computation in scan.c to fix old
+	  1.3.3 problems with very long string-literals in the parsed script
+	  (report by Marcin Krol).
 
 20130219
 	+ modify missing-operand check in rexp.c to allow the case of empty
