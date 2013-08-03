@@ -1,6 +1,6 @@
 /********************************************
 code.c
-copyright 2009-2010,2012, Thomas E. Dickey
+copyright 2009-2012,2013, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: code.c,v 1.35 2012/11/03 13:36:38 tom Exp $
+ * $MawkId: code.c,v 1.36 2013/08/03 14:15:22 tom Exp $
  * @Log: code.c,v @
  * Revision 1.6  1995/06/18  19:42:13  mike
  * Remove some redundant declarations and add some prototypes
@@ -255,7 +255,7 @@ be_setup(int scope)
 
 #ifdef NO_LEAKS
 void
-free_cell_data(CELL * cp)
+free_cell_data(CELL *cp)
 {
     switch (cp->type) {
     case C_RE:
@@ -343,8 +343,9 @@ free_codes(const char *tag, INST * base, size_t size)
 		break;
 	    case F_PUSHI:
 		++cdp;		/* skip pointer */
-		cp = (CELL *) (cdp->ptr);
-		TRACE(("\tparam %p type %d\n", (void *) cp, cp->type));
+		TRACE(("\tparam %p type %d\n",
+		       (void *) ((CELL *) (cdp->ptr)),
+		       ((CELL *) (cdp->ptr))->type));
 		++cdp;		/* skip integer */
 		break;
 	    case _PUSHS:
