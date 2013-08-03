@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.36 2013/08/03 00:59:47 tom Exp $
+ * $MawkId: scan.c,v 1.37 2013/08/03 13:04:50 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -643,16 +643,17 @@ yylex(void)
 
     case SC_IDCHAR:		/* collect an identifier */
 	{
-	    UChar *p =
-	    (UChar *) string_buff + 1;
+	    char *p = string_buff + 1;
 	    SYMTAB *stp;
 
 	    string_buff[0] = (char) c;
 
-	    while ((c = scan_code[NextUChar(*p++)]) == SC_IDCHAR ||
-		   c == SC_DIGIT) {
-		;		/* empty */
-	    };
+	    while (1) {
+		CheckStringSize(p);
+		c = scan_code[NextUChar(*p++)];
+		if (c != SC_IDCHAR && c != SC_DIGIT)
+		    break;
+	    }
 
 	    un_next();
 	    *--p = 0;
@@ -754,10 +755,10 @@ yylex(void)
 static double
 collect_decimal(int c, int *flag)
 {
-    register UChar *p = (UChar *) string_buff + 1;
-    UChar *endp;
+    register char *p = string_buff + 1;
+    char *endp;
     char *temp;
-    UChar *last_decimal = 0;
+    char *last_decimal = 0;
     double d;
 
     *flag = 0;
@@ -765,14 +766,18 @@ collect_decimal(int c, int *flag)
 
     if (c == '.') {
 	last_decimal = p - 1;
+	CheckStringSize(p);
 	if (scan_code[NextUChar(*p++)] != SC_DIGIT) {
 	    *flag = UNEXPECTED;
 	    yylval.ival = '.';
 	    return 0.0;
 	}
     } else {
-	while (scan_code[NextUChar(*p++)] == SC_DIGIT) {
-	    ;			/* empty */
+	while (1) {
+	    CheckStringSize(p);
+	    if (scan_code[NextUChar(*p++)] != SC_DIGIT) {
+		break;
+	    }
 	};
 	if (p[-1] == '.') {
 	    last_decimal = p - 1;
@@ -782,9 +787,12 @@ collect_decimal(int c, int *flag)
 	}
     }
     /* get rest of digits after decimal point */
-    while (scan_code[NextUChar(*p++)] == SC_DIGIT) {
-	;			/* empty */
-    };
+    while (1) {
+	CheckStringSize(p);
+	if (scan_code[NextUChar(*p++)] != SC_DIGIT) {
+	    break;
+	}
+    }
 
     /* check for exponent */
     if (p[-1] != 'e' && p[-1] != 'E') {
@@ -805,9 +813,12 @@ collect_decimal(int c, int *flag)
 	    }
 	} else {		/* get the rest of the exponent */
 	    p++;
-	    while (scan_code[NextUChar(*p++)] == SC_DIGIT) {
-		;		/* empty */
-	    };
+	    while (1) {
+		CheckStringSize(p);
+		if (scan_code[NextUChar(*p++)] != SC_DIGIT) {
+		    break;
+		}
+	    }
 	    un_next();
 	    *--p = 0;
 	}
@@ -815,13 +826,13 @@ collect_decimal(int c, int *flag)
 
 #ifdef LOCALE
     if (last_decimal && decimal_dot) {
-	*last_decimal = (UChar) decimal_dot;
+	*last_decimal = decimal_dot;
     }
 #endif
 
     errno = 0;			/* check for overflow/underflow */
     d = strtod(string_buff, &temp);
-    endp = (UChar *) temp;
+    endp = temp;
 
 #ifndef	 STRTOD_UNDERFLOW_ON_ZERO_BUG
     if (errno)
@@ -1004,7 +1015,7 @@ collect_string(void)
 	    } else if (c == 0)
 		un_next();
 	    else {
-		*p++ = (UChar) c;
+		*p++ = (char) c;
 		e_flag = 1;
 	    }
 
@@ -1043,6 +1054,7 @@ collect_RE(void)
 			     limit);
 	    mawk_exit(2);
 	}
+	CheckStringSize(p);
 	switch (scan_code[NextUChar(c = *p++)]) {
 	case SC_POW:
 	    /* Handle [^]] and [^^] correctly. */
