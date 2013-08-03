@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.37 2013/08/03 13:04:50 tom Exp $
+ * $MawkId: scan.c,v 1.38 2013/08/03 13:28:13 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -105,7 +105,7 @@ static int program_fd;
 static int eof_flag;
 
 /* use unsigned chars for index into scan_code[] */
-#define NextUChar(c) (UChar)(c = next())
+#define NextUChar(c) (UChar)(c = (char) next())
 
 static void
 string_too_long(void)
@@ -298,7 +298,7 @@ eat_nl(void)			/* eat all space including newlines */
 	       a csh user with backslash dyslexia.(Not a joke)
 	     */
 	    {
-		unsigned c;
+		int c;
 
 		while (scan_code[NextUChar(c)] == SC_SPACE) {
 		    ;		/* empty */
