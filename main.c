@@ -1,6 +1,6 @@
 /********************************************
 main.c
-copyright 2009-2010,2012 Thomas E. Dickey
+copyright 2009-2012,2013 Thomas E. Dickey
 copyright 1991-1993,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.28 2013/08/03 13:04:15 tom Exp $
+ * $MawkId: main.c,v 1.29 2013/08/03 13:04:15 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
