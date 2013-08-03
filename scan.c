@@ -1,6 +1,6 @@
 /********************************************
 scan.c
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2013, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
 copyright 1991-1995,1996, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.35 2013/08/03 00:56:57 tom Exp $
+ * $MawkId: scan.c,v 1.36 2013/08/03 00:59:47 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
