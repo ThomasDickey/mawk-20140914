@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.27 2012/12/07 11:45:47 tom Exp $
+ * $MawkId: main.c,v 1.28 2013/08/03 13:04:15 tom Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -62,7 +62,7 @@ int ignore_unused;
 #endif
 
 #ifdef LOCALE
-int decimal_dot;
+char decimal_dot;
 #endif
 
 int
@@ -77,7 +77,7 @@ main(int argc, char **argv)
     {
 	struct lconv *data;
 
-	decimal_dot = 0;	/* only set to nonzero if not POSIX '.' */
+	decimal_dot = '\0';	/* only set to nonzero if not POSIX '.' */
 	setlocale(LC_NUMERIC, "");
 	data = localeconv();
 	if (data != 0
