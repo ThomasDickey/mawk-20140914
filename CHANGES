@@ -1,6 +1,10 @@
--- $MawkId: CHANGES,v 1.175 2013/08/03 13:46:47 tom Exp $
+-- $MawkId: CHANGES,v 1.176 2013/12/26 09:25:10 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20131226
+	+ minor updates to configure script, for clang and mingw
+	+ update config.guess and config.sub
 
 20130803
 	+ minor updates to configure script
