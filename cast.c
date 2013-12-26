@@ -1,6 +1,6 @@
 /********************************************
 cast.c
-copyright 2009-2010,2012 Thomas E. Dickey
+copyright 2009-2012,2013 Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.18 2013/12/26 23:23:55 tom Exp $
+ * $MawkId: cast.c,v 1.19 2013/12/26 23:23:55 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
