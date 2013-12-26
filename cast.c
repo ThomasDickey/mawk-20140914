@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.17 2012/11/29 09:21:25 tom Exp $
+ * $MawkId: cast.c,v 1.18 2013/12/26 23:23:55 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -73,7 +73,7 @@ int mpow2[NUM_CELL_TYPES] =
 {1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
 
 void
-cast1_to_d(CELL * cp)
+cast1_to_d(CELL *cp)
 {
     switch (cp->type) {
     case C_NOINIT:
@@ -112,7 +112,7 @@ cast1_to_d(CELL * cp)
 }
 
 void
-cast2_to_d(CELL * cp)
+cast2_to_d(CELL *cp)
 {
     register STRING *s;
 
@@ -183,7 +183,7 @@ cast2_to_d(CELL * cp)
 }
 
 void
-cast1_to_s(CELL * cp)
+cast1_to_s(CELL *cp)
 {
     register Int lval;
     char xbuff[260];
@@ -219,7 +219,7 @@ cast1_to_s(CELL * cp)
 }
 
 void
-cast2_to_s(CELL * cp)
+cast2_to_s(CELL *cp)
 {
     register Int lval;
     char xbuff[260];
@@ -287,7 +287,7 @@ cast2_to_s(CELL * cp)
 }
 
 void
-cast_to_RE(CELL * cp)
+cast_to_RE(CELL *cp)
 {
     register PTR p;
 
@@ -303,7 +303,7 @@ cast_to_RE(CELL * cp)
 }
 
 void
-cast_for_split(CELL * cp)
+cast_for_split(CELL *cp)
 {
     static char meta[] = "^$.*+?|[]()";
     static char xbuff[] = "\\X";
@@ -337,7 +337,7 @@ cast_for_split(CELL * cp)
 	    cp->ptr = (PTR) new_STRING1(temp, (size_t) 1);
 	    return;
 #endif
-	} else if (strchr(meta, c)) {
+	} else if ((strchr) (meta, c)) {
 	    xbuff[1] = (char) c;
 	    free_STRING(string(cp));
 	    cp->ptr = (PTR) new_STRING(xbuff);
@@ -357,7 +357,7 @@ cast_for_split(CELL * cp)
 */
 
 void
-check_strnum(CELL * cp)
+check_strnum(CELL *cp)
 {
     char *temp;
     register unsigned char *s, *q;
@@ -408,7 +408,7 @@ check_strnum(CELL * cp)
 /* cast a CELL to a replacement cell */
 
 void
-cast_to_REPL(CELL * cp)
+cast_to_REPL(CELL *cp)
 {
     register STRING *sval;
 
@@ -466,7 +466,7 @@ static ALL_CELLS *all_cells;
  * free on exit for auditing.
  */
 void
-no_leaks_cell(CELL * cp)
+no_leaks_cell(CELL *cp)
 {
     ALL_CELLS *p = calloc(1, sizeof(ALL_CELLS));
     p->next = all_cells;
@@ -476,7 +476,7 @@ no_leaks_cell(CELL * cp)
 }
 
 void
-no_leaks_cell_ptr(CELL * cp)
+no_leaks_cell_ptr(CELL *cp)
 {
     ALL_CELLS *p = calloc(1, sizeof(ALL_CELLS));
     p->next = all_cells;
