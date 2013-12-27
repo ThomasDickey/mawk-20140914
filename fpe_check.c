@@ -1,6 +1,6 @@
 /********************************************
 fpe_check.c
-copyright 2008-2009, Thomas E. Dickey
+copyright 2008-2010,2013 Thomas E. Dickey
 copyright 1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -15,7 +15,7 @@ the GNU General Public License, version 2, 1991.
 */
 
 /*
- * $MawkId: fpe_check.c,v 1.14 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: fpe_check.c,v 1.16 2013/12/27 00:44:59 tom Exp $
  * @Log: fpe_check.c,v @
  * Revision 1.7  1996/08/30 00:07:14  mike
  * Modifications to the test and implementation of the bug fix for
@@ -55,14 +55,6 @@ the GNU General Public License, version 2, 1991.
 #else
 #define FPE_ARGS int sig, int why
 #define FPE_DECL		/* nothing */
-#endif
-
-/* Sets up NetBSD 1.0A for ieee floating point */
-#if defined(_LIB_VERSION_TYPE) && defined(_LIB_VERSION) && defined(_IEEE_)
-#ifdef _CONST
-_CONST				/* needed for cygwin */
-#endif
-_LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
 #endif
 
 static void
@@ -196,6 +188,9 @@ get_fpe_codes(void)
 int
 main(int argc, char *argv[])
 {
+#ifdef HAVE_MATH__LIB_VERSION
+    _LIB_VERSION = _IEEE_;
+#endif
 
     catch_FPEs();
     switch (argc) {
