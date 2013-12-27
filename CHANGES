@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.176 2013/12/26 09:25:10 tom Exp $
+-- $MawkId: CHANGES,v 1.177 2013/12/27 00:53:15 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20131226
+	+ add configure check to work around recent breakage in Cygwin's math.h
+	  which declares _LIB_VERSION without allowing it to be updated (report
+	  by Gert Hulselmans).
 	+ minor updates to configure script, for clang and mingw
 	+ update config.guess and config.sub
 
