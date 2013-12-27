@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.67 2013/12/26 09:25:14 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.68 2013/12/27 01:22:11 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -1525,6 +1525,39 @@ define([CF_REMOVE_DEFINE],
 $1=`echo "$2" | \
 	sed	-e 's/-[[UD]]'"$3"'\(=[[^ 	]]*\)\?[[ 	]]/ /g' \
 		-e 's/-[[UD]]'"$3"'\(=[[^ 	]]*\)\?[$]//g'`
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_SET_MATH_LIB_VERSION version: 1 updated: 2013/12/26 20:21:00
+dnl -----------------------
+dnl Check if math.h declares _LIB_VERSION, and if so, whether we can modify it
+dnl at runtime.  Cygwin is known to be broken in this regard (late 2013).
+AC_DEFUN([CF_SET_MATH_LIB_VERSION],[
+AC_CACHE_CHECK(if math.h declares _LIB_VERSION,cf_cv_get_math_lib_version,[
+
+AC_TRY_LINK([
+#include <math.h>],
+	[int foo = _LIB_VERSION],
+	[cf_cv_get_math_lib_version=yes],
+	[cf_cv_get_math_lib_version=no])
+])
+
+if test "x$cf_cv_get_math_lib_version" = xyes
+then
+	AC_CACHE_CHECK(if we can update _LIB_VERSION,cf_cv_set_math_lib_version,[
+
+	AC_TRY_LINK([
+#include <math.h>],
+		[_LIB_VERSION = _IEEE_],
+		[cf_cv_set_math_lib_version=yes],
+		[cf_cv_set_math_lib_version=no])
+	])
+	if test "x$cf_cv_set_math_lib_version" = xyes
+	then
+		AC_DEFINE(HAVE_MATH__LIB_VERSION,1,[Define to 1 if we can set math.h variable _LIB_VERSION])
+	else
+		AC_MSG_WARN(this is probably due to a defect in your system headers)
+	fi
+fi
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_SRAND version: 11 updated: 2012/10/31 07:00:16
