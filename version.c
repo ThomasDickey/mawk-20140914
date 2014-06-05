@@ -1,6 +1,6 @@
 /********************************************
 version.c
-copyright 2008-2012,2013.  Thomas E. Dickey
+copyright 2008-2013,2014.  Thomas E. Dickey
 copyright 1991-1995,1996.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.13 2013/02/19 11:46:10 tom Exp $
+ * $MawkId: version.c,v 1.14 2014/06/05 23:04:08 tom Exp $
  *
  * @Log: version.c,v @
  * Revision 1.10  1996/07/28 21:47:07  mike
@@ -34,7 +34,7 @@ the GNU General Public License, version 2, 1991.
 
 #define	 VERSION_STRING	 \
   "mawk %d.%d%s%s %s\n\
-Copyright 2013, Thomas E. Dickey\n\
+Copyright 2014, Thomas E. Dickey\n\
 Copyright 1996, Michael D. Brennan\n\n"
 
 /* If use different command line syntax for MSDOS
