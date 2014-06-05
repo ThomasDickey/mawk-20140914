@@ -1,6 +1,12 @@
--- $MawkId: CHANGES,v 1.177 2013/12/27 00:53:15 tom Exp $
+-- $MawkId: CHANGES,v 1.178 2014/06/05 23:01:15 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20140605
+	+ improve configure check for Intel compiler warnings; trim unwanted
+	  -no-gcc option.
+	+ for Solaris suppress the followup check for defining _XOPEN_SOURCE
+	+ update config.guess and config.sub
 
 20131226
 	+ add configure check to work around recent breakage in Cygwin's math.h
