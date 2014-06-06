@@ -1,6 +1,6 @@
 /********************************************
 re_cmpl.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2014, Thomas E. Dickey
 copyright 1991-1993,1994, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.22 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.23 2014/06/06 23:50:30 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -244,7 +244,7 @@ REPL_compile(STRING * sval)
 /* free memory used by a replacement CELL  */
 
 void
-repl_destroy(CELL * cp)
+repl_destroy(CELL *cp)
 {
     register STRING **p;
     VCount cnt;
@@ -266,7 +266,7 @@ repl_destroy(CELL * cp)
 /* copy a C_REPLV cell to another CELL */
 
 CELL *
-replv_cpy(CELL * target, CELL * source)
+replv_cpy(CELL *target, CELL *source)
 {
     STRING **t, **s;
     VCount cnt;
@@ -336,7 +336,7 @@ repl_compile(STRING * sval)
     p->cp = REPL_compile(sval);
 
   found:
-/* insert p at the front of the list */
+    /* insert p at the front of the list */
     p->link = repl_list;
     repl_list = p;
     return p->cp;
@@ -346,7 +346,7 @@ repl_compile(STRING * sval)
    this is only used by da()  */
 
 char *
-repl_uncompile(CELL * cp)
+repl_uncompile(CELL *cp)
 {
     register REPL_NODE *p = repl_list;
 
@@ -360,8 +360,7 @@ repl_uncompile(CELL * cp)
     } else {
 	while (p) {
 	    if (p->cp->type == C_REPLV &&
-		memcmp(cp->ptr, p->cp->ptr, cp->vcnt * sizeof(STRING *))
-		== 0)
+		memcmp(cp->ptr, p->cp->ptr, cp->vcnt * sizeof(STRING *)) == 0)
 		return p->sval->str;
 	    else
 		p = p->link;
@@ -381,7 +380,7 @@ repl_uncompile(CELL * cp)
 */
 
 CELL *
-replv_to_repl(CELL * cp, STRING * sval)
+replv_to_repl(CELL *cp, STRING * sval)
 {
     register STRING **p;
     STRING **sblock = (STRING **) cp->ptr;
