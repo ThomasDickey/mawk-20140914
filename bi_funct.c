@@ -1,6 +1,6 @@
 /********************************************
 bi_funct.c
-copyright 2008-2012,2013, Thomas E. Dickey
+copyright 2008-2013,2014, Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.68 2014/06/18 21:05:24 tom Exp $
+ * $MawkId: bi_funct.c,v 1.69 2014/06/18 23:15:40 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1236,7 +1236,7 @@ repl_length(CELL *cp)
 	while (count--) {
 	    if (*sblock) {
 		TRACE(("..adding "));
-		TraceString(*sblock);
+		TRACE_STRING(*sblock);
 		TRACE(("\n"));
 		result += (*sblock)->len;
 	    }
@@ -1494,11 +1494,11 @@ bi_gsub(CELL *sp)
     sp -= 2;
 
     TRACE(("SP 0: "));
-    TraceCell(sp);
+    TRACE_CELL(sp);
     TRACE(("SP 1: "));
-    TraceCell(sp + 1);
+    TRACE_CELL(sp + 1);
     TRACE(("SP 2: "));
-    TraceCell(sp + 2);
+    TRACE_CELL(sp + 2);
 
     if (sp->type != C_RE)
 	cast_to_RE(sp);
