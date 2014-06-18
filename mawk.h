@@ -1,6 +1,6 @@
 /********************************************
 mawk.h
-copyright 2008-2012,2013 Thomas E. Dickey
+copyright 2008-2013,2014 Thomas E. Dickey
 copyright 1991-1995,1996 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.45 2014/06/07 00:38:36 tom Exp $
+ * $MawkId: mawk.h,v 1.46 2014/06/18 23:15:52 tom Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -233,8 +233,10 @@ extern void Trace(const char *,...) GCC_PRINTFLIKE(1,2);
 extern void TraceCell(CELL *);
 extern void TraceString(STRING *);
 #define TRACE_CELL(cp) TraceCell(cp)
+#define TRACE_STRING(cp) TraceString(cp)
 #else
 #define TRACE_CELL(cp)		/* nothing */
+#define TRACE_STRING(cp)	/* nothing */
 #endif
 
 #if OPT_TRACE > 0
