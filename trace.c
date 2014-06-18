@@ -10,13 +10,11 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: trace.c,v 1.5 2012/11/02 00:34:37 tom Exp $
+ * $MawkId: trace.c,v 1.6 2014/06/18 20:21:09 tom Exp $
  */
 #include <stdarg.h>
 
 #include <mawk.h>
-
-static void TraceString(STRING *);
 
 static FILE *trace_fp;
 
@@ -37,7 +35,7 @@ Trace(const char *format,...)
 }
 
 void
-TraceCell(CELL * cp)
+TraceCell(CELL *cp)
 {
     TRACE(("cell %p ", (void *) cp));
     if (cp != 0) {
@@ -80,7 +78,7 @@ TraceCell(CELL * cp)
 }
 
 void
-TraceFunc(const char *name, CELL * sp)
+TraceFunc(const char *name, CELL *sp)
 {
     int nargs = sp->type;
     int n;
@@ -92,10 +90,10 @@ TraceFunc(const char *name, CELL * sp)
     }
 }
 
-static void
+void
 TraceString(STRING * sp)
 {
-    size_t limit = sp->len;
+    size_t limit = sp ? sp->len : 0;
     size_t n;
 
     TRACE(("\""));
