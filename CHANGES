@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.178 2014/06/05 23:01:15 tom Exp $
+-- $MawkId: CHANGES,v 1.179 2014/06/18 21:15:34 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140605
+20140618
+	+ restore in-progress change to gsub; resolved problem handling its
+	  internal use of vectors for second parameter when "&" marker is used.
 	+ improve configure check for Intel compiler warnings; trim unwanted
 	  -no-gcc option.
 	+ for Solaris suppress the followup check for defining _XOPEN_SOURCE
