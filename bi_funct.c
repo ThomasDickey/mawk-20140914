@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.67 2013/02/19 10:57:28 tom Exp $
+ * $MawkId: bi_funct.c,v 1.68 2014/06/18 21:05:24 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -160,7 +160,7 @@ bi_funct_init(void)
  **************************************************/
 
 CELL *
-bi_length(CELL * sp)
+bi_length(CELL *sp)
 {
     size_t len;
 
@@ -227,7 +227,7 @@ str_str(char *target, size_t target_len, char *key, size_t key_len)
 }
 
 CELL *
-bi_index(CELL * sp)
+bi_index(CELL *sp)
 {
     size_t idx;
     size_t len;
@@ -262,7 +262,7 @@ bi_index(CELL * sp)
     from  max(1,i) to min(l,n-i-1) inclusive */
 
 CELL *
-bi_substr(CELL * sp)
+bi_substr(CELL *sp)
 {
     int n_args, len;
     register int i, n;
@@ -341,7 +341,7 @@ bi_substr(CELL * sp)
 */
 
 CELL *
-bi_match(CELL * sp)
+bi_match(CELL *sp)
 {
     char *p;
     size_t length;
@@ -377,7 +377,7 @@ bi_match(CELL * sp)
 }
 
 CELL *
-bi_toupper(CELL * sp)
+bi_toupper(CELL *sp)
 {
     STRING *old;
     register char *p, *q;
@@ -401,7 +401,7 @@ bi_toupper(CELL * sp)
 }
 
 CELL *
-bi_tolower(CELL * sp)
+bi_tolower(CELL *sp)
 {
     STRING *old;
     register char *p, *q;
@@ -428,7 +428,7 @@ bi_tolower(CELL * sp)
  * Like gawk...
  */
 CELL *
-bi_systime(CELL * sp)
+bi_systime(CELL *sp)
 {
     time_t result;
     time(&result);
@@ -448,7 +448,7 @@ bi_systime(CELL * sp)
         YYYY MM DD HH MM SS [DST].
 */
 CELL *
-bi_mktime(CELL * sp)
+bi_mktime(CELL *sp)
 {
     time_t result;
     struct tm my_tm;
@@ -500,7 +500,7 @@ bi_mktime(CELL * sp)
 */
 #ifdef HAVE_STRFTIME
 CELL *
-bi_strftime(CELL * sp)
+bi_strftime(CELL *sp)
 {
     const char *format = "%c";
     time_t rawtime;
@@ -591,7 +591,7 @@ fplib_err(
 #endif
 
 CELL *
-bi_sin(CELL * sp)
+bi_sin(CELL *sp)
 {
     TRACE_FUNC("bi_sin", sp);
 
@@ -616,7 +616,7 @@ bi_sin(CELL * sp)
 }
 
 CELL *
-bi_cos(CELL * sp)
+bi_cos(CELL *sp)
 {
     TRACE_FUNC("bi_cos", sp);
 
@@ -641,7 +641,7 @@ bi_cos(CELL * sp)
 }
 
 CELL *
-bi_atan2(CELL * sp)
+bi_atan2(CELL *sp)
 {
     TRACE_FUNC("bi_atan2", sp);
 
@@ -665,7 +665,7 @@ bi_atan2(CELL * sp)
 }
 
 CELL *
-bi_log(CELL * sp)
+bi_log(CELL *sp)
 {
     TRACE_FUNC("bi_log", sp);
 
@@ -690,7 +690,7 @@ bi_log(CELL * sp)
 }
 
 CELL *
-bi_exp(CELL * sp)
+bi_exp(CELL *sp)
 {
     TRACE_FUNC("bi_exp", sp);
 
@@ -716,7 +716,7 @@ bi_exp(CELL * sp)
 }
 
 CELL *
-bi_int(CELL * sp)
+bi_int(CELL *sp)
 {
     TRACE_FUNC("bi_int", sp);
 
@@ -727,7 +727,7 @@ bi_int(CELL * sp)
 }
 
 CELL *
-bi_sqrt(CELL * sp)
+bi_sqrt(CELL *sp)
 {
     TRACE_FUNC("bi_sqrt", sp);
 
@@ -782,7 +782,7 @@ static CELL cseed;		/* argument of last call to srand() */
 #endif /* defined(mawk_srand) || defined(mawk_rand) */
 
 CELL *
-bi_srand(CELL * sp)
+bi_srand(CELL *sp)
 {
 #ifdef USE_SYSTEM_SRAND
     static long seed = 1;
@@ -839,7 +839,7 @@ bi_srand(CELL * sp)
 }
 
 CELL *
-bi_rand(CELL * sp)
+bi_rand(CELL *sp)
 {
     TRACE_FUNC("bi_rand", sp);
 
@@ -874,7 +874,7 @@ bi_rand(CELL * sp)
  *************************************************/
 
 CELL *
-bi_close(CELL * sp)
+bi_close(CELL *sp)
 {
     int x;
 
@@ -891,7 +891,7 @@ bi_close(CELL * sp)
 }
 
 CELL *
-bi_fflush(CELL * sp)
+bi_fflush(CELL *sp)
 {
     int ret = 0;
 
@@ -914,7 +914,7 @@ bi_fflush(CELL * sp)
 }
 
 CELL *
-bi_system(CELL * sp GCC_UNUSED)
+bi_system(CELL *sp GCC_UNUSED)
 {
 #ifdef HAVE_REAL_PIPES
     int pid;
@@ -972,7 +972,7 @@ bi_system(CELL * sp GCC_UNUSED)
 */
 
 CELL *
-bi_getline(CELL * sp)
+bi_getline(CELL *sp)
 {
     CELL tc;
     CELL *cp = 0;
@@ -1082,7 +1082,7 @@ bi_getline(CELL * sp)
 */
 
 CELL *
-bi_sub(CELL * sp)
+bi_sub(CELL *sp)
 {
     CELL *cp;			/* pointer to the replacement target */
     CELL tc;			/* build the new string here */
@@ -1222,6 +1222,31 @@ indent(int level)
    empty_ok is set if, match of empty string at front is OK
 */
 
+static size_t
+repl_length(CELL *cp)
+{
+    size_t result = 0;
+
+    if (cp->type == C_REPL) {
+	result = string(cp)->len;
+    } else if (cp->type == C_REPLV) {
+	STRING **sblock = (STRING **) cp->ptr;
+	unsigned count = cp->vcnt;
+	TRACE(("repl_length C_REPLV count %d\n", count));
+	while (count--) {
+	    if (*sblock) {
+		TRACE(("..adding "));
+		TraceString(*sblock);
+		TRACE(("\n"));
+		result += (*sblock)->len;
+	    }
+	    sblock++;
+	}
+    }
+    TRACE(("repl_length -> %d\n", (int) result));
+    return result;
+}
+
 #ifdef DEBUG_GSUB
 static STRING *
 old_gsub(PTR re, int level)
@@ -1231,6 +1256,7 @@ old_gsub(PTR re, int level)
     char *front = 0, *middle;
     STRING *back;
     size_t front_len, middle_len;
+    size_t repl_len;
 
     assert(level >= 0);
     assert(level + 1 < (int) gsub_max);
@@ -1293,21 +1319,22 @@ old_gsub(PTR re, int level)
 	}
 
 	/* put the three pieces together */
-	ThisResult = new_STRING0(front_len + string(&ThisReplace)->len + back->len);
+	repl_len = repl_length(&ThisReplace);
+	ThisResult = new_STRING0(front_len + repl_len + back->len);
 	TRACE(("old %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
-	       front_len, front,
-	       string(&ThisReplace)->len, string(&ThisReplace)->str,
-	       back->len, back->str));
+	       (int) front_len, front,
+	       (int) repl_len, string(&ThisReplace)->str,
+	       (int) back->len, back->str));
 	in_sval = ThisResult->str;
 
 	if (front_len) {
 	    memcpy(in_sval, front, front_len);
 	    in_sval += front_len;
 	}
-	if (string(&ThisReplace)->len) {
-	    memcpy(in_sval, string(&ThisReplace)->str, string(&ThisReplace)->len);
-	    in_sval += string(&ThisReplace)->len;
+	if (repl_len) {
+	    memcpy(in_sval, string(&ThisReplace)->str, repl_len);
+	    in_sval += repl_len;
 	}
 	if (back->len)
 	    memcpy(in_sval, back->str, back->len);
@@ -1330,6 +1357,7 @@ new_gsub(PTR re, int level)
     char xbuff[2];
     char *in_sval;
     STRING *back;
+    size_t repl_len;
 
   loop:
     assert(level >= 0);
@@ -1403,11 +1431,12 @@ new_gsub(PTR re, int level)
 	}
 
 	/* put the three pieces together */
-	ThisResult = new_STRING0(ThisFrontLen + string(&ThisReplace)->len + back->len);
+	repl_len = repl_length(&ThisReplace);
+	ThisResult = new_STRING0(ThisFrontLen + repl_len + back->len);
 	TRACE(("new %s front '%.*s', middle '%.*s', back '%.*s'\n",
 	       indent(level),
 	       (int) ThisFrontLen, ThisFront,
-	       (int) string(&ThisReplace)->len, string(&ThisReplace)->str,
+	       (int) repl_len, string(&ThisReplace)->str,
 	       (int) back->len, back->str));
 	in_sval = ThisResult->str;
 
@@ -1415,9 +1444,9 @@ new_gsub(PTR re, int level)
 	    memcpy(in_sval, ThisFront, ThisFrontLen);
 	    in_sval += ThisFrontLen;
 	}
-	if (string(&ThisReplace)->len) {
-	    memcpy(in_sval, string(&ThisReplace)->str, string(&ThisReplace)->len);
-	    in_sval += string(&ThisReplace)->len;
+	if (repl_len) {
+	    memcpy(in_sval, string(&ThisReplace)->str, repl_len);
+	    in_sval += repl_len;
 	}
 	if (back->len)
 	    memcpy(in_sval, back->str, back->len);
@@ -1448,7 +1477,7 @@ new_gsub(PTR re, int level)
 
 /* set up for call to gsub() */
 CELL *
-bi_gsub(CELL * sp)
+bi_gsub(CELL *sp)
 {
     CELL *cp;			/* pts at the replacement target */
     CELL sc;			/* copy of replacement target */
@@ -1463,6 +1492,14 @@ bi_gsub(CELL * sp)
     TRACE_FUNC("bi_gsub", sp);
 
     sp -= 2;
+
+    TRACE(("SP 0: "));
+    TraceCell(sp);
+    TRACE(("SP 1: "));
+    TraceCell(sp + 1);
+    TRACE(("SP 2: "));
+    TraceCell(sp + 2);
+
     if (sp->type != C_RE)
 	cast_to_RE(sp);
     if ((sp + 1)->type != C_REPL && (sp + 1)->type != C_REPLV)
@@ -1494,7 +1531,7 @@ bi_gsub(CELL * sp)
 
 	resul2 = old_gsub(sp->ptr, 0);
 
-	TRACE(("OLD ->'%.*s'\n", resul2->len, resul2->str));
+	TRACE(("OLD ->'%.*s'\n", (int) resul2->len, resul2->str));
 	free_STRING(target);
     }
 #endif
@@ -1512,7 +1549,7 @@ bi_gsub(CELL * sp)
     tc.ptr = (PTR) result;
 
 #ifdef DEBUG_GSUB
-    TRACE(("NEW ->'%.*s'\n", result->len, result->str));
+    TRACE(("NEW ->'%.*s'\n", (int) result->len, result->str));
     if (result->len != resul2->len || memcmp(result->str, resul2->str, result->len))
 	TRACE(("OOPS\n"));
 #endif
@@ -1551,7 +1588,7 @@ static unsigned repl_cnt;	/* number of global replacements */
 */
 
 static STRING *
-gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
+gsub(PTR re, CELL *repl, char *target, size_t target_len, int flag)
 {
     char *front = 0, *middle;
     STRING *back;
@@ -1641,7 +1678,7 @@ gsub(PTR re, CELL * repl, char *target, size_t target_len, int flag)
 
 /* set up for call to gsub() */
 CELL *
-bi_gsub(CELL * sp)
+bi_gsub(CELL *sp)
 {
     CELL *cp;			/* pts at the replacement target */
     CELL sc;			/* copy of replacement target */
