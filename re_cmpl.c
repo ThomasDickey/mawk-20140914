@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.23 2014/06/06 23:50:30 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.24 2014/06/18 22:40:33 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -174,6 +174,7 @@ REPL_compile(STRING * sval)
     char *xbuff;
     CELL *cp;
 
+    TRACE(("REPL_compile(%.*s)\n", (int) sval->len, sval->str));
     q = xbuff = (char *) zmalloc(sval->len + 1);
 
     while (1) {
@@ -230,12 +231,16 @@ REPL_compile(STRING * sval)
 	VCount j = 0;
 
 	while (j < count) {
+	    TRACE(("SPLIT %d:", j));
+	    TraceString(split_buff[j]);
+	    TRACE(("\n"));
 	    *sp++ = split_buff[j++];
 	    USED_SPLIT_BUFF(j - 1);
 	}
 
 	cp->type = C_REPLV;
 	cp->vcnt = count;
+	TRACE(("... created C_REPLV count %d\n", count));
     }
     zfree(xbuff, sval->len + 1);
     return cp;
