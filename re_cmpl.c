@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.24 2014/06/18 22:40:33 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.25 2014/06/18 23:10:30 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -232,7 +232,7 @@ REPL_compile(STRING * sval)
 
 	while (j < count) {
 	    TRACE(("SPLIT %d:", j));
-	    TraceString(split_buff[j]);
+	    TRACE_STRING(split_buff[j]);
 	    TRACE(("\n"));
 	    *sp++ = split_buff[j++];
 	    USED_SPLIT_BUFF(j - 1);
