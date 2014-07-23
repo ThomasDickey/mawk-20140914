@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.179 2014/06/18 21:15:34 tom Exp $
+-- $MawkId: CHANGES,v 1.180 2014/07/23 22:42:41 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140618
+20140724
+	+ improve configure macros CF_ADD_CFLAGS, CF_ADD_LIBS, CF_XOPEN_SOURCE,
+	  e.g., for Minix3.2 port.
 	+ restore in-progress change to gsub; resolved problem handling its
 	  internal use of vectors for second parameter when "&" marker is used.
 	+ improve configure check for Intel compiler warnings; trim unwanted
