@@ -1,6 +1,6 @@
 /********************************************
 init.c
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2014, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.35 2012/12/09 14:27:07 tom Exp $
+ * $MawkId: init.c,v 1.36 2014/07/31 23:52:53 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -80,10 +80,12 @@ typedef enum {
 #endif
     W_VERSION,
     W_DUMP,
+    W_HELP,
     W_INTERACTIVE,
     W_EXEC,
     W_SPRINTF,
-    W_POSIX_SPACE
+    W_POSIX_SPACE,
+    W_USAGE
 } W_OPTIONS;
 
 static void process_cmdline(int, char **);
@@ -160,6 +162,47 @@ bad_option(char *s)
 static void
 no_program(void)
 {
+    mawk_exit(0);
+}
+
+static void
+usage(void)
+{
+    static const char *msg[] =
+    {
+	"Usage: mawk [Options] [Program] [file ...]",
+	"",
+	"Program:",
+	"    The -f option value is the name of a file containing program text.",
+	"    If no -f option is given, a \"--\" ends option processing; the following",
+	"    parameters are the program text.",
+	"",
+	"Options:",
+	"    -f program-file  Program  text is read from file instead of from the",
+	"                     command-line.  Multiple -f options are accepted.",
+	"    -F value         sets the field separator, FS, to value.",
+	"    -v var=value     assigns value to program variable var.",
+	"    --               unambiguous end of options.",
+	"",
+	"    Implementation-specific options are prefixed with \"-W\".  They can be",
+	"    abbreviated:",
+	"",
+	"    -W version       show version information and exit.",
+#if USE_BINMODE
+	"    -W binmode",
+#endif
+	"    -W dump          show assembler-like listing of program and exit.",
+	"    -W help          show this message and exit.",
+	"    -W interactive   set unbuffered output, line-buffered input.",
+	"    -W exec file     use file's as program as well as last option.",
+	"    -W sprintf=number  adjust size of sprintf buffer.",
+	"    -W posix_space   do not consider \"\\n\" a space.",
+	"    -W usage         show this message and exit.",
+    };
+    size_t n;
+    for (n = 0; n < sizeof(msg) / sizeof(msg[0]); ++n) {
+	fprintf(stderr, "%s\n", msg[n]);
+    }
     mawk_exit(0);
 }
 
@@ -250,10 +293,12 @@ parse_w_opt(char *source, char **next)
 	    DATA(BINMODE),
 #endif
 	    DATA(DUMP),
+	    DATA(HELP),
 	    DATA(INTERACTIVE),
 	    DATA(EXEC),
 	    DATA(SPRINTF),
-	    DATA(POSIX_SPACE)
+	    DATA(POSIX_SPACE),
+	    DATA(USAGE)
     };
 #undef DATA
     W_OPTIONS result = W_UNKNOWN;
@@ -300,6 +345,9 @@ process_cmdline(int argc, char **argv)
     PFILE dummy;		/* starts linked list of filenames */
     PFILE *tail = &dummy;
     size_t length;
+
+    if (argc <= 1)
+	usage();
 
     for (i = 1; i < argc && argv[i][0] == '-'; i = nextarg) {
 	if (argv[i][1] == 0)	/* -  alone */
@@ -399,6 +447,11 @@ process_cmdline(int argc, char **argv)
 		    }
 		    break;
 
+		case W_HELP:
+		    /* FALLTHRU */
+		case W_USAGE:
+		    usage();
+		    /* NOTREACHED */
 		case W_UNKNOWN:
 		    errmsg(0, "vacuous option: -W %s", optArg + j);
 		    break;
