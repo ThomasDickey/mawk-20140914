@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.180 2014/07/23 22:42:41 tom Exp $
+-- $MawkId: CHANGES,v 1.181 2014/07/31 23:17:25 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140724
+20140731
+	+ add -Wu / -Wusage / -Wh / -Whelp to show usage message, like gawk.
+	  If long options are enabled, honor --help and --usage as well.
+	+ if no command-line parameters are given, show usage message like
+	  gawk and BWK (report by Michael Sanders).
 	+ improve configure macros CF_ADD_CFLAGS, CF_ADD_LIBS, CF_XOPEN_SOURCE,
 	  e.g., for Minix3.2 port.
 	+ restore in-progress change to gsub; resolved problem handling its
