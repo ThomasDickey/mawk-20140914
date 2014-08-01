@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.23 2012/11/29 00:10:57 tom Exp $
+.\" $MawkId: mawk.1,v 1.24 2014/08/01 10:47:26 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -11,7 +11,7 @@
 .\" ###########################################################################
 .ds N Mawk
 .ds n mawk
-.TH MAWK 1 "2012-11-28" "Version 1.3.4" "USER COMMANDS"
+.TH MAWK 1 "2014-08-01" "Version 1.3.4" "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
 .\" Bulleted paragraph
@@ -132,6 +132,9 @@ It is useful on systems that support the
 .B #!
 "magic number" convention for executable scripts.
 .TP
+\-\fBW \fRhelp
+prints a usage message to stderr and exits (same as \*(``\-\fBW\ \fRusage\*('').
+.TP
 \-\fBW \fRinteractive
 sets unbuffered writes to stdout and line buffered reads from stdin.
 Records from stdin are lines regardless of the value of
@@ -157,6 +160,9 @@ should be recompiled.
 writes its version and copyright
 to stdout and compiled limits to
 stderr and exits 0.
+.TP
+\-\fBW \fRusage
+prints a usage message to stderr and exits (same as \*(``\-\fBW\ \fRhelp\*('').
 .PP
 \fB\*n\fP accepts abbreviations for any of these options, e.g., 
 \*(``\-\fBW\ \fRv\*('' and \*(``\-\fBW\fRv\*(''
