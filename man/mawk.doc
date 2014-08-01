@@ -54,18 +54,24 @@ OOPPTTIIOONNSS
                       option.   It  is  useful  on systems that support the ##!!
                       "magic number" convention for executable scripts.
 
+       -WW help        prints a usage message to  stderr  and  exits  (same  as
+                      "-WW usage").
+
        -WW interactive sets unbuffered writes to stdout and line buffered reads
-                      from  stdin.  Records from stdin are lines regardless of
+                      from stdin.  Records from stdin are lines regardless  of
                       the value of RRSS.
 
        -WW posix_space forces mmaawwkk not to consider '\n' to be space.
 
-       -WW sprintf=_n_u_m adjusts the size of mmaawwkk's internal  sprintf  buffer  to
-                      _n_u_m  bytes.  More than rare use of this option indicates
+       -WW sprintf=_n_u_m adjusts  the  size  of mmaawwkk's internal sprintf buffer to
+                      _n_u_m bytes.  More than rare use of this option  indicates
                       mmaawwkk should be recompiled.
 
        -WW version     mmaawwkk writes its version and copyright to stdout and com-
                       piled limits to stderr and exits 0.
+
+       -WW usage       prints a usage message to  stderr  and  exits  (same  as
+                      "-WW help").
 
        mmaawwkk  accepts  abbreviations for any of these options, e.g., "-WW v" and
        "-WWv" both tell mmaawwkk to show its version.
@@ -1057,4 +1063,4 @@ AAUUTTHHOORR
 
 
 
-Version 1.3.4                     2012-11-28                           MAWK(1)
+Version 1.3.4                     2014-08-01                           MAWK(1)
