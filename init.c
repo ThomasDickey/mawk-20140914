@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.36 2014/07/31 23:52:53 tom Exp $
+ * $MawkId: init.c,v 1.37 2014/08/01 10:47:26 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -194,7 +194,7 @@ usage(void)
 	"    -W dump          show assembler-like listing of program and exit.",
 	"    -W help          show this message and exit.",
 	"    -W interactive   set unbuffered output, line-buffered input.",
-	"    -W exec file     use file's as program as well as last option.",
+	"    -W exec file     use file as program as well as last option.",
 	"    -W sprintf=number  adjust size of sprintf buffer.",
 	"    -W posix_space   do not consider \"\\n\" a space.",
 	"    -W usage         show this message and exit.",
