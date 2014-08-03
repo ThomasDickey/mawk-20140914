@@ -1,8 +1,8 @@
--- $MawkId: CHANGES,v 1.182 2014/08/01 10:47:26 tom Exp $
+-- $MawkId: CHANGES,v 1.183 2014/08/03 23:50:13 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140801
+20140803
 	+ add -Wu / -Wusage / -Wh / -Whelp to show usage message, like gawk.
 	  If long options are enabled, honor --help and --usage as well.
 	+ if no command-line parameters are given, show usage message like

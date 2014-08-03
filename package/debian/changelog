@@ -1,4 +1,4 @@
-mawk-cur (1.3.4-20140801) unstable; urgency=low
+mawk-cur (1.3.4-20140803) unstable; urgency=low
 
   * configure-script updates
   * minor fixes
