@@ -12,39 +12,36 @@
 % Clean up documentation.
 %
 
-%\hi -- hang item
-\def\hi{\smallskip\hangindent\parindent\indent\ignorespaces}
+\input mwebmac
+\input ctmac
+
+\RCSID{$Id: array.w,v 1.16 2014/08/03 23:30:26 Mike.Brennan Exp $}
+
+\TOC{Mawk Arrays}
+
 \def\expr{{\it expr}}
 \def\Null{{\it null}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<"array.h">>=
-<<array.h notice>>
-#ifndef ARRAY_H
-#define ARRAY_H 1
 
-#include "nstd.h"
-#include "types.h"
 
-<<array typedefs and [[#defines]]>>
-<<interface prototypes>>
-#endif /* ARRAY_H */
+\section{Introduction}
+This is the source and documenation for the [[mawk]] implementation
+of awk arrays.  Arrays in awk are associations of strings to awk scalar
+values.   The mawk implementation stores the associations in
+hash tables.   The hash table scheme was influenced by 
+and is similar to
+the design presented in Griswold and Townsend,
+{\sl The Design and Implementation of
+Dynamic Hashing Sets and Tables in Icon},
+{\bf Software Practice and Experience}, 23, 351-367, 1993.
 
-<<"array.c">>=
-<<array.c notice>>
-#include "mawk.h"
-#include "symtype.h"
-#include "memory.h"
-#include "field.h"
-#include "bi_vars.h"
-<<local constants, defs and prototypes>>
-<<interface functions>>
-<<local functions>>
 
-#define ahash(sval) hash2((sval)->str, (sval)->len)
-
-@ Array Structure
+@
+\section{Data Structures}
+@ 
+\subsection{Array Structure}
 The type [[ARRAY]] is a pointer to a [[struct array]].
 The [[size]] field is the number of elements in the table.
 The meaning of the other fields depends on the [[type]] field.
@@ -57,22 +54,22 @@ typedef struct array {
    unsigned hmask ; /* bitwise and with hash value to get table index */
    short type ;  /* values in AY_NULL .. AY_SPLIT */
 } *ARRAY ;
+@ %def ARRAY
 
-@
 There are three types of arrays and these are distinguished by the
 [[type]] field in the structure.  The types are:
 
-\hi [[AY_NULL]]\quad The array is empty and the [[size]] field is always
+\I[[AY_NULL]] The array is empty and the [[size]] field is always
 zero.  The other fields have no meaning.
 
-\hi [[AY_SPLIT]]\quad The array was created by the [[AWK]] built-in
+\I[[AY_SPLIT]] The array was created by the [[AWK]] built-in
 [[split]].  The return value from [[split]] is stored in the [[size]]
 field.  The [[ptr]] field points at a vector of [[CELLs]].  The number
 of [[CELLs]] is the [[limit]] field. It is always true that
 ${\it size}\leq{\it limit}$.  The address of [[A[i]]] is [[(CELL*)A->ptr+i-1]]
 for $1\leq i\leq{\it size}$.  The [[hmask]] field has no meaning.
 
-\hi {\bf Hash Table}\quad The array is a hash table.  If the [[AY_STR]] bit
+\I{\bf Hash Table} The array is a hash table.  If the [[AY_STR]] bit
 in the [[type]] field is set, then the table is keyed on strings.
 If the [[AY_INT]] bit in the [[type]] field is set, then the table is
 keyed on integers.  Both bits can be set, and then the two keys are
@@ -84,6 +81,7 @@ exceed [[limit]], the table grows by doubling the number of hash chains.
 The invariant,
 $({\it hmask}+1){\it max\_ave\_list\_length}={\it limit}$, is always true.
 {\it Max\_ave\_list\_length} is a tunable constant.
+\endhitems
 
 
 <<array typedefs and [[#defines]]>>=
@@ -91,8 +89,10 @@ $({\it hmask}+1){\it max\_ave\_list\_length}={\it limit}$, is always true.
 #define AY_INT		1
 #define AY_STR		2
 #define AY_SPLIT	4
+@ %def AY_NULL AY_INT AY_STR AY_SPLIT
 
-@ Hash Tables
+@ 
+\subsection{Hash Tables}
 The hash tables are linked lists of nodes, called [[ANODEs]].
 The number of lists is [[hmask+1]] which is always a power of two.
 The [[ptr]] field points at a vector of list heads.  Since there are
@@ -102,6 +102,7 @@ each list head is a structure, [[DUAL_LINK]].
 <<local constants, defs and prototypes>>=
 struct anode ;
 typedef struct {struct anode *slink, *ilink ;} DUAL_LINK ;
+@ %def anode DUAL_LINK
 
 @
 The string lists are chains connected by [[slinks]] and the integer
@@ -110,28 +111,29 @@ lists as slists and ilists, respectively.
 The elements on the lists are [[ANODEs]].
 The fields of an [[ANODE]] are:
 
-\hi [[slink]]\quad The link field for slists.
-\hi [[ilink]]\quad The link field for ilists.
-\hi [[sval]]\quad If non-null, then [[sval]] is a pointer to a string
+\I[[slink]] The link field for slists.
+\I[[ilink]] The link field for ilists.
+\I[[sval]] If non-null, then [[sval]] is a pointer to a string
 key.  For a given table, if the [[AY_STR]] bit is set then every
 [[ANODE]] has a non-null [[sval]] field and conversely, if [[AY_STR]]
 is not set, then every [[sval]] field is null.
 
-\hi [[hval]]\quad The hash value of [[sval]].  This field has no
+\I[[hval]] The hash value of [[sval]].  This field has no
 meaning if [[sval]] is null.
-\hi [[ival]]\quad The integer key.  The field has no meaning if set
+
+\I[[ival]] The integer key.  The field has no meaning if set
 to the constant, [[NOT_AN_IVALUE]].  If the [[AY_STR]] bit is off,
 then every [[ANODE]] will have a valid [[ival]] field.  If the
 [[AY_STR]] bit is on, then the [[ival]] field may or may not be
 valid.
 
-\hi [[cell]]\quad The data field in the hash table.
+\I[[cell]] The data field in the hash table.
+\endhitems
 
-\smallskip\noindent
+\noindent
 So the value of $A[\expr]$ is stored in the [[cell]] field, and if
 \expr{} is an integer, then \expr{} is stored in [[ival]], else it
 is stored in [[sval]].
-
 
 <<local constants, defs and prototypes>>=
 typedef struct anode {
@@ -142,40 +144,41 @@ typedef struct anode {
    Int     ival ;
    CELL    cell ;
 } ANODE ;
+@ %def ANODE
 
 
-@ Interface Functions
-The interface functions are:
+@ 
+\section{Array Operations}
+The functions that operate on arrays are,
 
-\nobreak
-\hi [[CELL* array_find(ARRAY A, CELL *cp, int create_flag)]] returns a
+\I[[CELL* array_find(ARRAY A, CELL *cp, int create_flag)]] returns a
 pointer to $A[\expr]$ where [[cp]] is a pointer to the [[CELL]]
 holding \expr\/.  If the [[create_flag]] is on and \expr\/ is not
 an element of [[A]], then the element is created with value \Null\/.
 
-\hi [[void array_delete(ARRAY A, CELL *cp)]] removes an element
+\I[[void array_delete(ARRAY A, CELL *cp)]] removes an element
 $A[\expr]$ from the array $A$.  [[cp]] points at the [[CELL]] holding
 \expr\/.
 
-\hi [[void array_load(ARRAY A, size_t cnt)]] builds a split array.  The
+\I[[void array_load(ARRAY A, size_t cnt)]] builds a split array.  The
 values $A[1..{\it cnt}]$ are copied from the array
 ${\it split\_buff}[0..{\it cnt}-1]$.
 
-\hi [[void array_clear(ARRAY A)]] removes all elements of $A$.  The
+\I[[void array_clear(ARRAY A)]] removes all elements of $A$.  The
 type of $A$ is then [[AY_NULL]].
 
-\hi [[STRING** array_loop_vector(ARRAY A, size_t *sizep)]]
+\I[[STRING** array_loop_vector(ARRAY A, size_t *sizep)]]
 returns a pointer
 to a linear vector that holds all the strings that are indices of $A$.
 The size of the the vector is returned indirectly in [[*sizep]].
 If [[A->size==0]], a \Null{} pointer is returned.
 
-\hi [[CELL* array_cat(CELL *sp, int cnt)]] concatenates the elements
+\I[[CELL* array_cat(CELL *sp, int cnt)]] concatenates the elements
 of ${\it sp}[1-cnt..0]$, with each element separated by [[SUBSEP]], to
 compute an array index.  For example, on a reference to $A[i,j]$,
 [[array_cat]] computes $i\circ{\it SUBSEP}\circ j$ where
 $\circ$ denotes concatenation.
-
+\endhitems
 
 <<interface prototypes>>=
 CELL* array_find(ARRAY, CELL*, int);
@@ -185,7 +188,8 @@ void  array_clear(ARRAY);
 STRING** array_loop_vector(ARRAY, size_t*);
 CELL* array_cat(CELL*, int);
 
-@ Array Find
+@ 
+\subsection{Array Find}
 Any reference to $A[\expr]$ creates a call to
 [[array_find(A,cp,CREATE)]] where [[cp]] points at the cell holding
 \expr\/.  The test, $\expr \hbox{ in } A$, creates a call to
@@ -194,17 +198,20 @@ Any reference to $A[\expr]$ creates a call to
 <<array typedefs and [[#defines]]>>=
 #define NO_CREATE  0
 #define CREATE     1
+@ %def NO_CREATE CREATE
 
 @
 [[Array_find]] is hash-table lookup that breaks into two cases:
 
-\hi 1)\quad If [[*cp]] is numeric and integer valued, then lookup by
+\list
+\item{(1)} If [[*cp]] is numeric and integer valued, then lookup by
 integer value using [[find_by_ival]].  If [[*cp]] is numeric, but not
 integer valued, then convert to string with [[sprintf(CONVFMT,...)]] and
 go to case~2.
 
-\hi 2)\quad if [[*cp]] is string valued, then lookup by string value
+\item{(2)} If [[*cp]] is string valued, then lookup by string value
 using [[find_by_sval]].
+\endlist
 
 <<interface functions>>=
 CELL* array_find(
@@ -230,6 +237,7 @@ CELL* array_find(
    }
    return ap ? &ap->cell : (CELL *) 0 ;
 }
+@ %def array_find
 
 @
 To test whether [[cp->dval]] is integer, we convert to the nearest
@@ -298,6 +306,10 @@ static ANODE* find_by_ival(
    table[indx].ilink = p ;
    return p ;
 }
+@ %def find_by_ival
+
+<<local constants, defs and prototypes>>=
+static ANODE* find_by_ival(ARRAY, Int, int, int*);
 
 @
 When a search by integer value fails, we have to check by string
@@ -385,6 +397,10 @@ static ANODE* find_by_sval(
    table[indx].slink = p ;
    return p ;
 }
+@ %def find_by_sval
+
+<<local constants, defs and prototypes>>=
+static ANODE* find_by_sval(ARRAY, STRING*, int, int*);
 
 @
 One [[Int]] value is reserved to show that the [[ival]] field is invalid.
@@ -392,6 +408,7 @@ This works because [[d_to_I]] returns a value in [[[-Max_Int, Max_Int]]].
 
 <<local constants, defs and prototypes>>=
 #define NOT_AN_IVALUE (-Max_Int-1)  /* usually 0x80000000 */
+@ %def NOT_AN_IVALUE
 
 <<create a new anode for [[sval]]>>=
 {
@@ -439,10 +456,15 @@ static void add_string_associations(ARRAY A)
       A->type |= AY_STR ;
    }
 }
+@ %def add_string_associations
 
-@ Array Delete
+<<local constants, defs and prototypes>>=
+static void add_string_associations(ARRAY);
+
+@ 
+\subsection{Array Delete}
 The execution of the statement, $\hbox{\it delete }A[\expr]$, creates a
-call to [[array_delete(ARRAY A, CELL *cp)]].  Depending on the
+call to{\hfil\break}[[array_delete(ARRAY A, CELL *cp)]].  Depending on the
 type of [[*cp]], the call is routed to [[find_by_sval]] or [[find_by_ival]].
 Each of these functions leaves its return value on the front of an
 slist or ilist, respectively, and then it is deleted from the front of
@@ -549,7 +571,8 @@ that had been completely cleared by successive deletions.
 if (--A->size == 0) array_clear(A) ;
 
 
-@ Building an Array with Split
+@ 
+\subsection{Building an Array with Split}
 A simple operation is to create an array with the [[AWK]]
 primitive [[split]].  The code that performs [[split]] puts the
 pieces in the global buffer [[split_buff]].  The call
@@ -573,6 +596,7 @@ void array_load(
       cells[i].ptr = split_buff[i] ;
    }
 }
+@ %def array_load
 
 @
 When [[cnt > MAX_SPLIT]], [[split_buff]] was not big enough to hold
@@ -614,7 +638,8 @@ else
        cell_destroy((CELL*)A->ptr + i) ;
 }
 
-@ Array Clear
+@ 
+\subsection{Array Clear}
 The function [[array_clear(ARRAY A)]] converts [[A]] to type [[AY_NULL]]
 and frees all storage used by [[A]] except for the [[struct array]]
 itself.  This function gets called in two contexts:
@@ -658,10 +683,11 @@ void array_clear(ARRAY A)
    }
    memset(A, 0, sizeof(*A)) ;
 }
+@ %def array_clear
 
 
-
-@ Constructor and Conversions
+@
+\subsection{Constructor and Conversions}
 Arrays are always created as empty arrays of type [[AY_NULL]].
 Global arrays are never destroyed although they can go empty or have
 their type change by conversion.  The only constructor function is
@@ -669,6 +695,7 @@ a macro.
 
 <<array typedefs and [[#defines]]>>=
 #define new_ARRAY()  ((ARRAY)memset(ZMALLOC(struct array),0,sizeof(struct array)))
+@ %def new_ARRAY
 
 @
 Hash tables only get constructed by conversion.  This happens in two
@@ -689,6 +716,10 @@ the hash table grows in size by doubling the number of lists.
 #define MAX_AVE_LIST_LENGTH   12
 #define hmask_to_limit(x) (((x)+1)*MAX_AVE_LIST_LENGTH)
 #define ahash(sval) hash2((sval)->str, (sval)->len)
+@ %def STARTING_HMASK
+@ %def MAX_AVE_LIST_LENGTH
+@ %def hmask_to_limit
+@ %def ahash
 
 <<local functions>>=
 static void make_empty_table(
@@ -701,6 +732,10 @@ static void make_empty_table(
    A->limit = hmask_to_limit(STARTING_HMASK) ;
    A->ptr = memset(zmalloc(sz), 0, sz) ;
 }
+@ %def make_empty_table
+
+<<local constants, defs and prototypes>>=
+static void make_empty_table(ARRAY, int);
 
 @
 The other way a hash table gets constructed is when a split array is
@@ -728,6 +763,10 @@ static void convert_split_array_to_table(ARRAY A)
    A->type = AY_INT ;
    zfree(cells, entry_limit*sizeof(CELL)) ;
 }
+@ %def convert_split_array_to_table
+
+<<local constants, defs and prototypes>>=
+static void convert_split_array_to_table(ARRAY);
 
 @
 To determine the size of the table, we set the initial size to
@@ -748,7 +787,8 @@ while(A->size > A->limit) {
 }
 
 
-@ Doubling the Size of a Hash Table
+@
+\subsection{Doubling the Size of a Hash Table}
 The whole point of making the table size a power of two is to
 facilitate resizing the table.  If the table size is $2^n$ and
 $h$ is the hash key, then $h\bmod 2^n$ is the hash chain index
@@ -774,7 +814,10 @@ static void double_the_hash_table(ARRAY A)
    A->hmask = new_hmask ;
    A->limit = hmask_to_limit(new_hmask) ;
 }
+@ %def double_the_hash_table
 
+<<local constants, defs and prototypes>>=
+static void double_the_hash_table(ARRAY);
 
 <<allocate the new hash table>>=
 A->ptr = zrealloc(A->ptr, (old_hmask+1)*sizeof(DUAL_LINK),
@@ -897,7 +940,9 @@ static int string_compare(
 
    return strcmp((*a)->str, (*b)->str);
 }
+@ %def string_compare
 
+<<interface functions>>=
 STRING** array_loop_vector(
    ARRAY A,
    size_t *sizep)
@@ -914,6 +959,7 @@ STRING** array_loop_vector(
    }
    return (STRING**) 0 ;
 }
+@ %def array_loop_vector
 
 @
 As we walk over the hash table [[ANODEs]], putting each [[sval]] in
@@ -934,7 +980,8 @@ return value is responsible for these new reference counts.
    }
 }
 
-@ Concatenating Array Indices
+@ 
+\subsection{Concatenating Array Indices}
 In [[AWK]], an array expression [[A[i,j]]] is equivalent to the
 expression [[A[i SUBSEP j]]], i.e., the index is the
 concatenation of the three
@@ -969,6 +1016,7 @@ CELL *array_cat(
    <<build the cat'ed [[STRING]] in [[sval]]>>
    <<cleanup, set [[sp]] and return>>
 }
+@ %def array_cat
 
 @
 We make a copy of [[SUBSEP]] which we can cast to string in the
@@ -1028,57 +1076,38 @@ sp->type = C_STRING ;
 sp->ptr = (PTR) sval ;
 return sp ;
 
-@ Loose Ends
-Here are some things we want to make sure end up in the [[.c]] and
-[[.h]] files.
-The compiler needs prototypes for the local functions, and we will
-put a copyright and links to the source file, [[array.w]], in each
-output file.
 
-<<local constants, defs and prototypes>>=
-static ANODE* find_by_ival(ARRAY, Int, int, int*);
-static ANODE* find_by_sval(ARRAY, STRING*, int, int*);
-static void add_string_associations(ARRAY);
-static void make_empty_table(ARRAY, int);
-static void convert_split_array_to_table(ARRAY);
-static void double_the_hash_table(ARRAY);
+@
+\section{Source Files}
 
-<<array.c notice>>=
+<<"array.h">>=
+/* array.h */
+<<blurb>>
+#ifndef ARRAY_H
+#define ARRAY_H 1
+
+#include "nstd.h"
+#include "types.h"
+
+<<array typedefs and [[#defines]]>>
+<<interface prototypes>>
+#endif /* ARRAY_H */
+
+<<"array.c">>=
+/* array.c */
+<<blurb>>
+#include "mawk.h"
+#include "symtype.h"
+#include "memory.h"
+#include "field.h"
+#include "bi_vars.h"
+<<local constants, defs and prototypes>>
+<<interface functions>>
+<<local functions>>
+
+<<blurb>>=
 /*
-array.c
-<<mawk blurb>>
-*/
-
-/*
-This file was generated with the command
-
-   notangle -R'"array.c"' array.w > array.c
-
-<<notangle blurb>>
-*/
-
-<<notangle blurb>>=
-Notangle is part of Norman Ramsey's noweb literate programming package
-available from CTAN(ftp.shsu.edu).
-
-It's easiest to read or modify this file by working with array.w.
-<<array.h notice>>=
-/*
-array.h
-<<mawk blurb>>
-*/
-
-/*
-This file was generated with the command
-
-   notangle -R'"array.h"' array.w > array.h
-
-<<notangle blurb>>
-*/
-
-<<mawk blurb>>=
-
-$MawkId: array.w,v 1.15 2010/12/10 17:00:00 tom Exp $
+$MawkId: array.w,v 1.16 2014/08/03 23:30:26 Mike.Brennan Exp $
 
 copyright 2009,2010, Thomas E. Dickey
 copyright 1991-1996, Michael D. Brennan
@@ -1088,3 +1117,17 @@ the AWK programming language.
 
 Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
+
+array.c and array.h were generated with the commands
+
+   notangle -R'"array.c"' array.w > array.c 
+   notangle -R'"array.h"' array.w > array.h 
+
+Notangle is part of Norman Ramsey's noweb literate programming package
+available from CTAN(ftp.shsu.edu).
+
+It's easiest to read or modify this file by working with array.w.
+*/
+
+@
+\idindex
