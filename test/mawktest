@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.31 2012/06/27 13:56:20 tom Exp $
+# $MawkId: mawktest,v 1.32 2014/08/04 00:14:24 tom Exp $
 ###############################################################################
 # copyright 2008-2010,2012, Thomas E. Dickey
 # copyright 2010, Guido Berhoerster
@@ -151,14 +151,6 @@ LC_ALL=C $PROG -f reg5.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg6.awk $dat >> $STDOUT
 
 cmp -s  reg-awk.out $STDOUT || Fail "reg0-reg6 case"
-
-# 640 backslashes
-backslashes='\\\\\\\\\\'
-backslashes="$backslashes$backslashes$backslashes$backslashes"
-backslashes="$backslashes$backslashes$backslashes$backslashes"
-backslashes="$backslashes$backslashes$backslashes$backslashes"
-backslashes="$backslashes$backslashes$backslashes$backslashes"
-( set +e; LC_ALL=C $PROG "/a$backslashes/" $dat 2> $STDERR ; test $? = 2 ) || Fail "buffer-overflow"
 
 echo "''Italics with an apostrophe' embedded''" |
 	LC_ALL=C $PROG -f noloop.awk || Fail "noloop2 test"
