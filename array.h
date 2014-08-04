@@ -1,22 +1,20 @@
+/* array.h */
 /*
-array.h
-
-@MawkId: array.w,v 1.15 2010/12/10 17:00:00 tom Exp @
+@MawkId: array.w,v 1.17 2014/08/04 00:16:42 tom Exp @
 
 copyright 2009,2010, Thomas E. Dickey
-copyright 1991-1996, Michael D. Brennan
+copyright 1991-1996,2014 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
 
 Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
-*/
 
-/*
-This file was generated with the command
+array.c and array.h were generated with the commands
 
-   notangle -R'"array.h"' array.w > array.h
+   notangle -R'"array.c"' array.w > array.c 
+   notangle -R'"array.h"' array.w > array.h 
 
 Notangle is part of Norman Ramsey's noweb literate programming package
 available from CTAN(ftp.shsu.edu).
@@ -37,17 +35,13 @@ typedef struct array {
    unsigned hmask ; /* bitwise and with hash value to get table index */
    short type ;  /* values in AY_NULL .. AY_SPLIT */
 } *ARRAY ;
-
 #define AY_NULL         0
 #define AY_INT          1
 #define AY_STR          2
 #define AY_SPLIT        4
-
 #define NO_CREATE  0
 #define CREATE     1
-
 #define new_ARRAY()  ((ARRAY)memset(ZMALLOC(struct array),0,sizeof(struct array)))
-
 CELL* array_find(ARRAY, CELL*, int);
 void  array_delete(ARRAY, CELL*);
 void  array_load(ARRAY, size_t);

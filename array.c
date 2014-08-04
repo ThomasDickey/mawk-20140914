@@ -1,22 +1,20 @@
+/* array.c */
 /*
-array.c
-
-@MawkId: array.w,v 1.15 2010/12/10 17:00:00 tom Exp @
+@MawkId: array.w,v 1.17 2014/08/04 00:16:42 tom Exp @
 
 copyright 2009,2010, Thomas E. Dickey
-copyright 1991-1996, Michael D. Brennan
+copyright 1991-1996,2014 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
 
 Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
-*/
 
-/*
-This file was generated with the command
+array.c and array.h were generated with the commands
 
-   notangle -R'"array.c"' array.w > array.c
+   notangle -R'"array.c"' array.w > array.c 
+   notangle -R'"array.h"' array.w > array.h 
 
 Notangle is part of Norman Ramsey's noweb literate programming package
 available from CTAN(ftp.shsu.edu).
@@ -31,7 +29,6 @@ It's easiest to read or modify this file by working with array.w.
 #include "bi_vars.h"
 struct anode ;
 typedef struct {struct anode *slink, *ilink ;} DUAL_LINK ;
-
 typedef struct anode {
    struct anode *slink ;
    struct anode  *ilink ;
@@ -40,20 +37,21 @@ typedef struct anode {
    Int     ival ;
    CELL    cell ;
 } ANODE ;
+static ANODE* find_by_ival(ARRAY, Int, int, int*);
 
+static ANODE* find_by_sval(ARRAY, STRING*, int, int*);
 
 #define NOT_AN_IVALUE (-Max_Int-1)  /* usually 0x80000000 */
+static void add_string_associations(ARRAY);
 
 #define STARTING_HMASK    63  /* 2^6-1, must have form 2^n-1 */
 #define MAX_AVE_LIST_LENGTH   12
 #define hmask_to_limit(x) (((x)+1)*MAX_AVE_LIST_LENGTH)
 #define ahash(sval) hash2((sval)->str, (sval)->len)
-
-static ANODE* find_by_ival(ARRAY, Int, int, int*);
-static ANODE* find_by_sval(ARRAY, STRING*, int, int*);
-static void add_string_associations(ARRAY);
 static void make_empty_table(ARRAY, int);
+
 static void convert_split_array_to_table(ARRAY);
+
 static void double_the_hash_table(ARRAY);
 
 CELL* array_find(
@@ -102,7 +100,6 @@ CELL* array_find(
    }
    return ap ? &ap->cell : (CELL *) 0 ;
 }
-
 void array_delete(
    ARRAY A,
    CELL *cp)
@@ -222,7 +219,6 @@ void array_load(
       cells[i].ptr = split_buff[i] ;
    }
 }
-
 void array_clear(ARRAY A)
 {
    unsigned i ;
@@ -259,9 +255,6 @@ void array_clear(ARRAY A)
    }
    memset(A, 0, sizeof(*A)) ;
 }
-
-
-
 static int string_compare(
    const void *l,
    const void *r)
@@ -271,7 +264,6 @@ static int string_compare(
 
    return strcmp((*a)->str, (*b)->str);
 }
-
 STRING** array_loop_vector(
    ARRAY A,
    size_t *sizep)
@@ -300,7 +292,6 @@ STRING** array_loop_vector(
    }
    return (STRING**) 0 ;
 }
-
 CELL *array_cat(
    CELL *sp,
    int cnt)
@@ -347,8 +338,8 @@ CELL *array_cat(
    sp->ptr = (PTR) sval ;
    return sp ;
 
-}
 
+}
 static ANODE* find_by_ival(
    ARRAY A ,
    Int ival ,
@@ -406,7 +397,6 @@ static ANODE* find_by_ival(
    table[indx].ilink = p ;
    return p ;
 }
-
 static ANODE* find_by_sval(
    ARRAY A ,
    STRING *sval ,
@@ -463,7 +453,6 @@ static ANODE* find_by_sval(
    table[indx].slink = p ;
    return p ;
 }
-
 static void add_string_associations(ARRAY A)
 {
    if (A->type == AY_NULL) make_empty_table(A, AY_STR) ;
@@ -488,7 +477,6 @@ static void add_string_associations(ARRAY A)
       A->type |= AY_STR ;
    }
 }
-
 static void make_empty_table(
    ARRAY A ,
    int type ) /* AY_INT or AY_STR */
@@ -499,7 +487,6 @@ static void make_empty_table(
    A->limit = hmask_to_limit(STARTING_HMASK) ;
    A->ptr = memset(zmalloc(sz), 0, sz) ;
 }
-
 static void convert_split_array_to_table(ARRAY A)
 {
    CELL *cells = (CELL*) A->ptr ;
@@ -533,7 +520,6 @@ static void convert_split_array_to_table(ARRAY A)
    A->type = AY_INT ;
    zfree(cells, entry_limit*sizeof(CELL)) ;
 }
-
 static void double_the_hash_table(ARRAY A)
 {
    unsigned old_hmask = A->hmask ;
@@ -602,8 +588,4 @@ static void double_the_hash_table(ARRAY A)
    A->hmask = new_hmask ;
    A->limit = hmask_to_limit(new_hmask) ;
 }
-
-
-
-#define ahash(sval) hash2((sval)->str, (sval)->len)
 
