@@ -1,5 +1,5 @@
 @echo off
-rem $MawkId: mawktest.bat,v 1.8 2012/06/27 13:57:24 tom Exp $
+rem $MawkId: mawktest.bat,v 1.9 2014/08/04 00:15:20 tom Exp $
 rem vile:rs=lf
 rem
 rem  ##########################################################################
@@ -68,14 +68,6 @@ rem ####################################
 	%PROG% -f reg5.awk %dat% >> %STDOUT%
 	%PROG% -f reg6.awk %dat% >> %STDOUT%
 	call :compare "reg0-reg6" %STDOUT% reg-awk.out
-
-	set backslashes="\\\\\\\\\\"
-	set backslashes=%backslashes%%backslashes%%backslashes%%backslashes%
-	set backslashes=%backslashes%%backslashes%%backslashes%%backslashes%
-	set backslashes=%backslashes%%backslashes%%backslashes%%backslashes%
-	set backslashes=%backslashes%%backslashes%%backslashes%%backslashes%
-	%PROG% "/a%backslashes%/" %dat% 2> %STDOUT%
-	if not x%ERRORLEVEL%==x2 echo ...fail buffer-overflow
 
 rem	echo ''Italics with an apostrophe' embedded'' | %PROG% -f noloop.awk
 rem	echo ''Italics with an apostrophe'' embedded'' | %PROG% -f noloop.awk
