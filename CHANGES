@@ -1,8 +1,12 @@
--- $MawkId: CHANGES,v 1.183 2014/08/03 23:50:13 tom Exp $
+-- $MawkId: CHANGES,v 1.184 2014/08/04 00:04:00 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140803
+	+ patches by Mike Brennan:
+	  + increase some limits: NF is now 1048575, sprintf limit is 8192.
+	  + updated array.w; mostly documentation improvements
+	  + add array.pdf generated from array.w
 	+ add -Wu / -Wusage / -Wh / -Whelp to show usage message, like gawk.
 	  If long options are enabled, honor --help and --usage as well.
 	+ if no command-line parameters are given, show usage message like
