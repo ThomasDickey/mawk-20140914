@@ -15,7 +15,7 @@
 \input mwebmac
 \input ctmac
 
-\RCSID{$Id: array.w,v 1.16 2014/08/03 23:30:26 Mike.Brennan Exp $}
+\RCSID{$Id: array.w,v 1.17 2014/08/04 00:16:42 tom Exp $}
 
 \TOC{Mawk Arrays}
 
@@ -1107,10 +1107,10 @@ return sp ;
 
 <<blurb>>=
 /*
-$MawkId: array.w,v 1.16 2014/08/03 23:30:26 Mike.Brennan Exp $
+$MawkId: array.w,v 1.17 2014/08/04 00:16:42 tom Exp $
 
 copyright 2009,2010, Thomas E. Dickey
-copyright 1991-1996, Michael D. Brennan
+copyright 1991-1996,2014 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.

@@ -1,7 +1,7 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.32 2014/08/04 00:14:24 tom Exp $
+# $MawkId: mawktest,v 1.33 2014/08/04 00:15:59 tom Exp $
 ###############################################################################
-# copyright 2008-2010,2012, Thomas E. Dickey
+# copyright 2008-2012,2014, Thomas E. Dickey
 # copyright 2010, Guido Berhoerster
 # copyright 2010, Jonathan Nieder
 # copyright 2005, Aleksey Cheusov

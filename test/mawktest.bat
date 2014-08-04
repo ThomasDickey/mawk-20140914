@@ -1,9 +1,9 @@
 @echo off
-rem $MawkId: mawktest.bat,v 1.9 2014/08/04 00:15:20 tom Exp $
+rem $MawkId: mawktest.bat,v 1.10 2014/08/04 00:15:48 tom Exp $
 rem vile:rs=lf
 rem
 rem  ##########################################################################
-rem  copyright 2010,2012, Thomas E. Dickey
+rem  copyright 2010-2012,2014 Thomas E. Dickey
 rem  copyright 1996, Michael D. Brennan
 rem 
 rem  This is a source file for mawk, an implementation of
