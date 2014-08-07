@@ -1,0 +1,33 @@
+#! /bin/sh
+echo "** postrm script for mawk: $*"
+
+set -e
+
+ALT=mawk
+PKG=mawk-base
+
+ETCDIR=/etc/alternatives
+BINDIR=/usr/bin
+MANDIR=/usr/share/man/man1
+
+if [ "x$1" = "xremove" ]
+then
+	# update-alternatives --config mawk
+	if [ -f $BINDIR/$PKG ]
+	then
+		rm -fv $ETCDIR/$ALT
+		rm -fv $BINDIR/$ALT
+		mv -fv $BINDIR/$PKG $BINDIR/$ALT
+	fi
+
+	if [ -f $MANDIR/$PKG.1.gz ]
+	then
+		rm -fv $ETCDIR/$ALT.1.gz
+		rm -fv $MANDIR/$ALT.1.gz
+		mv -fv $MANDIR/$PKG.1.gz $MANDIR/$ALT.1.gz
+	fi
+fi
+
+#DEBHELPER#
+
+exit 0
