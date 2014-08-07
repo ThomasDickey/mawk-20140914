@@ -1,5 +1,5 @@
 #! /bin/sh
-# postinst script for mawk
+echo "** postinst script for mawk: $*"
 
 set -e
 
@@ -12,14 +12,12 @@ MANDIR=/usr/share/man/man1
 
 if [ $1 != "upgrade" ]
 then
-
 	update-alternatives \
 		--install \
 			$BINDIR/$ALT $ALT \
 			$BINDIR/$PKG $PRI \
 		--slave $MANDIR/$ALT.1.gz $ALT.1.gz \
 			$MANDIR/$PKG.1.gz
-
 fi
 
 #DEBHELPER#

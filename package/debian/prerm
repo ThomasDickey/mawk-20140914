@@ -1,9 +1,9 @@
 #! /bin/sh
-# prerm script for mawk
+echo "** prerm script for mawk: $*"
 
 set -e
 
-if [ $1 != "upgrade" ]; then
+if [ "x$1" != "xupgrade" ]; then
 	update-alternatives --remove mawk /usr/bin/mawk-cur
 fi
 

@@ -1,5 +1,5 @@
 #! /bin/sh
-# preinst script for mawk
+echo "** preinst script for mawk: $*"
 
 set -e
 
@@ -12,8 +12,8 @@ MANDIR=/usr/share/man/man1
 
 if [ ! -f /usr/bin/mawk-base ]
 then
-	mv $BINDIR/$ALT      $BINDIR/$PKG 
-	mv $MANDIR/$ALT.1.gz $MANDIR/$PKG.1.gz
+	mv -fv $BINDIR/$ALT      $BINDIR/$PKG 
+	mv -fv $MANDIR/$ALT.1.gz $MANDIR/$PKG.1.gz
 fi
 
 	update-alternatives \
