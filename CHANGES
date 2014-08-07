@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.184 2014/08/04 00:04:00 tom Exp $
+-- $MawkId: CHANGES,v 1.185 2014/08/07 00:47:23 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140803
+20140806
+	+ improve test-package for debian by adding postrm script to restore
+	  "mawk-base" to its unalternatized configuration, as well as adding
+	  messages to the other pre/post scripts.
 	+ patches by Mike Brennan:
 	  + increase some limits: NF is now 1048575, sprintf limit is 8192.
 	  + updated array.w; mostly documentation improvements
