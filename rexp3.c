@@ -1,6 +1,6 @@
 /********************************************
 rexp3.c
-copyright 2008-2010,2013, Thomas E. Dickey
+copyright 2008-2013,2014, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
 copyright 1991-1992,1993, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.29 2013/08/03 14:04:00 tom Exp $
+ * $MawkId: rexp3.c,v 1.30 2014/08/08 00:51:37 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -64,6 +64,9 @@ the GNU General Public License, version 2, 1991.
 
 #define	  CASE_UANY(x)	case  x + U_OFF :  case	 x + U_ON
 
+#define RE_FILL() { goto refill; }
+#define RE_CASE() { goto reswitch; }
+
 /* returns start of first longest match and the length by
    reference.  If no match returns NULL and length zero */
 
@@ -99,7 +102,7 @@ REmatch(char *str,		/* string to test */
     cb_ss = ss = (char *) 0;
     stackp = RE_run_stack_empty;
     sp = RE_pos_stack_empty;
-    goto reswitch;
+    RE_CASE();
 
   refill:
     if (stackp == RE_run_stack_empty) {
@@ -112,10 +115,10 @@ REmatch(char *str,		/* string to test */
     if (cb_ss) {		/* does new state start too late ? */
 	if (ss) {
 	    if (cb_ss < ss || (cb_ss == ss && cb_e == str_end)) {
-		goto refill;
+		RE_FILL();
 	    }
 	} else if (cb_ss < s || (cb_ss == s && cb_e == str_end)) {
-	    goto refill;
+	    RE_FILL();
 	}
     }
 
@@ -125,52 +128,51 @@ REmatch(char *str,		/* string to test */
     u_flag = (stackp + 1)->u;
 
   reswitch:
-
     switch (m->s_type + u_flag) {
     case M_STR + U_OFF + END_OFF:
 	if (strncmp(s, m->s_data.str, (size_t) m->s_len)) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	s += m->s_len;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_STR + U_OFF + END_ON:
 	if (strcmp(s, m->s_data.str)) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	s += m->s_len;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_STR + U_ON + END_OFF:
 	if (s >= str_end) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!(s = str_str(s, (size_t) (str_end - s), m->s_data.str, (size_t) m->s_len))) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (s >= str + strlen(str)) {
-	    goto refill;
+	    RE_FILL();
 	}
 	push(m, s + 1, sp, ss, U_ON);
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
@@ -178,16 +180,16 @@ REmatch(char *str,		/* string to test */
 	s += m->s_len;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_STR + U_ON + END_ON:
 	t = (int) ((str_end - s) - m->s_len);
 	if (t < 0 || memcmp(ts = s + t, m->s_data.str, (size_t) m->s_len)) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && ts > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = ts;
 	    }
@@ -195,75 +197,78 @@ REmatch(char *str,		/* string to test */
 	s = str_end;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_OFF + END_OFF:
-	if (s >= str_end)
-	    goto refill;
+	if (s >= str_end) {
+	    RE_FILL();
+	}
 	if (!ison(*m->s_data.bvp, s[0])) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_OFF + END_ON:
-	if (s >= str_end)
-	    goto refill;
+	if (s >= str_end) {
+	    RE_FILL();
+	}
 	if (s[1] || !ison(*m->s_data.bvp, s[0])) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_ON + END_OFF:
-	if (s >= str_end)
-	    goto refill;
+	if (s >= str_end) {
+	    RE_FILL();
+	}
 	while (!ison(*m->s_data.bvp, s[0])) {
 	    if (s >= str_end) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		s++;
 	    }
 	}
 	if (s >= str_end) {
-	    goto refill;
+	    RE_FILL();
 	}
 	s++;
 	push(m, s, sp, ss, U_ON);
 	if (!ss) {
 	    if (cb_ss && s - 1 > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s - 1;
 	    }
 	}
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_ON + END_ON:
 	if ((s >= str_end) || !ison(*m->s_data.bvp, str_end[-1])) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && str_end - 1 > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = str_end - 1;
 	    }
@@ -271,62 +276,62 @@ REmatch(char *str,		/* string to test */
 	s = str_end;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_OFF + END_OFF:
 	if (s >= str_end) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_OFF + END_ON:
 	if ((s >= str_end) || ((s + 1) < str_end)) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_ON + END_OFF:
 	if (s >= str_end) {
-	    goto refill;
+	    RE_FILL();
 	}
 	s++;
 	push(m, s, sp, ss, U_ON);
 	if (!ss) {
 	    if (cb_ss && s - 1 > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s - 1;
 	    }
 	}
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_ON + END_ON:
 	if (s >= str_end) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && str_end - 1 > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = str_end - 1;
 	    }
@@ -334,94 +339,94 @@ REmatch(char *str,		/* string to test */
 	s = str_end;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_START + U_OFF + END_OFF:
     case M_START + U_ON + END_OFF:
 	if (s != str) {
-	    goto refill;
+	    RE_FILL();
 	}
 	ss = s;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_START + U_OFF + END_ON:
     case M_START + U_ON + END_ON:
 	if (s != str || (s < str_end)) {
-	    goto refill;
+	    RE_FILL();
 	}
 	ss = s;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_END + U_OFF:
 	if (s < str_end) {
-	    goto refill;
+	    RE_FILL();
 	}
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_END + U_ON:
 	s = str_end;
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_U):
 	if (!ss) {
 	    if (cb_ss && s > cb_ss) {
-		goto refill;
+		RE_FILL();
 	    } else {
 		ss = s;
 	    }
 	}
 	u_flag = U_ON;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_1J):
 	m += m->s_data.jump;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_SAVE_POS):	/* save position for a later M_2JC */
 	/* see also REtest */
 	sp = RE_pos_push(sp, stackp, s);
 	m++;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_2JA):	/* take the non jump branch */
 	push(m + m->s_data.jump, s, sp, ss, u_flag);
 	m++;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_2JC):	/* take the jump branch if position changed */
 	/* see REtest */
 	if (RE_pos_pop(&sp, stackp) == s) {
 	    m++;
-	    goto reswitch;
+	    RE_CASE();
 	}
 	/* fall thru */
 
       CASE_UANY(M_2JB):	/* take the jump branch */
 	push(m + 1, s, sp, ss, u_flag);
 	m += m->s_data.jump;
-	goto reswitch;
+	RE_CASE();
 
     case M_ACCEPT + U_OFF:
 	if (!ss)
@@ -430,8 +435,12 @@ REmatch(char *str,		/* string to test */
 	    /* we have a new current best */
 	    cb_ss = ss;
 	    cb_e = s;
+	} else if (ss == cb_ss && s == cb_e) {
+	    if (cb_ss)
+		*lenp = (unsigned) (cb_e - cb_ss);
+	    return cb_ss;
 	}
-	goto refill;
+	RE_FILL();
 
     case M_ACCEPT + U_ON:
 	if (!ss) {
@@ -444,8 +453,12 @@ REmatch(char *str,		/* string to test */
 	    /* we have a new current best */
 	    cb_ss = ss;
 	    cb_e = s;
+	} else if (ss == cb_ss && s == cb_e) {
+	    if (cb_ss)
+		*lenp = (unsigned) (cb_e - cb_ss);
+	    return cb_ss;
 	}
-	goto refill;
+	RE_FILL();
 
     default:
 	RE_panic("unexpected case in REmatch");

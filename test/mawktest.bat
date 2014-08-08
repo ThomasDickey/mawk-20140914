@@ -1,5 +1,5 @@
 @echo off
-rem $MawkId: mawktest.bat,v 1.10 2014/08/04 00:15:48 tom Exp $
+rem $MawkId: mawktest.bat,v 1.11 2014/08/08 00:55:23 tom Exp $
 rem vile:rs=lf
 rem
 rem  ##########################################################################
@@ -69,8 +69,8 @@ rem ####################################
 	%PROG% -f reg6.awk %dat% >> %STDOUT%
 	call :compare "reg0-reg6" %STDOUT% reg-awk.out
 
-rem	echo ''Italics with an apostrophe' embedded'' | %PROG% -f noloop.awk
-rem	echo ''Italics with an apostrophe'' embedded'' | %PROG% -f noloop.awk
+	echo ''Italics with an apostrophe' embedded'' | %PROG% -f noloop.awk
+	echo ''Italics with an apostrophe'' embedded'' | %PROG% -f noloop.awk
 
 	%PROG% "/^[^^]*$/" %dat% > %STDOUT%
 	call :compare "case 1" %STDOUT% %dat%

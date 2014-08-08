@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.33 2014/08/04 00:15:59 tom Exp $
+# $MawkId: mawktest,v 1.34 2014/08/08 00:55:04 tom Exp $
 ###############################################################################
 # copyright 2008-2012,2014, Thomas E. Dickey
 # copyright 2010, Guido Berhoerster
@@ -154,9 +154,8 @@ cmp -s  reg-awk.out $STDOUT || Fail "reg0-reg6 case"
 
 echo "''Italics with an apostrophe' embedded''" |
 	LC_ALL=C $PROG -f noloop.awk || Fail "noloop2 test"
-# To be uncommented when this stops taking so long to run.
-#echo "''Italics with an apostrophe'' embedded''" |
-#	LC_ALL=C $PROG -f noloop.awk || Fail "noloop1 test"
+echo "''Italics with an apostrophe'' embedded''" |
+	LC_ALL=C $PROG -f noloop.awk || Fail "noloop1 test"
 
 LC_ALL=C $PROG '/^[^^]*$/' $dat > $STDOUT
 cmp -s $dat $STDOUT || Fail "case 1"

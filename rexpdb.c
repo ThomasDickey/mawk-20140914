@@ -1,6 +1,6 @@
 /********************************************
 rexpdb.c
-copyright 2008,2010, Thomas E. Dickey
+copyright 2008-2010,2014, Thomas E. Dickey
 copyright 1991,1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexpdb.c,v 1.11 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: rexpdb.c,v 1.12 2014/08/08 00:51:49 tom Exp $
  * @Log: rexpdb.c,v @
  * Revision 1.2  1993/07/23  13:21:51  mike
  * cleanup rexp code
@@ -46,6 +46,12 @@ static const char *xlat[] =
     "M_SAVE_POS",
     "M_2JC",
     "M_ACCEPT"};
+
+const char *
+REs_type(PTR p)
+{
+    return (xlat[((UChar) (((STATE *) p)->s_type)) % U_ON]);
+}
 
 void
 REmprint(PTR m, FILE *f)

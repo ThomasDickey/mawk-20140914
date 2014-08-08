@@ -1,6 +1,6 @@
 /********************************************
 regexp.h
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2014, Thomas E. Dickey
 copyright 2005, Aleksey Cheusov
 copyright 1991,1993, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: regexp.h,v 1.11 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: regexp.h,v 1.12 2014/08/08 00:51:59 tom Exp $
  * @Log: regexp.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs
@@ -32,6 +32,7 @@ void REdestroy(PTR);
 int REtest(char *, size_t, PTR);
 char *REmatch(char *, size_t, PTR, size_t *);
 void REmprint(PTR, FILE *);
+const char *REs_type(PTR);
 const char *REerror(void);
 
 #endif /*  MAWK_REPL_H */
