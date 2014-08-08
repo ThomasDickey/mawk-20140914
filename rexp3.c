@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.30 2014/08/08 00:51:37 tom Exp $
+ * $MawkId: rexp3.c,v 1.31 2014/08/08 08:13:23 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -63,9 +63,6 @@ the GNU General Public License, version 2, 1991.
 } while(0)
 
 #define	  CASE_UANY(x)	case  x + U_OFF :  case	 x + U_ON
-
-#define RE_FILL() { goto refill; }
-#define RE_CASE() { goto reswitch; }
 
 /* returns start of first longest match and the length by
    reference.  If no match returns NULL and length zero */

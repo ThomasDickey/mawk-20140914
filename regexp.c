@@ -1,6 +1,6 @@
 /*
 regexp_system.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2014, Thomas E. Dickey
 copyright 2005, Aleksey Cheusov
 
 This is a source file for mawk, an implementation of
@@ -10,9 +10,11 @@ Mawk is distributed without warranty under the terms of
 the GNU General Public License, version 2, 1991.
  */
 
-/* $MawkId: regexp.c,v 1.7 2010/12/10 17:00:00 tom Exp $ */
+/* $MawkId: regexp.c,v 1.8 2014/08/08 08:15:15 tom Exp $ */
 #ifdef LOCAL_REGEXP
 #		include "mawk.h"
+#define RE_FILL() { goto refill; }
+#define RE_CASE() { goto reswitch; }
 #		include "rexp.c"
 #		include "rexp0.c"
 #		include "rexp1.c"

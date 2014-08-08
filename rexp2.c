@@ -1,6 +1,6 @@
 /********************************************
 rexp2.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2014, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
 copyright 1991-1992,1993, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.21 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: rexp2.c,v 1.22 2014/08/08 08:18:24 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -226,12 +226,13 @@ REtest(char *str,		/* string to test */
 	u_flag = U_ON;
 	stackp = RE_run_stack_empty;
 	sp = RE_pos_stack_empty;
-	goto reswitch;
+	RE_CASE();
     }
 
   refill:
-    if (stackp == RE_run_stack_empty)
+    if (stackp == RE_run_stack_empty) {
 	return 0;
+    }
     m = stackp->m;
     s = stackp->s;
     sp = RE_pos_stack_base + stackp->sp;
@@ -242,171 +243,189 @@ REtest(char *str,		/* string to test */
 
     switch (m->s_type + u_flag) {
     case M_STR + U_OFF + END_OFF:
-	if (strncmp(s, m->s_data.str, (size_t) m->s_len))
-	    goto refill;
+	if (strncmp(s, m->s_data.str, (size_t) m->s_len)) {
+	    RE_FILL();
+	}
 	s += m->s_len;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_STR + U_OFF + END_ON:
-	if (strcmp(s, m->s_data.str))
-	    goto refill;
+	if (strcmp(s, m->s_data.str)) {
+	    RE_FILL();
+	}
 	s += m->s_len;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_STR + U_ON + END_OFF:
-	if (!(s = str_str(s, (size_t) (str_end - s), m->s_data.str, (size_t) m->s_len)))
-	    goto refill;
+	if (!(s = str_str(s, (size_t) (str_end - s), m->s_data.str, (size_t) m->s_len))) {
+	    RE_FILL();
+	}
 	push(m, s + 1, sp, U_ON);
 	s += m->s_len;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_STR + U_ON + END_ON:
 	t = (int) (str_end - s) - m->s_len;
-	if (t < 0 || memcmp(s + t, m->s_data.str, (size_t) m->s_len))
-	    goto refill;
+	if (t < 0 || memcmp(s + t, m->s_data.str, (size_t) m->s_len)) {
+	    RE_FILL();
+	}
 	s = str_end;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_OFF + END_OFF:
-	if (s >= str_end || !ison(*m->s_data.bvp, s[0]))
-	    goto refill;
+	if (s >= str_end || !ison(*m->s_data.bvp, s[0])) {
+	    RE_FILL();
+	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_OFF + END_ON:
-	if (s >= str_end)
-	    goto refill;
-	if ((s + 1) < str_end || !ison(*m->s_data.bvp, s[0]))
-	    goto refill;
+	if (s >= str_end) {
+	    RE_FILL();
+	}
+	if ((s + 1) < str_end || !ison(*m->s_data.bvp, s[0])) {
+	    RE_FILL();
+	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_ON + END_OFF:
 	for (;;) {
-	    if (s >= str_end)
-		goto refill;
-	    else if (ison(*m->s_data.bvp, s[0]))
+	    if (s >= str_end) {
+		RE_FILL();
+	    } else if (ison(*m->s_data.bvp, s[0])) {
 		break;
+	    }
 	    s++;
 	}
 	s++;
 	push(m, s, sp, U_ON);
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_CLASS + U_ON + END_ON:
-	if (s >= str_end || !ison(*m->s_data.bvp, str_end[-1]))
-	    goto refill;
+	if (s >= str_end || !ison(*m->s_data.bvp, str_end[-1])) {
+	    RE_FILL();
+	}
 	s = str_end;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_OFF + END_OFF:
-	if (s >= str_end)
-	    goto refill;
+	if (s >= str_end) {
+	    RE_FILL();
+	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_OFF + END_ON:
-	if (s >= str_end || (s + 1) < str_end)
-	    goto refill;
+	if (s >= str_end || (s + 1) < str_end) {
+	    RE_FILL();
+	}
 	s++;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_ON + END_OFF:
-	if (s >= str_end)
-	    goto refill;
+	if (s >= str_end) {
+	    RE_FILL();
+	}
 	s++;
 	push(m, s, sp, U_ON);
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_ANY + U_ON + END_ON:
-	if (s >= str_end)
-	    goto refill;
+	if (s >= str_end) {
+	    RE_FILL();
+	}
 	s = str_end;
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_START + U_OFF + END_OFF:
     case M_START + U_ON + END_OFF:
-	if (s != str)
-	    goto refill;
+	if (s != str) {
+	    RE_FILL();
+	}
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_START + U_OFF + END_ON:
     case M_START + U_ON + END_ON:
-	if (s != str || s < str_end)
-	    goto refill;
+	if (s != str || s < str_end) {
+	    RE_FILL();
+	}
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
     case M_END + U_OFF:
-	if (s < str_end)
-	    goto refill;
+	if (s < str_end) {
+	    RE_FILL();
+	}
 	m++;
-	goto reswitch;
+	RE_CASE();
 
     case M_END + U_ON:
 	s += strlen(s);
 	m++;
 	u_flag = U_OFF;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_U):
 	u_flag = U_ON;
 	m++;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_1J):
 	m += m->s_data.jump;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_SAVE_POS):	/* save position for a later M_2JC */
 	sp = RE_pos_push(sp, stackp, s);
 	m++;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_2JA):	/* take the non jump branch */
 	/* don't stack an ACCEPT */
-	if ((tm = m + m->s_data.jump)->s_type == M_ACCEPT)
+	if ((tm = m + m->s_data.jump)->s_type == M_ACCEPT) {
 	    return 1;
+	}
 	push(tm, s, sp, u_flag);
 	m++;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_2JC):	/* take the jump branch if position changed */
 	if (RE_pos_pop(&sp, stackp) == s) {
 	    /* did not advance: do not jump back */
 	    m++;
-	    goto reswitch;
+	    RE_CASE();
 	}
 	/* fall thru */
 
       CASE_UANY(M_2JB):	/* take the jump branch */
 	/* don't stack an ACCEPT */
-	if ((tm = m + 1)->s_type == M_ACCEPT)
+	if ((tm = m + 1)->s_type == M_ACCEPT) {
 	    return 1;
+	}
 	push(tm, s, sp, u_flag);
 	m += m->s_data.jump;
-	goto reswitch;
+	RE_CASE();
 
       CASE_UANY(M_ACCEPT):
 	return 1;
