@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.185 2014/08/07 00:47:23 tom Exp $
+-- $MawkId: CHANGES,v 1.186 2014/08/08 01:02:43 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140806
+20140808
+	+ add checks in rexp3.c for infinite loop for testcase noloop.awk
+	  (report by Tibor Palinkas).
 	+ improve test-package for debian by adding postrm script to restore
 	  "mawk-base" to its unalternatized configuration, as well as adding
 	  messages to the other pre/post scripts.
