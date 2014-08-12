@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.187 2014/08/12 21:05:26 tom Exp $
+-- $MawkId: CHANGES,v 1.188 2014/08/12 23:36:45 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140812
+	+ when comparing two strings, allow for embedded nulls.
 	+ add checks in rexp3.c for infinite loop for testcase noloop.awk
 	  (report by Tibor Palinkas).
 	+ improve test-package for debian by adding postrm script to restore
