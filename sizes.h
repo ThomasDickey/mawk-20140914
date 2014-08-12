@@ -1,7 +1,7 @@
 /********************************************
 sizes.h
 copyright 2009,2010.  Thomas E. Dickey
-copyright 1991-1994,1995.  Michael D. Brennan
+copyright 1991-1995,2014.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: sizes.h,v 1.8 2014/08/03 23:30:22 Mike.Brennan Exp $
+ * $MawkId: sizes.h,v 1.9 2014/08/12 21:02:15 tom Exp $
  * @Log: sizes.h,v @
  * Revision 1.8  1995/10/14  22:09:51  mike
  * getting MAX__INT from values.h didn't really work since the value was
