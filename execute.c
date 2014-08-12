@@ -1,6 +1,6 @@
 /********************************************
 execute.c
-copyright 2008-2012,2013, Thomas E. Dickey
+copyright 2008-2013,2014, Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.31 2013/08/03 14:15:22 tom Exp $
+ * $MawkId: execute.c,v 1.32 2014/08/12 23:36:59 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -1401,6 +1401,7 @@ static int
 compare(CELL *cp)
 {
     int result;
+    size_t len;
 
   reswitch:
     result = 0;
@@ -1421,7 +1422,17 @@ compare(CELL *cp)
     case TWO_STRINGS:
     case STRING_AND_STRNUM:
       two_s:
-	result = strcmp(string(cp)->str, string(cp + 1)->str);
+	len = string(cp)->len;
+	if (len > string(cp + 1)->len)
+	    len = string(cp + 1)->len;
+	result = memcmp(string(cp)->str, string(cp + 1)->str, len);
+	if (result == 0) {
+	    if (len != string(cp)->len) {
+		result = 1;
+	    } else if (len != string(cp + 1)->len) {
+		result = -1;
+	    }
+	}
 	free_STRING(string(cp));
 	free_STRING(string(cp + 1));
 	break;
