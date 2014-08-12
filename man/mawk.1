@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.24 2014/08/01 10:47:26 tom Exp $
+.\" $MawkId: mawk.1,v 1.25 2014/08/12 22:19:49 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2010,2012, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -11,7 +11,7 @@
 .\" ###########################################################################
 .ds N Mawk
 .ds n mawk
-.TH MAWK 1 "2014-08-01" "Version 1.3.4" "USER COMMANDS"
+.TH MAWK 1 "2014-08-12" "Version 1.3.4" "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
 .\" Bulleted paragraph
@@ -155,14 +155,14 @@ More than rare use of this option indicates
 \fB\*n\fP
 should be recompiled.
 .TP
+\-\fBW \fRusage
+prints a usage message to stderr and exits (same as \*(``\-\fBW\ \fRhelp\*('').
+.TP
 \-\fBW \fRversion
 \fB\*n\fP
 writes its version and copyright
 to stdout and compiled limits to
 stderr and exits 0.
-.TP
-\-\fBW \fRusage
-prints a usage message to stderr and exits (same as \*(``\-\fBW\ \fRhelp\*('').
 .PP
 \fB\*n\fP accepts abbreviations for any of these options, e.g., 
 \*(``\-\fBW\ \fRv\*('' and \*(``\-\fBW\fRv\*(''
