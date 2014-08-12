@@ -67,11 +67,11 @@ OOPPTTIIOONNSS
                       _n_u_m bytes.  More than rare use of this option  indicates
                       mmaawwkk should be recompiled.
 
+       -WW usage       prints  a  usage  message  to  stderr and exits (same as
+                      "-WW help").
+
        -WW version     mmaawwkk writes its version and copyright to stdout and com-
                       piled limits to stderr and exits 0.
-
-       -WW usage       prints a usage message to  stderr  and  exits  (same  as
-                      "-WW help").
 
        mmaawwkk  accepts  abbreviations for any of these options, e.g., "-WW v" and
        "-WWv" both tell mmaawwkk to show its version.
@@ -1063,4 +1063,4 @@ AAUUTTHHOORR
 
 
 
-Version 1.3.4                     2014-08-01                           MAWK(1)
+Version 1.3.4                     2014-08-12                           MAWK(1)
