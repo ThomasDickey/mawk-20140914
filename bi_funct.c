@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.70 2014/08/12 23:37:49 tom Exp $
+ * $MawkId: bi_funct.c,v 1.71 2014/08/13 22:14:55 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1321,11 +1321,15 @@ old_gsub(PTR re, int level)
 	/* put the three pieces together */
 	repl_len = repl_length(&ThisReplace);
 	ThisResult = new_STRING0(front_len + repl_len + back->len);
-	TRACE(("old %s front '%.*s', middle '%.*s', back '%.*s'\n",
-	       indent(level),
-	       (int) front_len, front,
-	       (int) repl_len, string(&ThisReplace)->str,
-	       (int) back->len, back->str));
+
+	TRACE(("old %s front ", indent(level)));
+	TRACE_STRING2(front, front_len);
+	TRACE((", middle "));
+	TRACE_STRING2(string(&ThisReplace)->str, (int) repl_len);
+	TRACE((", back "));
+	TRACE_STRING2(back->str, (int) back->len);
+	TRACE(("\n"));
+
 	in_sval = ThisResult->str;
 
 	if (front_len) {
@@ -1531,7 +1535,7 @@ bi_gsub(CELL *sp)
 
 	resul2 = old_gsub(sp->ptr, 0);
 
-	TRACE(("OLD ->'%.*s'\n", (int) resul2->len, resul2->str));
+	TRACE(("OLD ->%d:'%.*s'\n", (int) resul2->len, (int) resul2->len, resul2->str));
 	free_STRING(target);
     }
 #endif
@@ -1549,9 +1553,12 @@ bi_gsub(CELL *sp)
     tc.ptr = (PTR) result;
 
 #ifdef DEBUG_GSUB
-    TRACE(("NEW ->'%.*s'\n", (int) result->len, result->str));
-    if (result->len != resul2->len || memcmp(result->str, resul2->str, result->len))
-	TRACE(("OOPS\n"));
+    TRACE(("NEW -> %d:", (int) result->len));
+    TRACE_STRING(result);
+    TRACE(("\n"));
+    if (result->len != resul2->len || memcmp(result->str, resul2->str, result->len)) {
+	TRACE(("OOPS: gsub result NEW != OLD\n"));
+    }
 #endif
 
     if (repl_cnt) {
