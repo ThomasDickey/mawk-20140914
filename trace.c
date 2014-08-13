@@ -10,7 +10,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: trace.c,v 1.7 2014/06/18 23:37:51 tom Exp $
+ * $MawkId: trace.c,v 1.8 2014/08/13 21:09:09 tom Exp $
  */
 #include <stdarg.h>
 
@@ -91,15 +91,15 @@ TraceFunc(const char *name, CELL *sp)
 }
 
 void
-TraceString(STRING * sp)
+TraceString2(const char *str, size_t len)
 {
-    size_t limit = sp ? sp->len : 0;
+    size_t limit = len;
     size_t n;
 
     TRACE(("\""));
     if (limit) {
 	for (n = 0; n < limit; ++n) {
-	    UChar ch = (UChar) sp->str[n];
+	    UChar ch = (UChar) str[n];
 	    switch (ch) {
 	    case '\"':
 		TRACE(("\\\""));
@@ -132,6 +132,13 @@ TraceString(STRING * sp)
 	}
     }
     TRACE(("\""));
+}
+
+void
+TraceString(STRING * sp)
+{
+    TraceString2(sp ? sp->str : "",
+		 sp ? sp->len : 0);
 }
 
 #ifdef NO_LEAKS
