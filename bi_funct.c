@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.71 2014/08/13 22:14:55 tom Exp $
+ * $MawkId: bi_funct.c,v 1.72 2014/08/13 23:22:24 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1437,11 +1437,15 @@ new_gsub(PTR re, int level)
 	/* put the three pieces together */
 	repl_len = repl_length(&ThisReplace);
 	ThisResult = new_STRING0(ThisFrontLen + repl_len + back->len);
-	TRACE(("new %s front '%.*s', middle '%.*s', back '%.*s'\n",
-	       indent(level),
-	       (int) ThisFrontLen, ThisFront,
-	       (int) repl_len, string(&ThisReplace)->str,
-	       (int) back->len, back->str));
+
+	TRACE(("new %s front ", indent(level)));
+	TRACE_STRING2(ThisFront, ThisFrontLen);
+	TRACE((", middle "));
+	TRACE_STRING2(string(&ThisReplace)->str, (int) repl_len);
+	TRACE((", back "));
+	TRACE_STRING2(back->str, (int) back->len);
+	TRACE(("\n"));
+
 	in_sval = ThisResult->str;
 
 	if (ThisFrontLen) {
