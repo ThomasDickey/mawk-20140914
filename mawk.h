@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: mawk.h,v 1.47 2014/08/13 22:12:25 tom Exp $
+ * $MawkId: mawk.h,v 1.48 2014/08/14 23:48:37 mike Exp $
  * @Log: mawk.h,v @
  * Revision 1.10  1996/08/25 19:31:04  mike
  * Added work-around for solaris strtod overflow bug.
@@ -101,23 +101,8 @@ extern short posix_space_flag, interactive_flag;
 /* a well known string */
 extern STRING null_str;
 
-#ifndef TEMPBUFF_GOES_HERE
-#define EXTERN	extern
-#else
-#define EXTERN			/* empty */
-#endif
-
 /* a useful scratch area */
-EXTERN union {
-    STRING *_split_buff[MAX_SPLIT];
-    char _string_buff[MIN_SPRINTF];
-} tempbuff;
-
-/* anonymous union */
-#define  string_buff	tempbuff._string_buff
-#define  split_buff	tempbuff._split_buff
-
-#define  SPRINTF_SZ	sizeof(tempbuff)
+extern char string_buff[SPRINTF_LIMIT];
 
 /* help with casts */
 extern int mpow2[];
@@ -140,7 +125,7 @@ extern short mawk_state;
 extern char decimal_dot;
 #endif
 
-extern char *progname;		/* for error messages */
+extern const char *progname;	/* for error messages */
 extern unsigned rt_nr, rt_fnr;	/* ditto */
 
 /* macro to test the type of two adjacent cells */
@@ -187,7 +172,7 @@ extern void rt_error(const char *,...) GCC_NORETURN GCC_PRINTFLIKE(1,2);
 extern void mawk_exit(int) GCC_NORETURN;
 extern void da(INST *, FILE *);
 extern char *rm_escape(char *, size_t *);
-extern char *re_pos_match(char *, size_t, PTR, size_t *);
+extern char *re_pos_match(const char *, size_t, PTR, size_t *);
 extern int binmode(void);
 
 #ifndef  REXP_H

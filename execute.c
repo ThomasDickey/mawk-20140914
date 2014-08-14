@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.32 2014/08/12 23:36:59 tom Exp $
+ * $MawkId: execute.c,v 1.33 2014/08/14 23:47:43 mike Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -1537,11 +1537,8 @@ DB_cell_destroy(CELL *cp)
 static int
 d_to_index(double d)
 {
-    if (d > MAX_FIELD)
-	rt_overflow("maximum number of fields", MAX_FIELD);
-
     if (d >= 0.0)
-	return (int) d;
+	return d_to_I(d);
 
     /* might include nan */
     rt_error("negative field index $%.6g", d);
