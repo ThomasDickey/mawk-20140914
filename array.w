@@ -15,7 +15,7 @@
 \input mwebmac
 \input ctmac
 
-\RCSID{$Id: array.w,v 1.17 2014/08/04 00:16:42 tom Exp $}
+\RCSID{$Id: array.w,v 1.18 2014/08/14 23:34:44 mike Exp $}
 
 \TOC{Mawk Arrays}
 
@@ -27,7 +27,7 @@
 
 
 \section{Introduction}
-This is the source and documenation for the [[mawk]] implementation
+This is the source and documentation for the [[mawk]] implementation
 of awk arrays.  Arrays in awk are associations of strings to awk scalar
 values.   The mawk implementation stores the associations in
 hash tables.   The hash table scheme was influenced by 
@@ -161,8 +161,9 @@ $A[\expr]$ from the array $A$.  [[cp]] points at the [[CELL]] holding
 \expr\/.
 
 \I[[void array_load(ARRAY A, size_t cnt)]] builds a split array.  The
-values $A[1..{\it cnt}]$ are copied from the array
-${\it split\_buff}[0..{\it cnt}-1]$.
+values [[A[1..cnt]]] are moved into [[A]] from an anonymous
+buffer with [[transfer_to_array()]] which is declared in
+[[split.h]].
 
 \I[[void array_clear(ARRAY A)]] removes all elements of $A$.  The
 type of $A$ is then [[AY_NULL]].
@@ -575,9 +576,10 @@ if (--A->size == 0) array_clear(A) ;
 \subsection{Building an Array with Split}
 A simple operation is to create an array with the [[AWK]]
 primitive [[split]].  The code that performs [[split]] puts the
-pieces in the global buffer [[split_buff]].  The call
-[[array_load(A, cnt)]] moves the [[cnt]] elements from [[split_buff]] to
-[[A]].  This is the only way an array of type [[AY_SPLIT]] is
+pieces in an anonymous buffer.
+[[array_load(A, cnt)]] moves the [[cnt]] elements from the anonymous
+buffer into [[A]].
+This is the only way an array of type [[AY_SPLIT]] is
 created.
 
 <<interface functions>>=
@@ -585,39 +587,11 @@ void array_load(
    ARRAY A,
    size_t cnt)
 {
-   CELL *cells ; /* storage for A[1..cnt] */
-   size_t i ;  /* index into cells[] */
-   <<clean up the existing array and prepare an empty split array>>
-   cells = (CELL*) A->ptr ;
+   <<clean up the existing array and prepare an empty split array of size [[cnt]]>>
    A->size = cnt ;
-   <<if [[cnt]] exceeds [[MAX_SPLIT]], load from overflow list and adjust [[cnt]]>>
-   for(i=0;i < cnt; i++) {
-      cells[i].type = C_MBSTRN ;
-      cells[i].ptr = split_buff[i] ;
-   }
+   transfer_to_array((CELL*) A->ptr, cnt) ;
 }
 @ %def array_load
-
-@
-When [[cnt > MAX_SPLIT]], [[split_buff]] was not big enough to hold
-everything so the overflow went on the [[split_ov_list]].
-The elements from [[MAX_SPLIT+1]] to [[cnt]] get loaded into
-[[cells[MAX_SPLIT..cnt-1]]] from this list.
-
-<<if [[cnt]] exceeds [[MAX_SPLIT]], load from overflow list and adjust [[cnt]]>>=
-if (cnt > MAX_SPLIT) {
-   SPLIT_OV *p = split_ov_list ;
-   SPLIT_OV *q ;
-   split_ov_list = (SPLIT_OV*) 0 ;
-   i = MAX_SPLIT ;
-   while( p ) {
-      cells[i].type = C_MBSTRN ;
-      cells[i].ptr = (PTR) p->sval ;
-      q = p ; p = q->link ; ZFREE(q) ;
-      i++ ;
-   }
-   cnt = MAX_SPLIT ;
-}
 
 @
 If the array [[A]] is a split array and big enough then we reuse it,
@@ -625,26 +599,30 @@ otherwise we need to allocate a new split array.
 When we allocate a block of [[CELLs]] for a split array, we round up
 to a multiple of 4.
 
-<<clean up the existing array and prepare an empty split array>>=
-if (A->type != AY_SPLIT || A->limit < (unsigned) cnt) {
-   array_clear(A) ;
-   A->limit = (unsigned) ( (cnt & (size_t) ~3) + 4 ) ;
-   A->ptr = zmalloc(A->limit*sizeof(CELL)) ;
-   A->type = AY_SPLIT ;
+<<clean up the existing array and prepare an empty split array of size [[cnt]]>>=
+if (A->type != AY_SPLIT || A->limit < cnt) {
+    array_clear(A) ;
+    A->limit = (cnt & (size_t) ~3) + 4 ;
+    A->ptr = zmalloc(A->limit*sizeof(CELL)) ;
+    A->type = AY_SPLIT ;
 }
 else
 {
-   for(i=0; (unsigned) i < A->size; i++)
+    /* reusing an existing AY_SPLIT array */
+    size_t i ;
+    for(i=0; i < A->size; i++) {
        cell_destroy((CELL*)A->ptr + i) ;
+    }
 }
 
 @ 
 \subsection{Array Clear}
 The function [[array_clear(ARRAY A)]] converts [[A]] to type [[AY_NULL]]
 and frees all storage used by [[A]] except for the [[struct array]]
-itself.  This function gets called in two contexts:
-(1)~when an array local to a user function goes out of scope and
-(2)~execution of the [[AWK]] statement, [[delete A]].
+itself.  This function gets called in three contexts:
+(1)~when an array local to a user function goes out of scope,
+(2)~execution of the [[AWK]] statement, [[delete A]] and
+(3)~when an existing changes type or size from [[split()]].
 
 <<interface functions>>=
 void array_clear(ARRAY A)
@@ -1099,6 +1077,7 @@ return sp ;
 #include "mawk.h"
 #include "symtype.h"
 #include "memory.h"
+#include "split.h"
 #include "field.h"
 #include "bi_vars.h"
 <<local constants, defs and prototypes>>
@@ -1107,7 +1086,7 @@ return sp ;
 
 <<blurb>>=
 /*
-$MawkId: array.w,v 1.17 2014/08/04 00:16:42 tom Exp $
+$MawkId: array.w,v 1.18 2014/08/14 23:34:44 mike Exp $
 
 copyright 2009,2010, Thomas E. Dickey
 copyright 1991-1996,2014 Michael D. Brennan

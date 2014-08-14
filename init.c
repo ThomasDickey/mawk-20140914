@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.37 2014/08/01 10:47:26 tom Exp $
+ * $MawkId: init.c,v 1.38 2014/08/14 23:34:44 mike Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -99,7 +99,7 @@ void reargv(int *, char ***);
 #endif
 #endif
 
-char *progname;
+const char *progname;
 short interactive_flag = 0;
 
 #ifndef	 SET_PROGNAME
@@ -431,7 +431,7 @@ process_cmdline(int argc, char **argv)
 		    if (haveValue(optNext)) {
 			int x = atoi(optNext + 1);
 
-			if (x > (int) SPRINTF_SZ) {
+			if (x > (int) sizeof(string_buff)) {
 			    if (sprintf_buff != string_buff &&
 				sprintf_buff != 0) {
 				zfree(sprintf_buff,

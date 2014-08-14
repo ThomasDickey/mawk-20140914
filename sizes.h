@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: sizes.h,v 1.9 2014/08/12 21:02:15 tom Exp $
+ * $MawkId: sizes.h,v 1.10 2014/08/14 23:34:44 mike Exp $
  * @Log: sizes.h,v @
  * Revision 1.8  1995/10/14  22:09:51  mike
  * getting MAX__INT from values.h didn't really work since the value was
@@ -89,26 +89,16 @@ typedef unsigned UInt;
 
 /*
  * FBANK_SZ, the number of fields at startup, must be a power of 2.
- * Also, FBANK_SZ-1 must be divisible by 3, since it is used for MAX_SPLIT.
  *
- * That means that FBANK_SZ can be 256, 1024, 4096, 16384, etc. (growing by
- * a factor of four for each next possible value).
  */
-#if 0
-#define  FBANK_SZ	 256
-#define  FB_SHIFT	   8	/* lg(FBANK_SZ) */
-#else
 #define  FBANK_SZ	1024
 #define  FB_SHIFT	  10	/* lg(FBANK_SZ) */
-#endif
-#define  NUM_FBANK	 (8*128)	/* see MAX_FIELD below */
 
-#define  MAX_SPLIT	(FBANK_SZ-1)	/* needs to be divisble by 3 */
-#define  MAX_FIELD	(NUM_FBANK*FBANK_SZ - 1)
 /*
- * mawk stores a union of MAX_SPLIT pointers and MIN_SPRINTF characters.
+ * hardwired limit on sprintf size, can be overridden with -Ws=xxx
+ * TBD to remove hard wired limit
  */
-#define  MIN_SPRINTF	8192
+#define  SPRINTF_LIMIT	8192
 
 #define  BUFFSZ         4096
   /* starting buffer size for input files, grows if
