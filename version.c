@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.16 2014/08/15 00:41:28 tom Exp $
+ * $MawkId: version.c,v 1.17 2014/08/15 00:56:12 tom Exp $
  */
 
 #include "mawk.h"
@@ -19,7 +19,7 @@ the GNU General Public License, version 2, 1991.
 #include "patchlev.h"
 
 #define	 VERSION_STRING	 \
-  "mawk %d.%d%s\n\
+  "mawk %d.%d%s %s\n\
 Copyright 2014, Thomas E. Dickey\n\
 Copyright 2014, Michael D. Brennan\n\n"
 
@@ -29,7 +29,7 @@ static const char fmt[] = "%-14s%10lu\n";
 void
 print_version(void)
 {
-    printf(VERSION_STRING, PATCH_BASE, PATCH_LEVEL, PATCH_STRING);
+    printf(VERSION_STRING, PATCH_BASE, PATCH_LEVEL, PATCH_STRING, DATE_STRING);
     fflush(stdout);
 
 #ifdef LOCAL_REGEXP
