@@ -1,8 +1,20 @@
--- $MawkId: CHANGES,v 1.188 2014/08/12 23:36:45 tom Exp $
+-- $MawkId: CHANGES,v 1.189 2014/08/15 00:24:26 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140812
+20140814
+	+ patches by Mike Brennan:
+	  + changed the intermediate storage of STRINGS used by split.
+	  + cleaned up the xxx_split() functions.
+	    a) removed hand loop unrolling. What was an optimization for
+            intel 8086/88 is silly today.
+            b) consequence of a) some macros went away so the code is easier
+            to read/understand.
+            c) handles null in input string
+	       Note:  re_split() does \x00 null correctly, but it calls
+	       REmatch() which does not.  I have examples where REmatch works
+	       with nulls and examples of not working.  That needs to be fixed.
+	  + changed field allocation to support no upper limit.
 	+ when comparing two strings, allow for embedded nulls.
 	+ add checks in rexp3.c for infinite loop for testcase noloop.awk
 	  (report by Tibor Palinkas).
@@ -50,7 +62,7 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20121209
 	+ build-fix for cygwin in matherr.c, which declares a different type
-	  for _LIB_VERSION 
+	  for _LIB_VERSION
 	+ add missing "-f" option in examples/gdecl.awk
 	+ fix a regression in fflush, ensuring that it returns an error if
 	  the argument does not match any output filename (report by Nathan
