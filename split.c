@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.23 2014/08/15 00:45:32 tom Exp $
+ * $MawkId: split.c,v 1.24 2014/08/15 00:52:38 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -98,7 +98,7 @@ space_split(const char *s, size_t slen)
 	    return cnt;
 	/* find one field */
 	{
-	    const char *q = s++;	// q is front of field
+	    const char *q = s++;	/* q is front of field */
 	    while (s < end && scan_code[*(const unsigned char *) s] != SC_SPACE)
 		s++;
 	    /* create and store the string field */
@@ -126,7 +126,7 @@ re_split(const char *s, size_t slen, PTR re)
 
     while (s < end) {
 	size_t mlen;
-	const char *m = re_pos_match(s, end - s, re, &mlen);
+	const char *m = re_pos_match(s, (size_t) (end - s), re, &mlen);
 	if (m) {
 	    /* stuff in front of match is a field, might have length zero */
 	    node_p->strings[idx] = new_STRING1(s, (size_t) (m - s));
@@ -160,7 +160,8 @@ re_pos_match(const char *str, size_t str_len, PTR re, size_t *lenp)
     const char *end = str + str_len;
 
     while (str < end) {
-	char *match = REmatch((char *) str, end - str, cast_to_re(re), lenp);
+	char *match = REmatch((char *) str, (size_t) (end - str),
+			      cast_to_re(re), lenp);
 	if (match) {
 	    if (*lenp) {
 		/* match of positive length so done */
