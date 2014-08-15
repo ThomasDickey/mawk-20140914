@@ -1,7 +1,7 @@
 /********************************************
 main.c
 copyright 2009-2012,2013 Thomas E. Dickey
-copyright 1991-1993,1995, Michael D. Brennan
+copyright 1991-1995,2014, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: main.c,v 1.29 2013/08/03 13:04:15 tom Exp $
+ * $MawkId: main.c,v 1.30 2014/08/15 00:29:34 mike Exp $
  * @Log: main.c,v @
  * Revision 1.4  1995/06/09  22:57:19  mike
  * parse() no longer returns on error
@@ -105,7 +105,7 @@ void
 mawk_exit(int x)
 {
 #ifdef  HAVE_REAL_PIPES
-    close_out_pipes();		/* no effect, if no out pipes */
+    close_out_pipes();		/* actually closes all output */
 #else
 #ifdef  HAVE_FAKE_PIPES
     close_fake_pipes();

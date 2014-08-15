@@ -1,7 +1,7 @@
 /********************************************
 re_cmpl.c
-copyright 2008-2010,2014, Thomas E. Dickey
-copyright 1991-1993,1994, Michael D. Brennan
+copyright 2008-2009,2010, Thomas E. Dickey
+copyright 1991-1994,2014, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.25 2014/06/18 23:10:30 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.26 2014/08/15 00:30:04 mike Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -165,6 +165,27 @@ re_destroy(PTR m)
 
 /* create a replacement CELL from a STRING *  */
 
+/* Here the replacement string gets scanned for &
+ * which calls for using the matched text in the replacement
+ * So to get a literal & in the replacement requires a convention
+ * which is \& is literal & not a matched text &.
+ * Here are the Posix rules which this code supports:
+           \&   -->   &
+	   \\   -->   \
+	   \c   -->   \c    
+	   &    -->   matched text 
+	   
+*/
+
+/* FIXME  -- this function doesn't handle embedded nulls
+   split_buff[] and MAX_SPLIT are obsolete, but needed by this
+   function.  Putting
+   them here is temporary until the rewrite to handle nulls.
+*/
+
+#define MAX_SPLIT  256		/* handle up to 256 &'s as matched text */
+static STRING *split_buff[MAX_SPLIT];
+
 static CELL *
 REPL_compile(STRING * sval)
 {
@@ -174,7 +195,6 @@ REPL_compile(STRING * sval)
     char *xbuff;
     CELL *cp;
 
-    TRACE(("REPL_compile(%.*s)\n", (int) sval->len, sval->str));
     q = xbuff = (char *) zmalloc(sval->len + 1);
 
     while (1) {
@@ -231,16 +251,12 @@ REPL_compile(STRING * sval)
 	VCount j = 0;
 
 	while (j < count) {
-	    TRACE(("SPLIT %d:", j));
-	    TRACE_STRING(split_buff[j]);
-	    TRACE(("\n"));
 	    *sp++ = split_buff[j++];
 	    USED_SPLIT_BUFF(j - 1);
 	}
 
 	cp->type = C_REPLV;
 	cp->vcnt = count;
-	TRACE(("... created C_REPLV count %d\n", count));
     }
     zfree(xbuff, sval->len + 1);
     return cp;
@@ -341,7 +357,7 @@ repl_compile(STRING * sval)
     p->cp = REPL_compile(sval);
 
   found:
-    /* insert p at the front of the list */
+/* insert p at the front of the list */
     p->link = repl_list;
     repl_list = p;
     return p->cp;
@@ -365,7 +381,8 @@ repl_uncompile(CELL *cp)
     } else {
 	while (p) {
 	    if (p->cp->type == C_REPLV &&
-		memcmp(cp->ptr, p->cp->ptr, cp->vcnt * sizeof(STRING *)) == 0)
+		memcmp(cp->ptr, p->cp->ptr, cp->vcnt * sizeof(STRING *))
+		== 0)
 		return p->sval->str;
 	    else
 		p = p->link;

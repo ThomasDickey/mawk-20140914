@@ -1,7 +1,7 @@
 /********************************************
 print.c
 copyright 2008-2010,2012.  Thomas E. Dickey
-copyright 1991-1995,1996.  Michael D. Brennan
+copyright 1991-1996,2014.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: print.c,v 1.24 2012/12/07 01:04:49 tom Exp $
+ * $MawkId: print.c,v 1.25 2014/08/15 00:29:48 mike Exp $
  * @Log: print.c,v @
  * Revision 1.7  1996/09/18 01:04:36  mike
  * Check ferror() after print and printf.
@@ -77,13 +77,13 @@ static void write_error(void);
 
 /* this can be moved and enlarged  by -W sprintf=num  */
 char *sprintf_buff = string_buff;
-char *sprintf_limit = string_buff + SPRINTF_SZ;
+char *sprintf_limit = string_buff + sizeof(string_buff);
 
 /* Once execute() starts the sprintf code is (belatedly) the only
    code allowed to use string_buff  */
 
 static void
-print_cell(CELL * p, FILE *fp)
+print_cell(CELL *p, FILE *fp)
 {
     size_t len;
 
@@ -134,7 +134,7 @@ print_cell(CELL * p, FILE *fp)
 
 CELL *
 bi_print(
-	    CELL * sp)		/* stack ptr passed in */
+	    CELL *sp)		/* stack ptr passed in */
 {
     register CELL *p;
     register int k;
@@ -360,7 +360,7 @@ SprintfBlock(char *buffer, char *source, int length)
 static PTR
 puts_sfmt(PTR target,
 	  FILE *fp,
-	  CELL * source,
+	  CELL *source,
 	  STRING * onechr,
 	  int width,
 	  int prec,
@@ -439,7 +439,7 @@ do_printf(
 	     FILE *fp,
 	     char *format,
 	     unsigned argcnt,	/* number of args on eval stack */
-	     CELL * cp)		/* ptr to an array of arguments
+	     CELL *cp)		/* ptr to an array of arguments
 				   (on the eval stack) */
 {
     char save;
@@ -749,7 +749,7 @@ do_printf(
 }
 
 CELL *
-bi_printf(CELL * sp)
+bi_printf(CELL *sp)
 {
     register int k;
     register CELL *p;
@@ -784,7 +784,7 @@ bi_printf(CELL * sp)
 }
 
 CELL *
-bi_sprintf(CELL * sp)
+bi_sprintf(CELL *sp)
 {
     CELL *p;
     int argcnt = sp->type;

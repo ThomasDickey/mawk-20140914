@@ -1,7 +1,7 @@
 /********************************************
 field.h
 copyright 2009-2010, Thomas E. Dickey
-copyright 1991-1995, Michael D. Brennan
+copyright 1991-1995,2014 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.h,v 1.10 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: field.h,v 1.11 2014/08/15 00:29:17 mike Exp $
  * @Log: field.h,v @
  * Revision 1.2  1995/06/18  19:42:16  mike
  * Remove some redundant declarations and add some prototypes
@@ -37,9 +37,6 @@ the GNU General Public License, version 2, 1991.
 
 extern void set_field0(char *, size_t);
 extern void split_field0(void);
-extern size_t space_split(char *, size_t);
-extern size_t re_split(STRING *, PTR);
-extern size_t null_split(char *, size_t);
 extern void field_assign(CELL *, CELL *);
 extern char *is_string_split(PTR, unsigned *);
 extern void slow_cell_assign(CELL *, CELL *);
@@ -49,13 +46,13 @@ extern void set_binmode(int);
 
 #define  NUM_PFIELDS		5
 extern CELL field[FBANK_SZ + NUM_PFIELDS];
-	/* $0, $1 ... $(MAX_SPLIT), NF, RS, RS, CONVFMT, OFMT */
+	/* $0, $1 ... $(FBANK_SZ-1), NF, RS, RS, CONVFMT, OFMT */
 
 /* more fields if needed go here */
-extern CELL *fbank[NUM_FBANK];	/* fbank[0] == field */
+extern CELL **fbankv;		/* fbankv[0] == field */
 
 /* index to CELL *  for a field */
-#define field_ptr(i) ((i) <= MAX_SPLIT ? field + (i) : slow_field_ptr(i))
+#define field_ptr(i) ((i) < FBANK_SZ ? field + (i) : slow_field_ptr(i))
 
 /* some, such as RS may be defined in system-headers */
 #undef NF
@@ -67,11 +64,11 @@ extern CELL *fbank[NUM_FBANK];	/* fbank[0] == field */
 /* some compilers choke on (NF-field) in a case statement
    even though it's constant so ...
 */
-#define  NF_field      (MAX_SPLIT + 1)
-#define  RS_field      (MAX_SPLIT + 2)
-#define  FS_field      (MAX_SPLIT + 3)
-#define  CONVFMT_field (MAX_SPLIT + 4)
-#define  OFMT_field    (MAX_SPLIT + 5)
+#define  NF_field      FBANK_SZ
+#define  RS_field      (FBANK_SZ + 1)
+#define  FS_field      (FBANK_SZ + 2)
+#define  CONVFMT_field (FBANK_SZ + 3)
+#define  OFMT_field    (FBANK_SZ + 4)
 
 /* the pseudo fields, assignment has side effects */
 #define  NF            (field + NF_field)	/* must be first */

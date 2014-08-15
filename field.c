@@ -1,7 +1,7 @@
 /********************************************
 field.c
 copyright 2008-2010,2012 Thomas E. Dickey
-copyright 1991-1995, Michael D. Brennan
+copyright 1991-1995,2014 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.27 2012/12/08 00:01:22 tom Exp $
+ * $MawkId: field.c,v 1.28 2014/08/15 00:29:00 mike Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -64,6 +64,7 @@ the GNU General Public License, version 2, 1991.
 /* field.c */
 
 #include "mawk.h"
+#include "split.h"
 #include "field.h"
 #include "init.h"
 #include "memory.h"
@@ -72,15 +73,63 @@ the GNU General Public License, version 2, 1991.
 #include "repl.h"
 #include "regexp.h"
 
+/* initial fields and pseudo fields,
+    most programs only need these */
 CELL field[FBANK_SZ + NUM_PFIELDS];
+/* hold banks of more fields if needed */
+CELL **fbankv;
 
-CELL *fbank[NUM_FBANK] =
-{field};
+/* fbankv grows in chunks */
+#define FBANKV_CHUNK_SIZE    1024
+static size_t fbankv_num_chunks;
 
-static int max_field = MAX_SPLIT;	/* maximum field actually created */
+/* make fbankv big enough to hold field CELL $i 
+   is called with i==0 during initialization
+
+   This does not create field CELL $i, it just
+   makes fbankv big enough to hold the fbank that will hold $i
+*/
+static void
+allocate_fbankv(int i)
+{
+    if (i == 0) {
+	size_t sz = FBANKV_CHUNK_SIZE * sizeof(CELL *);
+	fbankv_num_chunks = 1;
+	fbankv = (CELL **) zmalloc(sz);
+	memset(fbankv, 0, sz);
+	fbankv[0] = field;
+    } else {
+	size_t u = (size_t) i + 1;
+	size_t chunks = (u / (FBANK_SZ * FBANKV_CHUNK_SIZE)) + 1;
+	if (chunks > fbankv_num_chunks) {
+	    size_t old_size = fbankv_num_chunks * FBANKV_CHUNK_SIZE;
+	    size_t new_size = chunks * FBANKV_CHUNK_SIZE;
+	    fbankv = zrealloc(fbankv, old_size * sizeof(CELL *),
+			      new_size * sizeof(CELL *));
+
+	    memset(&fbankv[old_size], 0, (new_size - old_size) * sizeof(CELL *));
+	    fbankv_num_chunks = chunks;
+	}
+    }
+}
+
+/* max_field created i.e. $max_field exists 
+   as new fields are created max_field grows 
+*/
+static int max_field = FBANK_SZ - 1;
+
+/*  The fields $0, $1, ... $max_field are always valid, the
+    value of nf (below) does not affect validity of the
+    allocated fields.  When a new $0 is read, nf is set to -1
+    to indicate $0 has not been split, field[1], field[2] ...
+    field[3] (actually fbankv[i/1024][i%1024]) are unchanged.
+
+    So any time a field is assigned or changed, it has to
+    be cell_destroyed first and this is the only way a field gets
+    cell_destroyed.
+*/
 
 static void build_field0(void);
-static void load_field_ov(void);
 
 /* a description of how to split based on RS.
    If RS is changed, so is rs_shadow */
@@ -161,7 +210,7 @@ set_rs_shadow(void)
 }
 
 static void
-load_pfield(const char *name, CELL * cp)
+load_pfield(const char *name, CELL *cp)
 {
     SYMTAB *stp;
 
@@ -174,6 +223,8 @@ load_pfield(const char *name, CELL * cp)
 void
 field_init(void)
 {
+    allocate_fbankv(0);
+
     field[0].type = C_STRING;
     field[0].ptr = (PTR) & null_str;
     null_str.ref_cnt++;
@@ -219,59 +270,62 @@ set_field0(char *s, size_t len)
     }
 }
 
-/* split field[0] into $1, $2 ... and set NF  */
+/* split field[0] into $1, $2 ... and set NF  
+ *
+ * Note the current values are valid CELLS and
+ * have to be destroyed when the new values are loaded.
+*/
 
 void
 split_field0(void)
 {
-    register CELL *cp;
-    register int cnt;
-    CELL c;			/* copy field[0] here if not string */
+    CELL *cp0;
+    size_t cnt = 0;
+    CELL hold0;			/* copy field[0] here if not string */
 
     if (field[0].type < C_STRING) {
-	cast1_to_s(cellcpy(&c, field + 0));
-	cp = &c;
-    } else
-	cp = &field[0];
+	cast1_to_s(cellcpy(&hold0, field + 0));
+	cp0 = &hold0;
+    } else {
+	cp0 = &field[0];
+    }
 
-    if (string(cp)->len == 0)
-	nf = 0;
-    else {
+    if (string(cp0)->len > 0) {
 	switch (fs_shadow.type) {
 	case C_SNULL:		/* FS == "" */
-	    nf = (int) null_split(string(cp)->str, string(cp)->len);
+	    cnt = null_split(string(cp0)->str, string(cp0)->len);
 	    break;
 
 	case C_SPACE:
-	    nf = (int) space_split(string(cp)->str, string(cp)->len);
+	    cnt = space_split(string(cp0)->str, string(cp0)->len);
 	    break;
 
 	default:
-	    nf = (int) re_split(string(cp), fs_shadow.ptr);
+	    cnt = re_split(string(cp0)->str, string(cp0)->len, fs_shadow.ptr);
 	    break;
 	}
 
     }
+    /* the above xxx_split() function put the fields in an anonyous
+     * buffer that will be pulled into the fields with a transer call */
+
+    /* we are done with cp0 */
+    if (cp0 == &hold0)
+	free_STRING(string(cp0));
+
+    nf = (int) cnt;
 
     cell_destroy(NF);
     NF->type = C_DOUBLE;
     NF->dval = (double) nf;
 
-    if (nf > MAX_SPLIT) {
-	cnt = MAX_SPLIT;
-	load_field_ov();
-    } else
-	cnt = nf;
+    if (nf > max_field)
+	slow_field_ptr(nf);
+    /* fields 1 .. nf are created and valid */
 
-    while (cnt > 0) {
-	cell_destroy(field + cnt);
-	field[cnt].ptr = (PTR) split_buff[cnt - 1];
-	USED_SPLIT_BUFF(cnt - 1);
-	field[cnt--].type = C_MBSTRN;
-    }
-
-    if (cp == &c) {
-	free_STRING(string(cp));
+    /* retrieves the result of xxx_split() */
+    if (cnt > 0) {
+	transfer_to_fields(cnt);
     }
 }
 
@@ -281,7 +335,7 @@ split_field0(void)
 */
 
 void
-field_assign(CELL * fp, CELL * cp)
+field_assign(CELL *fp, CELL *cp)
 {
     CELL c;
     int i, j;
@@ -379,8 +433,12 @@ field_assign(CELL * fp, CELL * cp)
 	cell_destroy(fp);
 	cellcpy(fp, cp);
 
-	if (i < 0 || i > MAX_SPLIT)
+	if (i < 0 || i >= FBANK_SZ) {
+	    /* field assigned to was not in field[0..FBANK_SZ-1]
+	     * or a pseudo field, so compute actual field index
+	     */
 	    i = field_addr_to_index(fp);
+	}
 
 	if (i > nf) {
 	    for (j = nf + 1; j < i; j++) {
@@ -437,7 +495,7 @@ build_field0(void)
 
 	len = ((size_t) cnt) * ofs->len + tail->len;
 
-	fbp = fbank;
+	fbp = fbankv;
 	cp_limit = field + FBANK_SZ;
 	cp = field + 1;
 
@@ -476,7 +534,7 @@ build_field0(void)
 
 	/* walk it again , putting things together */
 	cnt = nf - 1;
-	fbp = fbank;
+	fbp = fbankv;
 	cp = field + 1;
 	cp_limit = field + FBANK_SZ;
 	while (cnt-- > 0) {
@@ -509,31 +567,27 @@ build_field0(void)
 }
 
 /* We are assigning to a CELL and we aren't sure if its
-   a field */
-
+   a field 
+*/
 void
-slow_cell_assign(CELL * target, CELL * source)
+slow_cell_assign(CELL *target, CELL *source)
 {
-    if (
-
-#ifdef MSDOS			/* the dreaded segment nonsense */
-	   SAMESEG(target, field) &&
-#endif
-	   target >= field && target <= LAST_PFIELD)
+    if (field <= target && target <= LAST_PFIELD) {
 	field_assign(target, source);
-    else {
-	CELL **p = fbank + 1;
+    } else {
+	size_t i;
+	for (i = 1; i < fbankv_num_chunks * FBANKV_CHUNK_SIZE; i++) {
+	    CELL *bank_start = fbankv[i];
+	    CELL *bank_end = bank_start + FBANK_SZ;
 
-	while (*p) {
-	    if (
-#ifdef  MSDOS
-		   SAMESEG(target, *p) &&
-#endif
-		   target >= *p && target < *p + FBANK_SZ) {
+	    if (bank_start == 0)
+		break;
+
+	    if (bank_start <= target && target < bank_end) {
+		/* it is a field */
 		field_assign(target, source);
 		return;
 	    }
-	    p++;
 	}
 	/* its not a field */
 	cell_destroy(target);
@@ -542,9 +596,9 @@ slow_cell_assign(CELL * target, CELL * source)
 }
 
 int
-field_addr_to_index(CELL * cp)
+field_addr_to_index(CELL *cp)
 {
-    CELL **p = fbank;
+    CELL **p = fbankv;
 
     while (
 
@@ -555,79 +609,40 @@ field_addr_to_index(CELL * cp)
 	      cp < *p || cp >= *p + FBANK_SZ)
 	p++;
 
-    return (int) (((p - fbank) << FB_SHIFT) + (cp - *p));
+    return (int) (((p - fbankv) << FB_SHIFT) + (cp - *p));
 }
 
 /*------- more than 1 fbank needed  ------------*/
 
 /*
-  compute the address of a field with index
-  > MAX_SPLIT
+  compute the address of a field $i
+
+  if CELL $i doesn't exist, because it is bigger than max_field,
+  then it gets created and max_field grows.
 */
 
 CELL *
 slow_field_ptr(int i)
 {
 
-    if (i > max_field) {
+    if (i > max_field) {	/* need to allocate more field memory */
 	int j;
+	allocate_fbankv(i);
 
-	if (i > MAX_FIELD)
-	    rt_overflow("maximum number of fields", MAX_FIELD);
+	j = (max_field >> FB_SHIFT) + 1;
 
-	j = 1;
-	while (fbank[j])
-	    j++;
+	assert(j > 0 && fbankv[j - 1] != 0 && fbankv[j] == 0);
 
 	do {
-	    fbank[j] = (CELL *) zmalloc(sizeof(CELL) * FBANK_SZ);
-	    memset(fbank[j], 0, sizeof(CELL) * FBANK_SZ);
+	    fbankv[j] = (CELL *) zmalloc(sizeof(CELL) * FBANK_SZ);
+	    memset(fbankv[j], 0, sizeof(CELL) * FBANK_SZ);
 	    j++;
 	    max_field += FBANK_SZ;
 	}
 	while (i > max_field);
     }
 
-    return &fbank[i >> FB_SHIFT][i & (FBANK_SZ - 1)];
-}
-
-/*
-  $0 split into more than MAX_SPLIT fields,
-  $(MAX_FIELD+1) ... are on the split_ov_list.
-  Copy into fields which start at fbank[1]
-*/
-
-static void
-load_field_ov(void)
-{
-    register SPLIT_OV *p;	/* walks split_ov_list */
-    register CELL *cp;		/* target of copy */
-    int j;			/* current fbank[] */
-    CELL *cp_limit;		/* change fbank[] */
-    SPLIT_OV *q;		/* trails p */
-
-    /* make sure the fields are allocated */
-    slow_field_ptr(nf);
-
-    p = split_ov_list;
-    split_ov_list = (SPLIT_OV *) 0;
-    j = 1;
-    cp = fbank[j];
-    cp_limit = cp + FBANK_SZ;
-    while (p) {
-	cell_destroy(cp);
-	cp->type = C_MBSTRN;
-	cp->ptr = (PTR) p->sval;
-
-	if (++cp == cp_limit) {
-	    cp = fbank[++j];
-	    cp_limit = cp + FBANK_SZ;
-	}
-
-	q = p;
-	p = p->link;
-	ZFREE(q);
-    }
+    return &fbankv[i >> FB_SHIFT][i & (FBANK_SZ - 1)];
 }
 
 #if USE_BINMODE
@@ -670,20 +685,48 @@ set_binmode(int x)
 #endif /* USE_BINMODE */
 
 #ifdef NO_LEAKS
+
+static void
+fbank_free(CELL *const fb)
+{
+    CELL *end = fb + FBANK_SZ;
+    CELL *cp;
+    for (cp = fb; cp < end; cp++) {
+	cell_destroy(cp);
+    }
+    zfree(fb, FBANK_SZ * sizeof(CELL *));
+}
+
+static void
+fbankv_free()
+{
+    unsigned i = 1;
+    const size_t cnt = FBANKV_CHUNK_SIZE * fbankv_num_chunks;
+    while (i < cnt && fbankv[i] != 0) {
+	fbank_free(fbankv[i]);
+	i++;
+    }
+    for (; i < cnt; i++) {
+	if (fbankv[i] != 0) {
+	    bozo("unexpected pointer in fbankv[]");
+	}
+    }
+    zfree(fbankv, cnt * sizeof(CELL *));
+}
+
 void
 field_leaks(void)
 {
     int n;
 
-    free_STRING(string(CONVFMT));
-    free_STRING(string(FS));
-    free_STRING(string(OFMT));
-    free_STRING(string(RS));
-    cell_destroy(&field[0]);
-
-    for (n = 1; n <= nf; ++n) {
+    /* everything in field[] */
+    for (n = 0; n < FBANK_SZ + NUM_PFIELDS; n++) {
 	cell_destroy(&field[n]);
     }
+    /* fbankv[0] == field 
+       this call does all the rest of the fields
+     */
+    fbankv_free();
 
     switch (fs_shadow.type) {
     case C_RE:

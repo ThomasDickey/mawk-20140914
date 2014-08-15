@@ -2,7 +2,7 @@
 scan.c
 copyright 2008-2012,2013, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
-copyright 1991-1995,1996, Michael D. Brennan
+copyright 1991-1996,2014, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.38 2013/08/03 13:28:13 tom Exp $
+ * $MawkId: scan.c,v 1.39 2014/08/15 00:30:22 mike Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -107,6 +107,9 @@ static int eof_flag;
 /* use unsigned chars for index into scan_code[] */
 #define NextUChar(c) (UChar)(c = (char) next())
 
+/* overused tmp buffer */
+char string_buff[SPRINTF_LIMIT];
+
 static void
 string_too_long(void)
 {
@@ -115,7 +118,7 @@ string_too_long(void)
 }
 
 #define CheckStringSize(ptr) \
-	if (((ptr) - string_buff) >= MIN_SPRINTF) \
+	if (((ptr) - string_buff) >= sizeof(string_buff)) \
 	    string_too_long()
 
 void
@@ -628,11 +631,12 @@ yylex(void)
 		else
 		    yylval.cp = &field[0];
 	    } else {
-		if (d > MAX_FIELD) {
-		    compile_error("$%g exceeds maximum field(%d)", d, MAX_FIELD);
-		    d = MAX_FIELD;
+		int ival = d_to_I(d);
+		double dval = (double) ival;
+		if (dval != d) {
+		    compile_error("$%g is invalid field index", d);
 		}
-		yylval.cp = field_ptr((int) d);
+		yylval.cp = field_ptr(ival);
 	    }
 
 	    ct_ret(FIELD);
@@ -1040,7 +1044,7 @@ collect_RE(void)
 {
     char *p = string_buff;
     const char *first = NULL;
-    int limit = MIN_SPRINTF - 2;
+    int limit = sizeof(string_buff) - 2;
     int c;
     int boxed = 0;
     STRING *sval;
