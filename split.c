@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.22 2014/08/15 00:26:37 mike Exp $
+ * $MawkId: split.c,v 1.23 2014/08/15 00:45:32 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -52,7 +52,7 @@ static Split_Block_Node *split_block_list = &split_block_base;
 */
 
 static void
-spb_list_shrink()
+spb_list_shrink(void)
 {
     Split_Block_Node *p = split_block_list->link;
     split_block_list->link = 0;
@@ -92,14 +92,14 @@ space_split(const char *s, size_t slen)
 
     while (1) {
 	/* eat space */
-	while (scan_code[*(unsigned char *) s] == SC_SPACE)
+	while (scan_code[*(const unsigned char *) s] == SC_SPACE)
 	    s++;
 	if (s == end)
 	    return cnt;
 	/* find one field */
 	{
 	    const char *q = s++;	// q is front of field
-	    while (s < end && scan_code[*(unsigned char *) s] != SC_SPACE)
+	    while (s < end && scan_code[*(const unsigned char *) s] != SC_SPACE)
 		s++;
 	    /* create and store the string field */
 	    node_p->strings[idx] = new_STRING1(q, (size_t) (s - q));

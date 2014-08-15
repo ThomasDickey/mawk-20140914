@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.39 2014/08/15 00:30:22 mike Exp $
+ * $MawkId: scan.c,v 1.40 2014/08/15 00:46:10 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -118,7 +118,7 @@ string_too_long(void)
 }
 
 #define CheckStringSize(ptr) \
-	if (((ptr) - string_buff) >= sizeof(string_buff)) \
+	if ((size_t)((ptr) - string_buff) >= sizeof(string_buff)) \
 	    string_too_long()
 
 void
