@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.189 2014/08/15 00:24:26 tom Exp $
+-- $MawkId: CHANGES,v 1.190 2014/08/15 00:43:07 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140814
+	+ remove old compiler information from version message.
+	+ remove NF value from version message.
 	+ patches by Mike Brennan:
 	  + changed the intermediate storage of STRINGS used by split.
 	  + cleaned up the xxx_split() functions.
