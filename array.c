@@ -1,6 +1,6 @@
 /* array.c */
 /*
-@MawkId: array.w,v 1.17 2014/08/04 00:16:42 tom Exp @
+@MawkId: array.w,v 1.18 2014/08/14 23:34:44 mike Exp @
 
 copyright 2009,2010, Thomas E. Dickey
 copyright 1991-1996,2014 Michael D. Brennan
@@ -25,6 +25,7 @@ It's easiest to read or modify this file by working with array.w.
 #include "mawk.h"
 #include "symtype.h"
 #include "memory.h"
+#include "split.h"
 #include "field.h"
 #include "bi_vars.h"
 struct anode ;
@@ -184,40 +185,23 @@ void array_load(
    ARRAY A,
    size_t cnt)
 {
-   CELL *cells ; /* storage for A[1..cnt] */
-   size_t i ;  /* index into cells[] */
-   if (A->type != AY_SPLIT || A->limit < (unsigned) cnt) {
-      array_clear(A) ;
-      A->limit = (unsigned) ( (cnt & (size_t) ~3) + 4 ) ;
-      A->ptr = zmalloc(A->limit*sizeof(CELL)) ;
-      A->type = AY_SPLIT ;
+   if (A->type != AY_SPLIT || A->limit < cnt) {
+       array_clear(A) ;
+       A->limit = (cnt & (size_t) ~3) + 4 ;
+       A->ptr = zmalloc(A->limit*sizeof(CELL)) ;
+       A->type = AY_SPLIT ;
    }
    else
    {
-      for(i=0; (unsigned) i < A->size; i++)
+       /* reusing an existing AY_SPLIT array */
+       size_t i ;
+       for(i=0; i < A->size; i++) {
           cell_destroy((CELL*)A->ptr + i) ;
+       }
    }
 
-   cells = (CELL*) A->ptr ;
    A->size = cnt ;
-   if (cnt > MAX_SPLIT) {
-      SPLIT_OV *p = split_ov_list ;
-      SPLIT_OV *q ;
-      split_ov_list = (SPLIT_OV*) 0 ;
-      i = MAX_SPLIT ;
-      while( p ) {
-         cells[i].type = C_MBSTRN ;
-         cells[i].ptr = (PTR) p->sval ;
-         q = p ; p = q->link ; ZFREE(q) ;
-         i++ ;
-      }
-      cnt = MAX_SPLIT ;
-   }
-
-   for(i=0;i < cnt; i++) {
-      cells[i].type = C_MBSTRN ;
-      cells[i].ptr = split_buff[i] ;
-   }
+   transfer_to_array((CELL*) A->ptr, cnt) ;
 }
 void array_clear(ARRAY A)
 {
