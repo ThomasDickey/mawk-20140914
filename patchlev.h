@@ -1,7 +1,7 @@
 /*
 patchlev.h
 copyright 2009-2013,2014, Thomas E. Dickey
-copyright 1996, Michael D. Brennan
+copyright 1991-1996,2014, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -11,9 +11,9 @@ the GNU General Public License, version 2, 1991.
  */
 
 /*
- * $MawkId: patchlev.h,v 1.58 2014/08/12 21:05:26 tom Exp $
+ * $MawkId: patchlev.h,v 1.59 2014/08/15 00:25:41 tom Exp $
  */
 #define  PATCH_BASE	1
 #define  PATCH_LEVEL	3
 #define  PATCH_STRING	".4"
-#define  DATE_STRING    "20140812"
+#define  DATE_STRING    "20140814"
