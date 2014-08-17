@@ -10,11 +10,12 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: trace.c,v 1.8 2014/08/13 21:09:09 tom Exp $
+ * $MawkId: trace.c,v 1.9 2014/08/17 16:37:56 tom Exp $
  */
 #include <stdarg.h>
 
 #include <mawk.h>
+#include <repl.h>
 
 static FILE *trace_fp;
 
@@ -60,10 +61,12 @@ TraceCell(CELL *cp)
 	    TRACE(("split on the empty string\n"));
 	    break;
 	case C_RE:
-	    TRACE(("a regular expression at %p\n", cp->ptr));
+	    TRACE(("a regular expression at %p: %s\n", cp->ptr, re_uncompile(cp->ptr)));
 	    break;
 	case C_REPL:
-	    TRACE(("a replacement string at %p\n", cp->ptr));
+	    TRACE(("a replacement string at %p: ", cp->ptr));
+	    TraceString(string(cp));
+	    TRACE(("\n"));
 	    break;
 	case C_REPLV:
 	    TRACE(("a vector replacement, count %d at %p\n", cp->vcnt, cp->ptr));
