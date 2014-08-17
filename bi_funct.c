@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.76 2014/08/17 20:17:59 tom Exp $
+ * $MawkId: bi_funct.c,v 1.77 2014/08/17 21:27:10 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -79,7 +79,6 @@ the GNU General Public License, version 2, 1991.
 #include <time.h>
 
 /* #define EXP_UNROLLED_GSUB */
-#define EXP_UNROLLED_GSUB 1
 
 #if OPT_TRACE > 0
 #define return_CELL(func, cell) TRACE(("..." func " ->")); \
@@ -1297,6 +1296,83 @@ gsub0(PTR re, CELL *repl, char *target, size_t target_len, int flag)
 }
 #endif /* USE_GSUB0 */
 
+#ifdef USE_GSUB2
+static STRING *
+gsub2(PTR re, CELL *repl, CELL *target)
+{
+    int pass;
+    size_t j;
+    STRING *input = string(target);
+    STRING *output = 0;
+    size_t want = 0;
+    size_t have;
+
+    TRACE(("called gsub2\n"));
+    /*
+     * On the first pass, determine the size of the resulting string.
+     * On the second pass, actually apply changes - if any.
+     */
+    for (pass = 0; pass < 2; ++pass) {
+	TRACE(("start pass %d\n", pass + 1));
+	repl_cnt = 0;
+	for (j = 0; j < input->len; ++j) {
+	    size_t howmuch;
+	    char *where = REmatch(input->str + j,
+				  input->len - j,
+				  cast_to_re(re),
+				  &howmuch);
+	    /*
+	     * REmatch returns a non-null pointer if it found a match.  But
+	     * that can be an empty string, e.g., for "*" or "?".  The length
+	     * is in 'howmuch'.
+	     */
+	    if (where != 0) {
+		TRACE(("REmatch %d:%d:", (int) j, (int) howmuch));
+		++repl_cnt;
+
+		want += 1;	//TODO: repl_length();
+		if (howmuch) {
+		    TRACE_STRING2(where, howmuch);
+		    /*
+		     * TODO: calculate length of replacement in first pass
+		     * TODO: do replacement in second pass
+		     */
+		    j = (where - input->str) + howmuch - 1;
+		} else {
+		    /*
+		     * TODO: calculate length of replacement in first pass
+		     * TODO: do replacement/insertion in second pass
+		     */
+		}
+		TRACE(("\n"));
+	    } else {
+		if (!repl_cnt)
+		    break;
+		have = (input->len - j);
+		want += have;
+		/*
+		 * TODO: in second pass, copy 'have' bytes on end of output
+		 */
+		break;
+	    }
+	}
+
+	if (!repl_cnt)
+	    break;
+
+	TRACE(("...done pass %d\n", pass + 1));
+	if (!pass) {
+	    output = new_STRING0(want);
+	    TRACE(("...input %d ->output %d\n",
+		   (int) input->len,
+		   (int) output->len));
+	}
+    }
+    TRACE(("...done gsub2\n"));
+    return output;
+}
+#endif
+
 #ifdef EXP_UNROLLED_GSUB
 /* #define DEBUG_GSUB 1 */
 
@@ -1492,7 +1568,7 @@ bi_gsub(CELL *sp)
     CELL sc;			/* copy of replacement target */
     CELL tc;			/* build the result here */
     STRING *result;
-#ifdef USE_GSUB0
+#if defined(USE_GSUB0) || defined(USE_GSUB2)
     STRING *resul2;
 #endif
     size_t stack_needs;
@@ -1541,6 +1617,16 @@ bi_gsub(CELL *sp)
 	free_STRING(target);
     }
 #endif
+#ifdef USE_GSUB2
+    {
+	resul2 = gsub2(sp->ptr, sp + 1, &sc);
+	if (resul2 != 0) {
+	    TRACE(("XXX ->%d:", (int) resul2->len));
+	    TRACE_STRING(resul2);
+	    TRACE(("\n"));
+	}
+    }
+#endif
 
     ThisBranch = btFinish;
     ThisEmptyOk = 1;
@@ -1558,7 +1644,9 @@ bi_gsub(CELL *sp)
     TRACE(("NEW -> %d:", (int) result->len));
     TRACE_STRING(result);
     TRACE(("\n"));
-    if (result->len != resul2->len || memcmp(result->str, resul2->str, result->len)) {
+    if (resul2 != 0 &&
+	((result->len != resul2->len) ||
+	 memcmp(result->str, resul2->str, result->len))) {
 	TRACE(("OOPS: gsub result NEW != OLD\n"));
     }
 #endif
