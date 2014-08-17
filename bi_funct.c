@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.73 2014/08/17 16:13:24 tom Exp $
+ * $MawkId: bi_funct.c,v 1.74 2014/08/17 18:34:51 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1370,6 +1370,7 @@ new_gsub(PTR re, int level)
     ThisFront = 0;
 
     ThisMiddle = REmatch(ThisTarget, ThisTargetLen, cast_to_re(re), &ThisMiddleLen);
+
     if (ThisMiddle != 0) {
 
 	if (!ThisEmptyOk && (ThisMiddleLen == 0) && (ThisMiddle == ThisTarget)) {
@@ -1501,13 +1502,6 @@ bi_gsub(CELL *sp)
 
     sp -= 2;
 
-    TRACE(("SP 0: "));
-    TRACE_CELL(sp);
-    TRACE(("SP 1: "));
-    TRACE_CELL(sp + 1);
-    TRACE(("SP 2: "));
-    TRACE_CELL(sp + 2);
-
     if (sp->type != C_RE)
 	cast_to_RE(sp);
     if ((sp + 1)->type != C_REPL && (sp + 1)->type != C_REPLV)
@@ -1516,6 +1510,14 @@ bi_gsub(CELL *sp)
     cellcpy(&sc, cp = (CELL *) (sp + 2)->ptr);
     if (sc.type < C_STRING)
 	cast1_to_s(&sc);
+
+    TRACE(("..actual gsub args:\n"));
+    TRACE(("arg0: "));
+    TRACE_CELL(sp);
+    TRACE(("arg1: "));
+    TRACE_CELL(sp + 1);
+    TRACE(("arg2: "));
+    TRACE_CELL(&sc);
 
     stack_needs = (string(&sc)->len + 2) * 2;
 
