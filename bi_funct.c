@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.75 2014/08/17 20:03:31 tom Exp $
+ * $MawkId: bi_funct.c,v 1.76 2014/08/17 20:17:59 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -79,6 +79,7 @@ the GNU General Public License, version 2, 1991.
 #include <time.h>
 
 /* #define EXP_UNROLLED_GSUB */
+#define EXP_UNROLLED_GSUB 1
 
 #if OPT_TRACE > 0
 #define return_CELL(func, cell) TRACE(("..." func " ->")); \
@@ -1350,8 +1351,12 @@ repl_length(CELL *cp)
     return result;
 }
 
+/*
+ * This is a revision of "gsub0" which does not recur on the stack.  However,
+ * it uses a fake stack of its own, and is less efficient.
+ */
 static STRING *
-new_gsub(PTR re, int level)
+gsub1(PTR re, int level)
 {
     char xbuff[2];
     char *in_sval;
@@ -1546,7 +1551,7 @@ bi_gsub(CELL *sp)
 
     repl_cnt = 0;
 
-    result = new_gsub(sp->ptr, 0);
+    result = gsub1(sp->ptr, 0);
     tc.ptr = (PTR) result;
 
 #ifdef USE_GSUB0
