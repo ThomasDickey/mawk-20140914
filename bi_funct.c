@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.72 2014/08/13 23:22:24 tom Exp $
+ * $MawkId: bi_funct.c,v 1.73 2014/08/17 16:13:24 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1577,11 +1577,6 @@ bi_gsub(CELL *sp)
     }
 #endif
 
-    /* cleanup */
-    free_STRING(string(&sc));
-    free_STRING(string(&tc));
-    repl_destroy(sp + 1);
-
     sp->type = C_DOUBLE;
     sp->dval = (double) repl_cnt;
 
@@ -1590,6 +1585,11 @@ bi_gsub(CELL *sp)
     TRACE(("String: "));
     TRACE_STRING(result);
     TRACE(("\n"));
+
+    /* cleanup */
+    free_STRING(string(&sc));
+    free_STRING(string(&tc));
+    repl_destroy(sp + 1);
 
     return_CELL("bi_gsub", sp);
 }
