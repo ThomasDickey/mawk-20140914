@@ -1,6 +1,8 @@
--- $MawkId: CHANGES,v 1.190 2014/08/15 00:43:07 tom Exp $
+-- $MawkId: CHANGES,v 1.191 2014/08/17 20:04:23 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
+
+20140817
 
 20140814
 	+ remove old compiler information from version message.
