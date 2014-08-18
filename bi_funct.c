@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.78 2014/08/18 00:03:33 tom Exp $
+ * $MawkId: bi_funct.c,v 1.79 2014/08/18 07:42:01 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1416,14 +1416,17 @@ gsub2(PTR re, CELL *repl, CELL *target)
 
 		if (howmuch) {
 		    j = (where - input->str) + howmuch - 1;
-		} else if (j < (int) input->len) {
-		    TRACE(("..emptied:"));
-		    TRACE_STRING2(input->str + j, 1);
-		    TRACE(("\n"));
-		    if (pass) {
-			output->str[used++] = input->str[j];
-		    } else {
-			++want;
+		} else {
+		    j = (where - input->str);
+		    if (j < (int) input->len) {
+			TRACE(("..emptied:"));
+			TRACE_STRING2(input->str + j, 1);
+			TRACE(("\n"));
+			if (pass) {
+			    output->str[used++] = input->str[j];
+			} else {
+			    ++want;
+			}
 		    }
 		}
 	    } else {
@@ -1665,7 +1668,7 @@ bi_gsub(CELL *sp)
 	repl_cnt = 0;
 	cellcpy(&ThisReplace, sp + 1);
 	resul2 = gsub0(sp->ptr, &ThisReplace, target->str, target->len, 1);
-	TRACE(("OLD ->%d:", (int) resul2->len));
+	TRACE(("OLD ->%u:", repl_cnt));
 	TRACE_STRING(resul2);
 	TRACE(("\n"));
 	free_STRING(target);
@@ -1675,7 +1678,7 @@ bi_gsub(CELL *sp)
     {
 	resul2 = gsub2(sp->ptr, sp + 1, &sc);
 	if (resul2 != 0) {
-	    TRACE(("XXX ->%d:", (int) resul2->len));
+	    TRACE(("XXX ->%u:", repl_cnt));
 	    TRACE_STRING(resul2);
 	    TRACE(("\n"));
 	}
