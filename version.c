@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.17 2014/08/15 00:56:12 tom Exp $
+ * $MawkId: version.c,v 1.18 2014/08/18 20:34:56 tom Exp $
  */
 
 #include "mawk.h"
@@ -20,8 +20,8 @@ the GNU General Public License, version 2, 1991.
 
 #define	 VERSION_STRING	 \
   "mawk %d.%d%s %s\n\
-Copyright 2014, Thomas E. Dickey\n\
-Copyright 2014, Michael D. Brennan\n\n"
+Copyright 2008-2013,2014, Thomas E. Dickey\n\
+Copyright 1991-1996,2014, Michael D. Brennan\n\n"
 
 static const char fmt[] = "%-14s%10lu\n";
 
