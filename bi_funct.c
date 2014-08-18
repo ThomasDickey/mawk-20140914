@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.81 2014/08/18 08:24:40 tom Exp $
+ * $MawkId: bi_funct.c,v 1.82 2014/08/18 18:59:06 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1371,7 +1371,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 	for (j = 0; j <= (int) input->len; ++j) {
 	    size_t howmuch;
 	    char *where = REmatch(input->str + j,
-				  input->len - j,
+				  input->len - (size_t) j,
 				  cast_to_re(re),
 				  &howmuch);
 	    /*
@@ -1380,7 +1380,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 	     * is in 'howmuch'.
 	     */
 	    if (where != 0) {
-		have = (where - (input->str + j));
+		have = (size_t) (where - (input->str + j));
 		if (have) {
 		    TRACE(("..before match:%d:", (int) have));
 		    TRACE_STRING2(input->str + j, have);
@@ -1421,9 +1421,9 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		}
 
 		if (howmuch) {
-		    j = (where - input->str) + howmuch - 1;
+		    j = (int) ((size_t) (where - input->str) + howmuch) - 1;
 		} else {
-		    j = (where - input->str);
+		    j = (int) (where - input->str);
 		    if (j < (int) input->len) {
 			TRACE(("..emptied:"));
 			TRACE_STRING2(input->str + j, 1);
@@ -1438,7 +1438,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		skip0 = (howmuch != 0) ? (j + 1) : -1;
 	    } else {
 		if (repl_cnt) {
-		    have = (input->len - j);
+		    have = (input->len - (size_t) j);
 		    TRACE(("..after match:%d:", (int) have));
 		    TRACE_STRING2(input->str + j, have);
 		    TRACE(("\n"));
