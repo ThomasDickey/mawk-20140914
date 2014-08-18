@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.79 2014/08/18 07:42:01 tom Exp $
+ * $MawkId: bi_funct.c,v 1.80 2014/08/18 08:10:20 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1362,6 +1362,8 @@ gsub2(PTR re, CELL *repl, CELL *target)
      * On the second pass, actually apply changes - if any.
      */
     for (pass = 0; pass < 2; ++pass) {
+	int skip0 = -1;
+
 	TRACE(("start pass %d\n", pass + 1));
 	repl_cnt = 0;
 	for (j = 0; j <= (int) input->len; ++j) {
@@ -1393,8 +1395,6 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		TRACE_STRING2(where, howmuch);
 		TRACE(("\n"));
 
-		++repl_cnt;
-
 		if (repl->type == C_REPLV) {
 		    sval = new_STRING1(where, howmuch);
 		    cellcpy(&xrepl, repl);
@@ -1407,11 +1407,15 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		TRACE_STRING2(string(&xrepl)->str, have);
 		TRACE(("\n"));
 
-		if (pass) {
-		    memcpy(output->str + used, string(&xrepl)->str, have);
-		    used += have;
-		} else {
-		    want += have;
+		if (howmuch || (j != skip0)) {
+		    ++repl_cnt;
+
+		    if (pass) {
+			memcpy(output->str + used, string(&xrepl)->str, have);
+			used += have;
+		    } else {
+			want += have;
+		    }
 		}
 
 		if (howmuch) {
@@ -1429,6 +1433,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 			}
 		    }
 		}
+		skip0 = (howmuch != 0) ? (j + 1) : -1;
 	    } else {
 		if (repl_cnt) {
 		    have = (input->len - j);
