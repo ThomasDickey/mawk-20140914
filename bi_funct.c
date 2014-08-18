@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.80 2014/08/18 08:10:20 tom Exp $
+ * $MawkId: bi_funct.c,v 1.81 2014/08/18 08:24:40 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1149,6 +1149,15 @@ bi_sub(CELL *sp)
     return_CELL("bi_sub", sp);
 }
 
+#if defined(DEBUG_GSUB) || !defined(EXP_UNROLLED_GSUB)
+#define USE_GSUB0
+#endif
+
+#if defined(EXP_UNROLLED_GSUB)
+#define USE_GSUB2
+#endif
+
+#ifdef USE_GSUB1
 typedef enum {
     btFinish = 0,
     btNormal,
@@ -1191,13 +1200,6 @@ typedef struct {
 #define NextResult     NextGSUB.result
 #define NextTarget     NextGSUB.target
 #define NextTargetLen  NextGSUB.target_len
-
-#if defined(DEBUG_GSUB) || !defined(EXP_UNROLLED_GSUB)
-#define USE_GSUB0
-#endif
-
-#if defined(EXP_UNROLLED_GSUB)
-#define USE_GSUB1
 #endif
 
 static unsigned repl_cnt;	/* number of global replacements */
@@ -1470,6 +1472,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 #ifdef EXP_UNROLLED_GSUB
 /* #define DEBUG_GSUB 1 */
 
+#ifdef USE_GSUB1
 static size_t gsub_max;
 static GSUB_STK *gsub_stk;
 
@@ -1621,6 +1624,7 @@ gsub1(PTR re, int level)
 
     return ThisResult;
 }
+#endif
 
 /* set up for call to gsub() */
 CELL *
@@ -1630,11 +1634,14 @@ bi_gsub(CELL *sp)
     CELL sc;			/* copy of replacement target */
     CELL tc;			/* build the result here */
     STRING *result;
-#if defined(USE_GSUB0) || defined(USE_GSUB2)
+#if defined(DEBUG_GSUB)
     STRING *resul2;
 #endif
+#ifdef USE_GSUB2
+#else
     size_t stack_needs;
     int level = 0;
+#endif
 
     TRACE_FUNC("bi_gsub", sp);
 
@@ -1657,16 +1664,7 @@ bi_gsub(CELL *sp)
     TRACE(("arg2: "));
     TRACE_CELL(&sc);
 
-    stack_needs = (string(&sc)->len + 2) * 2;
-
-    if (stack_needs > gsub_max) {
-	if (gsub_max) {
-	    zfree(gsub_stk, gsub_max * sizeof(GSUB_STK));
-	}
-	gsub_stk = zmalloc(stack_needs * sizeof(GSUB_STK));
-	gsub_max = stack_needs;
-    }
-#ifdef USE_GSUB0
+#ifdef DEBUG_GSUB
     {
 	STRING *target = new_STRING1(string(&sc)->str, string(&sc)->len);
 
@@ -1680,15 +1678,17 @@ bi_gsub(CELL *sp)
     }
 #endif
 #ifdef USE_GSUB2
-    {
-	resul2 = gsub2(sp->ptr, sp + 1, &sc);
-	if (resul2 != 0) {
-	    TRACE(("XXX ->%u:", repl_cnt));
-	    TRACE_STRING(resul2);
-	    TRACE(("\n"));
+    result = gsub2(sp->ptr, sp + 1, &sc);
+    tc.ptr = (PTR) result;
+#else
+    stack_needs = (string(&sc)->len + 2) * 2;
+    if (stack_needs > gsub_max) {
+	if (gsub_max) {
+	    zfree(gsub_stk, gsub_max * sizeof(GSUB_STK));
 	}
+	gsub_stk = zmalloc(stack_needs * sizeof(GSUB_STK));
+	gsub_max = stack_needs;
     }
-#endif
 
     ThisBranch = btFinish;
     ThisEmptyOk = 1;
@@ -1701,8 +1701,9 @@ bi_gsub(CELL *sp)
 
     result = gsub1(sp->ptr, 0);
     tc.ptr = (PTR) result;
+#endif
 
-#ifdef USE_GSUB0
+#ifdef DEBUG_GSUB
     TRACE(("NEW -> %d:", (int) result->len));
     TRACE_STRING(result);
     TRACE(("\n"));
@@ -1717,12 +1718,15 @@ bi_gsub(CELL *sp)
 	tc.type = C_STRING;
 	slow_cell_assign(cp, &tc);
     }
+#ifdef USE_GSUB2
+#else
 #ifdef NO_LEAKS
     if (gsub_stk != 0) {
 	zfree(gsub_stk, stack_needs * sizeof(GSUB_STK));
 	gsub_stk = 0;
 	gsub_max = 0;
     }
+#endif
 #endif
 
     sp->type = C_DOUBLE;
