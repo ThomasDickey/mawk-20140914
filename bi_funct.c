@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.77 2014/08/17 21:27:10 tom Exp $
+ * $MawkId: bi_funct.c,v 1.78 2014/08/18 00:03:33 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1192,10 +1192,48 @@ typedef struct {
 #define NextTarget     NextGSUB.target
 #define NextTargetLen  NextGSUB.target_len
 
-static unsigned repl_cnt;	/* number of global replacements */
-
 #if defined(DEBUG_GSUB) || !defined(EXP_UNROLLED_GSUB)
 #define USE_GSUB0
+#endif
+
+#if defined(EXP_UNROLLED_GSUB)
+#define USE_GSUB1
+#endif
+
+static unsigned repl_cnt;	/* number of global replacements */
+
+/* recursive global subsitution
+   dealing with empty matches makes this mildly painful
+
+   repl is always of type REPL or REPLV, destroyed by caller
+   empty_ok is set if, match of empty string at front is OK
+*/
+
+#ifdef USE_GSUB1
+static size_t
+repl_length(CELL *cp)
+{
+    size_t result = 0;
+
+    if (cp->type == C_REPL) {
+	result = string(cp)->len;
+    } else if (cp->type == C_REPLV) {
+	STRING **sblock = (STRING **) cp->ptr;
+	unsigned count = cp->vcnt;
+	TRACE(("repl_length C_REPLV count %d\n", count));
+	while (count--) {
+	    if (*sblock) {
+		TRACE(("..adding "));
+		TRACE_STRING(*sblock);
+		TRACE(("\n"));
+		result += (*sblock)->len;
+	    }
+	    sblock++;
+	}
+    }
+    TRACE(("repl_length -> %d\n", (int) result));
+    return result;
+}
 #endif
 
 #ifdef USE_GSUB0
@@ -1301,13 +1339,24 @@ static STRING *
 gsub2(PTR re, CELL *repl, CELL *target)
 {
     int pass;
-    size_t j;
+    int j;
+    CELL xrepl;
     STRING *input = string(target);
     STRING *output = 0;
+    STRING *sval;
     size_t want = 0;
     size_t have;
+    size_t used;
 
     TRACE(("called gsub2\n"));
+
+    /*
+     * If the replacement is constant, do it only once.
+     */
+    if (repl->type != C_REPLV) {
+	cellcpy(&xrepl, repl);
+    }
+
     /*
      * On the first pass, determine the size of the resulting string.
      * On the second pass, actually apply changes - if any.
@@ -1315,7 +1364,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
     for (pass = 0; pass < 2; ++pass) {
 	TRACE(("start pass %d\n", pass + 1));
 	repl_cnt = 0;
-	for (j = 0; j < input->len; ++j) {
+	for (j = 0; j <= (int) input->len; ++j) {
 	    size_t howmuch;
 	    char *where = REmatch(input->str + j,
 				  input->len - j,
@@ -1327,32 +1376,68 @@ gsub2(PTR re, CELL *repl, CELL *target)
 	     * is in 'howmuch'.
 	     */
 	    if (where != 0) {
+		have = (where - (input->str + j));
+		if (have) {
+		    TRACE(("..before match:%d:", (int) have));
+		    TRACE_STRING2(input->str + j, have);
+		    TRACE(("\n"));
+		    if (pass) {
+			memcpy(output->str + used, input->str + j, have);
+			used += have;
+		    } else {
+			want += have;
+		    }
+		}
+
 		TRACE(("REmatch %d:%d:", (int) j, (int) howmuch));
+		TRACE_STRING2(where, howmuch);
+		TRACE(("\n"));
+
 		++repl_cnt;
 
-		want += 1;	//TODO: repl_length();
-		if (howmuch) {
-		    TRACE_STRING2(where, howmuch);
-		    /*
-		     * TODO: calculate length of replacement in first pass
-		     * TODO: do replacement in second pass
-		     */
-		    j = (where - input->str) + howmuch - 1;
-		} else {
-		    /*
-		     * TODO: calculate length of replacement in first pass
-		     * TODO: do replacement/insertion in second pass
-		     */
+		if (repl->type == C_REPLV) {
+		    sval = new_STRING1(where, howmuch);
+		    cellcpy(&xrepl, repl);
+		    replv_to_repl(&xrepl, sval);
+		    free_STRING(sval);
 		}
+
+		have = string(&xrepl)->len;
+		TRACE(("..replace:"));
+		TRACE_STRING2(string(&xrepl)->str, have);
 		TRACE(("\n"));
+
+		if (pass) {
+		    memcpy(output->str + used, string(&xrepl)->str, have);
+		    used += have;
+		} else {
+		    want += have;
+		}
+
+		if (howmuch) {
+		    j = (where - input->str) + howmuch - 1;
+		} else if (j < (int) input->len) {
+		    TRACE(("..emptied:"));
+		    TRACE_STRING2(input->str + j, 1);
+		    TRACE(("\n"));
+		    if (pass) {
+			output->str[used++] = input->str[j];
+		    } else {
+			++want;
+		    }
+		}
 	    } else {
-		if (!repl_cnt)
-		    break;
-		have = (input->len - j);
-		want += have;
-		/*
-		 * TODO: in second pass, copy 'have' bytes on end of output
-		 */
+		if (repl_cnt) {
+		    have = (input->len - j);
+		    TRACE(("..after match:%d:", (int) have));
+		    TRACE_STRING2(input->str + j, have);
+		    TRACE(("\n"));
+		    if (pass) {
+			memcpy(output->str + used, input->str + j, have);
+		    } else {
+			want += have;
+		    }
+		}
 		break;
 	    }
 	}
@@ -1360,15 +1445,16 @@ gsub2(PTR re, CELL *repl, CELL *target)
 	if (!repl_cnt)
 	    break;
 
-	TRACE(("...done pass %d\n", pass + 1));
+	TRACE(("..done pass %d\n", pass + 1));
 	if (!pass) {
 	    output = new_STRING0(want);
-	    TRACE(("...input %d ->output %d\n",
+	    used = 0;
+	    TRACE(("..input %d ->output %d\n",
 		   (int) input->len,
 		   (int) output->len));
 	}
     }
-    TRACE(("...done gsub2\n"));
+    TRACE(("..done gsub2\n"));
     return output;
 }
 #endif
@@ -1394,38 +1480,6 @@ indent(int level)
     return result;
 }
 #endif
-
-/* recursive global subsitution
-   dealing with empty matches makes this mildly painful
-
-   repl is always of type REPL or REPLV, destroyed by caller
-   empty_ok is set if, match of empty string at front is OK
-*/
-
-static size_t
-repl_length(CELL *cp)
-{
-    size_t result = 0;
-
-    if (cp->type == C_REPL) {
-	result = string(cp)->len;
-    } else if (cp->type == C_REPLV) {
-	STRING **sblock = (STRING **) cp->ptr;
-	unsigned count = cp->vcnt;
-	TRACE(("repl_length C_REPLV count %d\n", count));
-	while (count--) {
-	    if (*sblock) {
-		TRACE(("..adding "));
-		TRACE_STRING(*sblock);
-		TRACE(("\n"));
-		result += (*sblock)->len;
-	    }
-	    sblock++;
-	}
-    }
-    TRACE(("repl_length -> %d\n", (int) result));
-    return result;
-}
 
 /*
  * This is a revision of "gsub0" which does not recur on the stack.  However,
