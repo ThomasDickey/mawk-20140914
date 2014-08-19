@@ -1,6 +1,6 @@
 /********************************************
 re_cmpl.c
-copyright 2008-2009,2010, Thomas E. Dickey
+copyright 2008-2010,2014, Thomas E. Dickey
 copyright 1991-1994,2014, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.26 2014/08/15 00:30:04 mike Exp $
+ * $MawkId: re_cmpl.c,v 1.27 2014/08/19 23:00:40 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -272,7 +272,7 @@ repl_destroy(CELL *cp)
 
     if (cp->type == C_REPL) {
 	free_STRING(string(cp));
-    } else {			/* an C_REPLV           */
+    } else if (cp->ptr != 0) {	/* an C_REPLV           */
 	p = (STRING **) cp->ptr;
 	for (cnt = cp->vcnt; cnt; cnt--) {
 	    if (*p) {
