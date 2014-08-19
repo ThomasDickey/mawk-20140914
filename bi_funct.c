@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.85 2014/08/19 20:40:14 tom Exp $
+ * $MawkId: bi_funct.c,v 1.86 2014/08/19 20:45:16 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -317,7 +317,7 @@ bi_substr(CELL *sp)
     }
 
     /*
-     * Keep 'n' from extending past the end of the string. 
+     * Keep 'n' from extending past the end of the string.
      */
     if (n > len - i) {
 	n = len - i;
@@ -444,7 +444,7 @@ bi_systime(CELL *sp)
 
 #ifdef HAVE_MKTIME
 /*  mktime(datespec)
-    Turns datespec into a time stamp of the same form as returned by systime(). 
+    Turns datespec into a time stamp of the same form as returned by systime().
     The datespec is a string of the form
         YYYY MM DD HH MM SS [DST].
 */
@@ -493,7 +493,7 @@ bi_mktime(CELL *sp)
 }
 #endif
 
-/*  strftime(format, timestamp, utc) 
+/*  strftime(format, timestamp, utc)
     should be equal to gawk strftime. all parameters are optional:
         format: ansi c strftime format descriptor. default is "%c"
         timestamp: seconds since unix epoch. default is now
@@ -1436,10 +1436,11 @@ bi_gsub(CELL *sp)
 #ifdef DEBUG_GSUB
     {
 	STRING *target = new_STRING1(string(&sc)->str, string(&sc)->len);
+	CELL xrepl;
 
 	repl_cnt = 0;
-	cellcpy(&ThisReplace, sp + 1);
-	resul2 = gsub0(sp->ptr, &ThisReplace, target->str, target->len, 1);
+	cellcpy(&xrepl, sp + 1);
+	resul2 = gsub0(sp->ptr, &xrepl, target->str, target->len, 1);
 	TRACE(("OLD ->%u:", repl_cnt));
 	TRACE_STRING(resul2);
 	TRACE(("\n"));
