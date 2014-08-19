@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.86 2014/08/19 20:45:16 tom Exp $
+ * $MawkId: bi_funct.c,v 1.87 2014/08/19 21:01:11 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1364,6 +1364,9 @@ gsub2(PTR re, CELL *repl, CELL *target)
 			}
 		    }
 		}
+		if (repl->type == C_REPLV) {
+		    repl_destroy(&xrepl);
+		}
 		skip0 = (howmuch != 0) ? (j + 1) : -1;
 	    } else {
 		if (repl_cnt) {
@@ -1392,6 +1395,9 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		   (int) input->len,
 		   (int) output->len));
 	}
+    }
+    if (repl->type != C_REPLV) {
+	repl_destroy(&xrepl);
     }
     TRACE(("..done gsub2\n"));
     return output;
@@ -1454,11 +1460,13 @@ bi_gsub(CELL *sp)
     TRACE(("NEW -> %d:", (int) result->len));
     TRACE_STRING(result);
     TRACE(("\n"));
-    if (result != 0 &&
-	resul2 != 0 &&
-	((result->len != resul2->len) ||
-	 memcmp(result->str, resul2->str, result->len))) {
-	TRACE(("OOPS: gsub result NEW != OLD\n"));
+    if (resul2 != 0) {
+	if (result != 0 &&
+	    ((result->len != resul2->len) ||
+	     memcmp(result->str, resul2->str, result->len))) {
+	    TRACE(("OOPS: gsub result NEW != OLD\n"));
+	}
+	free_STRING(resul2);
     }
 #endif
 
