@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.195 2014/08/18 18:44:45 tom Exp $
+-- $MawkId: CHANGES,v 1.196 2014/08/19 20:33:57 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140818
+20140819
+	+ discard intermediate new_gsub used for regression-testing, will do
+	  further improvements based on "gsub2".
 	+ fix a comparison in rexp3.c to work with embedded nulls (patch by
 	  Mike Brennan).
 	+ in-progress changes to implement "gsub2", which will reduce copying.
