@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.88 2014/08/19 22:59:39 tom Exp $
+ * $MawkId: bi_funct.c,v 1.89 2014/08/19 23:16:49 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1286,6 +1286,8 @@ gsub2(PTR re, CELL *repl, CELL *target)
      */
     if (repl->type != C_REPLV) {
 	cellcpy(&xrepl, repl);
+    } else {
+	memset(&xrepl, 0, sizeof(xrepl));
     }
 
     /*
