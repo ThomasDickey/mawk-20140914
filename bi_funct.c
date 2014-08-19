@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.84 2014/08/19 20:35:17 tom Exp $
+ * $MawkId: bi_funct.c,v 1.85 2014/08/19 20:40:14 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1411,11 +1411,6 @@ bi_gsub(CELL *sp)
 #if defined(DEBUG_GSUB)
     STRING *resul2;
 #endif
-#ifdef USE_GSUB2
-#else
-    size_t stack_needs;
-    int level = 0;
-#endif
 
     TRACE_FUNC("bi_gsub", sp);
 
@@ -1451,31 +1446,8 @@ bi_gsub(CELL *sp)
 	free_STRING(target);
     }
 #endif
-#ifdef USE_GSUB2
     result = gsub2(sp->ptr, sp + 1, &sc);
     tc.ptr = (PTR) result;
-#else
-    stack_needs = (string(&sc)->len + 2) * 2;
-    if (stack_needs > gsub_max) {
-	if (gsub_max) {
-	    zfree(gsub_stk, gsub_max * sizeof(GSUB_STK));
-	}
-	gsub_stk = zmalloc(stack_needs * sizeof(GSUB_STK));
-	gsub_max = stack_needs;
-    }
-
-    ThisBranch = btFinish;
-    ThisEmptyOk = 1;
-    cellcpy(&ThisReplace, sp + 1);
-    ThisResult = 0;
-    ThisTarget = string(&sc)->str;
-    ThisTargetLen = string(&sc)->len;
-
-    repl_cnt = 0;
-
-    result = gsub1(sp->ptr, 0);
-    tc.ptr = (PTR) result;
-#endif
 
 #ifdef DEBUG_GSUB
     TRACE(("NEW -> %d:", (int) result->len));
@@ -1493,16 +1465,6 @@ bi_gsub(CELL *sp)
 	tc.type = C_STRING;
 	slow_cell_assign(cp, &tc);
     }
-#ifdef USE_GSUB2
-#else
-#ifdef NO_LEAKS
-    if (gsub_stk != 0) {
-	zfree(gsub_stk, stack_needs * sizeof(GSUB_STK));
-	gsub_stk = 0;
-	gsub_max = 0;
-    }
-#endif
-#endif
 
     sp->type = C_DOUBLE;
     sp->dval = (double) repl_cnt;
