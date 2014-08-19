@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.87 2014/08/19 21:01:11 tom Exp $
+ * $MawkId: bi_funct.c,v 1.88 2014/08/19 22:59:39 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1327,10 +1327,17 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		TRACE(("\n"));
 
 		if (repl->type == C_REPLV) {
-		    sval = new_STRING1(where, howmuch);
-		    cellcpy(&xrepl, repl);
-		    replv_to_repl(&xrepl, sval);
-		    free_STRING(sval);
+		    if (xrepl.ptr == 0 ||
+			string(&xrepl)->len != howmuch ||
+			(howmuch != 0 &&
+			 memcmp(string(&xrepl)->str, where, howmuch))) {
+			if (xrepl.ptr != 0)
+			    repl_destroy(&xrepl);
+			sval = new_STRING1(where, howmuch);
+			cellcpy(&xrepl, repl);
+			replv_to_repl(&xrepl, sval);
+			free_STRING(sval);
+		    }
 		}
 
 		have = string(&xrepl)->len;
@@ -1364,9 +1371,6 @@ gsub2(PTR re, CELL *repl, CELL *target)
 			}
 		    }
 		}
-		if (repl->type == C_REPLV) {
-		    repl_destroy(&xrepl);
-		}
 		skip0 = (howmuch != 0) ? (j + 1) : -1;
 	    } else {
 		if (repl_cnt) {
@@ -1396,9 +1400,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		   (int) output->len));
 	}
     }
-    if (repl->type != C_REPLV) {
-	repl_destroy(&xrepl);
-    }
+    repl_destroy(&xrepl);
     TRACE(("..done gsub2\n"));
     return output;
 }
