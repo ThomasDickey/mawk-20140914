@@ -1,17 +1,18 @@
-#ifndef lint
-static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
-#endif
+/* original parser id follows */
+/* yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93" */
+/* (use YYMAJOR/YYMINOR for ifdefs dependent on parser version) */
 
 #define YYBYACC 1
 #define YYMAJOR 1
 #define YYMINOR 9
-#define YYPATCH 20130304
+#define YYPATCH 20140422
 
 #define YYEMPTY        (-1)
 #define yyclearin      (yychar = YYEMPTY)
 #define yyerrok        (yyerrflag = 0)
 #define YYRECOVERING() (yyerrflag != 0)
-
+#define YYENOMEM       (-2)
+#define YYEOF          0
 #define YYPREFIX "yy"
 
 #define YYPURE 0
@@ -83,7 +84,7 @@ typedef union{
   PTR      ptr ;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 86 "y.tab.c"
+#line 88 "parse.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -192,7 +193,8 @@ extern int YYPARSE_DECL();
 #define RETURN 330
 #define FUNCTION 331
 #define YYERRCODE 256
-static const short yylhs[] = {                           -1,
+typedef short YYINT;
+static const YYINT yylhs[] = {                           -1,
     0,    0,   36,   36,   36,   37,   40,   37,   41,   37,
    42,   37,   43,   44,   37,    1,    1,    2,    2,    3,
     3,    4,    4,    4,    4,    4,    4,    4,    4,    4,
@@ -212,7 +214,7 @@ static const short yylhs[] = {                           -1,
    34,   34,   35,   35,   39,   15,   31,   31,   32,   32,
    32,   33,   33,
 };
-static const short yylen[] = {                            2,
+static const YYINT yylen[] = {                            2,
     1,    2,    1,    1,    2,    1,    0,    3,    0,    3,
     0,    3,    0,    0,    6,    3,    3,    1,    1,    1,
     2,    1,    2,    1,    2,    2,    2,    1,    2,    2,
@@ -232,7 +234,7 @@ static const short yylen[] = {                            2,
     0,    1,    1,    3,    1,    3,    2,    2,    1,    3,
     3,    2,    2,
 };
-static const short yydefred[] = {                         0,
+static const YYINT yydefred[] = {                         0,
   165,    0,  147,    0,    0,    0,    0,    0,  119,    0,
    57,   58,   61,    0,   84,   84,   83,    0,    0,  153,
   154,    7,    9,    0,    0,    6,   71,    0,    0,    0,
@@ -268,7 +270,7 @@ static const short yydefred[] = {                         0,
    15,    0,    0,  155,  152,  117,    0,    0,    0,    0,
   115,  100,  156,
 };
-static const short yydgoto[] = {                         25,
+static const YYINT yydgoto[] = {                         25,
    59,  217,   60,   61,   87,  249,   83,   27,   28,   29,
    30,  144,   62,   32,   33,   63,   64,   65,  167,   66,
    67,   34,  228,  325,  251,  252,   68,   35,   36,   37,
@@ -276,7 +278,7 @@ static const short yydgoto[] = {                         25,
    93,  125,  204,  305,   69,  206,  207,  205,  322,  289,
   243,   70,  247,  136,   42,
 };
-static const short yysindex[] = {                       -73,
+static const YYINT yysindex[] = {                       -73,
     0,  203,    0, 2293, 2293, 2293,  -88, 2203,    0, 2323,
     0,    0,    0, -286,    0,    0,    0, -276, -273,    0,
     0,    0,    0, -291,  -73,    0,    0, 2293, 2576,   62,
@@ -312,7 +314,7 @@ static const short yysindex[] = {                       -73,
     0, 2323,  -88,    0,    0,    0, -178, -178, 2693,   41,
     0,    0,    0,
 };
-static const short yyrindex[] = {                         0,
+static const YYINT yyrindex[] = {                         0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,  524,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0, 1510,
@@ -348,7 +350,7 @@ static const short yyrindex[] = {                         0,
     0,    0,    0,    0,    0,    0,    0,    0, 2129,    0,
     0,    0,    0,
 };
-static const short yygindex[] = {                         0,
+static const YYINT yygindex[] = {                         0,
    21,   39,    0,  -50,   17,    0,   76,    0,    0,   -7,
    -1, -205,    1,    0,   32,    0,    0,    0,    0,    0,
     0,    0,   60,    0,  160, -139,    0,    0,    0,    0,
@@ -357,7 +359,7 @@ static const short yygindex[] = {                         0,
     0,    0,    0,    0,    0,
 };
 #define YYTABLESIZE 2987
-static const short yytable[] = {                         79,
+static const YYINT yytable[] = {                         79,
    31,  134,   73,   73,   73,   80,   73,  176,   84,  161,
    85,   86,  163,  164,   94,  168,   95,  297,  273,  170,
    26,   77,   77,  176,   90,   31,   73,   91,   77,  137,
@@ -658,7 +660,7 @@ static const short yytable[] = {                         79,
   117,  118,  119,  120,  121,  122,  123,  124,  116,  117,
   118,  119,  120,  121,  122,  123,  124,
 };
-static const short yycheck[] = {                          7,
+static const YYINT yycheck[] = {                          7,
     0,  265,    4,    5,    6,    7,    8,  265,   10,   60,
    10,  298,   63,   64,  306,   66,  308,  265,  224,   70,
     0,  259,  260,  265,  301,   25,   28,  301,  266,  265,
@@ -964,8 +966,10 @@ static const short yycheck[] = {                          7,
 #define YYDEBUG 0
 #endif
 #define YYMAXTOKEN 331
+#define YYUNDFTOKEN 389
+#define YYTRANSLATE(a) ((a) > YYMAXTOKEN ? YYUNDFTOKEN : (a))
 #if YYDEBUG
-static const char *yyname[] = {
+static const char *const yyname[] = {
 
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -981,9 +985,11 @@ static const char *yyname[] = {
 "DOLLAR","FIELD","LPAREN","RPAREN","DOUBLE","STRING_","RE","ID","D_ID",
 "FUNCT_ID","BUILTIN","LENGTH","PRINT","PRINTF","SPLIT","MATCH_FUNC","SUB",
 "GSUB","DO","WHILE","FOR","BREAK","CONTINUE","IF","ELSE","DELETE","BEGIN","END",
-"EXIT","NEXT","NEXTFILE","RETURN","FUNCTION",
+"EXIT","NEXT","NEXTFILE","RETURN","FUNCTION",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+"illegal-symbol",
 };
-static const char *yyrule[] = {
+static const char *const yyrule[] = {
 "$accept : program",
 "program : program_block",
 "program : program program_block",
@@ -1178,18 +1184,18 @@ YYSTYPE  yylval;
 #ifdef YYMAXDEPTH
 #define YYSTACKSIZE YYMAXDEPTH
 #else
-#define YYSTACKSIZE 500
-#define YYMAXDEPTH  500
+#define YYSTACKSIZE 10000
+#define YYMAXDEPTH  10000
 #endif
 #endif
 
-#define YYINITSTACKSIZE 500
+#define YYINITSTACKSIZE 200
 
 typedef struct {
     unsigned stacksize;
-    short    *s_base;
-    short    *s_mark;
-    short    *s_last;
+    YYINT    *s_base;
+    YYINT    *s_mark;
+    YYINT    *s_last;
     YYSTYPE  *l_base;
     YYSTYPE  *l_mark;
 } YYSTACKDATA;
@@ -1513,7 +1519,7 @@ parse(void)
 	mawk_exit(0);
     }
 }
-#line 1516 "y.tab.c"
+#line 1523 "parse.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -1527,27 +1533,27 @@ static int yygrowstack(YYSTACKDATA *data)
 {
     int i;
     unsigned newsize;
-    short *newss;
+    YYINT *newss;
     YYSTYPE *newvs;
 
     if ((newsize = data->stacksize) == 0)
         newsize = YYINITSTACKSIZE;
     else if (newsize >= YYMAXDEPTH)
-        return -1;
+        return YYENOMEM;
     else if ((newsize *= 2) > YYMAXDEPTH)
         newsize = YYMAXDEPTH;
 
     i = (int) (data->s_mark - data->s_base);
-    newss = (short *)realloc(data->s_base, newsize * sizeof(*newss));
+    newss = (YYINT *)realloc(data->s_base, newsize * sizeof(*newss));
     if (newss == 0)
-        return -1;
+        return YYENOMEM;
 
     data->s_base = newss;
     data->s_mark = newss + i;
 
     newvs = (YYSTYPE *)realloc(data->l_base, newsize * sizeof(*newvs));
     if (newvs == 0)
-        return -1;
+        return YYENOMEM;
 
     data->l_base = newvs;
     data->l_mark = newvs + i;
@@ -1597,7 +1603,7 @@ YYPARSE_DECL()
     memset(&yystack, 0, sizeof(yystack));
 #endif
 
-    if (yystack.s_base == NULL && yygrowstack(&yystack)) goto yyoverflow;
+    if (yystack.s_base == NULL && yygrowstack(&yystack) == YYENOMEM) goto yyoverflow;
     yystack.s_mark = yystack.s_base;
     yystack.l_mark = yystack.l_base;
     yystate = 0;
@@ -1607,13 +1613,11 @@ yyloop:
     if ((yyn = yydefred[yystate]) != 0) goto yyreduce;
     if (yychar < 0)
     {
-        if ((yychar = YYLEX) < 0) yychar = 0;
+        if ((yychar = YYLEX) < 0) yychar = YYEOF;
 #if YYDEBUG
         if (yydebug)
         {
-            yys = 0;
-            if (yychar <= YYMAXTOKEN) yys = yyname[yychar];
-            if (!yys) yys = "illegal-symbol";
+            yys = yyname[YYTRANSLATE(yychar)];
             printf("%sdebug: state %d, reading %d (%s)\n",
                     YYPREFIX, yystate, yychar, yys);
         }
@@ -1627,7 +1631,7 @@ yyloop:
             printf("%sdebug: state %d, shifting to state %d\n",
                     YYPREFIX, yystate, yytable[yyn]);
 #endif
-        if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack))
+        if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM)
         {
             goto yyoverflow;
         }
@@ -1646,7 +1650,7 @@ yyloop:
     }
     if (yyerrflag) goto yyinrecovery;
 
-    yyerror("syntax error");
+    YYERROR_CALL("syntax error");
 
     goto yyerrlab;
 
@@ -1667,7 +1671,7 @@ yyinrecovery:
                     printf("%sdebug: state %d, error recovery shifting\
  to state %d\n", YYPREFIX, *yystack.s_mark, yytable[yyn]);
 #endif
-                if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack))
+                if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM)
                 {
                     goto yyoverflow;
                 }
@@ -1691,13 +1695,11 @@ yyinrecovery:
     }
     else
     {
-        if (yychar == 0) goto yyabort;
+        if (yychar == YYEOF) goto yyabort;
 #if YYDEBUG
         if (yydebug)
         {
-            yys = 0;
-            if (yychar <= YYMAXTOKEN) yys = yyname[yychar];
-            if (!yys) yys = "illegal-symbol";
+            yys = yyname[YYTRANSLATE(yychar)];
             printf("%sdebug: state %d, error recovery discards token %d (%s)\n",
                     YYPREFIX, yystate, yychar, yys);
         }
@@ -2810,7 +2812,7 @@ case 173:
                 code_call_id(yyval.ca_p, yystack.l_mark[-1].stp) ;
               }
 break;
-#line 2813 "y.tab.c"
+#line 2816 "parse.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
@@ -2828,19 +2830,17 @@ break;
         *++yystack.l_mark = yyval;
         if (yychar < 0)
         {
-            if ((yychar = YYLEX) < 0) yychar = 0;
+            if ((yychar = YYLEX) < 0) yychar = YYEOF;
 #if YYDEBUG
             if (yydebug)
             {
-                yys = 0;
-                if (yychar <= YYMAXTOKEN) yys = yyname[yychar];
-                if (!yys) yys = "illegal-symbol";
+                yys = yyname[YYTRANSLATE(yychar)];
                 printf("%sdebug: state %d, reading %d (%s)\n",
                         YYPREFIX, YYFINAL, yychar, yys);
             }
 #endif
         }
-        if (yychar == 0) goto yyaccept;
+        if (yychar == YYEOF) goto yyaccept;
         goto yyloop;
     }
     if ((yyn = yygindex[yym]) && (yyn += yystate) >= 0 &&
@@ -2853,16 +2853,16 @@ break;
         printf("%sdebug: after reduction, shifting from state %d \
 to state %d\n", YYPREFIX, *yystack.s_mark, yystate);
 #endif
-    if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack))
+    if (yystack.s_mark >= yystack.s_last && yygrowstack(&yystack) == YYENOMEM)
     {
         goto yyoverflow;
     }
-    *++yystack.s_mark = (short) yystate;
+    *++yystack.s_mark = (YYINT) yystate;
     *++yystack.l_mark = yyval;
     goto yyloop;
 
 yyoverflow:
-    yyerror("yacc stack overflow");
+    YYERROR_CALL("yacc stack overflow");
 
 yyabort:
     yyfreestack(&yystack);
