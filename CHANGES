@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.196 2014/08/19 20:33:57 tom Exp $
+-- $MawkId: CHANGES,v 1.197 2014/08/20 20:05:28 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140819
+20140820
+	+ add test/reg7.awk to help with recent testing.
 	+ discard intermediate new_gsub used for regression-testing, will do
 	  further improvements based on "gsub2".
 	+ fix a comparison in rexp3.c to work with embedded nulls (patch by

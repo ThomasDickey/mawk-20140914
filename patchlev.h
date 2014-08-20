@@ -11,9 +11,9 @@ the GNU General Public License, version 2, 1991.
  */
 
 /*
- * $MawkId: patchlev.h,v 1.62 2014/08/19 20:32:21 tom Exp $
+ * $MawkId: patchlev.h,v 1.63 2014/08/20 20:04:55 tom Exp $
  */
 #define  PATCH_BASE	1
 #define  PATCH_LEVEL	3
 #define  PATCH_STRING	".4"
-#define  DATE_STRING    "20140819"
+#define  DATE_STRING    "20140820"
