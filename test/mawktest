@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.34 2014/08/08 00:55:04 tom Exp $
+# $MawkId: mawktest,v 1.35 2014/08/20 20:03:45 tom Exp $
 ###############################################################################
 # copyright 2008-2012,2014, Thomas E. Dickey
 # copyright 2010, Guido Berhoerster
@@ -149,8 +149,9 @@ LC_ALL=C $PROG -f reg3.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg4.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg5.awk $dat >> $STDOUT
 LC_ALL=C $PROG -f reg6.awk $dat >> $STDOUT
+LC_ALL=C $PROG -f reg7.awk $dat >> $STDOUT
 
-cmp -s  reg-awk.out $STDOUT || Fail "reg0-reg6 case"
+cmp -s  reg-awk.out $STDOUT || Fail "reg0-reg7 case"
 
 echo "''Italics with an apostrophe' embedded''" |
 	LC_ALL=C $PROG -f noloop.awk || Fail "noloop2 test"

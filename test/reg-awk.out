@@ -204,3 +204,23 @@ reg6.1<<ables >>
 reg6.3<<ab>>
 19..5:   and one for doubles.
 reg6.4<<bles.>>
+1 aFOOc
+4 XaXbXcX
+3 XaXcX
+1 abX
+1 abX
+1 abcX
+2 aXcX
+1 aFOOc
+4 XaXbXcX
+3 XaXcX
+1 abX
+1 abX
+1 abcX
+1 a(b)c
+4 {}a{}b{}c{}
+3 {}a{b}c{}
+3 {}a{bb}c{b}
+2 a(bb)c(b)
+1 a b c
+1 a b c
