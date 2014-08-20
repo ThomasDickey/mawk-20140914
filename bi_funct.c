@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.89 2014/08/19 23:16:49 tom Exp $
+ * $MawkId: bi_funct.c,v 1.90 2014/08/20 19:26:55 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1313,6 +1313,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 	    if (where != 0) {
 		have = (size_t) (where - (input->str + j));
 		if (have) {
+		    skip0 = -1;
 		    TRACE(("..before match:%d:", (int) have));
 		    TRACE_STRING2(input->str + j, have);
 		    TRACE(("\n"));
@@ -1324,7 +1325,7 @@ gsub2(PTR re, CELL *repl, CELL *target)
 		    }
 		}
 
-		TRACE(("REmatch %d:%d:", (int) j, (int) howmuch));
+		TRACE(("REmatch %d vs %d len=%d:", (int) j, skip0, (int) howmuch));
 		TRACE_STRING2(where, howmuch);
 		TRACE(("\n"));
 
