@@ -1,6 +1,6 @@
 /********************************************
 scan.c
-copyright 2008-2012,2013, Thomas E. Dickey
+copyright 2008-2013,2014, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
 copyright 1991-1996,2014, Michael D. Brennan
 
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: scan.c,v 1.40 2014/08/15 00:46:10 tom Exp $
+ * $MawkId: scan.c,v 1.41 2014/08/21 20:05:54 tom Exp $
  * @Log: scan.c,v @
  * Revision 1.8  1996/07/28 21:47:05  mike
  * gnuish patch
@@ -625,7 +625,7 @@ yylex(void)
 	    }
 
 	    /* compute field address at compile time */
-	    if ((d = collect_decimal(c, &flag)) == 0.0) {
+	    if ((d = collect_decimal(c, &flag)) <= 0.0) {
 		if (flag)
 		    ct_ret(flag);	/* an error */
 		else
