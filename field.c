@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.29 2014/08/17 16:32:23 tom Exp $
+ * $MawkId: field.c,v 1.30 2014/08/21 23:03:37 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -694,7 +694,7 @@ fbank_free(CELL *const fb)
     for (cp = fb; cp < end; cp++) {
 	cell_destroy(cp);
     }
-    zfree(fb, FBANK_SZ * sizeof(CELL *));
+    zfree(fb, FBANK_SZ * sizeof(CELL));
 }
 
 static void
