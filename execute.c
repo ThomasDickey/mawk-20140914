@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.33 2014/08/14 23:47:43 mike Exp $
+ * $MawkId: execute.c,v 1.34 2014/08/21 19:52:03 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -368,9 +368,9 @@ execute(INST * cdp,		/* code ptr, start execution here */
 
 	    if (nf < 0)
 		split_field0();
-	    if (t <= nf)
+	    if (t >= 0 && t <= nf) {
 		cellcpy(sp, field_ptr(t));
-	    else {
+	    } else {
 		sp->type = C_STRING;
 		sp->ptr = (PTR) & null_str;
 		null_str.ref_cnt++;
