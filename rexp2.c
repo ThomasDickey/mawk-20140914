@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp2.c,v 1.22 2014/08/08 08:18:24 tom Exp $
+ * $MawkId: rexp2.c,v 1.23 2014/08/21 23:58:04 tom Exp $
  * @Log: rexp2.c,v @
  * Revision 1.3  1993/07/24  17:55:12  mike
  * more cleanup
@@ -269,7 +269,7 @@ REtest(char *str,		/* string to test */
 	RE_CASE();
 
     case M_STR + U_ON + END_ON:
-	t = (int) (str_end - s) - m->s_len;
+	t = (int) (str_end - s) - (int) m->s_len;
 	if (t < 0 || memcmp(s + t, m->s_data.str, (size_t) m->s_len)) {
 	    RE_FILL();
 	}

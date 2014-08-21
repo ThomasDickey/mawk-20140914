@@ -1,8 +1,8 @@
 /********************************************
 rexp.h
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2014, Thomas E. Dickey
 copyright 2010, Jonathan Nieder
-copyright 1991, Michael D. Brennan
+copyright 1991,2014, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
 the AWK programming language.
@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp.h,v 1.25 2012/06/27 09:08:10 tom Exp $
+ * $MawkId: rexp.h,v 1.26 2014/08/22 00:00:17 tom Exp $
  * @Log: rexp.h,v @
  * Revision 1.2  1993/07/23  13:21:35  mike
  * cleanup rexp code
@@ -87,8 +87,6 @@ extern void RE_free(void *);
 #define  END_ON    (2*U_ON)
 
 typedef UChar BV[32];		/* bit vector */
-typedef char SType;
-typedef UChar SLen;
 
 typedef struct {
     SType s_type;
