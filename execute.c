@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.34 2014/08/21 19:52:03 tom Exp $
+ * $MawkId: execute.c,v 1.35 2014/08/21 23:13:21 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -349,7 +349,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    if (t && nf < 0)
 		split_field0();
 	    sp->ptr = (PTR) field_ptr(t);
-	    if (t > nf) {
+	    if (t < 0 || t > nf) {
 		/* make sure its set to "" */
 		cp = (CELL *) sp->ptr;
 		cell_destroy(cp);
