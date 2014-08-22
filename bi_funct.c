@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.93 2014/08/22 22:36:44 tom Exp $
+ * $MawkId: bi_funct.c,v 1.94 2014/08/22 22:59:14 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1155,7 +1155,7 @@ bi_sub(CELL *sp)
 #endif
 
 #if defined(EXP_UNROLLED_GSUB)
-#define USE_GSUB3
+#define USE_GSUB2
 #endif
 
 static unsigned repl_cnt;	/* number of global replacements */
@@ -1262,15 +1262,18 @@ gsub0(PTR re, CELL *repl, char *target, size_t target_len, int flag)
 static STRING *
 gsub3(PTR re, CELL *repl, CELL *target)
 {
-    int pass;
     int j;
     CELL xrepl;
     STRING *input = string(target);
     STRING *output = 0;
     STRING *sval;
-    size_t want = 0;
     size_t have;
-    size_t used;
+    size_t used = 0;
+    size_t oops = 10 * (1 + input->len);
+
+    int skip0 = -1;
+    size_t howmuch;
+    char *where;
 
     TRACE(("called gsub3\n"));
 
@@ -1283,124 +1286,90 @@ gsub3(PTR re, CELL *repl, CELL *target)
 	memset(&xrepl, 0, sizeof(xrepl));
     }
 
-    /*
-     * On the first pass, determine the size of the resulting string.
-     * On the second pass, actually apply changes - if any.
-     */
-    for (pass = 0; pass < 2; ++pass) {
-	int skip0 = -1;
-	size_t howmuch;
-	char *where;
+    repl_cnt = 0;
+    output = new_STRING0(oops);
 
-	TRACE(("start pass %d\n", pass + 1));
-	repl_cnt = 0;
-	for (j = 0; j <= (int) input->len; ++j) {
-	    if (isAnchored(re) && (j != 0)) {
-		where = 0;
-	    } else {
-		where = REmatch(input->str + j,
-				input->len - (size_t) j,
-				cast_to_re(re),
-				&howmuch);
-	    }
-	    /*
-	     * REmatch returns a non-null pointer if it found a match.  But
-	     * that can be an empty string, e.g., for "*" or "?".  The length
-	     * is in 'howmuch'.
-	     */
-	    if (where != 0) {
-		have = (size_t) (where - (input->str + j));
-		if (have) {
-		    skip0 = -1;
-		    TRACE(("..before match:%d:", (int) have));
-		    TRACE_STRING2(input->str + j, have);
-		    TRACE(("\n"));
-		    if (pass) {
-			memcpy(output->str + used, input->str + j, have);
-			used += have;
-		    } else {
-			want += have;
-		    }
-		}
-
-		TRACE(("REmatch %d vs %d len=%d:", (int) j, skip0, (int) howmuch));
-		TRACE_STRING2(where, howmuch);
-		TRACE(("\n"));
-
-		if (repl->type == C_REPLV) {
-		    if (xrepl.ptr == 0 ||
-			string(&xrepl)->len != howmuch ||
-			(howmuch != 0 &&
-			 memcmp(string(&xrepl)->str, where, howmuch))) {
-			if (xrepl.ptr != 0)
-			    repl_destroy(&xrepl);
-			sval = new_STRING1(where, howmuch);
-			cellcpy(&xrepl, repl);
-			replv_to_repl(&xrepl, sval);
-			free_STRING(sval);
-		    }
-		}
-
-		have = string(&xrepl)->len;
-		TRACE(("..replace:"));
-		TRACE_STRING2(string(&xrepl)->str, have);
-		TRACE(("\n"));
-
-		if (howmuch || (j != skip0)) {
-		    ++repl_cnt;
-
-		    if (pass) {
-			memcpy(output->str + used, string(&xrepl)->str, have);
-			used += have;
-		    } else {
-			want += have;
-		    }
-		}
-
-		if (howmuch) {
-		    j = (int) ((size_t) (where - input->str) + howmuch) - 1;
-		} else {
-		    j = (int) (where - input->str);
-		    if (j < (int) input->len) {
-			TRACE(("..emptied:"));
-			TRACE_STRING2(input->str + j, 1);
-			TRACE(("\n"));
-			if (pass) {
-			    output->str[used++] = input->str[j];
-			} else {
-			    ++want;
-			}
-		    }
-		}
-		skip0 = (howmuch != 0) ? (j + 1) : -1;
-	    } else {
-		if (repl_cnt) {
-		    have = (input->len - (size_t) j);
-		    TRACE(("..after match:%d:", (int) have));
-		    TRACE_STRING2(input->str + j, have);
-		    TRACE(("\n"));
-		    if (pass) {
-			memcpy(output->str + used, input->str + j, have);
-		    } else {
-			want += have;
-		    }
-		}
-		break;
-	    }
+    for (j = 0; j <= (int) input->len; ++j) {
+	if (isAnchored(re) && (j != 0)) {
+	    where = 0;
+	} else {
+	    where = REmatch(input->str + j,
+			    input->len - (size_t) j,
+			    cast_to_re(re),
+			    &howmuch);
 	}
+	/*
+	 * REmatch returns a non-null pointer if it found a match.  But
+	 * that can be an empty string, e.g., for "*" or "?".  The length
+	 * is in 'howmuch'.
+	 */
+	if (where != 0) {
+	    have = (size_t) (where - (input->str + j));
+	    if (have) {
+		skip0 = -1;
+		TRACE(("..before match:%d:", (int) have));
+		TRACE_STRING2(input->str + j, have);
+		TRACE(("\n"));
+		memcpy(output->str + used, input->str + j, have);
+		used += have;
+	    }
 
-	if (!repl_cnt)
+	    TRACE(("REmatch %d vs %d len=%d:", (int) j, skip0, (int) howmuch));
+	    TRACE_STRING2(where, howmuch);
+	    TRACE(("\n"));
+
+	    if (repl->type == C_REPLV) {
+		if (xrepl.ptr == 0 ||
+		    string(&xrepl)->len != howmuch ||
+		    (howmuch != 0 &&
+		     memcmp(string(&xrepl)->str, where, howmuch))) {
+		    if (xrepl.ptr != 0)
+			repl_destroy(&xrepl);
+		    sval = new_STRING1(where, howmuch);
+		    cellcpy(&xrepl, repl);
+		    replv_to_repl(&xrepl, sval);
+		    free_STRING(sval);
+		}
+	    }
+
+	    have = string(&xrepl)->len;
+	    TRACE(("..replace:"));
+	    TRACE_STRING2(string(&xrepl)->str, have);
+	    TRACE(("\n"));
+
+	    if (howmuch || (j != skip0)) {
+		++repl_cnt;
+
+		memcpy(output->str + used, string(&xrepl)->str, have);
+		used += have;
+	    }
+
+	    if (howmuch) {
+		j = (int) ((size_t) (where - input->str) + howmuch) - 1;
+	    } else {
+		j = (int) (where - input->str);
+		if (j < (int) input->len) {
+		    TRACE(("..emptied:"));
+		    TRACE_STRING2(input->str + j, 1);
+		    TRACE(("\n"));
+		    output->str[used++] = input->str[j];
+		}
+	    }
+	    skip0 = (howmuch != 0) ? (j + 1) : -1;
+	} else {
+	    have = (input->len - (size_t) j);
+	    TRACE(("..after match:%d:", (int) have));
+	    TRACE_STRING2(input->str + j, have);
+	    TRACE(("\n"));
+	    memcpy(output->str + used, input->str + j, have);
 	    break;
-
-	TRACE(("..done pass %d\n", pass + 1));
-	if (!pass) {
-	    output = new_STRING0(want);
-	    used = 0;
-	    TRACE(("..input %d ->output %d\n",
-		   (int) input->len,
-		   (int) output->len));
 	}
     }
+
+    TRACE(("..input %d ->output %d\n",
+	   (int) input->len,
+	   (int) output->len));
+
     repl_destroy(&xrepl);
     if (output == 0) {
 	output = new_STRING1(input->str, input->len);
