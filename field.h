@@ -1,6 +1,6 @@
 /********************************************
 field.h
-copyright 2009-2010, Thomas E. Dickey
+copyright 2009-2010,2014 Thomas E. Dickey
 copyright 1991-1995,2014 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.h,v 1.11 2014/08/15 00:29:17 mike Exp $
+ * $MawkId: field.h,v 1.12 2014/08/22 00:51:01 tom Exp $
  * @Log: field.h,v @
  * Revision 1.2  1995/06/18  19:42:16  mike
  * Remove some redundant declarations and add some prototypes
@@ -38,7 +38,7 @@ the GNU General Public License, version 2, 1991.
 extern void set_field0(char *, size_t);
 extern void split_field0(void);
 extern void field_assign(CELL *, CELL *);
-extern char *is_string_split(PTR, unsigned *);
+extern char *is_string_split(PTR, SLen *);
 extern void slow_cell_assign(CELL *, CELL *);
 extern CELL *slow_field_ptr(int);
 extern int field_addr_to_index(CELL *);

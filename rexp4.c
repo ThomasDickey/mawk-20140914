@@ -1,6 +1,6 @@
 /*
 regexp_system.c
-copyright 2009, Thomas E. Dickey
+copyright 2009-2010,2014 Thomas E. Dickey
 copyright 2005, Aleksey Cheusov
 
 This is a source file for mawk, an implementation of
@@ -11,14 +11,14 @@ the GNU General Public License, version 2, 1991.
  */
 
 /*
- * $MawkId: rexp4.c,v 1.6 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: rexp4.c,v 1.8 2014/08/22 00:52:21 tom Exp $
  */
 #include "mawk.h"
 #include "rexp.h"
 #include "field.h"
 
 char *
-is_string_split(PTR q, unsigned *lenp)
+is_string_split(PTR q, SLen * lenp)
 {
     STATE *p = (STATE *) q;
 
