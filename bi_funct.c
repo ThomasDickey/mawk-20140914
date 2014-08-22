@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.94 2014/08/22 22:59:14 tom Exp $
+ * $MawkId: bi_funct.c,v 1.95 2014/08/22 23:28:53 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1266,10 +1266,12 @@ gsub3(PTR re, CELL *repl, CELL *target)
     CELL xrepl;
     STRING *input = string(target);
     STRING *output = 0;
+    STRING *buffer;
     STRING *sval;
     size_t have;
     size_t used = 0;
-    size_t oops = 10 * (1 + input->len);
+    size_t guess = input->len;
+    size_t limit = guess;
 
     int skip0 = -1;
     size_t howmuch;
@@ -1287,7 +1289,7 @@ gsub3(PTR re, CELL *repl, CELL *target)
     }
 
     repl_cnt = 0;
-    output = new_STRING0(oops);
+    output = new_STRING0(limit);
 
     for (j = 0; j <= (int) input->len; ++j) {
 	if (isAnchored(re) && (j != 0)) {
@@ -1340,6 +1342,28 @@ gsub3(PTR re, CELL *repl, CELL *target)
 	    if (howmuch || (j != skip0)) {
 		++repl_cnt;
 
+		/*
+		 * If this new chunk is longer than its replacement, add that
+		 * to the estimate of the length.  Then, if the estimate goes
+		 * past the allocated length, reallocate and copy the existing
+		 * data.
+		 */
+		if (have > howmuch) {	/* growing */
+		    guess += (have - howmuch);
+		    if (guess >= limit) {
+			buffer = output;
+			limit = (++guess) * 2;	/* FIXME - too coarse? */
+			output = new_STRING0(limit);
+			memcpy(output->str, buffer->str, used);
+			free_STRING(buffer);
+		    }
+		} else if (howmuch > have) {	/* shrinking */
+		    guess -= (howmuch - have);
+		}
+
+		/*
+		 * Finally, copy the new chunk.
+		 */
 		memcpy(output->str + used, string(&xrepl)->str, have);
 		used += have;
 	    }
@@ -1371,8 +1395,10 @@ gsub3(PTR re, CELL *repl, CELL *target)
 	   (int) output->len));
 
     repl_destroy(&xrepl);
-    if (output == 0) {
-	output = new_STRING1(input->str, input->len);
+    if (output->len > used) {
+	buffer = output;
+	output = new_STRING1(output->str, used);
+	free_STRING(buffer);
     }
     TRACE(("..done gsub3\n"));
     return output;
