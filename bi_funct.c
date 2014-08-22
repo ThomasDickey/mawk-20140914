@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.95 2014/08/22 23:28:53 tom Exp $
+ * $MawkId: bi_funct.c,v 1.96 2014/08/22 23:57:51 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -1265,7 +1265,7 @@ gsub3(PTR re, CELL *repl, CELL *target)
     int j;
     CELL xrepl;
     STRING *input = string(target);
-    STRING *output = 0;
+    STRING *output;
     STRING *buffer;
     STRING *sval;
     size_t have;
@@ -1386,6 +1386,7 @@ gsub3(PTR re, CELL *repl, CELL *target)
 	    TRACE_STRING2(input->str + j, have);
 	    TRACE(("\n"));
 	    memcpy(output->str + used, input->str + j, have);
+	    used += have;
 	    break;
 	}
     }
