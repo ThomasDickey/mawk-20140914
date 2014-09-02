@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.35 2014/08/21 23:13:21 tom Exp $
+ * $MawkId: execute.c,v 1.36 2014/09/02 08:09:19 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -106,7 +106,7 @@ the GNU General Public License, version 2, 1991.
 #include <math.h>
 
 static int compare(CELL *);
-static int d_to_index(double);
+static unsigned d_to_index(double);
 
 #ifdef	 NOINFO_SIGFPE
 static char dz_msg[] = "division by zero";
@@ -192,6 +192,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
     /* some useful temporaries */
     CELL *cp;
     int t;
+    unsigned tu;
 
     /* save state for array loops via a stack */
     ALOOP_STATE *aloop_state = (ALOOP_STATE *) 0;
@@ -345,12 +346,12 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    if (sp->type != C_DOUBLE)
 		cast1_to_d(sp);
 
-	    t = d_to_index(sp->dval);
-	    if (t && nf < 0)
+	    tu = d_to_index(sp->dval);
+	    if (tu && nf < 0)
 		split_field0();
-	    sp->ptr = (PTR) field_ptr(t);
-	    if (t < 0 || t > nf) {
-		/* make sure its set to "" */
+	    sp->ptr = (PTR) field_ptr((int) tu);
+	    if ((int) tu > nf) {
+		/* make sure it is set to "" */
 		cp = (CELL *) sp->ptr;
 		cell_destroy(cp);
 		cp->type = C_STRING;
@@ -364,12 +365,12 @@ execute(INST * cdp,		/* code ptr, start execution here */
 	    if (sp->type != C_DOUBLE)
 		cast1_to_d(sp);
 
-	    t = d_to_index(sp->dval);
+	    tu = d_to_index(sp->dval);
 
 	    if (nf < 0)
 		split_field0();
-	    if (t >= 0 && t <= nf) {
-		cellcpy(sp, field_ptr(t));
+	    if ((int) tu <= nf) {
+		cellcpy(sp, field_ptr((int) tu));
 	    } else {
 		sp->type = C_STRING;
 		sp->ptr = (PTR) & null_str;
@@ -1534,11 +1535,11 @@ DB_cell_destroy(CELL *cp)
 #endif
 
 /* convert a double d to a field index	$d -> $i */
-static int
+static unsigned
 d_to_index(double d)
 {
     if (d >= 0.0)
-	return d_to_I(d);
+	return (unsigned) d_to_I(d);
 
     /* might include nan */
     rt_error("negative field index $%.6g", d);
