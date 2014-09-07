@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.205 2014/09/07 16:36:31 tom Exp $
+-- $MawkId: CHANGES,v 1.206 2014/09/07 16:50:08 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140907
+	+ make it possible to build with "bsd" library ported to Linux by
+	  setting LIBS=-lbsd before running configure script.
 	+ show random-function names in version message.
 	+ modify initialization of srand default seed from time of day to use
 	  gettimeofday, etc., so that successive runs of mawk are less likely
