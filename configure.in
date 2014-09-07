@@ -1,8 +1,8 @@
-dnl $MawkId: configure.in,v 1.50 2013/12/27 00:45:25 tom Exp $
+dnl $MawkId: configure.in,v 1.51 2014/09/07 14:43:33 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
-dnl copyright 2008-2012,2013, Thomas E. Dickey
+dnl copyright 2008-2013,2014, Thomas E. Dickey
 dnl copyright 1991-1994,1995, Michael D. Brennan
 dnl
 dnl This is a source file for mawk, an implementation of
@@ -131,7 +131,15 @@ CF_MAWK_FIND_SIZE_T
 CF_LOCALE
 CF_CHECK_ENVIRON(environ)
 
-AC_CHECK_FUNCS(fork matherr mktime pipe strftime tdestroy tsearch wait)
+AC_CHECK_FUNCS(fork gettimeofday matherr mktime pipe strftime tdestroy tsearch wait)
+
+###	Checks for libraries.
+case $cf_cv_system_name in #(vi
+*mingw32*) #(vi
+	CPPFLAGS="$CPPFLAGS -DWINVER=0x0501"
+#	LIBS=" -lpsapi $LIBS"
+	;;
+esac
 
 test "$ac_cv_func_fork" = yes && \
 test "$ac_cv_func_pipe" = yes && \

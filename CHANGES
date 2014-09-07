@@ -1,8 +1,11 @@
--- $MawkId: CHANGES,v 1.203 2014/09/07 10:39:39 tom Exp $
+-- $MawkId: CHANGES,v 1.204 2014/09/07 14:42:30 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140907
+	+ modify initialization of srand default seed from time of day to use
+	  gettimeofday, etc., so that successive runs of mawk are less likely
+	  to use the same seed value (suggested by Mike Brennan).
 	+ make a further refinement, "gsub3" which uses a single pass.
 	+ change SType and SLen types to improve performance as well as
 	  handling larger regular expressions (suggested by Mike Brennan).
