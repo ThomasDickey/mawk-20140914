@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: config_h.in,v 1.28 2014/09/07 15:22:09 tom Exp $
+ * $MawkId: config_h.in,v 1.29 2014/09/07 16:56:38 tom Exp $
  * template for config.h
  */
 
@@ -23,6 +23,7 @@ the GNU General Public License, version 2, 1991.
 #undef GCC_SCANF
 #undef GCC_SCANFLIKE
 #undef GCC_UNUSED
+#undef HAVE_BSD_STDLIB_H
 #undef HAVE_ERRNO_H
 #undef HAVE_FCNTL_H
 #undef HAVE_FORK
@@ -50,8 +51,7 @@ the GNU General Public License, version 2, 1991.
 #undef MAX__INT
 #undef MAX__LONG
 #undef MAX__UINT
-#undef NAME_RAND
-#undef NAME_SRAND
+#undef NAME_RANDOM
 #undef NOINFO_SIGFPE
 #undef NO_LEAKS
 #undef SIZE_T_STDDEF_H
