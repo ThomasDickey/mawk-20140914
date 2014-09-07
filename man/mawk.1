@@ -1,6 +1,6 @@
-.\" $MawkId: mawk.1,v 1.25 2014/08/12 22:19:49 tom Exp $
+.\" $MawkId: mawk.1,v 1.26 2014/09/07 17:12:59 tom Exp $
 .\" ###########################################################################
-.\" # copyright 2008-2010,2012, Thomas E. Dickey
+.\" # copyright 2008-2012,2014, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
 .\" #
 .\" # This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@
 .\" ###########################################################################
 .ds N Mawk
 .ds n mawk
-.TH MAWK 1 "2014-08-12" "Version 1.3.4" "USER COMMANDS"
+.TH MAWK 1 "2014-09-07" "Version 1.3.4" "USER COMMANDS"
 .\" strings
 .ds ex \fIexpr\fR
 .\" Bulleted paragraph
@@ -64,7 +64,7 @@ defined in Aho, Kernighan and Weinberger,
 Addison-Wesley Publishing, 1988 (hereafter referred to as
 the AWK book.)
 \fB\*n\fP
-conforms to the Posix 1003.2
+conforms to the POSIX 1003.2
 (draft 11.3)
 definition of the AWK language
 which contains a few features not described in the AWK book,
@@ -112,7 +112,7 @@ to program variable
 \-\|\-
 indicates the unambiguous end of options.
 .PP
-The above options will be available with any Posix compatible
+The above options will be available with any POSIX compatible
 implementation of AWK.
 Implementation specific options are prefaced with
 .BR \-W .
@@ -1340,7 +1340,7 @@ effect as if blank lines are stripped from the
 front and back of files and then records are determined as if
 .B RS
 = "\en\en+".
-Posix requires that "\en" always separates records when
+POSIX requires that "\en" always separates records when
 .B RS
 = "" regardless of the value of
 .BR FS .
@@ -1586,7 +1586,7 @@ every record based on the first field.
 .\" **************************************************************************
 .SH "COMPATIBILITY ISSUES"
 .SS "MAWK 1.3.3 versus POSIX 1003.2 Draft 11.3"
-The Posix 1003.2(draft 11.3) definition of the AWK language
+The POSIX 1003.2(draft 11.3) definition of the AWK language
 is AWK as described in the AWK book with a few extensions
 that appeared in SystemVR4 nawk.
 The extensions are:
@@ -1622,7 +1622,7 @@ with Unix line-endings.
 .RE
 .RE
 .sp
-Posix AWK is oriented to operate on files a line at
+POSIX AWK is oriented to operate on files a line at
 a time.
 .B RS
 can be changed from "\en" to another single character,
@@ -1702,15 +1702,15 @@ be recognized as
 .I c
 which necessitates the double escaping of meta-characters in
 strings.
-Posix explicitly declines to define the behavior which passively
+POSIX explicitly declines to define the behavior which passively
 forces programs that must run under a variety of awks to use
 the more portable but less readable, double escape.
 .PP
-Posix AWK does not recognize "/dev/std{in,out,err}".
+POSIX AWK does not recognize "/dev/std{in,out,err}".
 Some systems provide an actual device for this,
 allowing AWKs which do not implement the feature directly to support it.
 .PP
-Posix AWK does not recognize \ex hex escape
+POSIX AWK does not recognize \ex hex escape
 sequences in strings.
 Unlike ANSI C,
 \fB\*n\fP limits the number of digits that follows \ex to two as the current
@@ -1718,20 +1718,20 @@ implementation only supports 8 bit characters.
 The built-in
 .B fflush
 first appeared in a recent (1993) AT&T awk released to netlib, and is
-not part of the posix standard.
+not part of the POSIX standard.
 Aggregate deletion with
 .B delete
 .I array
-is not part of the posix standard.
+is not part of the POSIX standard.
 .PP
-Posix explicitly leaves the behavior of
+POSIX explicitly leaves the behavior of
 .B FS
 = "" undefined, and mentions splitting the record into characters as
 a possible interpretation, but currently this use is not portable
 across implementations.
 .SS "Random numbers"
 .PP
-Posix does not prescribe a method for initializing random numbers at startup.
+POSIX does not prescribe a method for initializing random numbers at startup.
 .PP
 In practice, most implementations do nothing special,
 which makes \fBsrand\fP and \fBrand\fP follow the C runtime library,
@@ -1751,7 +1751,8 @@ this feature may be suppressed using conditional compilation.
 .PP
 .B Nextfile
 is a \fBgawk\fP extension (also implemented by BWK awk),
-is not yet part of the posix standard (as of October 2012).
+is not yet part of the POSIX standard (as of October 2012),
+although it has been accepted for the next revision of the standard.
 .PP
 .BR Mktime ,
 .BR strftime \ and
@@ -1767,7 +1768,7 @@ The corresponding "-" (alias for /dev/stdin) was present in \*n 1.3.3.
 Finally, here is how
 \fB\*n\fP
 handles exceptional cases not discussed in the
-AWK book or the Posix draft.
+AWK book or the POSIX draft.
 It is unsafe to assume
 consistency across awks and safe to skip to
 the next section.
@@ -1858,7 +1859,7 @@ and language reference
 that does not attempt the depth of the AWK book
 and assumes the reader may be a novice programmer.
 The section on AWK arrays is excellent.
-It also discusses Posix requirements for AWK.
+It also discusses POSIX requirements for AWK.
 .\" **************************************************************************
 .SH BUGS
 .PP
