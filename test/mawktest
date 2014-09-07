@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MawkId: mawktest,v 1.35 2014/08/20 20:03:45 tom Exp $
+# $MawkId: mawktest,v 1.36 2014/09/07 22:05:34 tom Exp $
 ###############################################################################
 # copyright 2008-2012,2014, Thomas E. Dickey
 # copyright 2010, Guido Berhoerster
@@ -90,7 +90,7 @@ trap 'echo mawk_test failed ; rm -f $STDOUT $STDERR; exit 1'  0
 # find out which mawk we're testing
 $PROG -W version
 
-NULLS=`$PROG -W version 2>&1 |fgrep 'internal regex' 2>/dev/null`
+NULLS=`$PROG -W version 2>&1 |fgrep regex |fgrep 'internal' 2>/dev/null`
 #################################
 Begin "testing input and field splitting"
 
