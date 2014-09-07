@@ -1,9 +1,9 @@
-# $MawkId: vs6.mak,v 1.4 2012/10/27 10:55:58 tom Exp $
+# $MawkId: vs6.mak,v 1.5 2014/09/07 14:52:50 tom Exp $
 # Microsoft C makefile for mawk,
 # 
 # Tested with Microsoft Visual Studio 6 using nmake.
 ###############################################################################
-# copyright 2010,2012 Thomas E. Dickey
+# copyright 2010-2012,2014 Thomas E. Dickey
 #
 # This is a source file for mawk, an implementation of
 # the AWK programming language.
@@ -16,7 +16,7 @@
 
 #========================================================================
 
-CFLAGS = -I. -DLOCAL_REGEXP $(cflags)
+CFLAGS = -I. -DWINVER=0x501 -DLOCAL_REGEXP $(cflags)
 
 .c.obj:
 	$(CC) $(CFLAGS) -c $<
