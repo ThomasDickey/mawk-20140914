@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.38 2014/08/14 23:34:44 mike Exp $
+ * $MawkId: init.c,v 1.39 2014/09/07 20:43:31 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -67,6 +67,7 @@ the GNU General Public License, version 2, 1991.
 #include <memory.h>
 #include <symtype.h>
 #include <init.h>
+#include <bi_funct.h>
 #include <bi_vars.h>
 #include <files.h>
 #include <field.h>
@@ -83,6 +84,7 @@ typedef enum {
     W_HELP,
     W_INTERACTIVE,
     W_EXEC,
+    W_RANDOM,
     W_SPRINTF,
     W_POSIX_SPACE,
     W_USAGE
@@ -195,7 +197,8 @@ usage(void)
 	"    -W help          show this message and exit.",
 	"    -W interactive   set unbuffered output, line-buffered input.",
 	"    -W exec file     use file as program as well as last option.",
-	"    -W sprintf=number  adjust size of sprintf buffer.",
+	"    -W random=number set initial random seed.",
+	"    -W sprintf=number adjust size of sprintf buffer.",
 	"    -W posix_space   do not consider \"\\n\" a space.",
 	"    -W usage         show this message and exit.",
     };
@@ -296,6 +299,7 @@ parse_w_opt(char *source, char **next)
 	    DATA(HELP),
 	    DATA(INTERACTIVE),
 	    DATA(EXEC),
+	    DATA(RANDOM),
 	    DATA(SPRINTF),
 	    DATA(POSIX_SPACE),
 	    DATA(USAGE)
@@ -425,6 +429,23 @@ process_cmdline(int argc, char **argv)
 
 		case W_POSIX_SPACE:
 		    posix_space_flag = 1;
+		    break;
+
+		case W_RANDOM:
+		    if (haveValue(optNext)) {
+			int x = atoi(optNext + 1);
+			CELL c[2];
+
+			c[0].type = C_DOUBLE;
+			c[0].dval = (double) x;
+			c[1] = c[0];
+			/* c[0] is input, c[1] is output */
+			bi_srand(c + 1);
+			optNext = skipValue(optNext);
+		    } else {
+			errmsg(0, "missing value for -W random");
+			mawk_exit(2);
+		    }
 		    break;
 
 		case W_SPRINTF:
