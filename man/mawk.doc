@@ -18,7 +18,7 @@ DDEESSCCRRIIPPTTIIOONN
        is a _n_e_w _a_w_k meaning it implements the AWK language as defined in  Aho,
        Kernighan  and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g _L_a_n_g_u_a_g_e_, Addison-Wesley
        Publishing, 1988 (hereafter referred to as the AWK  book.)   mmaawwkk  con-
-       forms  to  the Posix 1003.2 (draft 11.3) definition of the AWK language
+       forms  to  the POSIX 1003.2 (draft 11.3) definition of the AWK language
        which contains a few features not described in the AWK book,  and  mmaawwkk
        provides a small number of extensions.
 
@@ -42,7 +42,7 @@ OOPPTTIIOONNSS
 
        --             indicates the unambiguous end of options.
 
-       The above options will be available with any Posix compatible implemen-
+       The above options will be available with any POSIX compatible implemen-
        tation  of  AWK.  Implementation specific options are prefaced with --WW.
        mmaawwkk provides these:
 
@@ -725,7 +725,7 @@ TTHHEE AAWWKK LLAANNGGUUAAGGEE
        "\n([ \t]*\n)+".   For  compatibility  with other awks, setting RRSS = ""
        has the same effect as if blank lines are stripped from the  front  and
        back  of  files  and  then  records  are determined as if RRSS = "\n\n+".
-       Posix requires that "\n" always separates records when RRSS = ""  regard-
+       POSIX requires that "\n" always separates records when RRSS = ""  regard-
        less  of  the  value  of  FFSS.   mmaawwkk  does not support this convention,
        because defining "\n" as <SPACE> makes it unnecessary.
 
@@ -857,7 +857,7 @@ EEXXAAMMPPLLEESS
 
 CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
    MMAAWWKK 11..33..33 vveerrssuuss PPOOSSIIXX 11000033..22 DDrraafftt 1111..33
-       The  Posix  1003.2(draft 11.3) definition of the AWK language is AWK as
+       The  POSIX  1003.2(draft 11.3) definition of the AWK language is AWK as
        described in the AWK book with a few extensions that appeared  in  Sys-
        temVR4 nawk.  The extensions are:
 
@@ -885,7 +885,7 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
                 sible to run scripts and generate output compatible with  Unix
                 line-endings.
 
-       Posix  AWK is oriented to operate on files a line at a time.  RRSS can be
+       POSIX  AWK is oriented to operate on files a line at a time.  RRSS can be
        changed from "\n" to another single character, but it is hard  to  find
        any  use for this -- there are no examples in the AWK book.  By conven-
        tion, RRSS = "", makes one or more blank lines separate records, allowing
@@ -937,28 +937,28 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
        The strings get scanned twice, once  as  string  and  once  as  regular
        expression.   On the string scan, mmaawwkk ignores the escape on non-escape
        characters while the AWK book advocates _\_c be  recognized  as  _c  which
-       necessitates  the double escaping of meta-characters in strings.  Posix
+       necessitates  the double escaping of meta-characters in strings.  POSIX
        explicitly declines to define the behavior which passively forces  pro-
        grams  that  must  run under a variety of awks to use the more portable
        but less readable, double escape.
 
-       Posix AWK does not recognize "/dev/std{in,out,err}".  Some systems pro-
+       POSIX AWK does not recognize "/dev/std{in,out,err}".  Some systems pro-
        vide  an  actual  device for this, allowing AWKs which do not implement
        the feature directly to support it.
 
-       Posix AWK does not  recognize  \x  hex  escape  sequences  in  strings.
+       POSIX AWK does not  recognize  \x  hex  escape  sequences  in  strings.
        Unlike  ANSI C, mmaawwkk limits the number of digits that follows \x to two
        as the current implementation only  supports  8  bit  characters.   The
        built-in  fffflluusshh first appeared in a recent (1993) AT&T awk released to
-       netlib, and is not part of the posix standard.  Aggregate deletion with
-       ddeelleettee _a_r_r_a_y is not part of the posix standard.
+       netlib, and is not part of the POSIX standard.  Aggregate deletion with
+       ddeelleettee _a_r_r_a_y is not part of the POSIX standard.
 
-       Posix explicitly leaves the behavior of FFSS = "" undefined, and mentions
+       POSIX explicitly leaves the behavior of FFSS = "" undefined, and mentions
        splitting the record into characters as a possible interpretation,  but
        currently this use is not portable across implementations.
 
    RRaannddoomm nnuummbbeerrss
-       Posix  does  not  prescribe a method for initializing random numbers at
+       POSIX  does  not  prescribe a method for initializing random numbers at
        startup.
 
        In practice, most implementations do nothing special, which makes ssrraanndd
@@ -973,37 +973,38 @@ CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS
 
    EExxtteennssiioonnss aaddddeedd ffoorr ccoommppaattiibbiilliittyy ffoorr GGAAWWKK aanndd BBWWKK
        NNeexxttffiillee is a ggaawwkk extension (also implemented by BWK awk), is not  yet
-       part of the posix standard (as of October 2012).
+       part  of  the POSIX standard (as of October 2012), although it has been
+       accepted for the next revision of the standard.
 
        MMkkttiimmee, ssttrrffttiimmee and ssyyssttiimmee are ggaawwkk extensions.
 
        The "/dev/stdin" feature was added to mmaawwkk after 1.3.4, for compatibil-
-       ity  with  ggaawwkk  and  BWK  awk.   The  corresponding  "-"  (alias   for
+       ity   with  ggaawwkk  and  BWK  awk.   The  corresponding  "-"  (alias  for
        /dev/stdin) was present in mawk 1.3.3.
 
    SSuubbttllee DDiiffffeerreenncceess nnoott iinn PPOOSSIIXX oorr tthhee AAWWKK BBooookk
-       Finally,  here  is  how mmaawwkk handles exceptional cases not discussed in
-       the AWK book or the Posix draft.  It is unsafe  to  assume  consistency
+       Finally, here is how mmaawwkk handles exceptional cases  not  discussed  in
+       the  AWK  book  or the POSIX draft.  It is unsafe to assume consistency
        across awks and safe to skip to the next section.
 
-          +o   substr(s,  i, n) returns the characters of s in the intersection
+          +o   substr(s, i, n) returns the characters of s in the  intersection
               of the closed interval [1, length(s)] and the half-open interval
-              [i,  i+n).  When this intersection is empty, the empty string is
+              [i, i+n).  When this intersection is empty, the empty string  is
               returned; so substr("ABC", 1, 0) = "" and substr("ABC", -4, 6) =
               "A".
 
-          +o   Every  string,  including  the  empty  string, matches the empty
-              string at the front so, s ~ // and s ~ "", are always  1  as  is
+          +o   Every string, including the  empty  string,  matches  the  empty
+              string  at  the  front so, s ~ // and s ~ "", are always 1 as is
               match(s, //) and match(s, "").  The last two set RRLLEENNGGTTHH to 0.
 
-          +o   index(s,  t)  is always the same as match(s, t1) where t1 is the
-              same as t with metacharacters escaped.  Hence  consistency  with
-              match  requires  that  index(s,  "") always returns 1.  Also the
-              condition, index(s,t) != 0 if and only t is a  substring  of  s,
+          +o   index(s, t) is always the same as match(s, t1) where t1  is  the
+              same  as  t with metacharacters escaped.  Hence consistency with
+              match requires that index(s, "") always  returns  1.   Also  the
+              condition,  index(s,t)  !=  0 if and only t is a substring of s,
               requires index("","") = 1.
 
-          +o   If  getline  encounters  end  of  file,  getline var, leaves var
-              unchanged.  Similarly, on entry to  the  EENNDD  actions,  $$00,  the
+          +o   If getline encounters end  of  file,  getline  var,  leaves  var
+              unchanged.   Similarly,  on  entry  to  the EENNDD actions, $$00, the
               fields and NNFF have their value unaltered from the last record.
 
 EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
@@ -1013,13 +1014,13 @@ EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
              (see CCOOMMPPAATTIIBBIILLIITTYY IISSSSUUEESS)
 
           MAWK_LONG_OPTIONS
-             If  this  is  set,  mmaawwkk uses its value to decide what to do with
+             If this is set, mmaawwkk uses its value to decide  what  to  do  with
              GNU-style long options:
 
-             allow  MMaawwkk allows the option to be checked against  the  (small)
+             allow  MMaawwkk  allows  the option to be checked against the (small)
                     set of long options it recognizes.
 
-             error  MMaawwkk  prints  an  error  message  and  exits.  This is the
+             error  MMaawwkk prints an error  message  and  exits.   This  is  the
                     default.
 
              ignore MMaawwkk ignores the option.
@@ -1029,29 +1030,29 @@ EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
              If the variable is unset, mmaawwkk prints an error message and exits.
 
           WHINY_USERS
-             This is an undocumented ggaawwkk feature.   It  tells  mmaawwkk  to  sort
+             This  is  an  undocumented  ggaawwkk  feature.  It tells mmaawwkk to sort
              array indices before it starts to iterate over the elements of an
              array.
 
 SSEEEE AALLSSOO
        _e_g_r_e_p(1)
 
-       Aho, Kernighan and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g  _L_a_n_g_u_a_g_e,  Addison-
-       Wesley  Publishing, 1988, (the AWK book), defines the language, opening
-       with a tutorial and advancing to many interesting programs  that  delve
-       into  issues of software design and analysis relevant to programming in
+       Aho,  Kernighan  and Weinberger, _T_h_e _A_W_K _P_r_o_g_r_a_m_m_i_n_g _L_a_n_g_u_a_g_e, Addison-
+       Wesley Publishing, 1988, (the AWK book), defines the language,  opening
+       with  a  tutorial and advancing to many interesting programs that delve
+       into issues of software design and analysis relevant to programming  in
        any language.
 
-       _T_h_e _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial  and
-       language  reference that does not attempt the depth of the AWK book and
-       assumes the reader may be a novice  programmer.   The  section  on  AWK
-       arrays is excellent.  It also discusses Posix requirements for AWK.
+       _T_h_e  _G_A_W_K _M_a_n_u_a_l, The Free Software Foundation, 1991, is a tutorial and
+       language reference that does not attempt the depth of the AWK book  and
+       assumes  the  reader  may  be  a novice programmer.  The section on AWK
+       arrays is excellent.  It also discusses POSIX requirements for AWK.
 
 BBUUGGSS
-       mmaawwkk  implements  printf() and sprintf() using the C library functions,
-       printf and sprintf, so full  ANSI  compatibility  requires  an  ANSI  C
-       library.   In practice this means the h conversion qualifier may not be
-       available.  Also mmaawwkk inherits any bugs or limitations of  the  library
+       mmaawwkk implements printf() and sprintf() using the C  library  functions,
+       printf  and  sprintf,  so  full  ANSI  compatibility requires an ANSI C
+       library.  In practice this means the h conversion qualifier may not  be
+       available.   Also  mmaawwkk inherits any bugs or limitations of the library
        functions.
 
        Implementors of the AWK language have shown a consistent lack of imagi-
@@ -1063,4 +1064,4 @@ AAUUTTHHOORR
 
 
 
-Version 1.3.4                     2014-08-12                           MAWK(1)
+Version 1.3.4                     2014-09-07                           MAWK(1)
