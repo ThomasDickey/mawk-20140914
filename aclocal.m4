@@ -1,4 +1,4 @@
-dnl $MawkId: aclocal.m4,v 1.70 2014/07/23 22:43:37 tom Exp $
+dnl $MawkId: aclocal.m4,v 1.71 2014/09/07 10:42:28 tom Exp $
 dnl custom mawk macros for autoconf
 dnl
 dnl The symbols beginning "CF_MAWK_" were originally written by Mike Brennan,
@@ -1790,7 +1790,7 @@ CF_NO_LEAKS_OPTION(valgrind,
 	[USE_VALGRIND])
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_XOPEN_SOURCE version: 47 updated: 2014/07/23 17:11:49
+dnl CF_XOPEN_SOURCE version: 48 updated: 2014/09/01 12:29:14
 dnl ---------------
 dnl Try to get _XOPEN_SOURCE defined properly that we can use POSIX functions,
 dnl or adapt to the vendor's definitions to get equivalent functionality,
@@ -1872,6 +1872,10 @@ sco*) #(vi
 solaris2.*) #(vi
 	cf_xopen_source="-D__EXTENSIONS__"
 	cf_cv_xopen_source=broken
+	;;
+sysv4.2uw2.*) # Novell/SCO UnixWare 2.x (tested on 2.1.2)
+	cf_XOPEN_SOURCE=
+	cf_POSIX_C_SOURCE=
 	;;
 *)
 	CF_TRY_XOPEN_SOURCE
