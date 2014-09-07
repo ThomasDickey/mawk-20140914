@@ -1,8 +1,8 @@
--- $MawkId: CHANGES,v 1.202 2014/09/02 08:03:46 tom Exp $
+-- $MawkId: CHANGES,v 1.203 2014/09/07 10:39:39 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140902
+20140907
 	+ make a further refinement, "gsub3" which uses a single pass.
 	+ change SType and SLen types to improve performance as well as
 	  handling larger regular expressions (suggested by Mike Brennan).
