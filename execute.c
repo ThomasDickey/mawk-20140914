@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.36 2014/09/02 08:09:19 tom Exp $
+ * $MawkId: execute.c,v 1.37 2014/09/07 10:33:15 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -106,7 +106,7 @@ the GNU General Public License, version 2, 1991.
 #include <math.h>
 
 static int compare(CELL *);
-static unsigned d_to_index(double);
+static UInt d_to_index(double);
 
 #ifdef	 NOINFO_SIGFPE
 static char dz_msg[] = "division by zero";
@@ -1534,14 +1534,22 @@ DB_cell_destroy(CELL *cp)
 
 #endif
 
-/* convert a double d to a field index	$d -> $i */
-static unsigned
+/*
+ * convert a double d to a field index	$d -> $i
+ *
+ * Note: this used to return (unsigned) d_to_I(d), but is done inline to
+ * aid static analysis.
+ */
+static UInt
 d_to_index(double d)
 {
-    if (d >= 0.0)
-	return (unsigned) d_to_I(d);
-
-    /* might include nan */
-    rt_error("negative field index $%.6g", d);
-    return 0;			/* shutup */
+    if (d >= Max_Int) {
+	return (UInt) Max_Int;
+    } else if (d >= 0.0) {
+	return (UInt) (Int) (d);
+    } else {
+	/* might include nan */
+	rt_error("negative field index $%.6g", d);
+	return 0;		/* shutup */
+    }
 }
