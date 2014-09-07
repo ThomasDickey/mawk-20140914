@@ -1,6 +1,6 @@
 /********************************************
 error.c
-copyright 2008-2010,2012 Thomas E. Dickey
+copyright 2008-2012,2014 Thomas E. Dickey
 copyright 1991-1994,1995 Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.21 2014/09/07 18:41:33 tom Exp $
+ * $MawkId: error.c,v 1.22 2014/09/07 21:43:43 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
