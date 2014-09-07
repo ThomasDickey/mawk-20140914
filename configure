@@ -662,7 +662,7 @@ Miscellaneous options
   --enable-warnings       test: turn on gcc compiler warnings
   --without-builtin-regex do not use mawk's own regular-expressions engine
   --enable-builtin-srand  use mawk's own srand/rand functions
-  --enable-init-srand     initialize random numbers automatically
+  --disable-init-srand    suppress automatic initialization of random numbers
   --disable-largefile     omit support for large files
 Testing-options
   --with-dmalloc          test: use Gray Watson's dmalloc library
@@ -3747,15 +3747,15 @@ echo $ECHO_N "checking if you want mawk to initialize random numbers at startup.
 # Check whether --enable-init-srand or --disable-init-srand was given.
 if test "${enable_init_srand+set}" = set; then
   enableval="$enable_init_srand"
-  test "$enableval" != yes && enableval=no
-  if test "$enableval" != "no" ; then
-    with_init_srand=yes
-  else
+  test "$enableval" != no && enableval=yes
+  if test "$enableval" != "yes" ; then
     with_init_srand=no
+  else
+    with_init_srand=yes
   fi
 else
-  enableval=no
-  with_init_srand=no
+  enableval=yes
+  with_init_srand=yes
 
 fi;
 if test "x${with_init_srand}" != xno; then
