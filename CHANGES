@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.207 2014/09/07 17:09:38 tom Exp $
+-- $MawkId: CHANGES,v 1.208 2014/09/07 20:01:51 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140907
+	+ add -W random option to set initial srand() seed.
+	+ add TraceVA, use to provide debug-traces for errmsg().
 	+ add note in manpage about "nextfile", see for example:
 	    http://www.opengroup.org/austin/docs/austin_578.txt
 	    http://austingroupbugs.net/view.php?id=607
