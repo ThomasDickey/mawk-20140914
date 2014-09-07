@@ -1,4 +1,4 @@
-dnl $MawkId: configure.in,v 1.51 2014/09/07 14:43:33 tom Exp $
+dnl $MawkId: configure.in,v 1.52 2014/09/07 15:23:59 tom Exp $
 dnl configure.in for mawk
 dnl ###########################################################################
 dnl configure.in
@@ -94,6 +94,8 @@ AC_MSG_RESULT($with_builtin_srand)
 
 if test "x${with_builtin_srand}" = xno; then
     CF_SRAND(mawk_)
+	test -n "$cf_srand_func" && AC_DEFINE_UNQUOTED(NAME_SRAND,"$cf_srand_func")
+	test -n "$cf_rand_func"  && AC_DEFINE_UNQUOTED(NAME_RAND,"$cf_rand_func")
 fi
 ###############################################################################
 AC_MSG_CHECKING(if you want mawk to initialize random numbers at startup)
