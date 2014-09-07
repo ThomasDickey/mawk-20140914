@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: error.c,v 1.20 2012/11/28 09:55:29 tom Exp $
+ * $MawkId: error.c,v 1.21 2014/09/07 18:41:33 tom Exp $
  * @Log: error.c,v @
  * Revision 1.6  1995/06/06  00:18:22  mike
  * change mawk_exit(1) to mawk_exit(2)
@@ -45,8 +45,6 @@ the GNU General Public License, version 2, 1991.
 #include <mawk.h>
 #include <scan.h>
 #include <bi_vars.h>
-
-#include <stdarg.h>
 
 /* for run time error messages only */
 unsigned rt_nr, rt_fnr;
@@ -210,6 +208,14 @@ errmsg(int errnum, const char *format,...)
     va_list args;
 
     fprintf(stderr, "%s: ", progname);
+
+#if OPT_TRACE > 0
+    va_start(args, format);
+    Trace("\n?? errmsg \n");
+    TraceVA(format, args);
+    Trace("\n");
+    va_end(args);
+#endif
 
     va_start(args, format);
     vfprintf(stderr, format, args);
