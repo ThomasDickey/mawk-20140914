@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: init.c,v 1.39 2014/09/07 20:43:31 tom Exp $
+ * $MawkId: init.c,v 1.40 2014/09/07 22:45:32 tom Exp $
  * @Log: init.c,v @
  * Revision 1.11  1995/08/20  17:35:21  mike
  * include <stdlib.h> for MSC, needed for environ decl
@@ -436,10 +436,10 @@ process_cmdline(int argc, char **argv)
 			int x = atoi(optNext + 1);
 			CELL c[2];
 
-			c[0].type = C_DOUBLE;
-			c[0].dval = (double) x;
-			c[1] = c[0];
-			/* c[0] is input, c[1] is output */
+			memset(c, 0, sizeof(c));
+			c[1].type = C_DOUBLE;
+			c[1].dval = (double) x;
+			/* c[1] is input, c[0] is output */
 			bi_srand(c + 1);
 			optNext = skipValue(optNext);
 		    } else {
