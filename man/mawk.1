@@ -1,4 +1,4 @@
-.\" $MawkId: mawk.1,v 1.26 2014/09/07 17:12:59 tom Exp $
+.\" $MawkId: mawk.1,v 1.27 2014/09/07 21:38:42 tom Exp $
 .\" ###########################################################################
 .\" # copyright 2008-2012,2014, Thomas E. Dickey
 .\" # copyright 1996, Michael D. Brennan
@@ -144,6 +144,10 @@ Records from stdin are lines regardless of the value of
 forces
 \fB\*n\fP
 not to consider '\en' to be space.
+.TP
+\-\fBW \fRrandom=\fInum\fR
+calls \fBsrand\fP with the given parameter
+(and overrides the auto-seeding behavior).
 .TP
 \-\fBW \fRsprintf=\fInum\fR
 adjusts the size of
@@ -967,8 +971,10 @@ Srand(\fIexpr\fR) is useful for repeating pseudo random sequences.
 .IP
 Note:
 \fB\*n\fP
-can be configured to seed the random number generator from the clock
+is normally configured to seed the random number generator from the clock
 at startup, making it unnecessary to call srand().
+This feature can be suppressed via conditional compile,
+or overridden using the \fB\-Wrandom\fP option.
 .RE
 .\"
 .SS "\fB9. Input and output"
