@@ -10,10 +10,8 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: trace.c,v 1.9 2014/08/17 16:37:56 tom Exp $
+ * $MawkId: trace.c,v 1.10 2014/09/07 18:40:30 tom Exp $
  */
-#include <stdarg.h>
-
 #include <mawk.h>
 #include <repl.h>
 
@@ -33,6 +31,12 @@ Trace(const char *format,...)
     va_start(args, format);
     vfprintf(trace_fp, format, args);
     va_end(args);
+}
+
+void
+TraceVA(const char *format, va_list args)
+{
+    vfprintf(trace_fp, format, args);
 }
 
 void
