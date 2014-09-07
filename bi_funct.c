@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.98 2014/09/07 16:54:44 tom Exp $
+ * $MawkId: bi_funct.c,v 1.99 2014/09/07 22:33:03 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -159,10 +159,11 @@ bi_funct_init(void)
 #ifndef NO_INIT_SRAND
     /* seed rand() off the clock */
     {
-	CELL c;
+	CELL c[2];
 
-	c.type = C_NOINIT;
-	bi_srand(&c);
+	memset(c, 0, sizeof(c));
+	c[1].type = C_NOINIT;
+	bi_srand(c + 1);
     }
 #endif
 
