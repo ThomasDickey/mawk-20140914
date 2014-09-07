@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.97 2014/09/07 14:44:32 tom Exp $
+ * $MawkId: bi_funct.c,v 1.98 2014/09/07 16:54:44 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -77,6 +77,14 @@ the GNU General Public License, version 2, 1991.
 #include <ctype.h>
 #include <math.h>
 #include <time.h>
+
+#if defined(mawk_srand) || defined(mawk_rand)
+#define USE_SYSTEM_SRAND
+#endif
+
+#if defined(HAVE_BSD_STDLIB_H) && defined(USE_SYSTEM_SRAND)
+#include <bsd/stdlib.h>		/* prototype arc4random */
+#endif
 
 #if defined(WINVER) && (WINVER >= 0x501)
 #include <windows.h>
@@ -756,9 +764,7 @@ bi_sqrt(CELL *sp)
     return_CELL("bi_sqrt", sp);
 }
 
-#if defined(mawk_srand) || defined(mawk_rand)
-#define USE_SYSTEM_SRAND
-#else
+#if !(defined(mawk_srand) || defined(mawk_rand))
 /* For portability, we'll use our own random number generator , taken
    from:  Park, SK and Miller KW, "Random Number Generators:
    Good Ones are Hard to Find", CACM, 31, 1192-1201, 1988.
