@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: version.c,v 1.19 2014/09/07 16:27:26 tom Exp $
+ * $MawkId: version.c,v 1.20 2014/09/07 16:53:45 tom Exp $
  */
 
 #include "mawk.h"
@@ -34,8 +34,8 @@ print_version(void)
     fflush(stdout);
 
 #define SHOW_RANDOM "random-funcs:"
-#if defined(NAME_SRAND) && defined(NAME_RAND)
-    fprintf(stderr, FMT_S, SHOW_RANDOM, NAME_SRAND "/" NAME_RAND);
+#if defined(NAME_RANDOM)
+    fprintf(stderr, FMT_S, SHOW_RANDOM, NAME_RANDOM);
 #else
     fprintf(stderr, FMT_S, SHOW_RANDOM, "internal");
 #endif
