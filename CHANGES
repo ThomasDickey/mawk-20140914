@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.204 2014/09/07 14:42:30 tom Exp $
+-- $MawkId: CHANGES,v 1.205 2014/09/07 16:36:31 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140907
+	+ show random-function names in version message.
 	+ modify initialization of srand default seed from time of day to use
 	  gettimeofday, etc., so that successive runs of mawk are less likely
 	  to use the same seed value (suggested by Mike Brennan).
