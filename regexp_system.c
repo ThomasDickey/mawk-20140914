@@ -1,6 +1,6 @@
 /*
 regexp_system.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2014 Thomas E. Dickey
 copyright 2005, Aleksey Cheusov
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
  */
 
 /*
- * $MawkId: regexp_system.c,v 1.35 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: regexp_system.c,v 1.36 2014/09/11 23:41:31 tom Exp $
  */
 #include <sys/types.h>
 #include <stdio.h>
@@ -360,16 +360,17 @@ REtest(char *str, size_t str_len GCC_UNUSED, PTR q)
 #define MAX_MATCHES 100
 
 char *
-REmatch(char *str, size_t str_len GCC_UNUSED, PTR q, size_t *lenp)
+REmatch(char *str, size_t str_len GCC_UNUSED, PTR q, size_t *lenp, int no_bol)
 {
     mawk_re_t *re = (mawk_re_t *) q;
     regmatch_t match[MAX_MATCHES];
+    int flags = (no_bol ? REG_NOTBOL : 0);
 
-    TRACE(("REmatch:  \"%s\" ~ /%s/", str, re->regexp));
+    TRACE(("REmatch: %s \"%s\" ~ /%s/", no_bol ? "any" : "1st", str, re->regexp));
 
     last_used_regexp = re;
 
-    if (!regexec(&re->re, str, (size_t) MAX_MATCHES, match, 0)) {
+    if (!regexec(&re->re, str, (size_t) MAX_MATCHES, match, flags)) {
 	*lenp = (size_t) (match[0].rm_eo - match[0].rm_so);
 	TRACE(("=%i/%lu\n", match[0].rm_so, (unsigned long) *lenp));
 	return str + match[0].rm_so;

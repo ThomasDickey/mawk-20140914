@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: regexp.h,v 1.12 2014/08/08 00:51:59 tom Exp $
+ * $MawkId: regexp.h,v 1.13 2014/09/11 23:43:10 tom Exp $
  * @Log: regexp.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:19  mike
  * move source to cvs
@@ -30,7 +30,7 @@ the GNU General Public License, version 2, 1991.
 PTR REcompile(char *, size_t);
 void REdestroy(PTR);
 int REtest(char *, size_t, PTR);
-char *REmatch(char *, size_t, PTR, size_t *);
+char *REmatch(char *, size_t, PTR, size_t *, int);
 void REmprint(PTR, FILE *);
 const char *REs_type(PTR);
 const char *REerror(void);
