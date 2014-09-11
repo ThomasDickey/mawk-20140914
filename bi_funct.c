@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.99 2014/09/07 22:33:03 tom Exp $
+ * $MawkId: bi_funct.c,v 1.100 2014/09/11 23:18:47 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -91,7 +91,6 @@ the GNU General Public License, version 2, 1991.
 #endif
 
 /* #define EXP_UNROLLED_GSUB 1 */
-/* #define DEBUG_GSUB 1 */
 
 #if OPT_TRACE > 0
 #define return_CELL(func, cell) TRACE(("..." func " ->")); \
@@ -1184,7 +1183,7 @@ bi_sub(CELL *sp)
     return_CELL("bi_sub", sp);
 }
 
-#if defined(DEBUG_GSUB) || !defined(EXP_UNROLLED_GSUB)
+#if !defined(EXP_UNROLLED_GSUB)
 #define USE_GSUB0
 #endif
 
@@ -1602,9 +1601,6 @@ bi_gsub(CELL *sp)
     CELL sc;			/* copy of replacement target */
     CELL tc;			/* build the result here */
     STRING *result;
-#if defined(DEBUG_GSUB)
-    STRING *resul2;
-#endif
 
     TRACE_FUNC("bi_gsub", sp);
 
@@ -1627,36 +1623,8 @@ bi_gsub(CELL *sp)
     TRACE(("arg2: "));
     TRACE_CELL(&sc);
 
-#ifdef DEBUG_GSUB
-    {
-	STRING *target = new_STRING1(string(&sc)->str, string(&sc)->len);
-	CELL xrepl;
-
-	repl_cnt = 0;
-	cellcpy(&xrepl, sp + 1);
-	resul2 = gsub0(sp->ptr, &xrepl, target->str, target->len, 1);
-	TRACE(("OLD ->%u:", repl_cnt));
-	TRACE_STRING(resul2);
-	TRACE(("\n"));
-	free_STRING(target);
-    }
-#endif
     result = my_gsub(sp->ptr, sp + 1, &sc);
     tc.ptr = (PTR) result;
-
-#ifdef DEBUG_GSUB
-    TRACE(("NEW -> %d:", (int) result->len));
-    TRACE_STRING(result);
-    TRACE(("\n"));
-    if (resul2 != 0) {
-	if (result != 0 &&
-	    ((result->len != resul2->len) ||
-	     memcmp(result->str, resul2->str, result->len))) {
-	    TRACE(("OOPS: gsub result NEW != OLD\n"));
-	}
-	free_STRING(resul2);
-    }
-#endif
 
     if (repl_cnt) {
 	tc.type = C_STRING;
