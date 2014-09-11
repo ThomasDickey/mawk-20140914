@@ -1,8 +1,9 @@
--- $MawkId: CHANGES,v 1.210 2014/09/07 22:12:06 tom Exp $
+-- $MawkId: CHANGES,v 1.211 2014/09/11 23:22:44 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140907
+	+ settle on "gsub3" implementation (suggested by Mike Brennan).
 	+ change default for configure option --enable-init-srand to enable
 	  this (discussion with Mike Brennan).
 	+ add -W random option to set initial srand() seed.
