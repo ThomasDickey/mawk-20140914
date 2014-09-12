@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.35 2014/09/12 08:00:06 tom Exp $
+ * $MawkId: rexp3.c,v 1.36 2014/09/12 23:19:45 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -64,6 +64,13 @@ the GNU General Public License, version 2, 1991.
 
 #define	  CASE_UANY(x)	case  x + U_OFF :  case	 x + U_ON
 
+#define RE_TURN() \
+	if (cb_ss) { \
+	    *lenp = (size_t) (cb_e - cb_ss); \
+	} \
+	TRACE(("=%i/%lu\n", (int) (s - str), (unsigned long) *lenp)); \
+	return cb_ss
+
 /* returns start of first longest match and the length by
    reference.  If no match returns NULL and length zero */
 
@@ -89,10 +96,14 @@ REmatch(char *str,		/* string to test */
 
     *lenp = 0;
 
+    TRACE(("REmatch: %s \"%s\" ~ /pattern/", no_bol ? "any" : "1st", str));
+
     /* check for the easy case */
     if ((m + 1)->s_type == M_ACCEPT && m->s_type == M_STR) {
-	if ((ts = str_str(s, str_len, m->s_data.str, (size_t) m->s_len)))
+	if ((ts = str_str(s, str_len, m->s_data.str, (size_t) m->s_len))) {
 	    *lenp = m->s_len;
+	}
+	TRACE(("=%i/%lu\n", (int) (ts - str), (unsigned long) *lenp));
 	return ts;
     }
 
@@ -104,9 +115,7 @@ REmatch(char *str,		/* string to test */
 
   refill:
     if (stackp == RE_run_stack_empty) {
-	if (cb_ss)
-	    *lenp = (size_t) (cb_e - cb_ss);
-	return cb_ss;
+	RE_TURN();
     }
     ss = stackp->ss;
     s = (stackp--)->s;
@@ -434,9 +443,7 @@ REmatch(char *str,		/* string to test */
 	    cb_ss = ss;
 	    cb_e = s;
 	} else if (ss == cb_ss && s == cb_e) {
-	    if (cb_ss)
-		*lenp = (size_t) (cb_e - cb_ss);
-	    return cb_ss;
+	    RE_TURN();
 	}
 	RE_FILL();
 
@@ -452,9 +459,7 @@ REmatch(char *str,		/* string to test */
 	    cb_ss = ss;
 	    cb_e = s;
 	} else if (ss == cb_ss && s == cb_e) {
-	    if (cb_ss)
-		*lenp = (size_t) (cb_e - cb_ss);
-	    return cb_ss;
+	    RE_TURN();
 	}
 	RE_FILL();
 
