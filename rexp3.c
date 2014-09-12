@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.33 2014/08/22 00:52:21 tom Exp $
+ * $MawkId: rexp3.c,v 1.34 2014/09/12 00:34:05 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -71,7 +71,8 @@ char *
 REmatch(char *str,		/* string to test */
 	size_t str_len,		/* ...its length */
 	PTR machine,		/* compiled regular expression */
-	size_t *lenp)		/* where to return matched-length */
+	size_t *lenp,		/* where to return matched-length */
+	int no_bol)		/* disallow match at beginning of line */
 {
     register STATE *m = (STATE *) machine;
     char *s = str;
@@ -104,7 +105,7 @@ REmatch(char *str,		/* string to test */
   refill:
     if (stackp == RE_run_stack_empty) {
 	if (cb_ss)
-	    *lenp = (unsigned) (cb_e - cb_ss);
+	    *lenp = (size_t) (cb_e - cb_ss);
 	return cb_ss;
     }
     ss = stackp->ss;
@@ -434,7 +435,7 @@ REmatch(char *str,		/* string to test */
 	    cb_e = s;
 	} else if (ss == cb_ss && s == cb_e) {
 	    if (cb_ss)
-		*lenp = (unsigned) (cb_e - cb_ss);
+		*lenp = (size_t) (cb_e - cb_ss);
 	    return cb_ss;
 	}
 	RE_FILL();
@@ -452,7 +453,7 @@ REmatch(char *str,		/* string to test */
 	    cb_e = s;
 	} else if (ss == cb_ss && s == cb_e) {
 	    if (cb_ss)
-		*lenp = (unsigned) (cb_e - cb_ss);
+		*lenp = (size_t) (cb_e - cb_ss);
 	    return cb_ss;
 	}
 	RE_FILL();
