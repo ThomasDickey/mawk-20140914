@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.25 2014/09/12 00:09:04 tom Exp $
+ * $MawkId: split.c,v 1.26 2014/09/12 23:19:05 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -120,13 +120,14 @@ re_split(const char *s, size_t slen, PTR re)
     const char *end = s + slen;
     Split_Block_Node *node_p = split_block_list;
     unsigned idx = 0;
+    int no_bol = 0;
 
     if (slen == 0)
 	return 0;
 
     while (s < end) {
 	size_t mlen;
-	const char *m = re_pos_match(s, (size_t) (end - s), re, &mlen);
+	const char *m = re_pos_match(s, (size_t) (end - s), re, &mlen, no_bol);
 	if (m) {
 	    /* stuff in front of match is a field, might have length zero */
 	    node_p->strings[idx] = new_STRING1(s, (size_t) (m - s));
@@ -136,6 +137,7 @@ re_split(const char *s, size_t slen, PTR re)
 		node_p = grow_sp_list(node_p);
 	    }
 	    s = m + mlen;
+	    no_bol = 1;
 	} else {
 	    /* no match so last field is what's left */
 	    node_p->strings[idx] = new_STRING1(s, (size_t) (end - s));
@@ -155,14 +157,13 @@ re_split(const char *s, size_t slen, PTR re)
  * length of match is returned in *lenp
  */
 char *
-re_pos_match(const char *str, size_t str_len, PTR re, size_t *lenp)
+re_pos_match(const char *str, size_t str_len, PTR re, size_t *lenp, int no_bol)
 {
-    const char *base = str;
     const char *end = str + str_len;
 
     while (str < end) {
 	char *match = REmatch((char *) str, (size_t) (end - str),
-			      cast_to_re(re), lenp, (str != base));
+			      cast_to_re(re), lenp, no_bol);
 	if (match) {
 	    if (*lenp) {
 		/* match of positive length so done */
@@ -171,6 +172,7 @@ re_pos_match(const char *str, size_t str_len, PTR re, size_t *lenp)
 		/* match but zero length, move str forward and try again */
 		/* note this match must have occured at front of str */
 		str = match + 1;
+		no_bol = 1;
 	    }
 	} else {
 	    /* no match */
