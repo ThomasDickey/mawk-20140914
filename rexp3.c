@@ -12,7 +12,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: rexp3.c,v 1.34 2014/09/12 00:34:05 tom Exp $
+ * $MawkId: rexp3.c,v 1.35 2014/09/12 08:00:06 tom Exp $
  * @Log: rexp3.c,v @
  * Revision 1.3  1993/07/24  17:55:15  mike
  * more cleanup
@@ -341,7 +341,7 @@ REmatch(char *str,		/* string to test */
 
     case M_START + U_OFF + END_OFF:
     case M_START + U_ON + END_OFF:
-	if (s != str) {
+	if (s != str || no_bol) {
 	    RE_FILL();
 	}
 	ss = s;
@@ -351,7 +351,7 @@ REmatch(char *str,		/* string to test */
 
     case M_START + U_OFF + END_ON:
     case M_START + U_ON + END_ON:
-	if (s != str || (s < str_end)) {
+	if (s != str || no_bol || (s < str_end)) {
 	    RE_FILL();
 	}
 	ss = s;
