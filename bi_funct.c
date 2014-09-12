@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: bi_funct.c,v 1.101 2014/09/11 23:21:06 tom Exp $
+ * $MawkId: bi_funct.c,v 1.102 2014/09/12 00:02:25 tom Exp $
  * @Log: bi_funct.c,v @
  * Revision 1.9  1996/01/14  17:16:11  mike
  * flush_all_output() before system()
@@ -369,7 +369,11 @@ bi_match(CELL *sp)
     RSTART->type = C_DOUBLE;
     RLENGTH->type = C_DOUBLE;
 
-    p = REmatch(string(sp)->str, string(sp)->len, cast_to_re((sp + 1)->ptr), &length);
+    p = REmatch(string(sp)->str,
+		string(sp)->len,
+		cast_to_re((sp + 1)->ptr),
+		&length,
+		0);
 
     if (p) {
 	sp->dval = (double) (p - string(sp)->str + 1);
@@ -1137,7 +1141,13 @@ bi_sub(CELL *sp)
 	cast1_to_s(&sc);
     front = string(&sc)->str;
 
-    if ((middle = REmatch(front, string(&sc)->len, cast_to_re(sp->ptr), &middle_len))) {
+    middle = REmatch(front,
+		     string(&sc)->len,
+		     cast_to_re(sp->ptr),
+		     &middle_len,
+		     0);
+
+    if (middle != 0) {
 	front_len = (size_t) (middle - front);
 	back = middle + middle_len;
 	back_len = string(&sc)->len - front_len - middle_len;
@@ -1222,7 +1232,8 @@ gsub3(PTR re, CELL *repl, CELL *target)
 	    where = REmatch(input->str + j,
 			    input->len - (size_t) j,
 			    cast_to_re(re),
-			    &howmuch);
+			    &howmuch,
+			    (j != 0));
 	}
 	/*
 	 * REmatch returns a non-null pointer if it found a match.  But

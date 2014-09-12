@@ -1,8 +1,10 @@
--- $MawkId: CHANGES,v 1.211 2014/09/11 23:22:44 tom Exp $
+-- $MawkId: CHANGES,v 1.212 2014/09/12 00:01:06 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140907
+	+ add parameter to REmatch to control use of REG_NOTBOL and its
+	  equivalent in mawk (prompted by discussion with Mike Brennan).
 	+ settle on "gsub3" implementation (suggested by Mike Brennan).
 	+ change default for configure option --enable-init-srand to enable
 	  this (discussion with Mike Brennan).
