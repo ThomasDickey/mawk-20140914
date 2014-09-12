@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.37 2012/12/08 00:12:06 tom Exp $
+ * $MawkId: fin.c,v 1.38 2014/09/12 23:31:42 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen
@@ -215,9 +215,11 @@ FINgets(FIN * fin, size_t *len_p)
     char *q = 0;
     size_t match_len;
     size_t r;
+    int no_bol;
 
   restart:
 
+    no_bol = 0;
     if ((p = fin->buffp) >= fin->limit) {	/* need a refill */
 	if (fin->flags & EOF_FLAG) {
 	    if (fin->flags & MAIN_FLAG) {
@@ -295,11 +297,14 @@ FINgets(FIN * fin, size_t *len_p)
 
     case SEP_MLR:
     case SEP_RE:
-	q = re_pos_match(p, (size_t) (fin->limit - p), rs_shadow.ptr, &match_len);
+	q = re_pos_match(p, (size_t) (fin->limit - p), rs_shadow.ptr,
+			 &match_len, no_bol);
 	/* if the match is at the end, there might still be
 	   more to match in the file */
-	if (q && q[match_len] == 0 && !(fin->flags & EOF_FLAG))
+	if (q && q[match_len] == 0 && !(fin->flags & EOF_FLAG)) {
+	    TRACE(("re_pos_match cancelled\n"));
 	    q = (char *) 0;
+	}
 	break;
 
     default:
@@ -352,6 +357,7 @@ FINgets(FIN * fin, size_t *len_p)
 	    fin->limit = fin->buff + amount + r;
 	}
     }
+    no_bol = 1;
     goto retry;
 }
 
