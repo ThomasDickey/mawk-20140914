@@ -1,6 +1,6 @@
 /********************************************
 fin.c
-copyright 2008-2010,2012.  Thomas E. Dickey
+copyright 2008-2012,2014.  Thomas E. Dickey
 copyright 1991-1995,1996.  Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.c,v 1.40 2014/09/13 00:56:15 tom Exp $
+ * $MawkId: fin.c,v 1.41 2014/09/13 01:01:10 tom Exp $
  * @Log: fin.c,v @
  * Revision 1.10  1995/12/24  22:23:22  mike
  * remove errmsg() from inside FINopen

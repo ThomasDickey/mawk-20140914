@@ -1,6 +1,6 @@
 /********************************************
 fin.h
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009-2010,2014 Thomas E. Dickey
 copyright 1991-1992,1993, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: fin.h,v 1.12 2014/09/13 00:55:46 tom Exp $
+ * $MawkId: fin.h,v 1.13 2014/09/13 01:01:10 tom Exp $
  * @Log: fin.h,v @
  * Revision 1.1.1.1  1993/07/03  18:58:13  mike
  * move source to cvs
