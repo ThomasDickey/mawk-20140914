@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.27 2014/09/14 20:23:08 tom Exp $
+ * $MawkId: split.c,v 1.28 2014/09/14 20:55:26 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -291,8 +291,12 @@ bi_split(CELL *sp)
     } else {
 	switch ((sp + 2)->type) {
 	case C_RE:
-	    cnt = re_split(string(sp)->str, string(sp)->len,
-			   (sp + 2)->ptr);
+	    if (isEmpty_RE((sp + 2)->ptr)) {
+		cnt = null_split(string(sp)->str, string(sp)->len);
+	    } else {
+		cnt = re_split(string(sp)->str, string(sp)->len,
+			       (sp + 2)->ptr);
+	    }
 	    break;
 
 	case C_SPACE:

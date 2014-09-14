@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: re_cmpl.c,v 1.27 2014/08/19 23:00:40 tom Exp $
+ * $MawkId: re_cmpl.c,v 1.28 2014/09/14 20:51:26 tom Exp $
  * @Log: re_cmpl.c,v @
  * Revision 1.6  1994/12/13  00:14:58  mike
  * \\ -> \ on second replacement scan
@@ -95,6 +95,7 @@ re_compile(STRING * sval)
 
     sval->ref_cnt++;
     p->re.anchored = (*s == '^');
+    p->re.is_empty = (sval->len == 0);
     if (!(p->re.compiled = REcompile(s, sval->len))) {
 	ZFREE(p);
 	sval->ref_cnt--;
