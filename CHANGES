@@ -1,11 +1,16 @@
--- $MawkId: CHANGES,v 1.214 2014/09/14 19:28:52 tom Exp $
+-- $MawkId: CHANGES,v 1.215 2014/09/14 19:57:41 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
 20140914
+	+ correct inconsistently-ifdef'd reset of errno in check_strnum()
+	  function, which caused some values to be internally classified as
+	  strings rather than strnums (Original-Mawk #26).
 	+ add parameter to REmatch to control use of REG_NOTBOL and its
-	  equivalent in mawk (prompted by discussion with Mike Brennan).
-	+ settle on "gsub3" implementation (suggested by Mike Brennan).
+	  equivalent in mawk (prompted by discussion with Mike Brennan,
+	  Original-Mawk #24).
+	+ settle on "gsub3" implementation (suggested by Mike Brennan,
+	  Original-Mawk #11).
 	+ change default for configure option --enable-init-srand to enable
 	  this (discussion with Mike Brennan).
 	+ add -W random option to set initial srand() seed.
@@ -124,14 +129,15 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 	+ add special case for forward reference to a function using an array
 	  parameter, updating the function's parameter type so that the array
 	  is passed properly.
-	+ support length(array), as done in gawk and BWK awk.
+	+ support length(array), as done in gawk and BWK awk (Original-Mawk #1).
 	+ support LC_NUMERIC, which will modify the displayed decimal point in
 	  some locales.  It does not modify the decimal point used for input,
 	  matching the behavior of nawk and BWK awk (prompted by request from
 	  Yechiel Bardov for thousands-separator).
 	+ add configure option --enable-init-srand to allow choice whether to
 	  initialize random numbers automatically at startup or not.  Not doing
-	  this makes programs more predictable (Debian #63843).
+	  this makes programs more predictable (Debian #63843, Original-Mawk
+	  #3).
 	+ add configure option --enable-builtin-srand, use that to deprecate
 	  mawk's builtin srand/rand functions which generally are not as good
 	  as the system-provided functions.
@@ -144,8 +150,9 @@ Changes by Thomas E Dickey <dickey@invisible-island.net>
 		  --posix
 		  --re-interval
 		  --traditional
-	+ integrate strtime function (patch by Dominic Letz).
-	+ correct logic for "/dev/stdin" special device (GenToo #424137).
+	+ integrate strtime function (patch by Dominic Letz, Original-Mawk #2).
+	+ correct logic for "/dev/stdin" special device (GenToo #424137,
+	  Original-Mawk #17).
 	+ updates for configure script macros:
 	  + modify configure script and makefile to support cross-compiles.
 	  + remove Turbo C++ and Zortech C++ makefiles.
