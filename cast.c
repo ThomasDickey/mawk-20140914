@@ -1,6 +1,6 @@
 /********************************************
 cast.c
-copyright 2009-2012,2013 Thomas E. Dickey
+copyright 2009-2013,2014, Thomas E. Dickey
 copyright 1991-1995,1996, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: cast.c,v 1.19 2013/12/26 23:23:55 tom Exp $
+ * $MawkId: cast.c,v 1.20 2014/09/14 20:14:16 tom Exp $
  * @Log: cast.c,v @
  * Revision 1.6  1996/08/11 22:07:50  mike
  * Fix small bozo in rt_error("overflow converting ...")
@@ -88,8 +88,8 @@ cast1_to_d(CELL *cp)
 	{
 	    register STRING *s = (STRING *) cp->ptr;
 
-#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	    errno = 0;
+#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	    cp->dval = strtod(s->str, (char **) 0);
 	    if (errno && cp->dval != 0.0)	/* ignore underflow */
 		rt_error("overflow converting %s to double", s->str);
@@ -131,8 +131,8 @@ cast2_to_d(CELL *cp)
     case C_STRING:
 	s = (STRING *) cp->ptr;
 
-#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	errno = 0;
+#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	cp->dval = strtod(s->str, (char **) 0);
 	if (errno && cp->dval != 0.0)	/* ignore underflow */
 	    rt_error("overflow converting %s to double", s->str);
@@ -165,8 +165,8 @@ cast2_to_d(CELL *cp)
     case C_STRING:
 	s = (STRING *) cp->ptr;
 
-#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	errno = 0;
+#ifdef FPE_TRAPS_ON		/* look for overflow error */
 	cp->dval = strtod(s->str, (char **) 0);
 	if (errno && cp->dval != 0.0)	/* ignore underflow */
 	    rt_error("overflow converting %s to double", s->str);
@@ -382,8 +382,8 @@ check_strnum(CELL *cp)
     case SC_MINUS:
     case SC_DOT:
 
-#ifdef FPE_TRAPS_ON
 	errno = 0;
+#ifdef FPE_TRAPS_ON
 	cp->dval = strtod((char *) s, &temp);
 	/* make overflow pure string */
 	if (errno && cp->dval != 0.0)
