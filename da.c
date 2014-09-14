@@ -1,6 +1,6 @@
 /********************************************
 da.c
-copyright 2008-2010,2012, Thomas E. Dickey
+copyright 2008-2012,2014, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: da.c,v 1.14 2012/12/08 15:00:11 tom Exp $
+ * $MawkId: da.c,v 1.15 2014/09/14 22:26:06 tom Exp $
  * @Log: da.c,v @
  * Revision 1.6  1995/06/18  19:19:59  mike
  * remove use of comma operator that broke some sysVr3 compilers
@@ -235,11 +235,7 @@ da(INST * start, FILE *fp)
 	    else if (cp == &fs_shadow)
 		fprintf(fp, "pushi\t@fs_shadow\n");
 	    else {
-		if (
-#ifdef  MSDOS
-		       SAMESEG(cp, field) &&
-#endif
-		       cp > NF && cp <= LAST_PFIELD)
+		if (cp > NF && cp <= LAST_PFIELD)
 		    name = reverse_find(ST_FIELD, &cp);
 		else
 		    name = reverse_find(ST_VAR, &cp);
@@ -270,11 +266,7 @@ da(INST * start, FILE *fp)
 
 	case F_PUSHA:
 	    cp = (CELL *) p++->ptr;
-	    if (
-#ifdef  MSDOS
-		   SAMESEG(cp, field) &&
-#endif
-		   cp >= NF && cp <= LAST_PFIELD)
+	    if (cp >= NF && cp <= LAST_PFIELD)
 		fprintf(fp, "f_pusha\t%s\n",
 			reverse_find(ST_FIELD, &cp));
 	    else
@@ -471,7 +463,7 @@ static OP_NAME type_names[] =
 /* *INDENT-ON* */
 
 const char *
-da_type_name(CELL * cdp)
+da_type_name(CELL *cdp)
 {
     int n;
     const char *result = "?";
