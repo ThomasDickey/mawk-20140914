@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: field.c,v 1.31 2014/08/22 00:00:36 tom Exp $
+ * $MawkId: field.c,v 1.32 2014/09/14 22:18:43 tom Exp $
  * @Log: field.c,v @
  * Revision 1.5  1995/06/18  19:17:47  mike
  * Create a type Int which on most machines is an int, but on machines
@@ -353,13 +353,6 @@ field_assign(CELL *fp, CELL *cp)
     if (nf < 0)
 	split_field0();
 
-#ifdef  MSDOS
-    if (!SAMESEG(fp, field)) {
-	i = -1;
-	goto lm_dos_label;
-    }
-#endif
-
     switch (i = (int) (fp - field)) {
 
     case NF_field:
@@ -600,13 +593,7 @@ field_addr_to_index(CELL *cp)
 {
     CELL **p = fbankv;
 
-    while (
-
-#ifdef MSDOS
-	      !SAMESEG(cp, *p) ||
-#endif
-
-	      cp < *p || cp >= *p + FBANK_SZ)
+    while (cp < *p || cp >= *p + FBANK_SZ)
 	p++;
 
     return (int) (((p - fbankv) << FB_SHIFT) + (cp - *p));

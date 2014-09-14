@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: execute.c,v 1.37 2014/09/07 10:33:15 tom Exp $
+ * $MawkId: execute.c,v 1.38 2014/09/14 22:18:43 tom Exp $
  * @Log: execute.c,v @
  * Revision 1.13  1996/02/01  04:39:40  mike
  * dynamic array scheme
@@ -267,11 +267,7 @@ execute(INST * cdp,		/* code ptr, start execution here */
 		if (nf < 0)
 		    split_field0();
 
-		if (!(
-#ifdef MSDOS
-			 SAMESEG(cp, field) &&
-#endif
-			 cp >= NF && cp <= LAST_PFIELD)) {
+		if (!(cp >= NF && cp <= LAST_PFIELD)) {
 		    /* it is a real field $1, $2 ...
 		       If it is greater than $NF, we have to
 		       make sure it is set to ""  so that
