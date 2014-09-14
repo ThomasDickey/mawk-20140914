@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.28 2014/09/14 20:55:26 tom Exp $
+ * $MawkId: split.c,v 1.29 2014/09/14 21:35:23 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
@@ -112,7 +112,7 @@ space_split(const char *s, size_t slen)
 }
 
 size_t
-re_split(const char *s, size_t slen, PTR re)
+re_split(char *s, size_t slen, PTR re)
 {
     size_t cnt = 0;
     const char *end = s + slen;
@@ -125,7 +125,7 @@ re_split(const char *s, size_t slen, PTR re)
 
     while (s < end) {
 	size_t mlen;
-	const char *m = re_pos_match(s, (size_t) (end - s), re, &mlen, no_bol);
+	char *m = re_pos_match(s, (size_t) (end - s), re, &mlen, no_bol);
 	if (m) {
 	    /* stuff in front of match is a field, might have length zero */
 	    node_p->strings[idx] = new_STRING1(s, (size_t) (m - s));
@@ -155,12 +155,12 @@ re_split(const char *s, size_t slen, PTR re)
  * length of match is returned in *lenp
  */
 char *
-re_pos_match(const char *str, size_t str_len, PTR re, size_t *lenp, int no_bol)
+re_pos_match(char *str, size_t str_len, PTR re, size_t *lenp, int no_bol)
 {
     const char *end = str + str_len;
 
     while (str < end) {
-	char *match = REmatch((char *) str, (size_t) (end - str),
+	char *match = REmatch(str, (size_t) (end - str),
 			      cast_to_re(re), lenp, no_bol);
 	if (match) {
 	    if (*lenp) {
