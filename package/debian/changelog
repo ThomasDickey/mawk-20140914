@@ -1,6 +1,6 @@
-mawk-cur (1.3.4-20140912) unstable; urgency=low
+mawk-cur (1.3.4-20140914) unstable; urgency=low
 
-  * improve experimental gsub
+  * improve gsub performance
   * improve field- and buffer-limits
   * configure-script updates
   * minor fixes

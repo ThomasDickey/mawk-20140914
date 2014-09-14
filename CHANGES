@@ -1,8 +1,8 @@
--- $MawkId: CHANGES,v 1.213 2014/09/13 01:00:07 tom Exp $
+-- $MawkId: CHANGES,v 1.214 2014/09/14 19:28:52 tom Exp $
 
 Changes by Thomas E Dickey <dickey@invisible-island.net>
 
-20140912
+20140914
 	+ add parameter to REmatch to control use of REG_NOTBOL and its
 	  equivalent in mawk (prompted by discussion with Mike Brennan).
 	+ settle on "gsub3" implementation (suggested by Mike Brennan).
