@@ -11,13 +11,11 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: split.c,v 1.26 2014/09/12 23:19:05 tom Exp $
+ * $MawkId: split.c,v 1.27 2014/09/14 20:23:08 tom Exp $
  * @Log: split.c,v @
  * Revision 1.3  1996/02/01  04:39:42  mike
  * dynamic array scheme
- *
- *
-*/
+ */
 
 /* split.c */
 
@@ -194,7 +192,7 @@ null_split(const char *s, size_t slen)
     unsigned idx = 0;
 
     while (s < end) {
-	node_p->strings[idx] = new_STRING1(s, 1);
+	node_p->strings[idx] = new_STRING1(s++, 1);
 	if (++idx == SP_SIZE) {
 	    idx = 0;
 	    node_p = grow_sp_list(node_p);
