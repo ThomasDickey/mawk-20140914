@@ -1,6 +1,6 @@
 /********************************************
 dosexec.c
-copyright 2009,2010, Thomas E. Dickey
+copyright 2009,2010,2014, Thomas E. Dickey
 copyright 1991-1994,1995, Michael D. Brennan
 
 This is a source file for mawk, an implementation of
@@ -11,7 +11,7 @@ the GNU General Public License, version 2, 1991.
 ********************************************/
 
 /*
- * $MawkId: dosexec.c,v 1.4 2010/12/10 17:00:00 tom Exp $
+ * $MawkId: dosexec.c,v 1.5 2014/09/14 22:29:49 tom Exp $
  *
  * @Log: dosexec.c,v @
  * Revision 1.3  1995/08/20  16:37:22  mike
@@ -47,7 +47,13 @@ the GNU General Public License, version 2, 1991.
 #include "files.h"
 #include "fin.h"
 
+#undef _POSIX_
+
 #include <process.h>
+
+#ifndef P_WAIT
+#define P_WAIT _P_WAIT		/* works with VS2008 */
+#endif
 
 static char *my_shell;		/* e.g.   "c:\\sys\\command.com"  */
 static char *command_opt;	/*  " /c"  */
